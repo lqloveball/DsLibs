@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="viewport" content=" initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="format-detection" content="telephone=no">
+    <meta content="telephone=no" name="format-detection" />
+
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <title>视频案例</title>
+    <link rel="stylesheet" href="./main.css" />
+    <script>
+        var ua = navigator.userAgent;
+        if (/Android (d+.d+)/.test(ua)) {
+            document.write('<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no">');
+        } else {
+            document.write('<meta name="viewport" content="width=640,target-densitydpi=device-dpi,maximum-scale=1.0, user-scalable=no">');
+        }
+    </script>
+    <script src="../../src/libs/base/jquery-1.9.1.min.js"></script>
+    <!-- <script src="../../src/libs/base/zepto.min.js"></script> -->
+    <script src="../../src/Ds/EventDispatcher.js"></script>
+    <script src="../../src/Ds/Log.js"></script>
+    <script src="../../src/Ds/SiteMoblieTemplate.js"></script>
+    <!-- <script src="../../src/libs/seajs/sea.min.js"></script> -->
+    <script src="../../src/libs/media/iphone-inline-video.browser.js"></script>
+    <script src="../../src/libs/media/jsmpg.js"></script>
+    <script src="../../src/Ds/media/VidePlayerByMpeg.js"></script>
+    <script src="../../src/Ds/media/VidePlayerByVideoTag.js"></script>
+    <script src="../../src/Ds/media/VideoInteractivePlayer.js"></script>
+
+    <style>
+        html {
+            font-family: sans-serif;
+            /* 1 */
+            -ms-text-size-adjust: 100%;
+            /* 2 */
+            -webkit-text-size-adjust: 100%;
+            /* 2 */
+        }
+        html,
+        body {
+            padding: 0;
+            margin: 0;
+            height: 100%;
+            -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+            overflow: hidden;
+            background-color: #fff;
+        }
+
+        #screen {
+            position: absolute;
+            left: 0px;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        .IIV::-webkit-media-controls-play-button,
+        .IIV::-webkit-media-controls-start-playback-button {
+            opacity: 0;
+            pointer-events: none;
+            width: 5px;
+        }
+
+        #videoPanel canvas {
+          position: absolute;
+          left:0;top:0;
+        }
+        #debug{
+          position: absolute;
+          left: 0px;
+          top: 0;
+          width: 100%;
+          height: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="screen">
+
+        <div id="videoPanel">
+          <video class="videoPlayer"  style="position: absolute; width:100%;background-color:#fff;" x-webkit-airplay="false" webkit-playsinline="true" playsinline preload='auto'></video>
+          <!-- <video id="videoPlayer" playsinline="" webkit-playsinline="true" preload="auto" poster="" src="video.mp4" style="position: absolute;width:100%; left:0; top:0; z-index: 100;background-color:#f0f;"></video> -->
+          <!-- <video id="videoBack" playsinline="true" webkit-playsinline="true" preload="auto" width="640" height="1040" poster="" src="video4.mp4" style="position: absolute; left:0; top:0;background-color:#f0f;"></video> -->
+        </div>
+        <!-- <img src="test.png" style="position:absolute;top:0;left:0;" /> -->
+        <div id="debug">
+            dddd
+        </div>
+    </div>
+    <script>
+        document.addEventListener('touchmove', function(e) {
+            e.preventDefault();
+        }, false);
+    </script>
+
+    <script src="main.js"></script>
+</body>
+
+</html>
