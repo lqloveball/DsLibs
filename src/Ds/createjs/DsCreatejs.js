@@ -17,11 +17,7 @@
  * @copyright:  我发起Ds库目的，简化方便工作项目开发。里面代码大部分理念来至曾经flash 前端时代，尽力减小类之间耦合，通过webpack按需request使用。Ds库里代码很多也都来源至或参考网络开源开放代码，所以这个库也开源开放。更多希望团队成员把积累工作中常用的代码，加快自己开发效率。
  * @constructor
  **/
-<<<<<<< HEAD
-!(function(window) {
-=======
 (function(window) {
->>>>>>> master
     /**
     对CJS进行扩张
     插件进行把类 放到window中 方便全局调用  (不主张这样做，这样会影响到其他类库)
@@ -471,25 +467,6 @@
         //经常做手绘画字时候 会没有stagemousemove事件mouseMoveOutside与mouseInBounds需要做开启
         this.Stage.mouseMoveOutside = true;
         this.Stage.mouseInBounds = true;
-<<<<<<< HEAD
-        /**
-         * 幀设置
-         * @param {[type]} value [description]
-         */
-        this.SetFPS = function(value) {
-            var _stage = this.Stage;
-            createjs.Ticker.setFPS(value);
-            createjs.Ticker.addEventListener("tick", handleTick);
-
-            function handleTick() {
-                _stage.update();
-            }
-        };
-        /**
-         * 进行刷新
-         */
-        this.Update = function() {
-=======
         this.Pause=false;
 
 
@@ -512,7 +489,6 @@
          */
         this.Update = function() {
             if(_Self.Pause)return;
->>>>>>> master
             var _stage = _Self.Stage;
             _stage.update();
         };
