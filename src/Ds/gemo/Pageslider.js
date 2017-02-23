@@ -1,5 +1,9 @@
 /**
+<<<<<<< HEAD
  * @class Ds.gemo.Pageslider
+=======
+ * @class Ds.gemo.PageSlider
+>>>>>>> master
  * @classdesc:页面平滑滚动
  *  事件 start move end
     start
@@ -22,12 +26,21 @@
 
     window.Ds = window.Ds || {};
     window.Ds.gemo = window.Ds.gemo || {};
+<<<<<<< HEAD
     window.Ds.gemo.Pageslider = Pageslider;
 
     function Pageslider(_scenes, _opt) {
         Ds.Extend(this, new Ds.EventDispatcher());
         var $scenes = $(_scenes),
             _self = this;
+=======
+    window.Ds.gemo.PageSlider = PageSlider;
+
+    function PageSlider(_scenes, _opt) {
+        Ds.Extend(this, new Ds.EventDispatcher());
+        var $scenes = $(_scenes),
+        _self = this;
+>>>>>>> master
         // log($scenes)
         //初始化一些参数
         var startY = 0, //开始Y
@@ -58,7 +71,12 @@
             var _targetTouches = event.targetTouches || event.originalEvent.targetTouches;
             var touch = _targetTouches[0];
             var target = $(event.target);
+<<<<<<< HEAD
             // event.preventDefault();
+=======
+            if(_self.capture)return;
+
+>>>>>>> master
             if (!_self.sliding) {
                 _self.capture = true;
                 startY = touch.pageY;
@@ -151,7 +169,12 @@
                         state = 'back';
                     }
                     //如果是横向滑动
+<<<<<<< HEAD
                 } else if (level) {
+=======
+                }
+                else if (level) {
+>>>>>>> master
 
                     if (diffX < -limitX) {
                         //上一个
@@ -178,6 +201,11 @@
                     upright: upright,
                     state: state
                 });
+<<<<<<< HEAD
+=======
+            }else{
+              _self.closeSliding();
+>>>>>>> master
             }
         });
         this.openSliding = function() {
