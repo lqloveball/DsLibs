@@ -64,7 +64,7 @@
       opts.button='#BGMBtn'
      */
     this.InitLoadAndSetBGM=function(opts){
-      if(opts.list===undefined)return;
+      if(opts.list===undefined||opts.list===null)return;
       if(opts.list.length<=0)return;
       var _list=opts.list;
       var _id=opts.id;
