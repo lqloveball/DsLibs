@@ -1,3 +1,12 @@
+/**
+ * @class
+ * @classdesc: webpack2 快速开发网站项目模板入口
+ * @extends
+ * @example: 
+ * @author: maksim email:maksim.lin@foxmail.com
+ * @copyright: Ds是累积平时项目工作的经验代码库，不属于职位任务与项目的内容。里面代码大部分理念来至曾经flash 前端时代，尽力减小类之间耦合，通过webpack按需request使用。Ds库里内容多来至网络与参考其他开源代码库。Ds库也开源开放，随意使用在所属的职位任务与项目中。
+ * @constructor
+ **/
 _time = new Date().getTime();
 //网址主模块
 window.SiteModel = {
@@ -60,7 +69,7 @@ function ShowProgress(progress){
   if((_loadPanel instanceof HTMLElement)||(_loadPanel.length>=1&&_loadPanel[0] instanceof HTMLElement)){
     //【Dom Loading 请在这里实现】
     $('#siteLoadPanel .progress').css({width:(progress+1)+'%'});
-    $('#siteLoadPanel .progress').html((progress+1)+'%');
+    $('#siteLoadPanel .label').html((progress+1)+'%');
   }
   //判断是createjs类型loading
   else if(createjs!==undefined&&_loadPanel instanceof createjs.DisplayObject){
