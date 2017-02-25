@@ -1,46 +1,43 @@
 /*!
- * VERSION: 0.1.0
- * DATE: 2015-12-20
- * GIT:https://github.com/shrekshrek/orienter
- *
- * @author: Shrek.wang, shrekshrek@gmail.com
+ * VERSION: 0.2.0
+ * DATE: 2016-10-20
+ * GIT: https://github.com/shrekshrek/orienter
+ * @author: Shrek.wang
  **/
 
 (function (factory) {
 
-    var root = (typeof self == 'object' && self.self == self && self) ||
-        (typeof global == 'object' && global.global == global && global);
-
     if (typeof define === 'function' && define.amd) {
-        define(['exports'], function (exports) {
-            root.Orienter = factory(root, exports);
+        define(['exports'], function(exports) {
+            window.Orienter = factory(exports);
         });
     } else if (typeof exports !== 'undefined') {
-        factory(root, exports);
+        factory(exports);
     } else {
-        root.Orienter = factory(root, {});
+        window.Orienter = factory({});
     }
 
-}(function (root, Orienter) {
-    function extend(obj, obj2) {
-        for (var prop in obj2) {
-            obj[prop] = obj2[prop];
-        }
-    }
+}(function (Orienter) {
 
     Orienter = function () {
         this.initialize.apply(this, arguments);
     };
 
-    extend(Orienter.prototype, {
-        //VERT: 'latical',//垂直
-        //HORI: 'lonzontal',//水平
+    Orienter.prototype = {
         lon: 0,
         lat: 0,
         direction: 0,
         fix: 0,
         os: '',
-        initialize: function () {
+        initialize: function (config) {
+            var _config = config || {};
+
+            this.onOrient = _config.onOrient || function(){};
+            this.onChange = _config.onChange || function(){};
+
+            this._orient = this._orient.bind(this);
+            this._change = this._change.bind(this);
+
             this.lon = 0;
             this.lat = 0;
             this.direction = window.orientation || 0;
@@ -57,18 +54,15 @@
                     break;
             }
 
-            if(!!navigator.userAgent.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/)){
+            if (!!navigator.userAgent.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/)) {
                 this.os = 'ios';
-            }else{
+            } else {
                 this.os = (navigator.userAgent.indexOf('Android') > -1 || navigator.userAgent.indexOf('Linux')) ? 'android' : '';
             }
         },
 
         init: function () {
-            this._orient = this.orientHandler.bind(this);
             window.addEventListener('deviceorientation', this._orient, false);
-
-            this._change = this.changeHandler.bind(this);
             window.addEventListener('orientationchange', this._change, false);
         },
 
@@ -77,12 +71,17 @@
             window.removeEventListener('orientationchange', this._change, false);
         },
 
-        changeHandler: function (event) {
+        _change: function (event) {
             this.direction = window.orientation;
-            //alert(window.orientation);
+
+            this.onChange(this.direction);
         },
 
-        orientHandler: function (event) {
+        changeDirectionTo: function (n) {
+            this.direction = n;
+        },
+
+        _orient: function (event) {
             switch (this.os) {
                 case 'ios':
                     switch (this.direction) {
@@ -120,9 +119,9 @@
                     switch (this.direction) {
                         case 0:
                             this.lon = event.alpha + event.gamma + 30;
-                            if (event.gamma > 90){
+                            if (event.gamma > 90) {
                                 this.lat = 90 - event.beta;
-                            }else{
+                            } else {
                                 this.lat = event.beta - 90;
                             }
                             break;
@@ -149,10 +148,17 @@
             this.lon = Math.round(this.lon);
             this.lat = Math.round(this.lat);
 
-            if (this.handler) this.handler.apply(this, [{a:Math.round(event.alpha), b:Math.round(event.beta), g:Math.round(event.gamma), lon: this.lon, lat: this.lat, dir: this.direction}]);
+            this.onOrient({
+                a: Math.round(event.alpha),
+                b: Math.round(event.beta),
+                g: Math.round(event.gamma),
+                lon: this.lon,
+                lat: this.lat,
+                dir: this.direction
+            });
         }
 
-    });
+    };
 
     return Orienter;
 }));

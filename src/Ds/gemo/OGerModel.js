@@ -142,7 +142,7 @@
             //陀螺仪
             _Orienter = new Orienter();
             //陀螺仪触发
-            _Orienter.handler = function(obj) {
+            _Orienter.onOrient = function(obj) {
                 _Self.Aim.lat = obj.lat;
                 _Self.Aim.lon = -obj.lon;
                 if (_Self.Lock) {
