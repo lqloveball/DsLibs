@@ -84,8 +84,13 @@ module.exports = function(env) {
                   options: {
                       //vue里面其他加载器
                       loaders: {
+
+                        // Since sass-loader (weirdly) has SCSS as its default parse mode, we map
+                        // the "scss" and "sass" values for the lang attribute to the right configs here.
+                        // other preprocessors should work out of the box, no loader config like this necessary.
                         'scss': 'vue-style-loader!css-loader!sass-loader',
                         'sass': 'vue-style-loader!css-loader!sass-loader?indentedSyntax'
+
                       }
                   }
               },
@@ -94,7 +99,11 @@ module.exports = function(env) {
               //html处理
               {test: /\.html$/,loader:'html-loader'},
               //处理ES6
-              //{ test: /\.js$/, exclude: /node_modules/, loader: "babel-loader"},
+              {
+                test: /\.js$/,
+                loader: 'babel-loader',
+                exclude: /node_modules/
+              },
               //处理样式，转成css，如：less-loader, sass-loader
               {test: /\.css$/,
                 use:[
@@ -107,15 +116,22 @@ module.exports = function(env) {
                 use:[
                   'style-loader',
                   'css-loader',
-                  'less-loader'
+                  'less-loader',
                 ]
               },
-              {test: /\.(png|jpg)$/,
-                loader: 'url-loader',
-                options:{
-                  name:'images/[hash].[ext]',
-                  limit:'2048000'
-                }
+              //图片资源 如果小于limit值（10k）会编译成base64 如果是超过会打包到会打包到js/app/images目录下
+              //平时可以考虑不适用
+              {
+                test: /\.(png|jpg)$/,
+                use:[
+                  {
+                    loader: 'url-loader',
+                    options: {
+                      name: '../../images/dist/[hash].[ext]', //会打包到js/app/images目录下
+                      limit: 10000//10k
+                    }
+                  },
+                ]
               },
           ],
       },
