@@ -2,7 +2,7 @@
  * @class
  * @classdesc: webpack2 快速开发网站项目模板入口
  * @extends
- * @example: 
+ * @example:
  * @author: maksim email:maksim.lin@foxmail.com
  * @copyright: Ds是累积平时项目工作的经验代码库，不属于职位任务与项目的内容。里面代码大部分理念来至曾经flash 前端时代，尽力减小类之间耦合，通过webpack按需request使用。Ds库里内容多来至网络与参考其他开源代码库。Ds库也开源开放，随意使用在所属的职位任务与项目中。
  * @constructor
@@ -17,6 +17,10 @@ window.SiteModel = {
     LoadPanel:null,//加载界面 [Dom的loading 请在InitLoadPanel函数内进行实现   Createjs的loading，正常来说不需要修改，如果需要修改InitCreateJsLoadPanel函数内修改实现]
     CJSModel:null,//createjs项目模块  [设置IsCJSSiteModel=true 时候才会创建]
     AudioAutoPlayLister:null,//声音自动播放加载与控制器类对象
+    //对整个网站框架进行ReSize方法执行
+    ReSize:function(){
+      SiteModel.SiteResizeModel.ReSize();
+    },
     //==============以上参数不做修改，会根据下列配置进行生成===================
     ScreenType:'v',//网站自适应方式
     Screen:'#screen',//网站自适应容器
