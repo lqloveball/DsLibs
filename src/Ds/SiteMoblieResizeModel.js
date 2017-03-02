@@ -19,7 +19,7 @@
  * @copyright:  我发起Ds库目的，简化方便工作项目开发。里面代码大部分理念来至曾经flash 前端时代，尽力减小类之间耦合，通过webpack按需request使用。Ds库里代码很多也都来源至或参考网络开源开放代码，所以这个库也开源开放。更多希望团队成员把积累工作中常用的代码，加快自己开发效率。
  * @constructor
  **/
-!(function() {
+(function() {
     window.Ds = window.Ds || {};
     window.Ds.SiteMoblieResizeModel = SiteMoblieResizeModel;
     //判断浏览器
@@ -84,7 +84,6 @@
                 }
             }
             return _OrientationTip;
-
         };
         /**
          * 进行自适应计算
@@ -103,11 +102,14 @@
         var _Width, _Height, _ScreenWidth, _PageScale, _ActualH, _Horizontal = false,
             _IsInputState = false,
             _DensityDpi = 1;
+        var _OldActualH, _OldInputState = false;
         /**
          * 一般不使用，只有需要强制执行时候使用
          * @type {[type]}
          */
         this.ReSize = function() {
+            _OldActualH = _ActualH;
+            _OldInputState = _IsInputState;
             //如果在输入以后需要进行viewport改变重新计算设置viewport
             _DensityDpi = Ds.SiteMoblieResizeModel.InputEndResize();
             //计算当前viewport后自适应后的尺寸
@@ -120,17 +122,33 @@
             _PageScale = _reSizeData.pageScale;
             _ActualH = _reSizeData.actualH;
             _ScreenWidth = _reSizeData.screenWidth;
+            if(!_OldActualH)_OldActualH=_ActualH;
+
+            $('#debug').html('_IsInputState:' + _IsInputState + '_ActualH:' + _ActualH);
             //设置场景宽高
             if (_Screen) {
-                $(_Screen).css({
+                var _resizeObj={
                     "-webkit-transform-origin": '0 0',
                     "transform-origin": '0 0',
                     "-webkit-transform": "scale(" + _PageScale + ")",
                     "transform": "scale(" + _PageScale + ")",
                     "width": _ScreenWidth + 'px',
                     "height": _ActualH + 'px'
-                });
+                };
+                //判断输入宽情况下
+                if(_IsInputState&&_OldInputState!=_IsInputState){
+                  _resizeObj.height=_OldActualH+ 'px';
+                }
+                //
+                $(_Screen).css(_resizeObj);
+                //输入情况下进行滚动
+                if (document.activeElement.tagName == "INPUT" || document.activeElement.tagName == "TEXTAREA") {
+                    window.setTimeout(function() {
+                      document.activeElement.scrollIntoViewIfNeeded();
+                    },0);
+                }
             }
+
             //如果不是自动适应强制横屏项目
             if (_ScreenType != 'auto') {
                 //判断横屏或者竖屏时候提示 留着做写代码参考使用
@@ -156,6 +174,7 @@
             _Self.Width = _Width; //获取到window宽
             _Self.Height = _Height; //获取到window高;
             _Self.ActualH = _ActualH;
+            _Self.OldActualH = _OldActualH;
             _Self.PageScale = _PageScale;
             _Self.IsInputState = _IsInputState;
             _Self.Horizontal = _Horizontal;
