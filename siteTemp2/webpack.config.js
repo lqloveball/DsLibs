@@ -119,7 +119,7 @@ module.exports = function(env) {
                   'less-loader',
                 ]
               },
-              //图片资源 如果小于limit值（10k）会编译成base64 如果是超过会打包到会打包到js/app/images目录下
+              //图片资源 如果小于limit值（10k）会编译成base64 如果是超过会打包到会打包到./images目录下
               //平时可以考虑不适用
               {
                 test: /\.(png|jpg)$/,
@@ -127,7 +127,7 @@ module.exports = function(env) {
                   {
                     loader: 'url-loader',
                     options: {
-                      name: '../../images/dist/[hash].[ext]', //会打包到js/app/images目录下
+                      name: '../../images/dist/[hash].[ext]', //会打包到./images目录下
                       limit: 10000//10k
                     }
                   },
