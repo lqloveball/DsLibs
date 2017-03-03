@@ -62,6 +62,26 @@
     };
     /**======================Rectangle 扩展 End========================**/
     /**
+     * 对文本进行换行处理
+     * @param {[create.Text]} label [文本框对象]
+     * @param {[String]} info  [内容]
+     * @param {[Number]} width [最大长度]
+     */
+    ccjs.Wrap=function(label,info,width){
+      var _info= '',_oinfo;
+      for (var i = 0; i < info.length; i++) {
+        _oinfo=_info;
+        _info=_oinfo+info[i];
+        label.text = _info;
+        var _w=label.getMetrics().width;
+        if(_w>width){
+          label.text = _oinfo+'\n'+info[i];
+          _w=label.getMetrics().width;
+        }
+        _info=label.text;
+      }
+    };
+    /**
      * 控制动画MovieClip播放
      * @param  {[MovieClip]} mc     [需要控制的MovieClip]
      * @param  {[String Number]} value  [需要跳转到的祯]
