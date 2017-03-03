@@ -164,6 +164,8 @@ function InitSiteResizeModel(){
   SiteResizeModel.on('resize', ReSize);
   //开始进行初始化场景自适应
   SiteResizeModel.InitResize();
+  //解决loading页面缩放问题
+  $(SiteModel.Screen).show();
 }
 /**
  * 自适应
