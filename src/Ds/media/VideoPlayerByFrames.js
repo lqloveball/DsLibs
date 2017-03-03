@@ -1,9 +1,11 @@
 /**
  * @class Ds.media.VideoPlayerByFrames
  * @classdesc:视频播放序列帧播放器
+ *  事件 progress加载进度   complete 加载完成  canplaythrough可以缓冲播放  playEnd播放完成  play播放  pause暂停
+ * @param {[Object]} data [初始化参数]
  * @extends
  * @example://默认初始化的时候 视频不放到可见区域
-   _VideoInteractivePlayer = new VideoFramesPlayerModel({
+   _VideoInteractivePlayer = new Ds.media.VideoPlayerByFrames({
        imagesPath: './images/video600/',//图片的文件夹地址
        imagePrefix: 'v',//图片前缀
        imgType: 'jpg',//图片类型
@@ -25,7 +27,10 @@
            log('VideoPlayEnd');
            VideoPlayEnd();
        },
-       // loop:true,//是否循环
+       loadEndFunc:function(){
+
+       },
+      // loop:true,//是否循环
    });
    _VideoPanel = $('#VideoFramesContainer');
    //事件
@@ -44,8 +49,7 @@
        _VideoPanel.css("left", "2000px");
        log("结束");
    }
-   //开始加载
-   _VideoInteractivePlayer.InitLoad();
+
  * @author: maksim email:maksim.lin@foxmail.com
  * @copyright:  我发起Ds库目的，简化方便工作项目开发。里面代码大部分理念来至曾经flash 前端时代，尽力减小类之间耦合，通过webpack按需request使用。Ds库里代码很多也都来源至或参考网络开源开放代码，所以这个库也开源开放。更多希望团队成员把积累工作中常用的代码，加快自己开发效率。
  * @constructor
@@ -119,14 +123,17 @@
         canvas.height = videoH;
 
         cxt = canvas.getContext("2d");
-        _self.canvas = canvas;
-        $(canvas).css({
-            width: '100%'
-        });
-        $(canvas).css({
-            height: '100%'
-        });
 
+        _self.canvas = canvas;
+        // $(canvas).css({
+        //     width: '100%'
+        // });
+        // $(canvas).css({
+        //     height: '100%'
+        // });
+        Object.defineProperty(this, "canvas", {
+            get: function() {return canvas;},
+        });
         if (audioPath === '') {
             audio = null;
         } else {
@@ -172,6 +179,8 @@
         var noAudioupDateTime;
         var playTime;
         var pauseTime;
+        //是否加载完成所有的资源
+        this.loadEnd=false;
 
         function init() {
             this.canvas = canvas;
@@ -240,16 +249,16 @@
             pause = true;
         };
         this.audioSuspend = function(e) {
-            log('audioSuspend');
+            // console.log('audioSuspend');
         };
         this.audioPlayEvent = function(e) {
-            log('audioPlayEvent');
+            // console.log('audioPlayEvent');
             audioPause = false;
             pause = false;
             _self.videoPlayEvent();
         };
         this.audioPauseEvent = function(e) {
-            log('audioPauseEvent');
+            // console.log('audioPauseEvent');
             audioPause = true;
             pause = true;
             _self.videoPauseEvent();
@@ -260,7 +269,21 @@
             imagesLoadEnd = false,
             bufferTime = 0,
             bufferAllTime = 0;
-        this.loadImages = function() {
+        //是否已经开始加载
+        var _starloadBool=false;
+        /**
+         * 开始加载队列图片
+         * @return {[type]} [description]
+         */
+        this.startLoad=function(){
+          //已经开始加载就退出
+          if(_starloadBool)return;
+          _starloadBool=true;
+          loadImages();
+        };
+        //加载图片队列方法
+        function loadImages() {
+          // console.log('loadImages');
             imagesLoadNum += 1;
             _self.ds({
                 type: 'progress',
@@ -268,10 +291,9 @@
             });
             if (imagesLoadNum >= imagesList.length) {
                 imagesLoadNum = imagesList.length - 1;
-                _self.ds({
-                    type: 'complete'
-                });
-                _self.videoLoadEdnEvent();
+                _self.loadEnd=true;
+                _self.videoLoadEndEvent();
+                _self.ds({type: 'complete'});
                 return;
             }
             img = imagesList[imagesLoadNum];
@@ -279,7 +301,7 @@
             img.errorNum = 0;
             img.onload = function() {
                 _self.videoBuffereEvent();
-                _self.loadImages();
+                loadImages();
                 img.loaded = true;
             };
             img.onerror = function() {
@@ -287,18 +309,18 @@
                 // img.errorNum++;
                 // img.src=img.url;
                 _self.videoBuffereEvent();
-                _self.loadImages();
+                loadImages();
             };
-        };
-        this.InitLoad = this.loadImages;
+        }
+
         //计算缓冲了多少秒了
         this.videoBuffereEvent = function() {
             bufferTime = (imagesLoadNum) / fps;
             imagesLoadEnd = false;
-
         };
-        this.videoLoadEdnEvent = function() {
-            log('videoLoadEdnEvent');
+
+        this.videoLoadEndEvent = function() {
+            console.log('videoLoadEndEvent');
             bufferTime = bufferAllTime;
             imagesLoadEnd = true;
             if (data.loadEndFunc) {
@@ -314,7 +336,9 @@
                 pause = false;
                 if (audio && audio.paused) audio.play();
                 playTime = new Date().getTime();
+                _self.ds('play');
             }
+            _self.ds('canplaythrough');
         };
         //需要进行缓冲
         this.videoBuffereInEvent = function() {
@@ -354,6 +378,7 @@
                 audio.play();
             }
             playTime = new Date().getTime();
+            _self.ds({type:'play'});
         };
         /**
          * 暂停
@@ -366,6 +391,7 @@
             _self.videoBuffereOutEvent();
             if (audio) audio.pause();
             pauseTime = new Date().getTime();
+            _self.ds({type:'pause'});
         };
         /**
          * 获取播放器当前是否播放状态
@@ -380,8 +406,7 @@
          * @param {[type]} _play [设置是否播放true播放  false暂停  不设置按当前状态]
          */
         this.setCurrentTime = function(value, _play) {
-            log(" setCurrentTime", value, _play);
-
+            console.log("setCurrentTime", value, _play);
             if (_play !== undefined) {
                 //log(" setCurrentTime", _play)
                 if (_play) {
@@ -416,7 +441,11 @@
 
         /**
          * 时间事件点
-         * @param {[type]} pointData [description]
+         * @param {[Object]} pointData [添加时间节点事件]
+         * pointData.name 事件名称
+         * pointData.time 事件触发的时间点
+         * pointData.fun 事件触发事件，可以为空
+         *
          */
         this.addCuePoint = function(pointData) {
             if (!pointData.time) {
@@ -457,7 +486,6 @@
         };
         /*使用Video标签的TimeUpDate*/
         function videoDomTimeUpDate(e) {
-
             _nowTime = _self.currentTime;
             // log(_nowTime)
             for (var i = 0; i < _videoCuePointList.length; i++) {
@@ -465,6 +493,7 @@
                 if (_pointData.time && _nowTime >= _pointData.time && !_pointData.bool) {
                     _pointData.bool = true;
                     _pointData.runNum += 1;
+                    if(_pointData.fun&&typeof(_pointData.fun)=='function')_pointData.fun();
                     _self.ds({
                         type: 'cuePoint',
                         data: _pointData,
@@ -503,12 +532,14 @@
                         //同时视频也要暂停
                         pause = true;
                         bufferedEndToPlay = true;
+                        _self.ds({type:'pause'});
                     }
                 }
                 drawNum = audio.currentTime * fps >> 0;
                 if (audio.currentTime >= bufferTime) drawNum = totalframes;
                 currentTime = audio.currentTime;
-            } else {
+            }
+            else {
 
                 if (!pause) {
                     //使用帧渲染
@@ -551,6 +582,7 @@
                         //同时视频也要暂停
                         pause = true;
                         bufferedEndToPlay = true;
+                        _self.ds({type:'pause'});
                     }
                 }
 
@@ -567,16 +599,13 @@
                 if (img.loaded) {
                     cxt.drawImage(img, 0, 0, videoW, videoH);
                 }
-
-                if (drawNum == imagesList.length - 1) {
-                    // log('videoPlayEnd :', videoPlayEnd, loop)
-                    if (videoPlayEnd) {
-                        return;
-                    }
+                // console.log(drawNum,imagesList.length)
+                if (drawNum >= imagesList.length - 1) {
+                    // console.log('videoPlayEnd :', videoPlayEnd, loop);
+                    if (videoPlayEnd) return;
                     videoPlayEnd = true;
-                    if (endedFun) {
-                        endedFun();
-                    }
+                    _self.ds('playEnd');
+                    if (endedFun)endedFun();
                     if (loop) {
                         _self.setCurrentTime(0, true);
                     }
