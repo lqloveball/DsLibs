@@ -20,12 +20,13 @@
     };
     /**
      * [获取地址上面的？后的参数]
+     *  @param {[Sring]} name [参数对象名]
      * @param {[String]} url  [地址]
-     * @param {[Sring]} name [参数对象名]
      * @example 获取地址上面的GameID参数
      * Ds.utils.Utils.GetUrlParam(location.href, "GameID");
      */
-    this.GetUrlParam=function (url, name) {
+    this.GetUrlParam=function ( name,url) {
+        if(url===undefined||url===null)url=location.href;
         var pattern = new RegExp("[?&]" + name + "\=([^&]+)", "g");
         var matcher = pattern.exec(url);
         var items = null;
