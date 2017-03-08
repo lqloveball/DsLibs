@@ -1,40 +1,41 @@
-﻿
 /**
- * 张田维同学的画板类
- * maksim帮忙修改整理
- *
-    //创建画板
-    var _DrawingBoard=new cagoeAG.display.DrawingBoard(640,1138,{maxHitory:50});
-    //可以执行关闭画板绘画功能
-    _DrawingBoard.OpenOrCloseDarw(false)
+ * @class Ds.createjs.display.DrawingBoard
+ * @classdesc:类说明: 张田维同学的画板类,maksim帮忙修改整理
+ * @extends
+ * @example: 举例
+ *   //创建画板
+   var _DrawingBoard=new cagoeAG.display.DrawingBoard(640,1138,{maxHitory:50});
+   //可以执行关闭画板绘画功能
+   _DrawingBoard.OpenOrCloseDarw(false)
 
 
-    //可以设置 画笔还是橡皮， 设置画笔还能设置粗细  颜色
-    _DrawingBoard.SetPen(true）
+   //可以设置 画笔还是橡皮， 设置画笔还能设置粗细  颜色
+   _DrawingBoard.SetPen(true）
 
-    //清空画布
-    _DrawingBoard.Clear()
+   //清空画布
+   _DrawingBoard.Clear()
 
-    //清空画布 并且清空所有的历史记录
-    _DrawingBoard.ClearAndClearHitory()
+   //清空画布 并且清空所有的历史记录
+   _DrawingBoard.ClearAndClearHitory()
 
-    //撤销上一步
-    _DrawingBoard.Revoke()
+   //撤销上一步
+   _DrawingBoard.Revoke()
 
-    //导入一个url做贴图
-    _DrawingBoard.ImportImageUrl('./images/test.jpg',{max:4,min:.2,drag:false});
+   //导入一个url做贴图
+   _DrawingBoard.ImportImageUrl('./images/test.jpg',{max:4,min:.2,drag:false});
 
-    //导入一个create的显示对象做贴图
-    var temp=new lib.IconMovie();
-    _DrawingBoard.ImportDisplayObject(temp,{max:4,min:.2,drag:false})
+   //导入一个create的显示对象做贴图
+   var temp=new lib.IconMovie();
+   _DrawingBoard.ImportDisplayObject(temp,{max:4,min:.2,drag:false})
 
-    //ImportDisplayObject 与ImportImageUrl 第2给参数说明
-    //是否拖动  是否旋转  是否缩放  缩放最小  缩放最大
-    //{drag:true,rotation:true,scale:true,min:.2,max:4};
- *
- */
-
-!(function() {
+   //ImportDisplayObject 与ImportImageUrl 第2给参数说明
+   //是否拖动  是否旋转  是否缩放  缩放最小  缩放最大
+   //{drag:true,rotation:true,scale:true,min:.2,max:4};
+ * @author: maksim email:maksim.lin@foxmail.com
+ * @copyright: Ds是累积平时项目工作的经验代码库，不属于职位任务与项目的内容。里面代码大部分理念来至曾经flash 前端时代，尽力减小类之间耦合，通过webpack按需request使用。Ds库里内容多来至网络与参考其他开源代码库。Ds库也开源开放，随意使用在所属的职位任务与项目中。
+ * @constructor
+ **/
+(function() {
     window.Ds = window.Ds || {};
     window.Ds.createjs = window.Ds.createjs || {};
     window.Ds.createjs.display = window.Ds.createjs.display || {};
