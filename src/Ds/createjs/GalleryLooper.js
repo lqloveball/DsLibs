@@ -11,6 +11,8 @@
  * opts.filters 是否支持滤镜效果附加，Boolean
  * 某种情况下需要手动控制开始构建初始化，
  * 如：一开始场景需要提前渲染，然后回执行setTimeout对box进行删除所有的内容，这时候如果自动今天构建，那就会发生先添加元素到box内，然后setTimeout对box进行删除所有的内容错误
+ *
+ * 事件:upData movieEnd
  * @extends
  * @example: 举例
  *
@@ -23,6 +25,18 @@
      autoInit:false,//是否自动构建
      filters:true,//是否动画需要做滤镜支持，滤镜是消耗性能的
  });
+ //如果创建参数里面autoInit值为false,没有进行自动构建，可以在实例需要构建初始化时候执行
+_GalleryLooper.Init();
+ //监听事件
+ _GalleryLooper.on('upData', function(e){});
+ //上一页
+ _GalleryLooper.Previous();
+ //下一页
+ _GalleryLooper.Next();
+ //选择项队列里面的1
+ _GalleryLooper.Select(1);
+
+
  * @author: maksim email:maksim.lin@foxmail.com
  * @copyright:  我发起Ds库目的，简化方便工作项目开发。里面代码大部分理念来至曾经flash 前端时代，尽力减小类之间耦合，通过webpack按需request使用。Ds库里代码很多也都来源至或参考网络开源开放代码，所以这个库也开源开放。更多希望团队成员把积累工作中常用的代码，加快自己开发效率。
  * @constructor
@@ -33,6 +47,7 @@
 
     if (typeof define === 'function' && define.amd) {
         define(['exports'], function (exports) {
+          require('ds/EventDispatcher');
           require('ds/gemo/GalleryAnnularLoopManager');
           module.exports= factory(root, exports);
         });
@@ -76,21 +91,36 @@
       });
       //Reference参考对象
       //左消失
-      var _Lout = _Box.leftOut;
+      var _BeforeOut = _Box.beforeOut;
       //右消失
-      var _Rout = _Box.rightOut;
+      var _AfterOut = _Box.afterOut;
       //参考排列
       var _ReferenceArr = [];
       for (var i = 0; i < _showNum; i++) {
           var _rf = _Box['mc' + i];
           _ReferenceArr.push(_rf);
-          console.log(_rf.filters);
+          // console.log(_rf.filters);
       }
       //画廊滚动管理对象
       var _GalleryLoopManager = new Ds.gemo.GalleryAnnularLoopManager(null, _showNum);
       this.GalleryLoopManager = _GalleryLoopManager;
       var _AutoInit=opts.autoInit!==undefined?opts.autoInit:true;
       var _InitBool=false;
+      /**
+       * 选择索引
+       * @type {[type]}
+       */
+      Object.defineProperty(this, "SelectNum", {
+          get: function() {return _GalleryLoopManager.SelectNum;},
+      });
+      /**
+       * 选择的对象
+       * @type {[type]}
+       */
+      Object.defineProperty(this, "SelectObj", {
+          get: function() {return _GalleryLoopManager.SelectObj;},
+      });
+
       /**
        * 初始化
        */
@@ -159,7 +189,6 @@
                   _mc.y = _rf.y;
                   //是否更新滤镜
                   if(_filters)UpFilters(_mc,_rf);
-
                   _Box.addChild(_mc);
               }
               _Self.MovieIng = false;
@@ -168,8 +197,8 @@
               _nowArr = e.now;
               _oldArr = e.old;
               var _time = 0.5;
-              var _outMc = e.direction ? _Lout : _Rout;
-              var _inMc = e.direction ? _Rout : _Lout;
+              var _outMc = e.direction ? _BeforeOut : _AfterOut;
+              var _inMc = e.direction ? _AfterOut : _BeforeOut;
               for ( i = 0; i < _oldArr.length; i++) {
                    _mc = _oldArr[i];
                   if (_nowArr.indexOf(_mc) == -1) {
@@ -234,7 +263,7 @@
         //动画是否播放完成
         if (value == 1){
           _Self.MovieIng = false;
-          _Self.ds('MovieEnd');
+          _Self.ds('movieEnd');
         }
       }
       if(_AutoInit)_Self.Init();
