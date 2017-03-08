@@ -35,7 +35,8 @@ _GalleryLooper.Init();
  _GalleryLooper.Next();
  //选择项队列里面的1
  _GalleryLooper.Select(1);
-
+//设置锁  不会拖动
+_GalleryLooper.Lock=true;
 
  * @author: maksim email:maksim.lin@foxmail.com
  * @copyright:  我发起Ds库目的，简化方便工作项目开发。里面代码大部分理念来至曾经flash 前端时代，尽力减小类之间耦合，通过webpack按需request使用。Ds库里代码很多也都来源至或参考网络开源开放代码，所以这个库也开源开放。更多希望团队成员把积累工作中常用的代码，加快自己开发效率。
@@ -79,7 +80,7 @@ _GalleryLooper.Init();
       //清空显示容器
       _Box.removeAllChildren();
       //是否锁定
-      this.Loack = false;
+      this.Lock = false;
       //是否运动中
       this.MovieIng = false;
       //触摸
@@ -136,7 +137,7 @@ _GalleryLooper.Init();
        * 上一个
        */
       this.Previous = function() {
-          if (this.Loack) return;
+          if (this.Lock) return;
           if (this.MovieIng) return;
           _GalleryLoopManager.Previous();
       };
@@ -144,7 +145,7 @@ _GalleryLooper.Init();
        * 下一个
        */
       this.Next = function() {
-          if (this.Loack) return;
+          if (this.Lock) return;
           if (this.MovieIng) return;
           _GalleryLoopManager.Next();
       };
@@ -153,7 +154,7 @@ _GalleryLooper.Init();
        * @param {[Number]} value []
        */
       this.Select = function(value) {
-          if (this.Loack) return;
+          if (this.Lock) return;
           if (this.MovieIng) return;
           _GalleryLoopManager.Select(value);
       };
