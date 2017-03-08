@@ -9,6 +9,9 @@
  * opts.showNum [显示个数 Number]
  * opts.autoInit 是否初始化构建，Boolean
  * opts.filters 是否支持滤镜效果附加，Boolean
+ * opts.touchDom 滑动触发的dom元素，默认是body
+ * opts.touchDirection 滑动触发方向，默认true 是左右滑动
+ *
  * 某种情况下需要手动控制开始构建初始化，
  * 如：一开始场景需要提前渲染，然后回执行setTimeout对box进行删除所有的内容，这时候如果自动今天构建，那就会发生先添加元素到box内，然后setTimeout对box进行删除所有的内容错误
  *
@@ -19,6 +22,7 @@
  //webpack 进行 require
  // require('ds/createjs/GalleryLooper');
  var _GalleryLooper = new Ds.createjs.GalleryLooper({
+
      box:_Panel,//动画显示与参考容器
      list:_ItemList,//选项内容
      showNum:3,//显示项目个数
@@ -77,6 +81,8 @@ _GalleryLooper.Lock=true;
       var _DataArr = opts.list;
       //触摸事件的dom元素
       var _touchDom=opts.touchDom!==undefined?$(opts.touchDom)[0]:$('body')[0];
+      //滑动方向
+      var _touchDirection=opts.touchDirection!==undefined?opts.touchDirection:true;
       //清空显示容器
       _Box.removeAllChildren();
       //是否锁定
@@ -85,10 +91,16 @@ _GalleryLooper.Lock=true;
       this.MovieIng = false;
       //触摸
       touch.on(_touchDom, 'swipeleft', function() {
-          _Self.Next();
+          if(_touchDirection)_Self.Next();
       });
       touch.on(_touchDom, 'swiperight', function() {
-          _Self.Previous();
+          if(_touchDirection)_Self.Previous();
+      });
+      touch.on(_touchDom, 'swipedown', function() {
+        if(!_touchDirection)_Self.Previous();
+      });
+      touch.on(_touchDom, 'swipeup', function() {
+        if(!_touchDirection)_Self.Next();
       });
       //Reference参考对象
       //左消失
