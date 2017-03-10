@@ -8,7 +8,7 @@
  * //百度事件 默认点击 Click
  * Ds.gemo.QuickTrack.BaiduEvent('GotoHome');
  * @author: maksim email:maksim.lin@foxmail.com
- * @copyright:  Ds是累积平时项目工作的经验代码库，不属于职位任务与项目的内容。里面代码大部分理念来至曾经flash 前端时代，尽力减小类之间耦合，通过webpack按需request使用。Ds库里内容多来至网络与参考其他开源代码库。Ds库也开源开放，随意使用在所属的职位任务与项目中。
+ * @copyright:  我发起Ds库目的，简化方便工作项目开发。里面代码大部分理念来至曾经flash 前端时代，尽力减小类之间耦合，通过webpack按需request使用。Ds库里代码很多也都来源至或参考网络开源开放代码，所以这个库也开源开放。更多希望团队成员把积累工作中常用的代码，加快自己开发效率。
  * @constructor
  **/
 (function(){
@@ -19,13 +19,19 @@
    * 快速进行执行检测代码
    */
   function QuickTrack(){
+    var _Self=this;
     /**
      * 百度虚拟PV
      * @param  {[String]} pageurl [如 '/virtual/login']
      * @return {[type]}
      */
     this.BaiduPV=function(pageurl){
-      _hmt.push(['_trackPageview', pageurl]);
+      try {
+        if(!_hmt)return null;
+      } catch (e) {
+        return;
+      }
+     _hmt.push(['_trackPageview', pageurl]);
     };
     /**
      * 百度监测事件
@@ -36,6 +42,11 @@
      * @return {[type]}
      */
     this.BaiduEvent=function( opt_label, opt_value,category, action){
+      try {
+        if(!_hmt)return null;
+      } catch (e) {
+        return;
+      }
       if(!category)category='Event';
       if(!action)action='Click';
       if(!opt_value)opt_value='one';
@@ -47,9 +58,12 @@
      * @param {[type]} pageurl [description]
      */
     this.GAPV=function(pageurl){
-      if(ga){
-        ga('send', 'pageview',pageurl);
+      try {
+        if(!ga)return null;
+      } catch (e) {
+        return;
       }
+      ga('send', 'pageview',pageurl);
     };
     /**
      * GA监测事件
@@ -60,19 +74,36 @@
      * @return {[type]}
      */
     this.GAEvent=function( opt_label, opt_value,category, action){
+      try {
+        if(!ga)return null;
+      } catch (e) {
+        return;
+      }
       if(!category)category='Event';
       if(!action)action='Click';
       if(!opt_value)opt_value='one';
       if(!opt_label)return;
-      if(ga){
-        ga('send', {
-          hitType: 'event',
-          eventCategory: category,
-          eventAction: action,
-          eventLabel: opt_label,
-          eventValue:opt_value,
-        });
-      }
+      ga('send', {
+        hitType: 'event',
+        eventCategory: category,
+        eventAction: action,
+        eventLabel: opt_label,
+        eventValue:opt_value,
+      });
+    };
+    /**
+     * 事件
+     */
+    this.Event=function(opt_label, opt_value,category, action){
+      _Self.BaiduEvent(opt_label, opt_value,category, action);
+      _Self.GAEvent(opt_label, opt_value,category, action);
+    };
+    /**
+     * 虚拟PV
+     */
+    this.PV=function(pageurl){
+      _Self.GAPV(pageurl);
+      _Self.BaiduPV(pageurl);
     };
   }
 })();
