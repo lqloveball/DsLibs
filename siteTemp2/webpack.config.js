@@ -1,19 +1,36 @@
 var path = require('path');
+var fs = require('fs'); //文件系统
+var glob = require('glob');
 var webpack = require('webpack');
 var ExtractTextPlugin = require("extract-text-webpack-plugin");
 
 function resolveBowerPath(componentPath) {
     return path.join(__dirname, componentPath);
 }
+//获取指定路径下的入口文件
+function getEntries(dir,ext) {
+    var files = glob.sync(dir + '/*.' + ext),
+        res = {};
+
+    files.forEach(function(file) {
+      var relativePath = path.relative(dir, file),
+           relativeName = relativePath.slice(0, relativePath.lastIndexOf('.'));
+       res[relativeName] = dir+'/' + relativePath;
+    });
+    return res;
+}
+//根据src目录下js文件，来动态判断入口文件
+var webpackEntry=getEntries('./src','js');
 
 module.exports = function(env) {
   return {
       //js入口源文件 项目的入口模块 [String | Array | Object]
       //入口
-      entry: {
-          //基础支持库（html页面首要加载）
-          main: "./src/main.js",
-      },
+      // entry: {
+      //     //基础支持库（html页面首要加载）
+      //     main: "./src/main.js",
+      // },
+      entry: webpackEntry,
       //输出生成文件
       output: {
           //输出路径

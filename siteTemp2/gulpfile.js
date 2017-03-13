@@ -1,5 +1,6 @@
 var gulp = require('gulp'); //gulp
 var fs = require('fs'); //文件系统
+var glob = require('glob');
 var path = require('path'); //路径习题
 var del = require('del'); //文件删除
 var newer = require('gulp-newer'); //快速创建copy
@@ -17,21 +18,8 @@ var removeCode = require('gulp-remove-code'); //进行删除指定块的代码
 var replace = require('gulp-replace'); //进行字符替换
 // var imagemin = require('gulp-imagemin');//jpg图片压缩 使用pp鸭 【不需要】
 // var pngquant = require('imagemin-pngquant');//png图片压缩 【不需要】
-var webpack = require("webpack");//webpack
+var webpack = require("webpack"); //webpack
 var _ = require('lodash'); //webpack配置更改
-// 错误处理
-var notify = require("gulp-notify");
-
-module.exports = function(errorObject, callback) {
-    // 错误通知
-    notify.onError(errorObject.toString().split(': ').join(':\n'))
-        .apply(this, arguments);
-
-    // Keep gulp from hanging on this task
-    if (typeof this.emit === 'function') {
-        this.emit('end');
-    }
-};
 
 /**
  * 刷新浏览器
@@ -61,8 +49,8 @@ var developmentConfig = {
     cssPath: "./css/",
     //css 变化监听
     css: ['css/*.css'],
-
 };
+
 /**
  * 生成js/css
  * @type {[type]}
@@ -92,7 +80,7 @@ gulp.task('watch:webpack', ['clean:webpack'], function() {
     webpack(_.merge(
             require('./webpack.config.js')(), {
                 watch: true,
-                devtool:null,
+                devtool: null,
             }
         ))
         .watch(200, function(err, stats) {
@@ -102,16 +90,16 @@ gulp.task('watch:webpack', ['clean:webpack'], function() {
 });
 // 开发环境 webpack
 gulp.task('dev:webpack', ['clean:webpack'], function() {
-      webpack(_.merge(
-          require('./webpack.config.js')(), {
-              watch: true,
-              devtool:'#eval',
-          }
-      ))
-      .watch(200, function(err, stats) {
-          // console.log('webpack watch',err,stats);
-          browserReload();
-      });
+    webpack(_.merge(
+            require('./webpack.config.js')(), {
+                watch: true,
+                devtool: '#eval',
+            }
+        ))
+        .watch(200, function(err, stats) {
+            // console.log('webpack watch',err,stats);
+            browserReload();
+        });
 });
 
 
