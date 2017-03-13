@@ -1,5 +1,6 @@
 var gulp = require('gulp'); //gulp
 var fs = require('fs'); //文件系统
+var glob = require('glob');
 var path = require('path'); //路径习题
 var del = require('del'); //文件删除
 var newer = require('gulp-newer'); //快速创建copy
@@ -17,7 +18,8 @@ var removeCode = require('gulp-remove-code'); //进行删除指定块的代码
 var replace = require('gulp-replace'); //进行字符替换
 // var imagemin = require('gulp-imagemin');//jpg图片压缩 使用pp鸭 【不需要】
 // var pngquant = require('imagemin-pngquant');//png图片压缩 【不需要】
-var webpack = require("webpack");
+var webpack = require("webpack"); //webpack
+var _ = require('lodash'); //webpack配置更改
 
 /**
  * 刷新浏览器
@@ -32,11 +34,11 @@ function browserReload(value) {
  * 开发目录
  * @type {Object}
  */
-var src = {
+var developmentConfig = {
     //监听 html 文件刷新
     html: ['*.html', 'html/**/*.html'],
     //js html css 需要经过webpack编译
-    build: ['src/**/*.js', 'src/**/*.html', 'src/**/*.css'],
+    src: ['src/**/*.js', 'src/**/*.html', 'src/**/*.css', 'src/**/*.vue'],
     //编译出来文件目录
     dist: './js/app/',
     //需要监听编译less文件
@@ -49,11 +51,61 @@ var src = {
     css: ['css/*.css'],
 };
 
+/**
+ * 生成js/css
+ * @type {[type]}
+ */
+gulp.task('init:webpack', function() {
+    webpack(require('./webpack.config.js')(), function(err, stats) {
+        console.log('init:webpack end');
+    });
+});
+/**
+ * 清除webpack编译打包
+ * @type {[type]}
+ */
+gulp.task('clean:webpack', function() {
+    return del([
+        developmentConfig.dist,
+    ], {
+        force: true
+    });
+});
+
+/**
+ * 生产环境  webpack
+ * @type {[type]}
+ */
+gulp.task('watch:webpack', ['clean:webpack'], function() {
+    webpack(_.merge(
+            require('./webpack.config.js')(), {
+                watch: true,
+                devtool: null,
+            }
+        ))
+        .watch(200, function(err, stats) {
+            // console.log('webpack watch',err,stats);
+            browserReload();
+        });
+});
+// 开发环境 webpack
+gulp.task('dev:webpack', ['clean:webpack'], function() {
+    webpack(_.merge(
+            require('./webpack.config.js')(), {
+                watch: true,
+                devtool: '#eval',
+            }
+        ))
+        .watch(200, function(err, stats) {
+            // console.log('webpack watch',err,stats);
+            browserReload();
+        });
+});
 
 
-/*进行build开发测试*/
-gulp.task('webpack', function() {
-    var webpackConfig = require("./webpack.config.js");
+
+/*进行生产开发测试*/
+gulp.task('webpack', ['watch:webpack'], function() {
     //启动browserSync服务
     browserSync.init({
         server: './',
@@ -61,82 +113,67 @@ gulp.task('webpack', function() {
         open: "external"
     });
 
-    del.sync(src.dist);
-    webpack(webpackConfig, function(err, stats) {
-        browserReload();
-    });
-    //webpack build编译监听
-    watch(src.build, {
-        verbose: true
-    }, function(e) {
-        webpack(webpackConfig, function(err, stats) {
-            browserReload();
-        });
-    });
     //less编译监听
-    watch(src.lesswatch, {
+    watch(developmentConfig.lesswatch, {
         verbose: true
     }, function(e) {
         var cb = e.history[0];
-        gulp.src(src.lessbuild).pipe(less().on('error', function(error) {
+        gulp.src(developmentConfig.lessbuild)
+            .pipe(less().on('error', function(error) {
                 console.log(error.message);
             }))
             .pipe(lazyImageCSS()) //自动为图片样式添加 宽/高/background-size 属性
             // .pipe(minifyCss({compatibility: 'ie8'}))
-            .pipe(gulp.dest(src.cssPath));
+            .pipe(gulp.dest(developmentConfig.cssPath));
     });
+
     //html变化监听
-    watch(src.html, {
+    watch(developmentConfig.html, {
         verbose: true
     }, function(event) {
         browserReload('*.html');
     });
     //css 变化监听
-    watch(src.css, {
+    watch(developmentConfig.css, {
         verbose: true
     }, function(e) {
         browserReload('*.css');
     });
-
 });
 
+/*进行开发环境测试*/
+gulp.task('webpack-dev', ['dev:webpack'], function() {
+    //启动browserSync服务
+    browserSync.init({
+        server: './',
+        port: 8001,
+        open: "external"
+    });
 
+    //less编译监听
+    watch(developmentConfig.lesswatch, {
+        verbose: true
+    }, function(e) {
+        var cb = e.history[0];
+        gulp.src(developmentConfig.lessbuild)
+            .pipe(less().on('error', function(error) {
+                console.log(error.message);
+            }))
+            .pipe(lazyImageCSS()) //自动为图片样式添加 宽/高/background-size 属性
+            // .pipe(minifyCss({compatibility: 'ie8'}))
+            .pipe(gulp.dest(developmentConfig.cssPath));
+    });
 
-gulp.task('build', function() {
-  //启动browserSync服务
-  browserSync.init({
-      server: './',
-      port: 8001,
-      open: "external"
-  });
-  //webpack build编译监听
-  watch(src.build, {
-      verbose: true
-  }, function(e) {
-    browserReload();
-  });
-  //less编译监听
-  watch(src.lesswatch, {
-      verbose: true
-  }, function(e) {
-      var cb = e.history[0];
-      gulp.src(src.lessbuild).pipe(less().on('error', function(error) {
-              console.log(error.message);
-          }))
-          .pipe(lazyImageCSS()) //自动为图片样式添加 宽/高/background-size 属性
-          // .pipe(minifyCss({compatibility: 'ie8'}))
-          .pipe(gulp.dest(src.cssPath));
-  });
-  //html变化监听
-  watch(src.html, {
-      verbose: true
-  }, function(event) {
-      browserReload('*.html');
-  });
-  //css 变化监听
-  watch(src.css, {
-      verbose: true
-  }, function(e) {
-      browserReload('*.css');
-  });
+    //html变化监听
+    watch(developmentConfig.html, {
+        verbose: true
+    }, function(event) {
+        browserReload('*.html');
+    });
+    //css 变化监听
+    watch(developmentConfig.css, {
+        verbose: true
+    }, function(e) {
+        browserReload('*.css');
+    });
 });

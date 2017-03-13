@@ -1,3 +1,12 @@
+/**
+ * @class
+ * @classdesc: webpack2 快速开发网站项目模板入口
+ * @extends
+ * @example:
+ * @author: maksim email:maksim.lin@foxmail.com
+ * @copyright: Ds是累积平时项目工作的经验代码库，不属于职位任务与项目的内容。里面代码大部分理念来至曾经flash 前端时代，尽力减小类之间耦合，通过webpack按需request使用。Ds库里内容多来至网络与参考其他开源代码库。Ds库也开源开放，随意使用在所属的职位任务与项目中。
+ * @constructor
+ **/
 _time = new Date().getTime();
 //网址主模块
 window.SiteModel = {
@@ -7,12 +16,26 @@ window.SiteModel = {
     SiteResizeModel:null,//也可以通过这里获取自适应模块
     LoadPanel:null,//加载界面 [Dom的loading 请在InitLoadPanel函数内进行实现   Createjs的loading，正常来说不需要修改，如果需要修改InitCreateJsLoadPanel函数内修改实现]
     CJSModel:null,//createjs项目模块  [设置IsCJSSiteModel=true 时候才会创建]
+    AudioAutoPlayLister:null,//声音自动播放加载与控制器类对象
+    //对整个网站框架进行ReSize方法执行
+    ReSize:function(){
+      SiteModel.SiteResizeModel.ReSize();
+    },
     //==============以上参数不做修改，会根据下列配置进行生成===================
     ScreenType:'v',//网站自适应方式
     Screen:'#screen',//网站自适应容器
     HasCreateJs:false,//网站是否需要是否是用createjs    [设置开发网站的类型,true会使用vendors2.js false使用vendors1.js]
     IsCJSSiteModel:false,//是否是用createjs方式网站    [需要设置HasCreateJs 等于true]
     IsCJSLoadPanel:false,//是否用createjs的loading  [设置使用什么方式做loading]
+    //声音自动播放加载与控制器类对象参数，不需要可以设置成null。
+    AudioAutoPlayListerData:{
+    //加载声音列表  list=null list=undefined list.length<=0没有这个列表不会执行
+    list:[],//项格式 {src:'./media/BGM.mp3',id:'BGM',loop:true}
+    //默认播放声音背景
+    id:'BGM',
+    //这个BMG 绑定的控制的按钮
+    button:'#BGMBtn'
+  },
 };
 /**
  * 加载单页面应用的代码
@@ -49,10 +72,11 @@ function ShowProgress(progress){
   //判断是Dom方式的loading
   if((_loadPanel instanceof HTMLElement)||(_loadPanel.length>=1&&_loadPanel[0] instanceof HTMLElement)){
     //【Dom Loading 请在这里实现】
-    // $('#siteLoadPanel .panel').css({width:(progress+1)+'%'});
+    $('#siteLoadPanel .progress').css({width:(progress+1)+'%'});
+    $('#siteLoadPanel .label').html((progress+1)+'%');
   }
   //判断是createjs类型loading
-  else if(createjs!==undefined&&_loadPanel instanceof createjs.DisplayObject){
+  else if(window['createjs']!==undefined&&_loadPanel instanceof createjs.DisplayObject){
     if(progress>=99)progress=99;
     if(_loadPanel instanceof createjs.MovieClip)_loadPanel.gotoAndStop(progress);
     if(_loadPanel.label)_loadPanel.label.text=progress<10?'0'+progress+'%':progress+'%';
@@ -68,7 +92,7 @@ function HitLoadPanel(){
   if((_loadPanel instanceof HTMLElement)||(_loadPanel.length>=1&&_loadPanel[0] instanceof HTMLElement)){
     $(_loadPanel).hide();
   }
-  else if(createjs!==undefined&&_loadPanel instanceof createjs.DisplayObject){
+  else if(window['createjs']!==undefined&&_loadPanel instanceof createjs.DisplayObject){
     if(_loadPanel.parent)_loadPanel.parent.removeChild(_loadPanel);
   }
 }
@@ -140,6 +164,8 @@ function InitSiteResizeModel(){
   SiteResizeModel.on('resize', ReSize);
   //开始进行初始化场景自适应
   SiteResizeModel.InitResize();
+  //解决loading页面缩放问题
+  $(SiteModel.Screen).show();
 }
 /**
  * 自适应
@@ -157,30 +183,41 @@ function ReSize(){
 function LoadBaseJS() {
     require.ensure(
         [
-            'jquery',
-            'eventdispatcher',
-            'log',
-            'ds/gemo/QuickTrack',
-            'sitemoblieresizemodel',
+          'jquery',
+          'eventdispatcher',
+          'log',
+          'ds/gemo/QuickTrack',
+          'ds/media/MobileAudioAutoPlayLister',
+          'sitemoblieresizemodel',
         ],
-        function(require) {
+        function() {
             require([
-                'jquery',
-                'eventdispatcher',
-                'log',
-                'ds/gemo/QuickTrack', 
-                'sitemoblieresizemodel',
+              'jquery',
+              'eventdispatcher',
+              'log',
+              'ds/gemo/QuickTrack',
+              'ds/media/MobileAudioAutoPlayLister',
+              'sitemoblieresizemodel',
             ],function(){
               console.log('LoadBaseJS:', new Date().getTime() - _time);
-              // setTimeout(function(){
-                InitSiteResizeModel();
-                if(SiteModel.HasCreateJs)LoadCJSFrameWorkJS();
-                else LoadFrameWorkJS();
-              // },10);
+              if(SiteModel.AudioAutoPlayListerData){
+                InitAudioAutoPlayLister();
+              }
+              InitSiteResizeModel();
+              if(SiteModel.HasCreateJs)LoadCJSFrameWorkJS();
+              else LoadFrameWorkJS();
             });
+
         },
         'base'
     );
+}
+/**
+ * 初始化默认背景声音播放
+ */
+function InitAudioAutoPlayLister(){
+  SiteModel.AudioAutoPlayLister=new Ds.media.MobileAudioAutoPlayLister();
+  SiteModel.AudioAutoPlayLister.InitLoadAndSetBGM(SiteModel.AudioAutoPlayListerData);
 }
 /**
  * 加载项目需要支持的第三方库
@@ -225,9 +262,11 @@ function LoadFrameWorkJS(){
           require([
               'jstween',
               'touchjs',
-          ]);
-          console.log('LoadFrameWorkJS:', new Date().getTime() - _time);
-          InitLoadPanel();
+          ],function(){
+            console.log('LoadFrameWorkJS:', new Date().getTime() - _time);
+            InitLoadPanel();
+          });
+
       },
       'vendors1'
   );
