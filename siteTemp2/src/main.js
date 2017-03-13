@@ -76,7 +76,7 @@ function ShowProgress(progress){
     $('#siteLoadPanel .label').html((progress+1)+'%');
   }
   //判断是createjs类型loading
-  else if(createjs!==undefined&&_loadPanel instanceof createjs.DisplayObject){
+  else if(window['createjs']!==undefined&&_loadPanel instanceof createjs.DisplayObject){
     if(progress>=99)progress=99;
     if(_loadPanel instanceof createjs.MovieClip)_loadPanel.gotoAndStop(progress);
     if(_loadPanel.label)_loadPanel.label.text=progress<10?'0'+progress+'%':progress+'%';
@@ -92,7 +92,7 @@ function HitLoadPanel(){
   if((_loadPanel instanceof HTMLElement)||(_loadPanel.length>=1&&_loadPanel[0] instanceof HTMLElement)){
     $(_loadPanel).hide();
   }
-  else if(createjs!==undefined&&_loadPanel instanceof createjs.DisplayObject){
+  else if(window['createjs']!==undefined&&_loadPanel instanceof createjs.DisplayObject){
     if(_loadPanel.parent)_loadPanel.parent.removeChild(_loadPanel);
   }
 }
@@ -263,8 +263,8 @@ function LoadFrameWorkJS(){
               'jstween',
               'touchjs',
           ],function(){
-          	console.log('LoadFrameWorkJS:', new Date().getTime() - _time);
-          	InitLoadPanel();
+            console.log('LoadFrameWorkJS:', new Date().getTime() - _time);
+            InitLoadPanel();
           });
 
       },
