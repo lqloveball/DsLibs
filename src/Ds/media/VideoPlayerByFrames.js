@@ -227,7 +227,7 @@
 
             fpsTimer = setTimeout(_self.upDate, fpsTime);
 
-            if (autoLoad) _self.loadImages();
+            if (autoLoad) _self.startLoad();
             //一进来就默认播放
             if (autoplay === true) _self.play();
 
