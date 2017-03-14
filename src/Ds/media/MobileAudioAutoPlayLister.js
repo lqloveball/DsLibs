@@ -24,7 +24,7 @@
    <div class="off"></div>
  </div>
  * @author: maksim email:maksim.lin@foxmail.com
- * @copyright:  Ds是累积平时项目工作的经验代码库，不属于职位任务与项目的内容。里面代码大部分理念来至曾经flash 前端时代，尽力减小类之间耦合，通过webpack按需request使用。Ds库里内容多来至网络与参考其他开源代码库。Ds库也开源开放，随意使用在所属的职位任务与项目中。
+ * @copyright:  我发起Ds库目的，简化方便工作项目开发。里面代码大部分理念来至曾经flash 前端时代，尽力减小类之间耦合，通过webpack按需request使用。Ds库里代码很多也都来源至或参考网络开源开放代码，所以这个库也开源开放。更多希望团队成员把积累工作中常用的代码，加快自己开发效率。
  * @constructor
  **/
 (function (factory) {
@@ -53,6 +53,11 @@
     var _AudioDc={};
     Object.defineProperty(this, "AudioDc", {
         get: function() {return _AudioDc;},
+    });
+    //声音列表
+    var _AudioList;
+    Object.defineProperty(this, "AudioList", {
+        get: function() {return _AudioList;},
     });
     /**
      * 加载声音队列，并且播放第一个BGM,设置BGM按钮
@@ -89,6 +94,7 @@
       if (ua.match(/MicroMessenger/i) == "micromessenger") _isWeixin = true;
       //需要初始化声音播放的列表
       var _audioList=[];
+      _AudioList=_audioList;
       for (var i = 0; i < list.length; i++) {
         var _obj=list[i];
         var _tempAudio=new Audio();
@@ -162,23 +168,36 @@
         document.body.removeEventListener('touchstart', audioInBrowserHandler);
       }
     };
-
+    /**
+     * 对一个按钮设置音乐开关
+     * @param {[Audio]} audio  [音乐对象]
+     * @param {[String||Dom]} button [按钮Dom 或者选择字符]
+     */
     this.SetBMGButton=function(audio,button){
-      //声音对象
-      var _audio=audio;
-      //监听声音对象事件
-      _audio.addEventListener("play", function(){
-        upUIState();
-      });
-      _audio.addEventListener("pause", function(){
-        upUIState();
-      });
       //按钮设置
       var _button=$(button);
-      _button.on('click',function(){
+      //旧音乐控制事件删除
+      if(_button[0]._BMGclickFun){
+        _button.off('click',_button[0]._BMGclickFun);
+      }
+      if(_button[0]._BGMAudio&&_button[0]._BGMAudio._upUIState){
+        _button[0]._BGMAudio.removeEventListener("play",_button[0]._BGMAudio._upUIState);
+        _button[0]._BGMAudio.removeEventListener("pause",_button[0]._BGMAudio._upUIState);
+      }
+      //声音对象
+      var _audio=audio;
+      _audio._upUIState=upUIState;
+      //监听声音对象事件
+      _audio.addEventListener("play", upUIState);
+      _audio.addEventListener("pause", upUIState);
+      //按钮点击事件
+      _button[0]._BMGclickFun=function(){
+        // console.log(_button);
         if(_audio.paused)_audio.play();
         else _audio.pause();
-      });
+      };
+      _button[0]._BGMAudio=_audio;
+      _button.on('click',_button[0]._BMGclickFun);
       //声音按钮状态update
       function upUIState(){
         if(_button){
