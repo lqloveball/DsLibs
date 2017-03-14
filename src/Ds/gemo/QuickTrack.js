@@ -81,7 +81,7 @@
       }
       if(!category)category='Event';
       if(!action)action='Click';
-      if(!opt_value)opt_value='one';
+      if(!opt_value)opt_value=1;
       if(!opt_label)return;
       ga('send', {
         hitType: 'event',
@@ -95,8 +95,8 @@
      * 事件
      */
     this.Event=function(opt_label, opt_value,category, action){
-      _Self.BaiduEvent(opt_label, opt_value,category, action);
       _Self.GAEvent(opt_label, opt_value,category, action);
+      _Self.BaiduEvent(opt_label, opt_value,category, action);
     };
     /**
      * 虚拟PV
