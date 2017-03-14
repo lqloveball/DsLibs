@@ -98,7 +98,7 @@ function HitLoadPanel(){
 }
 /*=================以下部分基本通用可以不需要修改===================*/
 //进行判断是否进行debug的判断
-if (location.href.indexOf(':8001') != -1) SiteModel.Debug = true;
+if (location.href.indexOf(':800') != -1) SiteModel.Debug = true;
 //屏蔽滑动页面
 document.addEventListener('touchmove', function(e) {e.preventDefault();}, false);
 /**
