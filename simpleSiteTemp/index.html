@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="viewport" content=" initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="format-detection" content="telephone=no">
+    <meta content="telephone=no" name="format-detection" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <title>测试</title>
+    <link rel="stylesheet" href="./css/main.css" />
+    <script>
+        var ua = navigator.userAgent;
+        if (/Android (\d+\.\d+)/.test(ua)) {
+            document.write('<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no">');
+        } else {
+            document.write('<meta name="viewport" content="width=640,target-densitydpi=device-dpi,maximum-scale=1.0, user-scalable=no">');
+        }
+    </script>
+    <style>
+        html,body {
+            height: 100%;
+            -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+            overflow: hidden;
+            background-color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div id="screen">
+        <!-- cjs容器 如果不适用可以删除-->
+        <div id="cjsBox"></div>
+        <!-- loading界面 如果不适用可以删除 -->
+        <div id="siteLoadPanel"> </div>
+    </div>
+    <!-- 主入口文件 -->
+    <script src="js/app/index.js"></script>
+</body>
+</html>
