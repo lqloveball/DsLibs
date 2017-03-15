@@ -597,7 +597,8 @@
                 }
                 img = imagesList[drawNum];
                 if (img.loaded) {
-                    cxt.drawImage(img, 0, 0, videoW, videoH);
+                  cxt.clearRect( 0, 0, videoW, videoH);
+                  cxt.drawImage(img, 0, 0, videoW, videoH);
                 }
                 // console.log(drawNum,imagesList.length)
                 if (drawNum >= imagesList.length - 1) {
