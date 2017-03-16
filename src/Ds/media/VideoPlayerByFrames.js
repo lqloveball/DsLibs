@@ -6,6 +6,7 @@
  * @extends
  * @example://默认初始化的时候 视频不放到可见区域
    _VideoInteractivePlayer = new Ds.media.VideoPlayerByFrames({
+        imagesList:_ImagesList,//如果提前传入图片队列，那就会忽略 imagesPath imagePrefix imgType totalframes参数 因为提前传入队列 所有没 complete事件的发出，但有loadEndFunc这个参数的方法执行
        imagesPath: './images/video600/',//图片的文件夹地址
        imagePrefix: 'v',//图片前缀
        imgType: 'jpg',//图片类型
@@ -54,7 +55,7 @@
  * @copyright:  Ds是累积平时项目工作的经验代码库，不属于职位任务与项目的内容。里面代码大部分理念来至曾经flash 前端时代，尽力减小类之间耦合，通过webpack按需request使用。Ds库里内容多来至网络与参考其他开源代码库。Ds库也开源开放，随意使用在所属的职位任务与项目中。
  * @constructor
  **/
-!(function() {
+(function() {
     window.Ds = window.Ds || {};
     window.Ds.media = window.Ds.media || {};
     window.Ds.media.VideoPlayerByFrames = VideoPlayerByFrames;
@@ -88,8 +89,13 @@
         autoLoad = data.autoLoad ? true : false;
         //是否自动播放
         autoplay = data.autoplay ? true : false;
+        //帧图片列表
+        imagesList = [];
+        //如果是一开始就传入图片队列的话
+        if(data.imagesList&&data.imagesList.length>0)imagesList=data.imagesList;
         //图片总数
         totalframeNum = data.totalframes ? data.totalframes : -1;
+        if(imagesList.length>0)totalframeNum=imagesList.length;
         var endedFun = data.endedFun ? data.endedFun : null;
         loop = data.loop !== undefined ? data.loop : false;
         repairImgQname = data.repairImgQname ? data.repairImgQname : false;
@@ -102,8 +108,7 @@
 
         //加载了多少帧
         var imagesLoadNum = 0;
-        //帧图片列表
-        imagesList = [];
+
         //当前帧，与总帧数
         var currentFrame = 0,
             totalframes = totalframeNum - 1;
@@ -187,8 +192,61 @@
             this.audio = audio;
             this.pause = pause;
 
-            var sequenceLength = ('' + totalframeNum).length;
+            var img,i;
+            //如果使用传入有的序列帧 就忽略外部序列帧
+            if(imagesList.length>0){
+              img=imagesList[0];
+              totalframeNum=imagesList.length;
+              for ( i = 0; i < imagesList.length; i++) {
+                  img = imagesList[i];
+                  img.loaded = true;
+              }
+              cxt.drawImage(img, 0, 0, videoW, videoH);
+              fpsTimer = setTimeout(_self.upDate, fpsTime);
+              bufferAllTime = totalframeNum / fps;
+              bufferTime = bufferAllTime;
+              imagesLoadNum=imagesList.length;
+              _starloadBool=true;
+              imagesLoadEnd = false;
+              _self.loadEnd=true;
+              _self.videoLoadEndEvent();
+              _self.ds({type: 'complete'});
+              //一进来就默认播放
+              if (autoplay === true) _self.play();
+            }else{
+              var sequenceLength = ('' + totalframeNum).length;
+              //创建img序列
+              for ( i = 0; i < totalframeNum; i++) {
+                  img = new Image();
+                  img.url = rename(i);
+                  imagesList.push(img);
+              }
+              // log(imagesList)
 
+              //默认加载一张第一帧进来
+              img = new Image();
+              img.src = imagesList[0].url;
+              img.loaded = false;
+              img.onload = function() {
+                  cxt.drawImage(img, 0, 0, videoW, videoH);
+              };
+
+              bufferAllTime = totalframeNum / fps;
+              imagesLoadNum = -1;
+
+              fpsTimer = setTimeout(_self.upDate, fpsTime);
+
+              if (autoLoad) _self.startLoad();
+              //一进来就默认播放
+              if (autoplay === true) _self.play();
+            }
+
+            //_self.loadImages();
+
+
+
+
+            //重命名图片序列
             function rename(value) {
                 var _src = '';
                 if (!repairImgQname) {
@@ -204,36 +262,13 @@
                 }
                 return _src;
             }
-            var img;
-            //创建img序列
-            for (var i = 0; i < totalframeNum; i++) {
-                img = new Image();
-                img.url = rename(i);
-                imagesList.push(img);
-            }
-            // log(imagesList)
-
-            //默认加载一张第一帧进来
-            img = new Image();
-            img.src = imagesList[0].url;
-            img.loaded = false;
-            img.onload = function() {
-                cxt.drawImage(img, 0, 0, videoW, videoH);
-            };
-
-            bufferAllTime = totalframeNum / fps;
-            imagesLoadNum = -1;
-            //_self.loadImages();
-
-            fpsTimer = setTimeout(_self.upDate, fpsTime);
-
-            if (autoLoad) _self.startLoad();
-            //一进来就默认播放
-            if (autoplay === true) _self.play();
-
-
-
         }
+
+
+
+
+
+
         this.audioLoadedmetadata = function(e) {
 
         };
@@ -244,7 +279,7 @@
             // log('audioWaiting');
         };
         this.audioEnded = function(e) {
-            log('audioEnded');
+            // log('audioEnded');
             audioPause = true;
             pause = true;
         };
@@ -252,7 +287,7 @@
             // console.log('audioSuspend');
         };
         this.audioPlayEvent = function(e) {
-            // console.log('audioPlayEvent');
+            //console.log('audioPlayEvent');
             audioPause = false;
             pause = false;
             _self.videoPlayEvent();
@@ -320,7 +355,7 @@
         };
 
         this.videoLoadEndEvent = function() {
-            console.log('videoLoadEndEvent');
+            // console.log('videoLoadEndEvent');
             bufferTime = bufferAllTime;
             imagesLoadEnd = true;
             if (data.loadEndFunc) {
@@ -351,7 +386,8 @@
 
         };
         this.videoPlayEvent = function() {
-
+          //console.log("startPlay");
+          //_self.ds({type: 'startPlay'});
         };
 
         /**
@@ -406,7 +442,7 @@
          * @param {[type]} _play [设置是否播放true播放  false暂停  不设置按当前状态]
          */
         this.setCurrentTime = function(value, _play) {
-            console.log("setCurrentTime", value, _play);
+            // console.log("setCurrentTime", value, _play);
             if (_play !== undefined) {
                 //log(" setCurrentTime", _play)
                 if (_play) {
@@ -540,7 +576,7 @@
                 currentTime = audio.currentTime;
             }
             else {
-
+                // console.log(pause,isBufferPlay,currentTime,bufferTime,bufferedSpeedTime);
                 if (!pause) {
                     //使用帧渲染
                     if (rendFrameType) {
@@ -591,21 +627,23 @@
 
 
             if (!pause) {
+              // console.log(drawNum);
                 if (drawNum >= imagesList.length) {
                     drawNum = imagesList.length - 1;
                     _self.pause();
                 }
                 img = imagesList[drawNum];
                 if (img.loaded) {
-                  cxt.clearRect( 0, 0, videoW, videoH);
-                  cxt.drawImage(img, 0, 0, videoW, videoH);
+                    cxt.clearRect( 0, 0, videoW, videoH);
+                    cxt.drawImage(img, 0, 0, videoW, videoH);
                 }
                 // console.log(drawNum,imagesList.length)
                 if (drawNum >= imagesList.length - 1) {
-                    // console.log('videoPlayEnd :', videoPlayEnd, loop);
+                    //console.log('videoPlayEnd :', videoPlayEnd, loop);
                     if (videoPlayEnd) return;
                     videoPlayEnd = true;
                     _self.ds('playEnd');
+                    // console.log('videoPlayEnd :', videoPlayEnd, loop);
                     if (endedFun)endedFun();
                     if (loop) {
                         _self.setCurrentTime(0, true);
