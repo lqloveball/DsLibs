@@ -3,10 +3,13 @@
  * @classdesc:视频播放器 基于对mpeg视频格式解码 渲染到canvas上
  * 基于对mpeg视频格式解码 ，需要引用 src/libs/media/jsmpg.js
  * 视频压缩工具
- * ffmpeg -i in.mp4 -f mpeg1video -vf "crop=iw-mod(iw\,2):ih-mod(ih\,2)" -b 0 out.mpg
+ * ffmpeg -i in.mp4 -f mpeg1video -vf "crop=iw-mod(iw\,2):ih-mod(ih\,2)" -qsale 1 -b 0 out.mpg
+    （in.mp4：原视频文件名；out.mpg：导出的视频文件名）
+    （(iw\,2)和(ih\,2)为视频的宽高，设置为1则代表为原视频宽高）
+    （ -qscale 1 ：视频的清晰度，1代表最清晰，数值越大越模糊） 
  * [down http://www.ffmpeg.org/]
- * @param {[type]} url  [description]
- * @param {[type]} opts [description]
+ * @param {[String]} url  [description]
+ * @param {[Object]} opts [description]
      audio://声音地址
      loadByAudioCanplay://是否在声音允许播放就开始进行加载准备解码播放
      progressShow: //默认加载进度表现
