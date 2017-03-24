@@ -27,3 +27,6 @@
 - css/  项目是通过less进行编译的所以css下文件都是编译生成的。请不要直接修改这里css
 - js/app 项目的js是通过webpack编译的，所以这里代码请不要直接修改
 - js/libs 项目中一些js不适合通过webpack编译 请放到这里然后插入到html内
+- 
+###开发环境配置
+[https://github.com/lqloveball/DsLibs/tree/master/other/开发环境配置](https://github.com/lqloveball/DsLibs/tree/master/other/%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE)
