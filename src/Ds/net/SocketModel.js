@@ -1,26 +1,105 @@
 /**
  * @class Ds.net.SocketModel
- * @classdesc: Socket连接服务器基础类,配套对应的Node socket.io服务器使用.基于socket.io.js 请确保socket.io.js已经加载。常用于双屏互动项目
+ * @classdesc: 
+ *  常用于双屏互动项目
+ *  Socket连接服务器基础类,配套对应的Node socket.io服务器使用.基于socket.io.js,请确保socket.io.js已经加载(webpack开发模式下已经做了处理,src/libs/socket.io/socket.io.js)。
+ *  介绍一些常用参数与方法:
+ *  var _Socketer=new Ds.net.SocketModel();//创建一个socket连接对象
+ *  方法:
+ *  InitSocket 	// 开始连接服务器，具体参数看方法注释
+ *  AddRoom		// 加入到什么房间
+ *  Call		// 给房间内人发消息
+ * 	CallAll		// 给房间内所有人发消息（包括自己也能接收到）
+ * 	Destroy		// 主动断开与服务器之间连接
+ * 	属性:
+ *  ID 			// 连接成后会获取到一个socket 在服务器端的唯一值
+ *  事件:
+ *  initSocketEvent 	// 初始化或者重新绑定所有事件
+ * 	connect				// 连接成功
+ * 	connecting			// 连接中？一般没看到这个事件
+ * 	connect_failed		// 连接完成？一般没看到这个事件
+ * 	error				// 错误信息
+ * 	disconnect			// 断开连接
+ * 	reconnect			// 断线重连接
+ * 	clearWaste			// 被当垃圾用户清理退出
+ * 	serverFull			// 服务器满了 
+ * 	roomFull			// 房间满了 e.data 数字  当前房间人数
+ * 	addRoomOK			// 房间满了 e.data 房间的变号
+ * 	upUserRoomData		// 进入房间后个人信息 e.data.length 房间人数 e.data.num 自己编号  e.data.roomid 房间号
+ * 	call				// 收到消息  e.data  服务器传递来数据  可能是object 也可能是 String
+ * 【 自动定义消息  】通过call事件接收到的消息，以下情况会转换成自动定义消息 
+ *  String类型消息，如果带“:”的话 前部分会作为事件名，后面部分作为数据传输
+ *  Object类型消息，如果type值不为空，那就会把整个object作为事件对象发送
+ * 【 ***如果不符合以上两种，会默认作为call事件内容发送*** 】
+ * 
  * @extends
- * @example: 举例
+ * @example: 
+ * 
+   	//创建一个socket连接对象
+    var _Socketer=new Ds.net.SocketModel();
+	 //不去更改SocketModel类 根据服务器额外定制一些消息事件监听
+    var _Socket=_Socketer.Socket;
+    //成功连接
+    _Socketer.on('connect',function(){
+        console.log('连接成功');
+    });
+    //断开连接
+    _Socketer.on('disconnect',function(){
+         console.log('断开连接');
+    });
+    //被服务器当垃圾请下线
+    _Socketer.on('clearWaste',function(){
+        console.log('被服务器当垃圾请下线');
+    });
+    //初始化socekt连接事件绑定
+    _Socketer.on('initSocketEvent',function(){
+        console.log('初始化连接服务器，事件重置');
+    });
+ * //开始连接
+ * _Socketer.InitSocket({
+ *          url:'192.168.1.131',
+ *          port:8000,
+ * });
+ * 
  * @author: maksim email:maksim.lin@foxmail.com
  * @copyright:  Ds是累积平时项目工作的经验代码库，不属于职位任务与项目的内容。里面代码大部分理念来至曾经flash 前端时代，尽力减小类之间耦合，通过webpack按需request使用。Ds库里内容多来至网络与参考其他开源代码库。Ds库也开源开放，随意使用在所属的职位任务与项目中。
  * @constructor
  **/
-!(function () {
-	window.Ds=window.Ds ||{};
-	window.Ds.net = window.Ds.net || {};
-	window.Ds.net.SocketModel=SocketModel;
+(function (factory) {
+    var root = (typeof self == 'object' && self.self == self && self) ||
+        (typeof global == 'object' && global.global == global && global);
+
+    if (typeof define === 'function' && define.amd) {
+        define(['exports'], function (exports) {
+          require('ds/EventDispatcher');
+		  var _io=require('libs/socket.io/socket.io.js');
+          module.exports= factory(root, exports,_io);
+        });
+    } else if (typeof exports !== 'undefined') {
+        module.exports=factory(root, exports);
+    } else {
+         factory(root, {});
+    }
+}(function (root, modelOb,io) {
+
+	root.Ds=root.Ds ||{};
+	root.Ds.net = root.Ds.net || {};
+	root.Ds.net.SocketModel=SocketModel;
 	/**
 	 * SocketModel Socket连接服务器基础类
 	 */
 	function SocketModel() {
 			Ds.Extend(this,new Ds.EventDispatcher());
 			var _Self=this;
+			//socket对象
 			var _Socket;
+			//连接的地址
 			var _SocketUrl;
+			//连接的端口号
 			var _Port='';
+			//是否断线重连接
 			var _Reconnect;
+			//唯一ID
 			_Self.ID='';
 			/**
 			 * 初始化Socket连接
@@ -159,8 +238,8 @@
 	                _Self.ds('reconnect');
 	            });
 	            _Socket.on("message", function (obj) {
-	                //进行通知响应客户端连接上来
-	                console.log('进行通知响应客户端连接上来',obj);
+	                //获取到接受到消息
+	                console.log('获取到接受到消息',obj);
 	            });
 	            /*被当垃圾用户清理退出*/
 	            _Socket.on('clearWaste', function(){
@@ -215,4 +294,5 @@
 	            });
 			}
 		}
-})();
+  return root.Ds.net.SocketModel;
+}));
