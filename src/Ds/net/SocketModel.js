@@ -2,7 +2,11 @@
  * @class Ds.net.SocketModel
  * @classdesc: 
  *  常用于双屏互动项目
- *  Socket连接服务器基础类,配套对应的Node socket.io服务器使用.基于socket.io.js,请确保socket.io.js已经加载(webpack开发模式下已经做了处理,src/libs/socket.io/socket.io.js)。
+ *  Socket连接服务器基础类
+ *  服务器端代码如下：配套对应的Node socket.io服务器使用.
+ *  https://github.com/lqloveball/DsLibs/blob/master/other/SocektServer.zip
+ *  基于socket.io.js：
+ *  请确保socket.io.js已经加载(webpack开发模式下已经做了处理,src/libs/socket.io/socket.io.js)。
  *  介绍一些常用参数与方法:
  *  var _Socketer=new Ds.net.SocketModel();//创建一个socket连接对象
  *  方法:
