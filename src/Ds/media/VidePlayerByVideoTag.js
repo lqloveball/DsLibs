@@ -16,12 +16,13 @@
    onplay:  //触发播放 function
    onpause: //触发播放 function
  *  @extends
- * @example: 举例
+ *  @example: 举例
+ *  @todo 感觉这播放器还有点bug，需要项目实践进行修复
  * @author: maksim email:maksim.lin@foxmail.com
  * @copyright:  Ds是累积平时项目工作的经验代码库，不属于职位任务与项目的内容。里面代码大部分理念来至曾经flash 前端时代，尽力减小类之间耦合，通过webpack按需request使用。Ds库里内容多来至网络与参考其他开源代码库。Ds库也开源开放，随意使用在所属的职位任务与项目中。
  * @constructor
  **/
-!(function() {
+(function() {
     window.Ds = window.Ds || {};
     window.Ds.media = window.Ds.media || {};
     window.Ds.media.VidePlayerByVideoTag = VidePlayerByVideoTag;
@@ -51,13 +52,14 @@
             }
         });
 
-        var _VideoHtml=['<video class="videoPlayer"',
-'  	            style="position: absolute; width:100%;background-color:#fff;"',
-'  	             x-webkit-airplay="false"',
-'  	             webkit-playsinline playsinline preload=\'meta\'>',
-'  	            </video>'].join("");
+        var _VideoHtml = ['<video class="videoPlayer"',
+            '  	            style="position: absolute; width:100%;background-color:#fff;"',
+            '  	             x-webkit-airplay="false"',
+            '  	             webkit-playsinline playsinline preload=\'meta\'>',
+            '  	            </video>'
+        ].join("");
         //配置里面没有视频标签就创建一个
-        _VideoDOMElement=opts.element||$(_VideoHtml)[0];
+        _VideoDOMElement = opts.element || $(_VideoHtml)[0];
         //添加制定容器
         if (opts.append) $(opts.append).append(_VideoDOMElement);
 
@@ -66,28 +68,28 @@
          * @type {Array}
          */
         var _EventList = [
-            'abort'  , //当音频/视频的加载已放弃时
+            'abort', //当音频/视频的加载已放弃时
             // , 'canplay' //当浏览器可以播放音频/视频时
             // , 'canplaythrough' //当浏览器可在不因缓冲而停顿的情况下进行播放时
-           'durationchange'  , //当音频/视频的时长已更改时
-             'emptied'  , //当目前的播放列表为空时
+            'durationchange', //当音频/视频的时长已更改时
+            'emptied', //当目前的播放列表为空时
             // , 'ended' //当目前的播放列表已结束时
-             'error'  , //当在音频/视频加载期间发生错误时
-             'loadeddata'   ,//当浏览器已加载音频/视频的当前帧时
-             'loadedmetadata'  , //当浏览器已加载音频/视频的元数据时
-             'loadstart'  , //当浏览器开始查找音频/视频时
+            'error', //当在音频/视频加载期间发生错误时
+            'loadeddata', //当浏览器已加载音频/视频的当前帧时
+            'loadedmetadata', //当浏览器已加载音频/视频的元数据时
+            'loadstart', //当浏览器开始查找音频/视频时
             // , 'pause' //当音频/视频已暂停时
             // , 'play' //当音频/视频已开始或不再暂停时
             // , 'playing' //当音频/视频在已因缓冲而暂停或停止后已就绪时
             // , 'progress' //当浏览器正在下载音频/视频时
-             'ratechange'  , //当音频/视频的播放速度已更改时
-             'seeked'  , //当用户已移动/跳跃到音频/视频中的新位置时
-             'seeking'  , //当用户开始移动/跳跃到音频/视频中的新位置时
-             'stalled'  , //当浏览器尝试获取媒体数据，但数据不可用时
-             'suspend'  , //当浏览器刻意不获取媒体数据时
+            'ratechange', //当音频/视频的播放速度已更改时
+            'seeked', //当用户已移动/跳跃到音频/视频中的新位置时
+            'seeking', //当用户开始移动/跳跃到音频/视频中的新位置时
+            'stalled', //当浏览器尝试获取媒体数据，但数据不可用时
+            'suspend', //当浏览器刻意不获取媒体数据时
             // , 'timeupdate' //当目前的播放位置已更改时
-             'volumechange'  , //当音量已更改时
-             'waiting'  , //当视频由于需要缓冲下一帧而停止
+            'volumechange', //当音量已更改时
+            'waiting', //当视频由于需要缓冲下一帧而停止
         ];
         //进行时间对象绑定
         // _VideoDomEventer = {};
@@ -101,85 +103,95 @@
         //         if (_VideoDomEventer && _VideoDomEventer[e.type]) _VideoDomEventer[e.type]();
         //     });
         // }
-
         _VideoDOMElement.autoplay = !!opts.autoplay;
         _VideoDOMElement.loop = !!opts.loop;
         _VideoDOMElement.src = url;
         _VideoDOMElement.load();
+        /**
+        //注意本来这里想解决微信自动播放视频功能，现在发现这功能考虑严重造成bug。
+        function InitVideoLoad() {
+            // $('#debug').html('InitVideoLoad')
+            // if(!_VideoDOMElement.autoplay)
+            _VideoDOMElement.play();
+            _VideoDOMElement.volume = 0;
+            _VideoDOMElement.pause();
+        }
 
-        function InitVideoLoad(){
-          // $('#debug').html('InitVideoLoad')
-          // if(!_VideoDOMElement.autoplay)
-          _VideoDOMElement.play();
-          _VideoDOMElement.volume=0;
-          _VideoDOMElement.pause();
+        function VideoInBrowserHandler() {
+            //如果这个视频在是后创建交互视频对象，那就不能通过WeixinJSBridgeReady来触发视频播放 就不会有canplay，需要通过第一次touchstart；
+            InitVideoLoad();
+            document.body.removeEventListener('touchstart', VideoInBrowserHandler);
         }
-        function VideoInBrowserHandler(){
-          //如果这个视频在是后创建交互视频对象，那就不能通过WeixinJSBridgeReady来触发视频播放 就不会有canplay，需要通过第一次touchstart；
-          InitVideoLoad();
-          document.body.removeEventListener('touchstart', VideoInBrowserHandler);
+        if (_isWeixin) {
+            // $('#debug').html('是微信')
+            if (typeof WeixinJSBridge == "undefined") {
+                // $('#debug').html('WeixinJSBridge undefined')
+                document.addEventListener("WeixinJSBridgeReady", function func() {
+                    // $('#debug').html('WeixinJSBridgeReady')
+                    // InitVideoLoad();
+                    _VideoDOMElement.play();
+                    _VideoDOMElement.volume = 0;
+                    _VideoDOMElement.pause();
+                }, false);
+            } else {
+                //如果这个视频在是后创建交互视频对象，那就不能通过WeixinJSBridgeReady来触发视频播放 就不会有canplay，需要通过第一次touchstart；
+                // $('#debug').html('WeixinJSBridge OK'+WeixinJSBridge)
+                document.body.addEventListener('touchstart', VideoInBrowserHandler);
+            }
+        } else {
+            // $('#debug').html('非微信')
+            InitVideoLoad();
         }
-        if(_isWeixin){
-          // $('#debug').html('是微信')
-          if (typeof WeixinJSBridge == "undefined"){
-            // $('#debug').html('WeixinJSBridge undefined')
-            document.addEventListener("WeixinJSBridgeReady", function func() {
-              // $('#debug').html('WeixinJSBridgeReady')
-              // InitVideoLoad();
-              _VideoDOMElement.play();
-              _VideoDOMElement.volume=0;
-              _VideoDOMElement.pause();
-            }, false);
-          }else{
-              //如果这个视频在是后创建交互视频对象，那就不能通过WeixinJSBridgeReady来触发视频播放 就不会有canplay，需要通过第一次touchstart；
-            // $('#debug').html('WeixinJSBridge OK'+WeixinJSBridge)
-            document.body.addEventListener('touchstart', VideoInBrowserHandler);
-          }
-        }else{
-          // $('#debug').html('非微信')
-          InitVideoLoad();
-        }
+        */
         //进行预加载判断
         _VideoDOMElement.addEventListener("canplaythrough", Canplaythrough);
         _VideoDOMElement.addEventListener("canplay", Canplay);
-        _VideoDOMElement.addEventListener("progress", function(e){Progress(e);});
-        _VideoDOMElement.addEventListener("timeupdate", function(){FrameUpDate();});
-        _VideoDOMElement.addEventListener("play", function(){OnPlay();});
-        _VideoDOMElement.addEventListener("pause", function(){OnPause();});
-        _VideoDOMElement.addEventListener("ended", function(){
-          PlayEnd();
+        _VideoDOMElement.addEventListener("progress", function(e) {
+            Progress(e);
+        });
+        _VideoDOMElement.addEventListener("timeupdate", function() {
+            FrameUpDate();
+        });
+        _VideoDOMElement.addEventListener("play", function() {
+            OnPlay();
+        });
+        _VideoDOMElement.addEventListener("pause", function() {
+            OnPause();
+        });
+        _VideoDOMElement.addEventListener("ended", function() {
+            PlayEnd();
         });
 
 
 
-        function Canplay(){
+        function Canplay() {
             // log('Canplay');
-            if(_CanPlayBool)return;
+            if (_CanPlayBool) return;
             //解决IOS自动全屏的问题
             // makeVideoPlayableInline(_VideoDOMElement);
         }
-        var _CanPlayBool=false;
+        var _CanPlayBool = false;
         /**
          * 视频准备就绪可以播放
          */
         function Canplaythrough() {
-            if(_CanPlayBool)return;
+            if (_CanPlayBool) return;
             //解决IOS自动全屏的问题
             makeVideoPlayableInline(_VideoDOMElement);
-            _CanPlayBool=true;
-              // $('#debug').html('Canplaythrough');
-            if(_VideoDOMElement.autoplay){
-              _VideoDOMElement.currentTime = 0;
-              _VideoDOMElement.play();
-            }else{
-              _VideoDOMElement.currentTime = 0;
-              _VideoDOMElement.pause();
+            _CanPlayBool = true;
+            // $('#debug').html('Canplaythrough');
+            if (_VideoDOMElement.autoplay) {
+                _VideoDOMElement.currentTime = 0;
+                _VideoDOMElement.play();
+            } else {
+                _VideoDOMElement.currentTime = 0;
+                _VideoDOMElement.pause();
             }
             _VideoDOMElement.removeEventListener("canplay", Canplay);
             _VideoDOMElement.removeEventListener("canplaythrough", Canplaythrough);
             _VideoDOMElement.volume = 1;
 
-            if(opts.canplay)opts.canplay();
+            if (opts.canplay) opts.canplay();
             _Self.ds('canplay');
         }
         /**
@@ -273,7 +285,7 @@
          * 播放
          */
         this.Play = function() {
-            if(!_CanPlayBool)return;
+            if (!_CanPlayBool) return;
             // _Playing = true;
             _VideoDOMElement.play();
         };
@@ -282,7 +294,7 @@
          * 暂停
          */
         this.Pause = function() {
-            if(!_CanPlayBool)return;
+            if (!_CanPlayBool) return;
             // _Playing = false;
             _VideoDOMElement.pause();
         };
@@ -291,8 +303,8 @@
          * @param {[type]} seconds [description]
          */
         this.SeekToTime = function(seconds) {
-          _VideoDOMElement.currentTime=seconds;
-          _VideoDOMElement.play();
+            _VideoDOMElement.currentTime = seconds;
+            // _VideoDOMElement.play();
         };
 
     }
