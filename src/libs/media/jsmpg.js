@@ -1,3 +1,6 @@
+/**
+ * 老版mepg  基本可以废弃
+ */
 (function(window){
 	'use strict';
 
@@ -268,6 +271,7 @@ jsmpeg.prototype.frameCount = 0;
 jsmpeg.prototype.duration = 0;
 
 jsmpeg.prototype.load = function(url) {
+	console.log('mepg load ');
 	this.url = url;
 
 	var request = new XMLHttpRequest();
@@ -309,6 +313,7 @@ jsmpeg.prototype.updateLoaderGL = function(ev) {
 };
 
 jsmpeg.prototype.loadCallback = function(file) {
+	console.log('loadCallback');
 	this.buffer = new BitReader(file);
 
 	if (this.seekable) {
@@ -348,11 +353,13 @@ jsmpeg.prototype.collectIntraFrames = function() {
 			this.intraFrames.push({frame: frame, index: this.buffer.index - 13});
 		}
 	}
-
+	console.log('collectIntraFrames:',frame);
 	this.frameCount = frame;
 };
 
 jsmpeg.prototype.seekToFrame = function(seekFrame, seekExact) {
+	console.log('seekToFrame:',seekFrame,this.frameCount,this.intraFrames.length);
+	console.log('seekToFrame Bool:',(seekFrame < 0 || seekFrame >= this.frameCount || !this.intraFrames.length));
 	if (seekFrame < 0 || seekFrame >= this.frameCount || !this.intraFrames.length) {
 		return false;
 	}
@@ -430,6 +437,7 @@ jsmpeg.prototype.stop = function() {
 // Progressive loading via AJAX
 
 jsmpeg.prototype.beginProgressiveLoad = function(url) {
+	console.log('mepg beginProgressiveLoad');
 	this.url = url;
 
 	this.progressiveLoadPositon = 0;
