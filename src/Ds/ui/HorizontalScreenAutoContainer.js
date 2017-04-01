@@ -41,7 +41,6 @@
             overflow: 'hidden',
         });
 
-        var _Self = this;
         //宽 高 是否横屏  是否输入  屏幕计算用的宽 屏幕缩放尺寸
         var _Width, _Height, _Horizontal = false,
             _IsInputState = false,
