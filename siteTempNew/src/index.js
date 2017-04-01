@@ -18,6 +18,7 @@ window.SiteModel = {
     Debug:false,//是否debug  会根据端口号进行判断
     SiteResizeModel:null,//也可以通过这里获取自适应模块
     LoadPanel:null,//加载界面 [Dom的loading 请在InitLoadPanel函数内进行实现   Createjs的loading，正常来说不需要修改，如果需要修改InitCreateJsLoadPanel函数内修改实现]
+    AudioAutoPlayLister:null,//声音自动播放加载与控制器类对象
     //对整个网站框架进行ReSize方法执行
     ReSize:function(){
       SiteModel.SiteResizeModel.ReSize();
@@ -35,6 +36,7 @@ window.SiteModel = {
       button:'#BGMBtn'
     },
 };
+
 /**
  * 加载单页面应用的代码
  */
@@ -118,7 +120,9 @@ function LoadBaseJS() {
     require('ds/EventDispatcher.min');
     require('sitemoblieresizemodel');
     require('ds/media/MobileAudioAutoPlayLister');
+    // require('jstween');
     InitSiteResizeModel();
+    InitAudioAutoPlayLister();
     InitLoadPanel();
 
     // require.ensure(
