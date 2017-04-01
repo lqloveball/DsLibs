@@ -11,9 +11,23 @@
   * @copyright:   Ds是累积平时项目工作的经验代码库，不属于职位任务与项目的内容。里面代码大部分理念来至曾经flash 前端时代，尽力减小类之间耦合，通过webpack按需request使用。Ds库里内容多来至网络与参考其他开源代码库。Ds库也开源开放，随意使用在所属的职位任务与项目中。
   * @constructor
   **/
- !(function() {
-      window.Ds = window.Ds || {};
-      window.Ds.EventDispatcher = EventDispatcher;
+ (function(factory) {
+     var root = (typeof self == 'object' && self.self == self && self) ||
+         (typeof global == 'object' && global.global == global && global);
+
+     if (typeof define === 'function' && define.amd) {
+         define(['exports'], function(exports) {
+             module.exports = factory(root, exports);
+         });
+     } else if (typeof exports !== 'undefined') {
+         module.exports = factory(root, exports);
+     } else {
+         factory(root, {});
+     }
+
+ }(function(root, modelObj) {
+     root.Ds = root.Ds || {};
+     root.Ds.EventDispatcher = EventDispatcher;
      /**
       * 事件类
       * EventDispatcher类是可调度事件的类的基类，它允许显示列表上的任何对象都是一个事件目标。
@@ -131,17 +145,17 @@
           */
          this.dispatchEvent = function(event) {
              if (typeof event == 'string') event = {
-                type: event
+                 type: event
              };
              var map = this._eventMap[event.type];
              var keyMap = this._eventByKeyMap[event.type];
              if ((map === null || map === undefined) && (keyMap === null || keyMap === undefined)) {
-                return false;
+                 return false;
              }
              //普通事件
              if (!event.target) event.target = this;
-             var i=0;
-            var listener;
+             var i = 0;
+             var listener;
              if (map) {
                  map = map.slice();
                  for (i = 0; i < map.length; i++) {
@@ -172,14 +186,16 @@
          this.hasEventListener = function(type) {
              var map = this._eventMap[type];
              return map;
-            //  return (map != null && map != undefined) && map.length > 0;
+             //  return (map != null && map != undefined) && map.length > 0;
          };
          //添加若干的常用的快捷缩写方法
          this.on = this.addEventListener;
          this.off = this.removeEventListener;
          this.ds = this.dispatchEvent;
+     }
+     EventDispatcher.extend = function(obj) {
+         root.Ds.Extend(obj, new EventDispatcher());
      };
-     EventDispatcher.extend = function(obj) {window.Ds.Extend(obj,new EventDispatcher());};
 
      /**
       * 类扩展方法，多个对象扩展
@@ -187,14 +203,14 @@
       * @param  {[type]} arguments [多个继承父级对象]
       * @return {[type]}     [目标扩展的对象]
       */
-     window.Ds.Extend = extend;
+     root.Ds.Extend = extend;
      /**
       * 类扩展方法，不做覆盖
       * @param  {[type]} target [目标扩展对象]
       * @param  {[type]} source [原对象,记住是不要用实际使用的一个对象，用一个new出来新对象]
       * @return {[type]}        [目标扩展对象]
       */
-     window.Ds.ExtendNoCover = extendNoCover;
+     root.Ds.ExtendNoCover = extendNoCover;
      /**
       * Function类创建继承子类工厂方法
       * @param  {[type]} protoProps  [description]
@@ -223,7 +239,7 @@
         });
       *
       */
-     window.Ds.ExtendFactory = extend2;
+     root.Ds.ExtendFactory = extend2;
      /**
       * Object key List
       * @param  {[type]} obj [description]
@@ -237,7 +253,7 @@
          return keys;
      }
 
-    function extend(obj) {
+     function extend(obj) {
          var length = arguments.length;
          if (length < 2 || obj === null) return obj;
          for (var index = 1; index < length; index++) {
@@ -251,6 +267,7 @@
          }
          return obj;
      }
+
      function extend2(protoProps, staticProps) {
          var parent = this;
          var child;
@@ -258,12 +275,12 @@
          if (protoProps && Object.prototype.hasOwnProperty.call(protoProps, 'constructor')) {
              child = protoProps.constructor;
          } else {
-             child = function () {
+             child = function() {
                  return parent.apply(this, arguments);
              };
          }
          extend(child, parent, staticProps);
-         var Surrogate = function () {
+         var Surrogate = function() {
              this.constructor = child;
          };
          Surrogate.prototype = parent.prototype;
@@ -278,11 +295,12 @@
 
      function extendNoCover(target, source) {
          for (var key in source) {
-           if (source[key] !== undefined && target[key] === undefined) {
-              target[key] = source[key];
-           }
+             if (source[key] !== undefined && target[key] === undefined) {
+                 target[key] = source[key];
+             }
          }
          return target;
      }
 
- })(window);
+     return root.Ds.EventDispatcher;
+ }));

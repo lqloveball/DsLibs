@@ -18,194 +18,193 @@
  * @constructor
  **/
 
- (function (factory) {
-     var root = (typeof self == 'object' && self.self == self && self) ||
-         (typeof global == 'object' && global.global == global && global);
+(function(factory) {
+    var root = (typeof self == 'object' && self.self == self && self) ||
+        (typeof global == 'object' && global.global == global && global);
 
-     if (typeof define === 'function' && define.amd) {
-         define(['exports'], function (exports) {
-           require('ds/EventDispatcher');
-           module.exports= factory(root, exports);
-         });
-     } else if (typeof exports !== 'undefined') {
-         module.exports=factory(root, exports);
-     } else {
-          factory(root, {});
-     }
+    if (typeof define === 'function' && define.amd) {
+        define(['exports'], function(exports) {
+            require('ds/EventDispatcher');
+            module.exports = factory(root, exports);
+        });
+    } else if (typeof exports !== 'undefined') {
+        module.exports = factory(root, exports);
+    } else {
+        factory(root, {});
+    }
 
- }(function (root, modelObj) {
-   root.Ds = root.Ds || {};
-   root.Ds.gemo=root.Ds.gemo ||{};
-   root.Ds.gemo.PageSlider=PageSlider;
+}(function(root, modelObj) {
+    root.Ds = root.Ds || {};
+    root.Ds.gemo = root.Ds.gemo || {};
+    root.Ds.gemo.PageSlider = PageSlider;
 
-   function PageSlider(_scenes, _opt) {
-       Ds.Extend(this, new Ds.EventDispatcher());
-       var $scenes = $(_scenes),
-       _self = this;
-       // log($scenes)
-       //初始化一些参数
-       var startY = 0, //开始Y
-           endY = 0, //结束Y
-           currentY = 0, //实际Y
-           startX = 0, //开始X
-           endX = 0, //结束X
-           diffX = 0, //改变X
-           diffY = 0, //改变Y
-           limitY = 150, //改变超过该值时执行翻页
-           limitX = 40, //改变超过该值时执行翻页
-           limit = 10, //判断方向的最小滑动距离
-           upright = false, //是否上下滑动
-           level = false; //是否左右滑动
-       _self.sliding = false; //是否正在滑动
-       _self.capture = false; //是否扑捉到Touch
-       _self.lock=false;
-       if (_opt) {
-           if (_opt.limitY) limitY = _opt.limitY;
-           if (_opt.limitX) limitX = _opt.limitX;
-           if (_opt.limit) limit = _opt.limit;
-           if (_opt.lock!==undefined) _self.lock = _opt.lock;
-       }
-       // log('init',scenes)
-       $scenes.bind('touchstart', function(event) {
-           if(_self.lock)return;
-           // log(event,event.originalEvent)
-           var _targetTouches = event.targetTouches || event.originalEvent.targetTouches;
-           var touch = _targetTouches[0];
-           var target = $(event.target);
-           if(_self.capture)return;
+    function PageSlider(_scenes, _opt) {
+        Ds.Extend(this, new Ds.EventDispatcher());
+        var $scenes = $(_scenes),
+            _self = this;
+        // log($scenes)
+        //初始化一些参数
+        var startY = 0, //开始Y
+            endY = 0, //结束Y
+            currentY = 0, //实际Y
+            startX = 0, //开始X
+            endX = 0, //结束X
+            diffX = 0, //改变X
+            diffY = 0, //改变Y
+            limitY = 150, //改变超过该值时执行翻页
+            limitX = 40, //改变超过该值时执行翻页
+            limit = 10, //判断方向的最小滑动距离
+            upright = false, //是否上下滑动
+            level = false; //是否左右滑动
+        _self.sliding = false; //是否正在滑动
+        _self.capture = false; //是否扑捉到Touch
+        _self.lock = false;
+        if (_opt) {
+            if (_opt.limitY) limitY = _opt.limitY;
+            if (_opt.limitX) limitX = _opt.limitX;
+            if (_opt.limit) limit = _opt.limit;
+            if (_opt.lock !== undefined) _self.lock = _opt.lock;
+        }
+        // log('init',scenes)
+        $scenes.bind('touchstart', function(event) {
+            if (_self.lock) return;
+            // log(event,event.originalEvent)
+            var _targetTouches = event.targetTouches || event.originalEvent.targetTouches;
+            var touch = _targetTouches[0];
+            var target = $(event.target);
+            if (_self.capture) return;
 
-           if (!_self.sliding) {
-               _self.capture = true;
-               startY = touch.pageY;
-               startX = touch.pageX;
-               endY = 0;
-               endX = 0;
-               diffY = 0;
-               diffX = 0;
-               level = false;
-               upright = false;
-               _self.ds({
-                   type: 'start',
-                   startX: startX,
-                   startY: startY,
-                   mouseX: startX,
-                   mouseY: startY
-               });
-           }
-       });
-       $scenes.bind('touchmove', function(event) {
-           if(_self.lock)return;
-           //console.log(sliding)
-           var _targetTouches = event.targetTouches || event.originalEvent.targetTouches;
-           var touch = _targetTouches[0];
-           if (!_self.sliding && _self.capture) {
-               event.preventDefault();
+            if (!_self.sliding) {
+                _self.capture = true;
+                startY = touch.pageY;
+                startX = touch.pageX;
+                endY = 0;
+                endX = 0;
+                diffY = 0;
+                diffX = 0;
+                level = false;
+                upright = false;
+                _self.ds({
+                    type: 'start',
+                    startX: startX,
+                    startY: startY,
+                    mouseX: startX,
+                    mouseY: startY
+                });
+            }
+        });
+        $scenes.bind('touchmove', function(event) {
+            if (_self.lock) return;
+            //console.log(sliding)
+            var _targetTouches = event.targetTouches || event.originalEvent.targetTouches;
+            var touch = _targetTouches[0];
+            if (!_self.sliding && _self.capture) {
+                event.preventDefault();
 
-               endX = touch.pageX;
-               endY = touch.pageY;
+                endX = touch.pageX;
+                endY = touch.pageY;
 
-               diffX = endX - startX;
-               diffY = endY - startY;
-               if (!level && !upright) {
-                   if (Math.abs(diffX) >= limit && Math.abs(diffX) > Math.abs(diffY)) {
-                       level = true;
-                       upright = false;
-                   } else if (Math.abs(diffY) >= limit && Math.abs(diffX) < Math.abs(diffY)) {
-                       level = false;
-                       upright = true;
-                   } else {
-                       level = false;
-                       upright = false;
-                   }
-               }
-               //如果是纵向滑动
-               if (upright) {
-                   diffY = diffY > 0 ? (diffY - limit) : (diffY + limit);
-               }
-               //如果是横向滑动
-               if (level) {
-                   diffX = diffX > 0 ? (diffX - limit) : (diffX + limit);
-               }
-               _self.ds({
-                   type: 'move',
-                   level: level,
-                   upright: upright,
-                   diffX: diffX,
-                   diffY: diffY,
-                   endX: endX,
-                   endY: endY
-               });
-           }
-           _self.ds({
-               type: 'touchmove',
-               oe: event,
-               mouseX: touch.pageX,
-               mouseY: touch.pageY
-           });
-       });
-       $scenes.bind('touchend touchcancel', function(event) {
-           var _targetTouches = event.targetTouches || event.originalEvent.targetTouches;
-           var touch = _targetTouches[0];
-           // event.preventDefault();
-           if (!_self.sliding && _self.capture) {
-               //如果是纵向滑动
-               var state = '';
-               if (upright) {
-                   if (diffY < -limitY) {
-                       //上一个
-                       state = 'up';
-                   } else if (diffY < 0 && diffY > -limitY) {
-                       //小于最小距离回到原位置
-                       event.preventDefault();
-                       state = 'back';
-                   } else if (diffY > limitY) {
-                       //下一个
-                       state = 'down';
-                   } else if (diffY > 0 && diffY < limitY) {
-                       //小于最小距离回到原位置
-                       state = 'back';
-                   }
-                   //如果是横向滑动
-               }
-               else if (level) {
+                diffX = endX - startX;
+                diffY = endY - startY;
+                if (!level && !upright) {
+                    if (Math.abs(diffX) >= limit && Math.abs(diffX) > Math.abs(diffY)) {
+                        level = true;
+                        upright = false;
+                    } else if (Math.abs(diffY) >= limit && Math.abs(diffX) < Math.abs(diffY)) {
+                        level = false;
+                        upright = true;
+                    } else {
+                        level = false;
+                        upright = false;
+                    }
+                }
+                //如果是纵向滑动
+                if (upright) {
+                    diffY = diffY > 0 ? (diffY - limit) : (diffY + limit);
+                }
+                //如果是横向滑动
+                if (level) {
+                    diffX = diffX > 0 ? (diffX - limit) : (diffX + limit);
+                }
+                _self.ds({
+                    type: 'move',
+                    level: level,
+                    upright: upright,
+                    diffX: diffX,
+                    diffY: diffY,
+                    endX: endX,
+                    endY: endY
+                });
+            }
+            _self.ds({
+                type: 'touchmove',
+                oe: event,
+                mouseX: touch.pageX,
+                mouseY: touch.pageY
+            });
+        });
+        $scenes.bind('touchend touchcancel', function(event) {
+            var _targetTouches = event.targetTouches || event.originalEvent.targetTouches;
+            var touch = _targetTouches[0];
+            // event.preventDefault();
+            if (!_self.sliding && _self.capture) {
+                //如果是纵向滑动
+                var state = '';
+                if (upright) {
+                    if (diffY < -limitY) {
+                        //上一个
+                        state = 'up';
+                    } else if (diffY < 0 && diffY > -limitY) {
+                        //小于最小距离回到原位置
+                        event.preventDefault();
+                        state = 'back';
+                    } else if (diffY > limitY) {
+                        //下一个
+                        state = 'down';
+                    } else if (diffY > 0 && diffY < limitY) {
+                        //小于最小距离回到原位置
+                        state = 'back';
+                    }
+                    //如果是横向滑动
+                } else if (level) {
 
-                   if (diffX < -limitX) {
-                       //上一个
-                       state = 'up';
-                   } else if (diffX < 0 && diffX > -limitX) {
-                       event.preventDefault();
-                       state = 'back';
-                       //小于最小距离回到原位置
-                   } else if (diffX > limitX) {
-                       state = 'down';
-                       //下一个
+                    if (diffX < -limitX) {
+                        //上一个
+                        state = 'up';
+                    } else if (diffX < 0 && diffX > -limitX) {
+                        event.preventDefault();
+                        state = 'back';
+                        //小于最小距离回到原位置
+                    } else if (diffX > limitX) {
+                        state = 'down';
+                        //下一个
 
-                   } else if (diffX > 0 && diffY < limitX) {
-                       //小于最小距离回到原位置
-                       state = 'back';
-                   }
-               } else {
-                   //点击
-                   _self.closeSliding();
-               }
-               _self.ds({
-                   type: 'end',
-                   level: level,
-                   upright: upright,
-                   state: state
-               });
-           }else{
-             _self.closeSliding();
-           }
-       });
-       this.openSliding = function() {
-           _self.sliding = true;
-           _self.capture = false;
-       };
-       this.closeSliding = function() {
-           _self.sliding = false;
-           _self.capture = false;
-       };
-   }
-   return Ds.gemo.PageSlider;
- }));
+                    } else if (diffX > 0 && diffY < limitX) {
+                        //小于最小距离回到原位置
+                        state = 'back';
+                    }
+                } else {
+                    //点击
+                    _self.closeSliding();
+                }
+                _self.ds({
+                    type: 'end',
+                    level: level,
+                    upright: upright,
+                    state: state
+                });
+            } else {
+                _self.closeSliding();
+            }
+        });
+        this.openSliding = function() {
+            _self.sliding = true;
+            _self.capture = false;
+        };
+        this.closeSliding = function() {
+            _self.sliding = false;
+            _self.capture = false;
+        };
+    }
+    return Ds.gemo.PageSlider;
+}));

@@ -13,6 +13,7 @@
 
     if (typeof define === 'function' && define.amd) {
         define(['exports'], function (exports) {
+          require('ds/gemo/OGerModel');
             module.exports= factory(root, exports);
         });
     } else if (typeof exports !== 'undefined') {
@@ -23,8 +24,9 @@
 
 }(function (root, modelObj) {
   root.Ds = root.Ds || {};
-  root.Ds.gemo = root.Ds.gemo || {};
-  root.Ds.gemo.Gallery360Week=Gallery360Week;
+  root.Ds.createjs=root.Ds.createjs ||{};
+  root.Ds.createjs.display = root.Ds.createjs.display || {};
+  root.Ds.createjs.display.Gallery360Week=Gallery360Week;
 
   function Gallery360Week(){
     //陀螺仪 拖动控制器

@@ -94,7 +94,7 @@
          * @param {[type]} callBack [description]
          */
         this.AddShake = function(callBack) {
-            callBack.__deviceMotionHandler=deviceMotionHandler;
+            callBack.__deviceMotionHandler = deviceMotionHandler;
 
             window.addEventListener('devicemotion', deviceMotionHandler, false);
             var _speed = 30; //speed
@@ -108,7 +108,7 @@
                 _z = _acceleration.z;
                 if (Math.abs(_x - _lastX) > _speed || Math.abs(_y - _lastY) > _speed || Math.abs(_z - _lastZ) > _speed) {
                     //简单的摇一摇触发代码
-                    if(callBack)callBack();
+                    if (callBack) callBack();
                 }
                 _lastX = _x;
                 _lastY = _y;
@@ -120,10 +120,10 @@
          * @param {[type]} callBack [description]
          */
         this.RemoveShake = function(callBack) {
-          var _deviceMotionHandler=callBack.__deviceMotionHandler;
-          if(_deviceMotionHandler){
-            window.removeEventListener('devicemotion', _deviceMotionHandler, false);
-          }
+            var _deviceMotionHandler = callBack.__deviceMotionHandler;
+            if (_deviceMotionHandler) {
+                window.removeEventListener('devicemotion', _deviceMotionHandler, false);
+            }
         };
 
     }

@@ -11,10 +11,24 @@
  * @copyright:  我发起Ds库目的，简化方便工作项目开发。里面代码大部分理念来至曾经flash 前端时代，尽力减小类之间耦合，通过webpack按需request使用。Ds库里代码很多也都来源至或参考网络开源开放代码，所以这个库也开源开放。更多希望团队成员把积累工作中常用的代码，加快自己开发效率。
  * @constructor
  **/
-(function(){
-  window.Ds=window.Ds ||{};
-  window.Ds.gemo=window.Ds.gemo ||{};
-  window.Ds.gemo.QuickTrack=new QuickTrack();
+(function (factory) {
+    var root = (typeof self == 'object' && self.self == self && self) ||
+        (typeof global == 'object' && global.global == global && global);
+
+    if (typeof define === 'function' && define.amd) {
+        define(['exports'], function (exports) {
+            module.exports= factory(root, exports);
+        });
+    } else if (typeof exports !== 'undefined') {
+        module.exports=factory(root, exports);
+    } else {
+         factory(root, {});
+    }
+
+}(function (root, modelObj) {
+  root.Ds=root.Ds ||{};
+  root.Ds.gemo=root.Ds.gemo ||{};
+  root.Ds.gemo.QuickTrack=new QuickTrack();
   /**
    * 快速进行执行检测代码
    */
@@ -106,4 +120,6 @@
       _Self.BaiduPV(pageurl);
     };
   }
-})();
+
+  return root.Ds.gemo.QuickTrack;
+}));

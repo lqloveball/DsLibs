@@ -63,8 +63,9 @@ _GalleryLooper.Lock=true;
     }
 }(function (root, modelObj) {
   root.Ds = root.Ds || {};
-  root.Ds.createjs=window.Ds.createjs ||{};
-  root.Ds.createjs.GalleryLooper = GalleryLooper;
+  root.Ds.createjs=root.Ds.createjs ||{};
+  root.Ds.createjs.display = root.Ds.createjs.display || {};
+  root.Ds.createjs.display.GalleryLooper = GalleryLooper;
 
   function GalleryLooper(opts) {
       if(!opts.box){

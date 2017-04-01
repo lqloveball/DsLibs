@@ -35,10 +35,27 @@
  * @copyright:  Ds是累积平时项目工作的经验代码库，不属于职位任务与项目的内容。里面代码大部分理念来至曾经flash 前端时代，尽力减小类之间耦合，通过webpack按需request使用。Ds库里内容多来至网络与参考其他开源代码库。Ds库也开源开放，随意使用在所属的职位任务与项目中。
  * @constructor
  **/
-!(function() {
-    window.Ds = window.Ds || {};
-    window.Ds.gemo = window.Ds.gemo || {};
-    window.Ds.gemo.OGerModel = OGerModel;
+(function(factory) {
+    var root = (typeof self == 'object' && self.self == self && self) ||
+        (typeof global == 'object' && global.global == global && global);
+
+    if (typeof define === 'function' && define.amd) {
+        define(['exports'], function(exports) {
+            require('ds/gemo/Gesture');
+            require('libs/shrek/orienter.min.js');
+            module.exports = factory(root, exports);
+        });
+    } else if (typeof exports !== 'undefined') {
+        module.exports = factory(root, exports);
+    } else {
+        factory(root, {});
+    }
+
+}(function(root, modelObj) {
+    root.Ds = root.Ds || {};
+    root.Ds.gemo = root.Ds.gemo || {};
+    root.Ds.gemo.OGerModel = OGerModel;
+
     //刷新场景
     var _requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame || window.oRequestAnimationFrame;
     /**
@@ -77,11 +94,11 @@
                 return _OrienterLook;
             },
             set: function(value) {
-              _OrienterLook=value;
-              if(value===true){
-                _Self.Drag.lon=_Self.Drag.lon+_Self.Aim.lon;
-                _Self.Drag.lat=_Self.Drag.lon+_Self.Aim.lat;
-              }
+                _OrienterLook = value;
+                if (value === true) {
+                    _Self.Drag.lon = _Self.Drag.lon + _Self.Aim.lon;
+                    _Self.Drag.lat = _Self.Drag.lon + _Self.Aim.lat;
+                }
             }
         });
 
@@ -91,12 +108,12 @@
                 return _TouchLook;
             },
             set: function(value) {
-              _TouchLook=value;
+                _TouchLook = value;
             }
         });
 
-        _Self.Drag.lat=+_Self.Aim.lat;
-        _Self.Drag.lon=+_Self.Aim.lon;
+        _Self.Drag.lat = +_Self.Aim.lat;
+        _Self.Drag.lon = +_Self.Aim.lon;
         //进行touch拖动系数 默认0.2
         var _TouchSpeed = opts.touchSpeed || 0.2;
         Object.defineProperty(this, "TouchSpeed", {
@@ -104,7 +121,7 @@
                 return _TouchSpeed;
             },
             set: function(value) {
-              _TouchSpeed=value;
+                _TouchSpeed = value;
             }
         });
 
@@ -163,18 +180,18 @@
         this.AnimateOn = function() {
             this.Lock = false;
             this.OrienterLook = false;
-            this.TouchLook=false;
+            this.TouchLook = false;
             // this.Animate();
-            if(window['createjs']!==undefined){
-               createjs.Ticker.addEventListener("tick", _Self.Animate);
-            }else{
-              _requestAnimationFrame(go);
+            if (window['createjs'] !== undefined) {
+                createjs.Ticker.addEventListener("tick", _Self.Animate);
+            } else {
+                _requestAnimationFrame(go);
             }
 
-            function go(){
-              if(_Self.Lock)return;
-              _Self.Animate();
-              _requestAnimationFrame(go);
+            function go() {
+                if (_Self.Lock) return;
+                _Self.Animate();
+                _requestAnimationFrame(go);
             }
 
         };
@@ -185,8 +202,8 @@
             this.Lock = true;
             this.OrienterLook = _OrienterLook;
             this.TouchLook = _TouchLook;
-            if(window['createjs']!==undefined){
-               createjs.Ticker.removeEventListener("tick", _Self.Animate);
+            if (window['createjs'] !== undefined) {
+                createjs.Ticker.removeEventListener("tick", _Self.Animate);
             }
             // if (this.AnimateId) cancelAnimationFrame(this.AnimateId);
             // createjs.Ticker.removeEventListener("tick", _Self.Animate);
@@ -252,4 +269,5 @@
         };
     }
 
-})();
+    return OGerModel;
+}));
