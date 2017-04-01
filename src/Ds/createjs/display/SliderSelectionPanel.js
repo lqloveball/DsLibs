@@ -80,6 +80,8 @@
 
     if (typeof define === 'function' && define.amd) {
         define(['exports'], function(exports) {
+            require('ds/EventDispatcher');
+            require('ds/gemo/PageSlider');
             module.exports = factory(root, exports);
         });
     } else if (typeof exports !== 'undefined') {
@@ -300,7 +302,7 @@
         }
 
         //平滑滚动计算类
-        var _Slider = new Ds.gemo.Pageslider(_Scenes);
+        var _Slider = new Ds.gemo.PageSlider(_Scenes);
         //判断默认是否锁住
         _Slider.lock = _Lock;
         //开始交互触摸
