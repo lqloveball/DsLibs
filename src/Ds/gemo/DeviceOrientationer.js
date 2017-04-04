@@ -1,6 +1,7 @@
 /**
  * @class Ds.gemo.DeviceOrientationer
  * @classdesc:陀螺仪简易使用方式
+ *  AddShake 添加一个摇一摇
  * @extends
  * @example: 举例
  * @author: maksim email:maksim.lin@foxmail.com
@@ -93,11 +94,11 @@
          * 添加摇一摇
          * @param {[type]} callBack [description]
          */
-        this.AddShake = function(callBack) {
+        this.AddShake = function(callBack,speed) {
             callBack.__deviceMotionHandler = deviceMotionHandler;
 
             window.addEventListener('devicemotion', deviceMotionHandler, false);
-            var _speed = 30; //speed
+            var _speed = speed||30; //speed
             var _x, _y, _z, _lastX, _lastY, _lastZ;
             _x = _y = _z = _lastX = _lastY = _lastZ = 0;
 
@@ -128,5 +129,5 @@
 
     }
 
-    return root.Ds.gemo;
+    return Ds.gemo.DeviceOrientationer;
 }));

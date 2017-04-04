@@ -17,10 +17,10 @@
      duration:  //避免头文件未计算完成，得不到总时间
      progressive: //缓冲加载播放
      progressiveThrottled: //缓冲加载播放
-
-
+     autoLoad:false// 自动加载视频
      append://需要添加到div
      autoplay://是否自动播放
+
      loop: //是否循环
      onload://加载完成 function
      upDate://帧触发 function
@@ -29,6 +29,16 @@
      onplay:  //触发播放 function
      onpause: //触发暂停 function
      canplay://触发可以开始播放
+
+     onstartload: StartLoad, //开始加载
+     onprogress: Progress, //加载进度
+     onload: LoadEnd, //加载完成
+     upDate: FrameUpDate, //帧触发
+     onplayend: PlayEnd, //播放完成
+     onplay: OnPlay, //触发播放
+     onpause: OnPause, //触发播放
+     oncanPlay: OnCanPlay, //触发可以播放
+     oncanPlayProgress: OnCanPlayProgress, //触发可以播放
  *  @extends
  * @example: 举例
  * @author: maksim email:maksim.lin@foxmail.com
@@ -36,7 +46,7 @@
  * @constructor
  **/
 
-!(function() {
+(function() {
 
     window.Ds = window.Ds || {};
     window.Ds.media = window.Ds.media || {};
@@ -48,10 +58,10 @@
         //继承事件类
         Ds.Extend(_Self, new Ds.EventDispatcher());
         //是否缓存加载
-        var _Progressive = (opts.progressive!==undefined)?opts.progressive:true;
+        var _Progressive = (opts.progressive !== undefined) ? opts.progressive : true;
         // console.log(opts.progressive,_Progressive);
         //是否在声音允许播放就开始进行加载准备解码播放
-        var _LoadByAudioCanplay = true;//opts.loadByAudioCanplay == undefined ? true : false;
+        var _LoadByAudioCanplay = true; //opts.loadByAudioCanplay == undefined ? true : false;
         //获取Canvas渲染对象
         var _Canvas = opts.canvas || document.createElement('canvas');
         Object.defineProperty(this, "Canvas", {
@@ -62,11 +72,11 @@
         //MPEG 解码播放器
         var _Player = new jsmpeg(url, {
             canvas: _Canvas,
-            autoload: true,
+            autoload: opts.autoplay !== undefined ? opts.autoplay : true,
             autoplay: !!opts.autoplay, //是否自动播放
             progressShow: !!opts.progressShow, //默认加载进度
             loop: !!opts.loop, //是否循环
-            seekable: opts.seekable === undefined ? true : false, //是否计算头文件 计算出时间
+            seekable: opts.seekable !== undefined ? opts.seekable : false, //是否计算头文件 计算出时间
             duration: opts.duration || 60, //避免头文件未计算完成，得不到总时间
             progressive: _Progressive, //缓冲加载播放
             progressiveThrottled: _Progressive, //缓冲加载播放
@@ -77,6 +87,8 @@
             onplay: OnPlay, //触发播放
             onpause: OnPause, //触发播放
             canPlay: OnCanPlay, //触发可以播放
+            oncanPlayProgress: CanPlayProgress, //第一个加载完成可以播放进度
+            upAudioTime:PlayerUpAudioTime //进跳帧后 声音控制
         });
         Object.defineProperty(this, "Player", {
             get: function() {
@@ -131,6 +143,9 @@
         var _AudioUrl = opts.audio || '';
         if (_AudioUrl === '') {
             _Audio = null;
+            if (opts.autoload === true) {
+                _Self.Load(url);
+            }
         } else {
             _Audio = new Audio();
             _Audio.autoplay = false;
@@ -146,8 +161,7 @@
             });
             _Audio.addEventListener('waiting', function() {}); //等待数据，并非错误
             _Audio.addEventListener('ended', function() {}); //播放结束
-            _Audio.addEventListener('loadedmetadata', function() {
-            }); //加载完成 其实不是
+            _Audio.addEventListener('loadedmetadata', function() {}); //加载完成 其实不是
             _Audio.addEventListener('progress', function() {}); //客户端正在请求数据
             _Audio.addEventListener('suspend', function() {}); //延迟下载
             _Audio.addEventListener('play', function() {}); //play()和autoplay开始播放时触发
@@ -158,17 +172,23 @@
             _Audio.addEventListener('error', function() {
                 AudioError();
             }); //可以播放
+            document.body.addEventListener('touchstart', audioInBrowserHandler);
+
         }
-        var _LoadBool = false;
+        function audioInBrowserHandler(){
+          document.body.removeEventListener('touchstart', audioInBrowserHandler);
+          if(_Audio){
+            _Audio.play();
+            _Audio.pause();
+          }
+        }
+
+
         //可以播放
         function AudioCanplay() {
-            console.log('AudioCanplay',_Player.progressive);
-            if (_LoadBool) return;
-            _LoadBool = true;
-            if (_Player.progressive) {
-                _Player.beginProgressiveLoad(url);
-            } else {
-                _Player.load(url);
+            console.log('AudioCanplay', _Player.progressive);
+            if (opts.autoload === true) {
+                _Self.Load(url);
             }
         }
 
@@ -177,14 +197,7 @@
             console.warn('声音加载错误');
         }
 
-        //没有声音情况直接创建视频播放器
-        if (!_Audio) {
-            if (_Player.progressive) {
-                _Player.beginProgressiveLoad(url);
-            } else {
-                _Player.load(url);
-            }
-        }
+
         /**
          * 当前时间
          * @type {[Number]}
@@ -204,7 +217,34 @@
                 return _Player.duration;
             }
         });
-
+        /**
+         * 声音
+         * @type {[type]}
+         */
+        Object.defineProperty(this, "Volume", {
+            get: function() {
+                return _Audio ? _Audio.volume : 0;
+            },
+            set: function(value) {
+                if (_Audio) {
+                    _Audio.volume = value;
+                }
+            }
+        });
+        /**
+         * 是否禁音
+         * @type {[type]}
+         */
+        Object.defineProperty(this, "Muted", {
+          get: function() {
+              return _Audio ? _Audio.muted : true;
+          },
+          set: function(value) {
+              if (_Audio) {
+                  _Audio.muted = value;
+              }
+          }
+        });
         /**
          * 当前帧数
          * @type {[Number]}
@@ -214,7 +254,17 @@
                 return _Player.currentFrame;
             }
         });
-
+        var _LoadBool = false;
+        this.Load = function() {
+            if (_LoadBool) return;
+            _LoadBool = true;
+            if (_Player.progressive) {
+              // _Player.load(url);
+                _Player.beginProgressiveLoad(url);
+            } else {
+                _Player.load(url);
+            }
+        };
         /**
          * 总帧数
          * @type {[Number]}
@@ -230,22 +280,22 @@
          * @param {[Number]} progress [0-1加载进度]
          */
         function Progress(progress) {
-            // console.log('加载进度:' + progress);
-            if (opts.progress) opts.progress(progress);
+            console.log('加载进度:' + progress);
+            if (opts.onprogress) opts.onprogress(progress);
             _Self.ds({
                 type: 'progress',
                 progress: progress
             });
+
         }
 
         /**
          * 加载完成
          */
         function LoaeEnd() {
-            if (opts.loaeEnd) opts.loaeEnd();
-            _Self.ds('loadEnd');
             console.log('加载完成');
-            // console.log('Duration: ' +_Player.currentTime+'/'+ _Player.duration+ ' seconds (' +_Player.currentFrame+'/'+ _Player.frameCount + ' frames)')
+            if (opts.onload) opts.onload();
+            _Self.ds('loadEnd');
         }
 
         /**
@@ -272,7 +322,6 @@
         function OnPlay() {
             // _Playing = true;
             if (_Audio) {
-                // if(!_Player.canPlayThrough)return;
                 if (_Player && _Player.currentTime) _Audio.currentTime = _Player.currentTime;
                 _Audio.play();
             }
@@ -286,12 +335,25 @@
             if (_Audio) _Audio.pause();
             _Self.ds('pause');
         }
-        var _CanPlayBool=false;
-        function OnCanPlay(){
-          if(_CanPlayBool)return;
-          _CanPlayBool=true;
-          if (opts.canplay) opts.canplay();
-          _Self.ds('canplay');
+
+        var _CanPlayBool = false;
+        function OnCanPlay() {
+            console.log(url+' >>OnCanPlay');
+            if (_CanPlayBool) return;
+            _CanPlayBool = true;
+            if (opts.oncanPlay) opts.oncanPlay();
+            _Self.ds('canplay');
+        }
+        /**
+         * 第一个触发可以播放进度
+         * @param {[type]} progress [description]
+         */
+        function CanPlayProgress(progress){
+          if (opts.oncanPlayProgress) opts.oncanPlayProgress(progress);
+          _Self.ds({
+              type: 'canPlayprogress',
+              progress: progress
+          });
         }
 
 
@@ -313,30 +375,30 @@
          * 播放
          */
         this.Play = function() {
-            if(!_CanPlayBool)return;
+            if (!_CanPlayBool) return;
             // _Playing = true;
             _Player.play();
-            // if (_Audio) {
-            //     _Audio.currentTime = _Player.currentTime
-            //     _Audio.play();
-            // }
+            if (_Audio) {
+                _Audio.currentTime = _Player.currentTime;
+                _Audio.play();
+            }
         };
 
         /**
          * 暂停
          */
         this.Pause = function() {
-            if(!_CanPlayBool)return;
+            if (!_CanPlayBool) return;
             // _Playing = false;
             _Player.pause();
-            // if (_Audio) _Audio.pause();
+            if (_Audio) _Audio.pause();
         };
         /**
          * 跳转到制定时间
          * @param {[type]} seconds [description]
          */
         this.SeekToTime = function(seconds) {
-            _Player.seekToTime(seconds);
+            _Player.seekToTime(seconds,true);
         };
 
         /**
@@ -344,11 +406,18 @@
          * @param {[type]} frame [description]
          */
         this.SeekToFrame = function(frame) {
-            _Player.seekToFrame(frame);
+            _Player.seekToFrame(frame,true);
         };
+
+        //进行跳帧后 声音播放位置更新
+        function PlayerUpAudioTime(time){
+          if (_Audio) {
+            _Audio.currentTime=time;
+          }
+        }
 
 
 
     }
 
-})()
+})();

@@ -11,13 +11,13 @@
    loop: //是否循环
    onload://加载完成 function
    upDate://帧触发 function
-   progress: //加载进度 function
-   playEnd://播放完成 function
+   onprogress: //加载进度 function
+   onplayend://播放完成 function
    onplay:  //触发播放 function
    onpause: //触发播放 function
  *  @extends
  *  @example: 举例
- *  @todo 感觉这播放器还有点bug，需要项目实践进行修复
+ *  @todo 感觉这播放器还有点bug，需要项目实践Play进行修复
  * @author: maksim email:maksim.lin@foxmail.com
  * @copyright:  Ds是累积平时项目工作的经验代码库，不属于职位任务与项目的内容。里面代码大部分理念来至曾经flash 前端时代，尽力减小类之间耦合，通过webpack按需request使用。Ds库里内容多来至网络与参考其他开源代码库。Ds库也开源开放，随意使用在所属的职位任务与项目中。
  * @constructor
@@ -45,21 +45,33 @@
   	            </video>
   	      </div>
          */
+         var _VideoHtml = ['<video class="videoPlayer"',
+             '  	            style="position: absolute; width:100%;background-color:#fff;"',
+             '  	             x-webkit-airplay="false"',
+             '  	             webkit-playsinline playsinline preload=\'meta\'>',
+             '  	            </video>'
+         ].join("");
+
+         /**
+          *  Video标签元素
+          * @type {[type]}
+          */
         var _VideoDOMElement;
         Object.defineProperty(this, "VideoDOMElement", {
             get: function() {
                 return _VideoDOMElement;
             }
         });
-
-        var _VideoHtml = ['<video class="videoPlayer"',
-            '  	            style="position: absolute; width:100%;background-color:#fff;"',
-            '  	             x-webkit-airplay="false"',
-            '  	             webkit-playsinline playsinline preload=\'meta\'>',
-            '  	            </video>'
-        ].join("");
         //配置里面没有视频标签就创建一个
-        _VideoDOMElement = opts.element || $(_VideoHtml)[0];
+        var _element=null;
+        if(opts.element){
+          _element=opts.element;
+        }
+        else if(opts.videoDom){
+          _element=opts.videoDom;
+        }
+        _VideoDOMElement = _element || $(_VideoHtml)[0];
+        // console.log('_VideoDOMElement:',_VideoDOMElement);
         //添加制定容器
         if (opts.append) $(opts.append).append(_VideoDOMElement);
 
@@ -103,10 +115,16 @@
         //         if (_VideoDomEventer && _VideoDomEventer[e.type]) _VideoDomEventer[e.type]();
         //     });
         // }
-        _VideoDOMElement.autoplay = !!opts.autoplay;
-        _VideoDOMElement.loop = !!opts.loop;
-        _VideoDOMElement.src = url;
-        _VideoDOMElement.load();
+        if(url!==undefined&&url!==null){
+          _VideoDOMElement.autoplay = !!opts.autoplay;
+          _VideoDOMElement.loop = !!opts.loop;
+          _VideoDOMElement.src = url;
+          _VideoDOMElement.load();
+        }else{
+          console.log('不创建video标签');
+          _CanPlayBool=true;
+        }
+
         /**
         //注意本来这里想解决微信自动播放视频功能，现在发现这功能考虑严重造成bug。
         function InitVideoLoad() {
@@ -144,8 +162,8 @@
         }
         */
         //进行预加载判断
-        _VideoDOMElement.addEventListener("canplaythrough", Canplaythrough);
-        _VideoDOMElement.addEventListener("canplay", Canplay);
+        // _VideoDOMElement.addEventListener("canplaythrough", Canplaythrough);
+        // _VideoDOMElement.addEventListener("canplay", Canplay);
         _VideoDOMElement.addEventListener("progress", function(e) {
             Progress(e);
         });
@@ -163,37 +181,37 @@
         });
 
 
+        // var _CanPlayBool = false;
+        // function Canplay() {
+        //     // log('Canplay');
+        //     if (_CanPlayBool) return;
+        //     //解决IOS自动全屏的问题
+        //     //makeVideoPlayableInline(_VideoDOMElement);
+        // }
 
-        function Canplay() {
-            // log('Canplay');
-            if (_CanPlayBool) return;
-            //解决IOS自动全屏的问题
-            // makeVideoPlayableInline(_VideoDOMElement);
-        }
-        var _CanPlayBool = false;
         /**
          * 视频准备就绪可以播放
          */
-        function Canplaythrough() {
-            if (_CanPlayBool) return;
-            //解决IOS自动全屏的问题
-            makeVideoPlayableInline(_VideoDOMElement);
-            _CanPlayBool = true;
-            // $('#debug').html('Canplaythrough');
-            if (_VideoDOMElement.autoplay) {
-                _VideoDOMElement.currentTime = 0;
-                _VideoDOMElement.play();
-            } else {
-                _VideoDOMElement.currentTime = 0;
-                _VideoDOMElement.pause();
-            }
-            _VideoDOMElement.removeEventListener("canplay", Canplay);
-            _VideoDOMElement.removeEventListener("canplaythrough", Canplaythrough);
-            _VideoDOMElement.volume = 1;
-
-            if (opts.canplay) opts.canplay();
-            _Self.ds('canplay');
-        }
+        // function Canplaythrough() {
+        //     if (_CanPlayBool) return;
+        //     //解决IOS自动全屏的问题
+        //     makeVideoPlayableInline(_VideoDOMElement);
+        //     _CanPlayBool = true;
+        //     // $('#debug').html('Canplaythrough');
+        //     if (_VideoDOMElement.autoplay) {
+        //         _VideoDOMElement.currentTime = 0;
+        //         _VideoDOMElement.play();
+        //     } else {
+        //         _VideoDOMElement.currentTime = 0;
+        //         _VideoDOMElement.pause();
+        //     }
+        //     _VideoDOMElement.removeEventListener("canplay", Canplay);
+        //     _VideoDOMElement.removeEventListener("canplaythrough", Canplaythrough);
+        //     _VideoDOMElement.volume = 1;
+        //
+        //     if (opts.canplay) opts.canplay();
+        //     _Self.ds('canplay');
+        // }
         /**
          * 当前时间
          * @type {[Number]}
@@ -213,6 +231,33 @@
             }
         });
 
+        /**
+         * 声音大小
+         * @type {[type]}
+         */
+        Object.defineProperty(this, "Volume", {
+            get: function() {
+                return _VideoDOMElement.volume;
+            },
+            set: function(value) {
+              _VideoDOMElement.volume=value;
+            }
+        });
+
+        /**
+         * 是否禁音
+         * @type {[type]}
+         */
+        Object.defineProperty(this, "Muted", {
+            get: function() {
+                return _VideoDOMElement.muted;
+            },
+            set: function(value) {
+              _VideoDOMElement.muted=value;
+            }
+        });
+
+
         //添加制定位置
         // if (opts.append) $(opts.append).append(_Canvas);
         /**
@@ -221,7 +266,7 @@
          */
         function Progress(e) {
             // console.log('加载进度:', e);
-            if (opts.progress) opts.progress(progress);
+            if (opts.onprogress) opts.onprogress(progress);
             _Self.ds('progress');
         }
         /**
@@ -246,7 +291,7 @@
          * 播放完成
          */
         function PlayEnd() {
-            if (opts.playEnd) opts.playEnd();
+            if (opts.onplayend) opts.onplayend();
             _Self.ds('playEnd');
         }
         /**
@@ -254,7 +299,6 @@
          */
         function OnPlay() {
             // console.log('OnPlay',_Self.Playing);
-
             _VideoDOMElement.play();
             _Self.ds('play');
         }
@@ -263,7 +307,6 @@
          */
         function OnPause() {
             // console.log('OnPause',_Self.Playing);
-
             _VideoDOMElement.pause();
             _Self.ds('pause');
         }
@@ -285,7 +328,7 @@
          * 播放
          */
         this.Play = function() {
-            if (!_CanPlayBool) return;
+            // if (!_CanPlayBool) return;
             // _Playing = true;
             _VideoDOMElement.play();
         };
@@ -294,7 +337,7 @@
          * 暂停
          */
         this.Pause = function() {
-            if (!_CanPlayBool) return;
+            // if (!_CanPlayBool) return;
             // _Playing = false;
             _VideoDOMElement.pause();
         };

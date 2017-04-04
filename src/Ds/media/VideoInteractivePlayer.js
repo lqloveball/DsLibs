@@ -64,7 +64,7 @@
    }
   * [=================JS===================]
     //解决IOS自动全屏的问题
-    //  var video = document.querySelector('video');
+    //var video = document.querySelector('video');
     makeVideoPlayableInline(video);
  * @todo 把序列帧播放器也添加到这个视频交互类里
  * @author: maksim email:maksim.lin@foxmail.com
@@ -89,27 +89,53 @@
                 return _VideoPlayer;
             }
         });
+        /**
+         * 是否交互播放器类型
+         * @type {String}
+         */
+        var _VideoType = '';
+        Object.defineProperty(this, "VideoType", {
+            get: function() {
+                return _VideoType;
+            },
+        });
         // console.log(type);
         //初始化视频的交互使用播放器方式
         //使用版本1的播放器
-        if (type === 'canvas'||type==='mpeg') {
+        if (type === 'canvas' || type === 'mpeg') {
+            _VideoType = 'MPEG';
+            console.log('创建mpeg的交互对象');
             _VideoPlayer = new Ds.media.VidePlayerByMpeg(url, opts);
             InitVideoEvent();
         }
         //使用序列帧播放器
-        else if(type === 'mpegByts'){
-          _VideoPlayer = new Ds.media.VidePlayerByMpegTS(url, opts);
-          InitVideoEvent();
+        else if (type === 'mpegByts') {
+            _VideoType = 'TS';
+            console.log('创建mpegByTS的交互对象');
+            _VideoPlayer = new Ds.media.VidePlayerByMpegTS(url, opts);
+            InitVideoEvent();
         }
         //使用序列帧播放器
-        else if(type === 'frames'){
-
+        else if (type === 'frames' || type === 'FPS') {
+            _VideoType = 'FPS';
         }
         //使用默认video标签
         else {
+            _VideoType = 'Video';
+            console.log('创建Video标签的交互对象');
             _VideoPlayer = new Ds.media.VidePlayerByVideoTag(url, opts);
             InitVideoEvent();
         }
+        /**
+         * 开始加载视频，只有非Video标签实现的交互播放器才有这功能
+         * @return {[type]} [description]
+         */
+        this.Load=function(){
+          // console.log('load Video',_VideoType);
+          if(_VideoType!='Video'){
+            _VideoPlayer.Load();
+          }
+        };
 
         function InitVideoEvent() {
             //事件
@@ -186,6 +212,33 @@
         this.SeekToTime = function(seconds) {
             _VideoPlayer.SeekToTime(seconds);
         };
+        /**
+         * 声音大小
+         * @type {[type]}
+         */
+        Object.defineProperty(this, "Volume", {
+            get: function() {
+                return _VideoPlayer.Volume;
+            },
+            set: function(value) {
+              _VideoPlayer.Volume=value;
+            }
+        });
+        /**
+         * 是否禁音
+         * @type {[type]}
+         */
+        Object.defineProperty(this, "Muted", {
+            get: function() {
+                return _VideoPlayer.Muted;
+            },
+            set: function(value) {
+              _VideoPlayer.Muted=value;
+            }
+        });
+
+
+
         _VideoPlayer.on('upDate', TimeUpDate);
         /*使用Video标签的TimeUpDate*/
         function TimeUpDate(e) {
@@ -246,6 +299,21 @@
             pointData.runNum = 0;
             pointData.bool = false;
             _VideoCuePointList.push(pointData);
+        };
+        /**
+         * 获取互动节点
+         * @param  {[type]} name [description]
+         * @return {[type]}      [description]
+         */
+        this.GetCuePoints = function(name) {
+          var _list=[];
+          for (var i = 0; i < _VideoCuePointList.length; i++) {
+              var _pointData = _VideoCuePointList[i];
+              if(_pointData.name.indexOf(name)!=-1){
+                _list.push(_pointData);
+              }
+          }
+          return _list;
         };
         /**
          * 重置所有时间交互点

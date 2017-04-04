@@ -252,6 +252,7 @@
             //2d有边界计算方式 _WeekY=90度算一个边界  值是-0.5到0.5  是指-45到正45
             _ry = _RotationY;
             if (_ry < -180) _ry = 360 + _ry;
+            if (_ry > 180) _ry -= 360;
             var _proportion2Y = _ry / _WeekY / 2;
             if (_proportion2Y >= 1) _proportion2Y = 1;
             if (_proportion2Y <= -1) _proportion2Y = -1;
@@ -268,6 +269,75 @@
             });
         };
     }
+    /**
+     *  做左右看图辅助计算
+     *  对e.proportionY; 进行辅助处理计算0-1之间
+     * @param  {[type]} value        [当前值]
+     * @param  {[type]} intermediate [中间值，第一次记录下当前值]
+     * @param  {[type]} interval     [间隔值 默认0.2 大于72度]
+     * @return {[type]}              [旋转百分比]
+     */
+    OGerModel.GetProportionYAuxiliary=function(value,intermediate,interval){
+      // intermediate=0.9;
+      // value=0.92
+      value=value||1;
+      value=Math.max(0,Math.min(value,1));
+      intermediate=intermediate||0;
+      intermediate=Math.max(0,Math.min(intermediate,1));
+
+      var _gy=interval||0.2;
+      // console.log(_gy);
+      var _intermediate=intermediate;
+      var _x=value;//0.9
+      var _sy=_intermediate-_gy;//0.1-0.2=-0.1
+      var _ey=_intermediate+_gy;//0.1+0.2=0.3
+      //计算出偏差
+      var _x2=0;
+      //大于等上限
+      if(_x>=_intermediate+_gy){
+        // console.log('1 _sy:',_sy);
+        // console.log('1 _x:',_x);
+        //如果下限小于0才需要判断  大于上限，那就要判断下是否超过下限，
+        if(_sy<=0){
+          var _sy2=1+_sy;//0.9 获取下限取正值
+          // console.log('1 _sy2:',_sy2);
+          //判断是否超过下限取正后的值
+          if(_x>=_sy2){
+            // console.log('1 _cc:',(_x-_sy2));
+            _x2=(_x-(_sy2+_gy))/_gy*0.5;//(当前值-（下限值+间隔值）)/间隔值*0.5[只是一半所以乘以0.5]
+            if(_x2<0)_x2=-_x2;
+          }else{
+            _x2=1;//正常超出上限
+          }
+        }else{
+          //超出上线 默认是1
+          _x2=1;
+        }
+        // console.log('1 _x2:',_x2);
+      }
+      else if(_x<_intermediate-_gy){
+        // console.log('2 _ey:',_ey);
+        // console.log('2 _x:',_x);
+        //上限值超过了1
+        if(_ey>=1){
+          var _ey2=_ey-1;//1.1-->0.1
+          // console.log('2 _ey2:',_ey2);
+          if(_x<=_ey2){
+            _x2=0.5+(_x-(_ey2-_gy))/_gy*0.5;//中间值+(当前值-（上限值-间隔值）)/间隔值*0.5[只是一半所以乘以0.5]
+          }else{
+            _x2=0;
+          }
+        }else{
+          _x2=0;
+        }
+        // console.log('2 _x2:',_x2,_x);
+      }
+      else{
+        _x2=(_x-_sy)/(_gy*2);
+        // console.log('3 _x2:',_x2);
+      }
+      return _x2;
+    };
 
     return OGerModel;
 }));

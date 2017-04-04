@@ -32,12 +32,12 @@
      videoBufferSize: opts.videoBufferSize !== undefined ? opts.videoBufferSize : (512 * 1024), //视频缓存区Default 512*1024 (512kb)
      audioBufferSize: opts.audioBufferSize !== undefined ? opts.audioBufferSize : (128 * 1024), //视频缓存区Default 512*1024 (512kb)
      duration: opts.duration || 60, //视频总时间长度
+     autoLoad：false //是否自动加载
 
-
-     onstartload: StartLoad, //加载完成
+     onstartload: StartLoad, //开始加载
      onprogress: Progress, //加载进度
      onload: LoadEnd, //加载完成
-     onframe: FrameUpDate, //帧触发
+     upDate: FrameUpDate, //帧触发
      onplayend: PlayEnd, //播放完成
      onplay: OnPlay, //触发播放
      onpause: OnPause, //触发播放
@@ -130,6 +130,30 @@
                 return _Duration;
             }
         });
+        /**
+         * 声音
+         * @type {[type]}
+         */
+        Object.defineProperty(this, "Volume", {
+            get: function() {
+                return _Player.volume;
+            },
+            set: function(value) {
+              _Player.volume=value;
+            }
+        });
+        /**
+         * 是否禁音
+         * @type {[type]}
+         */
+        Object.defineProperty(this, "Muted", {
+            get: function() {
+                return _Player.muted;
+            },
+            set: function(value) {
+              _Player.muted=value;
+            }
+        });
 
         /**
          * 是否播放中 Playing
@@ -161,7 +185,7 @@
             videoBufferSize: opts.videoBufferSize !== undefined ? opts.videoBufferSize : (512 * 1024), //视频缓存区Default 512*1024 (512kb)
             audioBufferSize: opts.audioBufferSize !== undefined ? opts.audioBufferSize : (128 * 1024), //视频缓存区Default 512*1024 (512kb)
             duration: opts.duration || 60, //视频总时间长度
-
+            autoLoad:opts.autoLoad !== undefined ? opts.autoLoad : false,
 
             onstartload: StartLoad, //加载完成
             onprogress: Progress, //加载进度
@@ -173,6 +197,10 @@
             oncanPlay: OnCanPlay, //触发可以播放
             oncanPlayProgress: OnCanPlayProgress, //触发可以播放
         });
+        this.Load=function(){
+          console.log('TS load');
+          _Player.load();
+        };
         /**
          * 开始加载
          */
@@ -186,7 +214,7 @@
          * @param {[Number]} progress [0-1加载进度]
          */
         function Progress(progress) {
-            console.log('加载进度:' + progress);
+            // console.log('加载进度:' + progress);
             if (opts.progress) opts.progress(progress);
             _Self.ds({
                 type: 'progress',
