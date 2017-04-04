@@ -11,11 +11,11 @@ var jsmpeg = window.jsmpeg = function(url, opts) {
 	this.progressShow=!!opts.progressShow;
 
 	this.autoplay = !!opts.autoplay;
-	this.autoload = opts.autoload==undefined?true:false;
+	this.autoload = opts.autoload!==undefined?opts.autoload:false;
 	// console.log(	this.autoload);
 	this.wantsToPlay = this.autoplay;
 	this.loop = !!opts.loop;
-	this.seekable = !!opts.seekable;
+	this.seekable = opts.seekable!==undefined?opts.seekable:true;
 	this.externalLoadCallback = opts.onload || null;
 	this.externalDecodeCallback = opts.ondecodeframe || null;
 	this.externalFinishedCallback = opts.onfinished || null;
@@ -23,13 +23,15 @@ var jsmpeg = window.jsmpeg = function(url, opts) {
 	this.externalplayCallback = opts.onplay || null;
 	this.externalpauseCallback = opts.onpause || null;
 	this.externalcanPlayCallback = opts.canPlay || null;
+	this.externalCanPlayProgressCallback = opts.oncanPlayProgress || null;
+	this.externalupAudioTimeCallback = opts.upAudioTime || null;
 
 	this.duration=opts.duration||0;
 
-	this.progressive = !!opts.progressive;
+	this.progressive = opts.progressive!==undefined?opts.progressive:true;
 	this.progressiveThrottled = !!opts.progressiveThrottled;
-	this.progressiveChunkSize = opts.progressiveChunkSize || 256 * 1024;
-	this.progressiveChunkSizeMax = 4 * 1024 * 1024;
+	this.progressiveChunkSize = opts.progressiveChunkSize || 1024 * 1024;
+	this.progressiveChunkSizeMax = 50 * 1024 * 1024;
 
 	this.customIntraQuantMatrix = new Uint8Array(64);
 	this.customNonIntraQuantMatrix = new Uint8Array(64);
@@ -294,7 +296,8 @@ jsmpeg.prototype.updateLoader2D = function(ev) {
 		w = this.canvas.width,
 		h = this.canvas.height,
 		ctx = this.canvasContext;
-	if(this.externalProgressCallback){this.externalProgressCallback(p)}
+	this._progress=p;
+	if(this.externalProgressCallback){this.externalProgressCallback(this._progress);}
 
 
 	if(!this.progressShow)return;
@@ -305,9 +308,11 @@ jsmpeg.prototype.updateLoader2D = function(ev) {
 };
 
 jsmpeg.prototype.updateLoaderGL = function(ev) {
+	// console.log('updateLoaderGL',ev.loaded/ev.total);
+	this._progress=ev.loaded / ev.total;
+	if(this.externalProgressCallback){this.externalProgressCallback(this._progress);}
 	if(!this.progressShow)return;
 	var gl = this.gl;
-	if(this.externalProgressCallback){this.externalProgressCallback(ev.loaded / ev.total)}
 	gl.uniform1f(gl.getUniformLocation(this.loadingProgram, 'loaded'), (ev.loaded / ev.total));
 	gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 };
@@ -315,7 +320,6 @@ jsmpeg.prototype.updateLoaderGL = function(ev) {
 jsmpeg.prototype.loadCallback = function(file) {
 	console.log('loadCallback');
 	this.buffer = new BitReader(file);
-
 	if (this.seekable) {
 		this.collectIntraFrames();
 		this.buffer.index = 0;
@@ -358,8 +362,8 @@ jsmpeg.prototype.collectIntraFrames = function() {
 };
 
 jsmpeg.prototype.seekToFrame = function(seekFrame, seekExact) {
-	console.log('seekToFrame:',seekFrame,this.frameCount,this.intraFrames.length);
-	console.log('seekToFrame Bool:',(seekFrame < 0 || seekFrame >= this.frameCount || !this.intraFrames.length));
+	console.log('jsmpeg.prototype.seekToFrame:',seekFrame,this.frameCount,this.intraFrames.length);
+	console.log('seekToFrame Bool:',seekFrame < 0 , seekFrame, this.frameCount , this.intraFrames.length);
 	if (seekFrame < 0 || seekFrame >= this.frameCount || !this.intraFrames.length) {
 		return false;
 	}
@@ -385,11 +389,16 @@ jsmpeg.prototype.seekToFrame = function(seekFrame, seekExact) {
 
 	// Decode and display the picture we have seeked to
 	this.decodePicture();
+
 	return true;
 };
 
 jsmpeg.prototype.seekToTime = function(time, seekExact) {
-	this.seekToFrame( (time * this.pictureRate)|0, seekExact );
+	console.log('jsmpeg.prototype.seekToTime:',time,((time * this.pictureRate)|0), seekExact );
+	var _bool=this.seekToFrame( (time * this.pictureRate)|0, seekExact );
+	if(_bool&&this.externalupAudioTimeCallback){
+		this.externalupAudioTimeCallback(time);
+	}
 };
 
 jsmpeg.prototype.play = function() {
@@ -437,7 +446,7 @@ jsmpeg.prototype.stop = function() {
 // Progressive loading via AJAX
 
 jsmpeg.prototype.beginProgressiveLoad = function(url) {
-	console.log('mepg beginProgressiveLoad');
+	console.log('mepg beginProgressiveLoad:',url);
 	this.url = url;
 
 	this.progressiveLoadPositon = 0;
@@ -453,6 +462,7 @@ jsmpeg.prototype.beginProgressiveLoad = function(url) {
 			that.loadNextChunk();
 		}
 	};
+
 
 	request.open('HEAD', url);
 	request.send();
@@ -496,9 +506,20 @@ jsmpeg.prototype.loadNextChunk = function() {
 			that.maybeLoadNextChunk();
 		}
 	};
-
-	if (start === 0) {
-		request.onprogress = this.updateLoader.bind(this);
+	console.log('loadNextChunk start:',start);
+	//改造这个加载进度，我要的是整个视频的加载进度
+	// if (start === 0) {
+	// 	request.onprogress = this.updateLoader.bind(this);
+	// }
+	request.onprogress = onProgress.bind(that);
+	function onProgress(ev){
+		if (start === 0) {
+				if (that.externalCanPlayProgressCallback) that.externalCanPlayProgressCallback(that.progress);
+		}
+		if (that.externalProgressCallback) {
+				var _progress = (start + ev.loaded) / that.fileSize;
+				that.externalProgressCallback(_progress);
+		}
 	}
 
 	request.open('GET', this.url+'?'+start+"-"+end);
@@ -510,6 +531,7 @@ jsmpeg.prototype.loadNextChunk = function() {
 jsmpeg.prototype.canPlayThrough = false;
 
 jsmpeg.prototype.progressiveLoadCallback = function(data) {
+	console.log('progressiveLoadCallback');
 	this.chunkIsLoading = false;
 	var isFirstChunk = (this.buffer.writePos === 0);
 
@@ -564,6 +586,7 @@ jsmpeg.prototype.progressiveLoadCallback = function(data) {
 			- this.progressiveChunkSize * (bytesPerSecondPlayed / bytesPerSecondLoaded) * 4;
 			// console.log('canPlayThrough');
 			this.externalcanPlayCallback&&this.externalcanPlayCallback();
+			// console.log('externalcanPlayCallback:',this._progress);
 	}
 	else {
 		this.nextChunkLoadAt = 0;
@@ -573,7 +596,7 @@ jsmpeg.prototype.progressiveLoadCallback = function(data) {
 		// All loaded. We don't need to schedule another load
 		this.lastFrameIndex = this.buffer.writePos << 3;
 		this.canPlayThrough = true;
-
+		// console.log('progressiveLoadCallback:',this.seekable);
 		if (this.seekable) {
 			var currentBufferPos = this.buffer.index;
 			this.buffer.index = 0;

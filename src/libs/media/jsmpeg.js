@@ -30,6 +30,7 @@ var JSMpeg = {
         }
     }
 };
+window.JSMpeg = JSMpeg;
 if (document.readyState === "complete") {
     JSMpeg.CreateVideoElements();
 } else {
@@ -88,7 +89,7 @@ JSMpeg.VideoElement = function() {
                 options[option] = element.dataset[option]
             }
         }
-        this.player = new JSMpeg.Player(url,options);
+        this.player = new JSMpeg.Player(url, options);
         if (options.poster && !options.autoplay && !this.player.options.streaming) {
             options.decodeFirstFrame = false;
             this.poster = new Image;
@@ -141,15 +142,14 @@ JSMpeg.VideoElement = function() {
             ev.stopPropagation()
         }
         this.player.audioOut.unlock(function() {
-            if (this.unmuteButton) {
-                this.unmuteButton.style.display = "none"
+                if (this.unmuteButton) {
+                    this.unmuteButton.style.display = "none"
+                }
+                element.removeEventListener("touchstart", this.unlockAudioBound);
+                element.removeEventListener("click", this.unlockAudioBound)
             }
-            element.removeEventListener("touchstart", this.unlockAudioBound);
-            element.removeEventListener("click", this.unlockAudioBound)
-        }
-        .bind(this))
-    }
-    ;
+            .bind(this))
+    };
     VideoElement.prototype.onClick = function(ev) {
         if (this.player.isPlaying) {
             this.player.pause();
@@ -161,8 +161,7 @@ JSMpeg.VideoElement = function() {
                 this.poster.style.display = "none"
             }
         }
-    }
-    ;
+    };
     VideoElement.PLAY_BUTTON = '<svg style="max-width: 75px; max-height: 75px;" ' + 'viewBox="0 0 200 200" alt="Play video">' + '<circle cx="100" cy="100" r="90" fill="none" ' + 'stroke-width="15" stroke="#fff"/>' + '<polygon points="70, 55 70, 145 145, 100" fill="#fff"/>' + "</svg>";
     VideoElement.UNMUTE_BUTTON = '<svg style="max-width: 75px; max-height: 75px;" viewBox="0 0 75 75">' + '<polygon class="audio-speaker" stroke="none" fill="#fff" ' + 'points="39,13 22,28 6,28 6,47 21,47 39,62 39,13"/>' + '<g stroke="#fff" stroke-width="5">' + '<path d="M 49,50 69,26"/>' + '<path d="M 69,50 49,26"/>' + "</g>" + "</svg>";
     return VideoElement;
@@ -173,34 +172,36 @@ JSMpeg.Player = function() {
         this.options = options || {};
         //maksim add code start
         this.externalStartLoadCallback = options.onstartload || null;
-      	this.externalFrameUpDateCallback = options.onframe || null;
-      	this.externalPlayEndCallback = options.onplayend || null;
-      	this.externalPlayCallback = options.onplay || null;
-      	this.externalPauseCallback = options.onpause || null;
+        this.externalFrameUpDateCallback = options.onframe || null;
+        this.externalPlayEndCallback = options.onplayend || null;
+        this.externalPlayCallback = options.onplay || null;
+        this.externalPauseCallback = options.onpause || null;
         //外部赋值获取声音长度
-      	this.duration = options.duration || null;
+        this.duration = options.duration || null;
 
         //maksim add code end
 
         if (url.match(/^wss?:\/\//)) {
-            this.source = new JSMpeg.Source.WebSocket(url,options);
+            this.source = new JSMpeg.Source.WebSocket(url, options);
             options.streaming = true;
         } else if (options.progressive !== false) {
-            this.source = new JSMpeg.Source.AjaxProgressive(url,options);
+            this.source = new JSMpeg.Source.AjaxProgressive(url, options);
             options.streaming = false;
             //maksim add code start
-            if(this.externalStartLoadCallback)this.externalStartLoadCallback();
+            if (this.externalStartLoadCallback) this.externalStartLoadCallback();
             //maksim add code end
         } else {
-            this.source = new JSMpeg.Source.Ajax(url,options);
+            this.source = new JSMpeg.Source.Ajax(url, options);
             options.streaming = false;
             //maksim add code start
-            if(this.externalStartLoadCallback)this.externalStartLoadCallback();
+            if (this.externalStartLoadCallback) this.externalStartLoadCallback();
             //maksim add code end
         }
         this.maxAudioLag = options.maxAudioLag || 0.25;
-        this.loop = options.loop !== false;
-        this.autoplay = !!options.autoplay || options.streaming;
+        this.loop = options.loop !== undefined ? options.loop : false;
+        this.autoplay = options.autoplay !== undefined ? options.autoplay : false;
+        this.autoLoad = options.autoLoad !== undefined ? options.autoLoad : false;
+        if(options.streaming)this.autoplay = true;
         this.demuxer = new JSMpeg.Demuxer.TS(options);
         this.source.connect(this.demuxer);
         if (options.video !== false) {
@@ -223,15 +224,32 @@ JSMpeg.Player = function() {
             get: this.getVolume,
             set: this.setVolume
         });
+        Object.defineProperty(this, "muted", {
+            get: this.getMuted,
+            set: this.setMuted
+        });
         this.unpauseOnShow = false;
         if (options.pauseWhenHidden !== false) {
             document.addEventListener("visibilitychange", this.showHide.bind(this));
         }
+
+        this.startLoadBool = false;
+        if(this.autoLoad){
+          this.load();
+        }
+
+    };
+
+    Player.prototype.load = function() {
+        // console.log('mpeg load');
+        if (this.startLoadBool) return;
+        this.startLoadBool = true;
         this.source.start();
         if (this.autoplay) {
             this.play();
         }
     };
+
     Player.prototype.showHide = function(ev) {
         if (document.visibilityState === "hidden") {
             this.unpauseOnShow = this.wantsToPlay;
@@ -239,15 +257,13 @@ JSMpeg.Player = function() {
         } else if (this.unpauseOnShow) {
             this.play();
         }
-    }
-    ;
+    };
     Player.prototype.play = function(ev) {
         this.animationId = requestAnimationFrame(this.update.bind(this));
         this.wantsToPlay = true;
-          //maksim add code start
-        if(this.externalPlayCallback)this.externalPlayCallback();
-    }
-    ;
+        //maksim add code start
+        if (this.externalPlayCallback) this.externalPlayCallback();
+    };
     Player.prototype.pause = function(ev) {
         cancelAnimationFrame(this.animationId);
         this.wantsToPlay = false;
@@ -256,28 +272,39 @@ JSMpeg.Player = function() {
             this.audioOut.stop();
             this.seek(this.currentTime);
         }
-          //maksim add code start
-        if(this.externalPauseCallback)this.externalPauseCallback();
-    }
-    ;
+        //maksim add code start
+        if (this.externalPauseCallback) this.externalPauseCallback();
+    };
     Player.prototype.getVolume = function() {
         return this.audioOut ? this.audioOut.volume : 0;
-    }
-    ;
+    };
     Player.prototype.setVolume = function(volume) {
         if (this.audioOut) {
             this.audioOut.volume = volume;
         }
-    }
-    ;
+    };
+    Player.prototype.getMuted = function() {
+        if(this.audioOut){
+          if(this.audioOut.volume ===0)return true;
+          else return false;
+        }else{
+          return false;
+        }
+
+    };
+    Player.prototype.setMuted = function(value) {
+        if (this.audioOut) {
+            if(value===true)this.audioOut.volume = 0;
+            else this.audioOut.volume = 1;
+        }
+    };
     Player.prototype.stop = function(ev) {
         this.pause();
         this.seek(0);
         if (this.video && this.options.decodeFirstFrame !== false) {
             this.video.decode();
         }
-    }
-    ;
+    };
     Player.prototype.seek = function(time) {
         var startOffset = this.audio && this.audio.canPlay ? this.audio.startTime : this.video.startTime;
         if (this.video) {
@@ -287,22 +314,19 @@ JSMpeg.Player = function() {
             this.audio.seek(time + startOffset);
         }
         this.startTime = JSMpeg.Now() - time;
-    }
-    ;
+    };
     Player.prototype.getCurrentTime = function() {
         return this.audio && this.audio.canPlay ? this.audio.currentTime - this.audio.startTime : this.video.currentTime - this.video.startTime;
-    }
-    ;
+    };
     Player.prototype.setCurrentTime = function(time) {
         this.seek(time);
-    }
-    ;
+    };
     Player.prototype.update = function() {
-      // console.log('update');
+        // console.log('update');
         this.animationId = requestAnimationFrame(this.update.bind(this));
         if (!this.source.established) {
             if (this.renderer) {
-              console.log('this.source.progress:',this.source.progress);
+                console.log('this.source.progress:', this.source.progress);
                 this.renderer.renderProgress(this.source.progress);
             }
             return;
@@ -315,12 +339,11 @@ JSMpeg.Player = function() {
         if (this.options.streaming) {
             this.updateForStreaming();
         } else {
-            this.updateForStaticFile();
+            if (this.wantsToPlay) this.updateForStaticFile();
         }
-          //maksim add code start
-        if(this.externalFrameUpDateCallback)this.externalFrameUpDateCallback();
-    }
-    ;
+        //maksim add code start
+        if (this.externalFrameUpDateCallback) this.externalFrameUpDateCallback();
+    };
     Player.prototype.updateForStreaming = function() {
         if (this.video) {
             this.video.decode();
@@ -333,12 +356,13 @@ JSMpeg.Player = function() {
                     this.audioOut.enabled = false;
                 }
                 decoded = this.audio.decode();
-            } while (decoded);this.audioOut.enabled = true;
+            } while (decoded);
+            this.audioOut.enabled = true;
         }
-    }
-    ;
+    };
     Player.prototype.updateForStaticFile = function() {
-        var notEnoughData = false, headroom = 0;
+        var notEnoughData = false,
+            headroom = 0;
         if (this.audio && this.audio.canPlay) {
             while (!notEnoughData && this.audio.decodedTime - this.audio.currentTime < 0.25) {
                 notEnoughData = !this.audio.decode();
@@ -367,10 +391,9 @@ JSMpeg.Player = function() {
                 this.pause();
             }
             //maksim add code start
-            if(this.externalPlayEndCallback)this.externalPlayEndCallback();
+            if (this.externalPlayEndCallback) this.externalPlayEndCallback();
         }
-    }
-    ;
+    };
     return Player;
 }();
 JSMpeg.BitBuffer = function() {
@@ -394,11 +417,10 @@ JSMpeg.BitBuffer = function() {
         }
         this.bytes = newBytes;
         this.index = Math.min(this.index, this.byteLength << 3)
-    }
-    ;
+    };
     BitBuffer.prototype.evict = function(sizeNeeded) {
-        var bytePos = this.index >> 3
-          , available = this.bytes.length - this.byteLength;
+        var bytePos = this.index >> 3,
+            available = this.bytes.length - this.byteLength;
         if (this.index === this.byteLength << 3 || sizeNeeded > available + bytePos) {
             this.byteLength = 0;
             this.index = 0;
@@ -414,12 +436,11 @@ JSMpeg.BitBuffer = function() {
         this.byteLength = this.byteLength - bytePos;
         this.index -= bytePos << 3;
         return
-    }
-    ;
+    };
     BitBuffer.prototype.write = function(buffers) {
-        var isArrayOfBuffers = typeof buffers[0] === "object"
-          , totalLength = 0
-          , available = this.bytes.length - this.byteLength;
+        var isArrayOfBuffers = typeof buffers[0] === "object",
+            totalLength = 0,
+            available = this.bytes.length - this.byteLength;
         if (isArrayOfBuffers) {
             var totalLength = 0;
             for (var i = 0; i < buffers.length; i++) {
@@ -443,14 +464,12 @@ JSMpeg.BitBuffer = function() {
         } else {
             this.appendSingleBuffer(buffers)
         }
-    }
-    ;
+    };
     BitBuffer.prototype.appendSingleBuffer = function(buffer) {
         buffer = buffer instanceof Uint8Array ? buffer : new Uint8Array(buffer);
         this.bytes.set(buffer, this.byteLength);
         this.byteLength += buffer.length
-    }
-    ;
+    };
     BitBuffer.prototype.findNextStartCode = function() {
         for (var i = this.index + 7 >> 3; i < this.byteLength; i++) {
             if (this.bytes[i] == 0 && this.bytes[i + 1] == 0 && this.bytes[i + 2] == 1) {
@@ -460,8 +479,7 @@ JSMpeg.BitBuffer = function() {
         }
         this.index = this.byteLength << 3;
         return -1
-    }
-    ;
+    };
     BitBuffer.prototype.findStartCode = function(code) {
         var current = 0;
         while (true) {
@@ -471,47 +489,40 @@ JSMpeg.BitBuffer = function() {
             }
         }
         return -1
-    }
-    ;
+    };
     BitBuffer.prototype.nextBytesAreStartCode = function() {
         var i = this.index + 7 >> 3;
         return i >= this.byteLength || this.bytes[i] == 0 && this.bytes[i + 1] == 0 && this.bytes[i + 2] == 1
-    }
-    ;
+    };
     BitBuffer.prototype.peek = function(count) {
         var offset = this.index;
         var value = 0;
         while (count) {
-            var currentByte = this.bytes[offset >> 3]
-              , remaining = 8 - (offset & 7)
-              , read = remaining < count ? remaining : count
-              , shift = remaining - read
-              , mask = 255 >> 8 - read;
+            var currentByte = this.bytes[offset >> 3],
+                remaining = 8 - (offset & 7),
+                read = remaining < count ? remaining : count,
+                shift = remaining - read,
+                mask = 255 >> 8 - read;
             value = value << read | (currentByte & mask << shift) >> shift;
             offset += read;
             count -= read
         }
         return value
-    }
-    ;
+    };
     BitBuffer.prototype.read = function(count) {
         var value = this.peek(count);
         this.index += count;
         return value
-    }
-    ;
+    };
     BitBuffer.prototype.skip = function(count) {
         return this.index += count
-    }
-    ;
+    };
     BitBuffer.prototype.rewind = function(count) {
         this.index = Math.max(this.index - count, 0)
-    }
-    ;
+    };
     BitBuffer.prototype.has = function(count) {
         return (this.byteLength << 3) - this.index >= count
-    }
-    ;
+    };
     BitBuffer.MODE = {
         EVICT: 1,
         EXPAND: 2
@@ -530,32 +541,27 @@ JSMpeg.Source.Ajax = function() {
     };
     AjaxSource.prototype.connect = function(destination) {
         this.destination = destination
-    }
-    ;
+    };
     AjaxSource.prototype.start = function() {
         this.request = new XMLHttpRequest;
         this.request.onreadystatechange = function() {
-            if (this.request.readyState === this.request.DONE && this.request.status === 200) {
-                this.onLoad(this.request.response)
+                if (this.request.readyState === this.request.DONE && this.request.status === 200) {
+                    this.onLoad(this.request.response)
+                }
             }
-        }
-        .bind(this);
+            .bind(this);
         this.request.onprogress = this.onProgress.bind(this);
         this.request.open("GET", this.url);
         this.request.responseType = "arraybuffer";
         this.request.send()
-    }
-    ;
-    AjaxSource.prototype.resume = function(secondsHeadroom) {}
-    ;
+    };
+    AjaxSource.prototype.resume = function(secondsHeadroom) {};
     AjaxSource.prototype.abort = function() {
         this.request.abort()
-    }
-    ;
+    };
     AjaxSource.prototype.onProgress = function(ev) {
         this.progress = ev.loaded / ev.total
-    }
-    ;
+    };
     AjaxSource.prototype.onLoad = function(data) {
         this.established = true;
         this.completed = true;
@@ -563,14 +569,13 @@ JSMpeg.Source.Ajax = function() {
         if (this.destination) {
             this.destination.write(data)
         }
-    }
-    ;
+    };
     return AjaxSource
 }();
 JSMpeg.Source.AjaxProgressive = function() {
     "use strict";
     var AjaxProgressiveSource = function(url, options) {
-        options=options||{};
+        options = options || {};
         this.externalProgressCallback = options.onprogress || null;
         this.externalLoadCallback = options.onload || null;
         this.externalCanPlayCallback = options.oncanPlay || null;
@@ -591,22 +596,20 @@ JSMpeg.Source.AjaxProgressive = function() {
     };
     AjaxProgressiveSource.prototype.connect = function(destination) {
         this.destination = destination
-    }
-    ;
+    };
     AjaxProgressiveSource.prototype.start = function() {
         this.request = new XMLHttpRequest;
         this.request.onreadystatechange = function() {
-            if (this.request.readyState === this.request.DONE) {
-                this.fileSize = parseInt(this.request.getResponseHeader("Content-Length"));
-                this.loadNextChunk()
+                if (this.request.readyState === this.request.DONE) {
+                    this.fileSize = parseInt(this.request.getResponseHeader("Content-Length"));
+                    this.loadNextChunk()
+                }
             }
-        }
-        .bind(this);
+            .bind(this);
         this.request.onprogress = this.onProgress.bind(this);
         this.request.open("HEAD", this.url);
         this.request.send()
-    }
-    ;
+    };
     AjaxProgressiveSource.prototype.resume = function(secondsHeadroom) {
         if (this.isLoading || !this.throttled) {
             return
@@ -615,51 +618,48 @@ JSMpeg.Source.AjaxProgressive = function() {
         if (worstCaseLoadingTime > secondsHeadroom) {
             this.loadNextChunk()
         }
-    }
-    ;
+    };
     AjaxProgressiveSource.prototype.abort = function() {
         this.request.abort()
-    }
-    ;
+    };
     AjaxProgressiveSource.prototype.loadNextChunk = function() {
-        var start = this.loadedSize
-          , end = Math.min(this.loadedSize + this.chunkSize - 1, this.fileSize - 1);
+        var start = this.loadedSize,
+            end = Math.min(this.loadedSize + this.chunkSize - 1, this.fileSize - 1);
         if (start >= this.fileSize) {
             this.completed = true;
-            if(this.externalLoadCallback )this.externalLoadCallback();
+            if (this.externalLoadCallback) this.externalLoadCallback();
             return
         }
         this.isLoading = true;
         this.loadStartTime = JSMpeg.Now();
         this.request = new XMLHttpRequest;
         this.request.onreadystatechange = function() {
-            if (this.request.readyState === this.request.DONE && this.request.status >= 200 && this.request.status < 300) {
-                this.onChunkLoad(this.request.response)
-            } else if (this.request.readyState === this.request.DONE) {
-                if (this.loadFails++ < 3) {
-                    this.loadNextChunk()
+                if (this.request.readyState === this.request.DONE && this.request.status >= 200 && this.request.status < 300) {
+                    this.onChunkLoad(this.request.response)
+                } else if (this.request.readyState === this.request.DONE) {
+                    if (this.loadFails++ < 3) {
+                        this.loadNextChunk()
+                    }
                 }
             }
-        }
-        .bind(this);
+            .bind(this);
         // if (start === 0) {
-            this.request.onprogress = this.onProgress.bind(this)
+        this.request.onprogress = this.onProgress.bind(this)
         // }
         this.request.open("GET", this.url + "?" + start + "-" + end);
         this.request.setRequestHeader("Range", "bytes=" + start + "-" + end);
         this.request.responseType = "arraybuffer";
         this.request.send()
-    }
-    ;
+    };
     AjaxProgressiveSource.prototype.onProgress = function(ev) {
         this.progress = ev.loaded / ev.total;
-        if(this.loadedSize===0){
-          if(this.externalCanPlayProgressCallback)this.externalCanPlayProgressCallback(this.progress);
+        if (this.loadedSize === 0) {
+            if (this.externalCanPlayProgressCallback) this.externalCanPlayProgressCallback(this.progress);
         }
 
-        if(this.externalProgressCallback){
-          var _progress=(this.loadedSize+ev.loaded)/this.fileSize;
-          this.externalProgressCallback(_progress);
+        if (this.externalProgressCallback) {
+            var _progress = (this.loadedSize + ev.loaded) / this.fileSize;
+            this.externalProgressCallback(_progress);
         }
 
     };
@@ -677,8 +677,8 @@ JSMpeg.Source.AjaxProgressive = function() {
             this.loadNextChunk()
         }
         // console.log(this.loadedSize,this.fileSize);
-        if(this.loadedSize<=this.chunkSize){
-          if(this.externalCanPlayCallback)this.externalCanPlayCallback();
+        if (this.loadedSize <= this.chunkSize) {
+            if (this.externalCanPlayCallback) this.externalCanPlayCallback();
         }
 
 
@@ -703,13 +703,11 @@ JSMpeg.Source.WebSocket = function() {
     };
     WSSource.prototype.connect = function(destination) {
         this.destination = destination
-    }
-    ;
+    };
     WSSource.prototype.abort = function() {
         this.shouldAttemptReconnect = false;
         this.socket.close()
-    }
-    ;
+    };
     WSSource.prototype.start = function() {
         this.shouldAttemptReconnect = !!this.reconnectInterval;
         this.progress = 0;
@@ -720,30 +718,25 @@ JSMpeg.Source.WebSocket = function() {
         this.socket.onopen = this.onOpen.bind(this);
         this.socket.onerror = this.onClose.bind(this);
         this.socket.onclose = this.onClose.bind(this)
-    }
-    ;
-    WSSource.prototype.resume = function(secondsHeadroom) {}
-    ;
+    };
+    WSSource.prototype.resume = function(secondsHeadroom) {};
     WSSource.prototype.onOpen = function() {
         this.progress = 1;
         this.established = true
-    }
-    ;
+    };
     WSSource.prototype.onClose = function() {
         if (this.shouldAttemptReconnect) {
             setTimeout(function() {
-                this.start()
-            }
-            .bind(this), this.reconnectInterval * 1e3)
+                    this.start()
+                }
+                .bind(this), this.reconnectInterval * 1e3)
         }
-    }
-    ;
+    };
     WSSource.prototype.onMessage = function(ev) {
         if (this.destination) {
             this.destination.write(ev.data)
         }
-    }
-    ;
+    };
     return WSSource
 }();
 JSMpeg.Demuxer.TS = function() {
@@ -765,8 +758,7 @@ JSMpeg.Demuxer.TS = function() {
             pts: 0,
             buffers: []
         }
-    }
-    ;
+    };
     TS.prototype.write = function(buffer) {
         if (this.leftoverBytes) {
             var totalLength = buffer.byteLength + this.leftoverBytes.byteLength;
@@ -780,20 +772,19 @@ JSMpeg.Demuxer.TS = function() {
         }
         var leftoverCount = this.bits.byteLength - (this.bits.index >> 3);
         this.leftoverBytes = leftoverCount > 0 ? this.bits.bytes.subarray(this.bits.index >> 3) : null
-    }
-    ;
+    };
     TS.prototype.parsePacket = function() {
         var end = (this.bits.index >> 3) + 188;
         if (this.bits.read(8) !== 71) {
             throw "Sync Token not found"
         }
-        var transportError = this.bits.read(1)
-          , payloadStart = this.bits.read(1)
-          , transportPriority = this.bits.read(1)
-          , pid = this.bits.read(13)
-          , transportScrambling = this.bits.read(2)
-          , adaptationField = this.bits.read(2)
-          , continuityCounter = this.bits.read(4);
+        var transportError = this.bits.read(1),
+            payloadStart = this.bits.read(1),
+            transportPriority = this.bits.read(1),
+            pid = this.bits.read(13),
+            transportScrambling = this.bits.read(2),
+            adaptationField = this.bits.read(2),
+            continuityCounter = this.bits.read(4);
         var streamId = this.pidsToStreamIds[pid];
         if (payloadStart && streamId) {
             var pi = this.pesPacketInfo[streamId];
@@ -851,28 +842,24 @@ JSMpeg.Demuxer.TS = function() {
             }
         }
         this.bits.index = end << 3
-    }
-    ;
+    };
     TS.prototype.packetStart = function(pi, pts, payloadLength) {
         pi.totalLength = payloadLength;
         pi.currentLength = 0;
         pi.pts = pts
-    }
-    ;
+    };
     TS.prototype.packetAddData = function(pi, start, end) {
         pi.buffers.push(this.bits.bytes.subarray(start, end));
         pi.currentLength += end - start;
         var complete = pi.totalLength !== 0 && pi.currentLength >= pi.totalLength;
         return complete
-    }
-    ;
+    };
     TS.prototype.packetComplete = function(pi) {
         pi.destination.write(pi.pts, pi.buffers);
         pi.totalLength = 0;
         pi.currentLength = 0;
         pi.buffers = []
-    }
-    ;
+    };
     TS.STREAM = {
         PACK_HEADER: 186,
         SYSTEM_HEADER: 187,
@@ -902,8 +889,7 @@ JSMpeg.Decoder.Base = function() {
     };
     BaseDecoder.prototype.connect = function(destination) {
         this.destination = destination
-    }
-    ;
+    };
     BaseDecoder.prototype.write = function(pts, buffers) {
         if (this.collectTimestamps) {
             if (this.timestamps.length === 0) {
@@ -917,8 +903,7 @@ JSMpeg.Decoder.Base = function() {
         }
         this.bits.write(buffers);
         this.canPlay = true
-    }
-    ;
+    };
     BaseDecoder.prototype.seek = function(time) {
         if (!this.collectTimestamps) {
             return
@@ -938,12 +923,10 @@ JSMpeg.Decoder.Base = function() {
             this.bits.index = 0;
             this.decodedTime = this.startTime
         }
-    }
-    ;
+    };
     BaseDecoder.prototype.decode = function() {
         this.advanceDecodedTime(0)
-    }
-    ;
+    };
     BaseDecoder.prototype.advanceDecodedTime = function(seconds) {
         if (this.collectTimestamps) {
             var newTimestampIndex = -1;
@@ -960,12 +943,10 @@ JSMpeg.Decoder.Base = function() {
             }
         }
         this.decodedTime += seconds
-    }
-    ;
+    };
     BaseDecoder.prototype.getCurrentTime = function() {
         return this.decodedTime
-    }
-    ;
+    };
     return BaseDecoder
 }();
 JSMpeg.Decoder.MPEG1Video = function() {
@@ -974,7 +955,7 @@ JSMpeg.Decoder.MPEG1Video = function() {
         JSMpeg.Decoder.Base.call(this, options);
         var bufferSize = options.videoBufferSize || 512 * 1024;
         var bufferMode = options.streaming ? JSMpeg.BitBuffer.MODE.EVICT : JSMpeg.BitBuffer.MODE.EXPAND;
-        this.bits = new JSMpeg.BitBuffer(bufferSize,bufferMode);
+        this.bits = new JSMpeg.BitBuffer(bufferSize, bufferMode);
         this.customIntraQuantMatrix = new Uint8Array(64);
         this.customNonIntraQuantMatrix = new Uint8Array(64);
         this.blockData = new Int32Array(64);
@@ -994,8 +975,7 @@ JSMpeg.Decoder.MPEG1Video = function() {
                 this.decode()
             }
         }
-    }
-    ;
+    };
     MPEG1.prototype.decode = function() {
         if (!this.hasSequenceHeader) {
             return false
@@ -1007,19 +987,18 @@ JSMpeg.Decoder.MPEG1Video = function() {
         this.decodePicture();
         this.advanceDecodedTime(1 / this.frameRate);
         return true
-    }
-    ;
+    };
     MPEG1.prototype.readHuffman = function(codeTable) {
         var state = 0;
         do {
             state = codeTable[state + this.bits.read(1)]
-        } while (state >= 0 && codeTable[state] !== 0);return codeTable[state + 2]
-    }
-    ;
+        } while (state >= 0 && codeTable[state] !== 0);
+        return codeTable[state + 2]
+    };
     MPEG1.prototype.frameRate = 30;
     MPEG1.prototype.decodeSequenceHeader = function() {
-        var newWidth = this.bits.read(12)
-          , newHeight = this.bits.read(12);
+        var newWidth = this.bits.read(12),
+            newHeight = this.bits.read(12);
         this.bits.skip(4);
         this.frameRate = MPEG1.PICTURE_RATE[this.bits.read(4)];
         this.bits.skip(18 + 1 + 10 + 1);
@@ -1045,8 +1024,7 @@ JSMpeg.Decoder.MPEG1Video = function() {
             this.nonIntraQuantMatrix = this.customNonIntraQuantMatrix
         }
         this.hasSequenceHeader = true
-    }
-    ;
+    };
     MPEG1.prototype.initBuffers = function() {
         this.intraQuantMatrix = MPEG1.DEFAULT_INTRA_QUANT_MATRIX;
         this.nonIntraQuantMatrix = MPEG1.DEFAULT_NON_INTRA_QUANT_MATRIX;
@@ -1070,8 +1048,7 @@ JSMpeg.Decoder.MPEG1Video = function() {
         this.forwardCr32 = new Uint32Array(this.forwardCr.buffer);
         this.forwardCb = new Uint8ClampedArray(this.codedSize >> 2);
         this.forwardCb32 = new Uint32Array(this.forwardCb.buffer)
-    }
-    ;
+    };
     MPEG1.prototype.currentY = null;
     MPEG1.prototype.currentCr = null;
     MPEG1.prototype.currentCb = null;
@@ -1103,7 +1080,8 @@ JSMpeg.Decoder.MPEG1Video = function() {
         var code = 0;
         do {
             code = this.bits.findNextStartCode()
-        } while (code === MPEG1.START.EXTENSION || code === MPEG1.START.USER_DATA);while (code >= MPEG1.START.SLICE_FIRST && code <= MPEG1.START.SLICE_LAST) {
+        } while (code === MPEG1.START.EXTENSION || code === MPEG1.START.USER_DATA);
+        while (code >= MPEG1.START.SLICE_FIRST && code <= MPEG1.START.SLICE_LAST) {
             this.decodeSlice(code & 255);
             code = this.bits.findNextStartCode()
         }
@@ -1114,12 +1092,12 @@ JSMpeg.Decoder.MPEG1Video = function() {
             this.destination.render(this.currentY, this.currentCr, this.currentCb)
         }
         if (this.pictureType === MPEG1.PICTURE_TYPE.INTRA || this.pictureType === MPEG1.PICTURE_TYPE.PREDICTIVE) {
-            var tmpY = this.forwardY
-              , tmpY32 = this.forwardY32
-              , tmpCr = this.forwardCr
-              , tmpCr32 = this.forwardCr32
-              , tmpCb = this.forwardCb
-              , tmpCb32 = this.forwardCb32;
+            var tmpY = this.forwardY,
+                tmpY32 = this.forwardY32,
+                tmpCr = this.forwardCr,
+                tmpCr32 = this.forwardCr32,
+                tmpCb = this.forwardCb,
+                tmpCb32 = this.forwardCb32;
             this.forwardY = this.currentY;
             this.forwardY32 = this.currentY32;
             this.forwardCr = this.currentCr;
@@ -1133,8 +1111,7 @@ JSMpeg.Decoder.MPEG1Video = function() {
             this.currentCb = tmpCb;
             this.currentCb32 = tmpCb32
         }
-    }
-    ;
+    };
     MPEG1.prototype.quantizerScale = 0;
     MPEG1.prototype.sliceBegin = false;
     MPEG1.prototype.decodeSlice = function(slice) {
@@ -1152,8 +1129,7 @@ JSMpeg.Decoder.MPEG1Video = function() {
         do {
             this.decodeMacroblock()
         } while (!this.bits.nextBytesAreStartCode())
-    }
-    ;
+    };
     MPEG1.prototype.macroblockAddress = 0;
     MPEG1.prototype.mbRow = 0;
     MPEG1.prototype.mbCol = 0;
@@ -1165,8 +1141,8 @@ JSMpeg.Decoder.MPEG1Video = function() {
     MPEG1.prototype.motionFwHPrev = 0;
     MPEG1.prototype.motionFwVPrev = 0;
     MPEG1.prototype.decodeMacroblock = function() {
-        var increment = 0
-          , t = this.readHuffman(MPEG1.MACROBLOCK_ADDRESS_INCREMENT);
+        var increment = 0,
+            t = this.readHuffman(MPEG1.MACROBLOCK_ADDRESS_INCREMENT);
         while (t === 34) {
             t = this.readHuffman(MPEG1.MACROBLOCK_ADDRESS_INCREMENT)
         }
@@ -1226,8 +1202,7 @@ JSMpeg.Decoder.MPEG1Video = function() {
             }
             mask >>= 1
         }
-    }
-    ;
+    };
     MPEG1.prototype.decodeMotionVectors = function() {
         var code, d, r = 0;
         if (this.macroblockMotFw) {
@@ -1275,13 +1250,12 @@ JSMpeg.Decoder.MPEG1Video = function() {
             this.motionFwH = this.motionFwHPrev = 0;
             this.motionFwV = this.motionFwVPrev = 0
         }
-    }
-    ;
+    };
     MPEG1.prototype.copyMacroblock = function(motionH, motionV, sY, sCr, sCb) {
         var width, scan, H, V, oddH, oddV, src, dest, last;
-        var dY = this.currentY32
-          , dCb = this.currentCb32
-          , dCr = this.currentCr32;
+        var dY = this.currentY32,
+            dCb = this.currentCb32,
+            dCr = this.currentCr32;
         width = this.codedWidth;
         scan = width - 16;
         H = motionH >> 1;
@@ -1490,14 +1464,14 @@ JSMpeg.Decoder.MPEG1Video = function() {
                 }
             }
         }
-    }
-    ;
+    };
     MPEG1.prototype.dcPredictorY = 0;
     MPEG1.prototype.dcPredictorCr = 0;
     MPEG1.prototype.dcPredictorCb = 0;
     MPEG1.prototype.blockData = null;
     MPEG1.prototype.decodeBlock = function(block) {
-        var n = 0, quantMatrix;
+        var n = 0,
+            quantMatrix;
         if (this.macroblockIntra) {
             var predictor, dctSize;
             if (block < 4) {
@@ -1532,8 +1506,8 @@ JSMpeg.Decoder.MPEG1Video = function() {
         }
         var level = 0;
         while (true) {
-            var run = 0
-              , coeff = this.readHuffman(MPEG1.DCT_COEFF);
+            var run = 0,
+                coeff = this.readHuffman(MPEG1.DCT_COEFF);
             if (coeff === 1 && n > 0 && this.bits.read(1) === 0) {
                 break
             }
@@ -1608,11 +1582,10 @@ JSMpeg.Decoder.MPEG1Video = function() {
             }
         }
         n = 0
-    }
-    ;
+    };
     MPEG1.CopyBlockToDestination = function(block, dest, index, scan) {
         for (var n = 0; n < 64; n += 8,
-        index += scan + 8) {
+            index += scan + 8) {
             dest[index + 0] = block[n + 0];
             dest[index + 1] = block[n + 1];
             dest[index + 2] = block[n + 2];
@@ -1622,11 +1595,10 @@ JSMpeg.Decoder.MPEG1Video = function() {
             dest[index + 6] = block[n + 6];
             dest[index + 7] = block[n + 7]
         }
-    }
-    ;
+    };
     MPEG1.AddBlockToDestination = function(block, dest, index, scan) {
         for (var n = 0; n < 64; n += 8,
-        index += scan + 8) {
+            index += scan + 8) {
             dest[index + 0] += block[n + 0];
             dest[index + 1] += block[n + 1];
             dest[index + 2] += block[n + 2];
@@ -1636,11 +1608,10 @@ JSMpeg.Decoder.MPEG1Video = function() {
             dest[index + 6] += block[n + 6];
             dest[index + 7] += block[n + 7]
         }
-    }
-    ;
+    };
     MPEG1.CopyValueToDestination = function(value, dest, index, scan) {
         for (var n = 0; n < 64; n += 8,
-        index += scan + 8) {
+            index += scan + 8) {
             dest[index + 0] = value;
             dest[index + 1] = value;
             dest[index + 2] = value;
@@ -1650,11 +1621,10 @@ JSMpeg.Decoder.MPEG1Video = function() {
             dest[index + 6] = value;
             dest[index + 7] = value
         }
-    }
-    ;
+    };
     MPEG1.AddValueToDestination = function(value, dest, index, scan) {
         for (var n = 0; n < 64; n += 8,
-        index += scan + 8) {
+            index += scan + 8) {
             dest[index + 0] += value;
             dest[index + 1] += value;
             dest[index + 2] += value;
@@ -1664,8 +1634,7 @@ JSMpeg.Decoder.MPEG1Video = function() {
             dest[index + 6] += value;
             dest[index + 7] += value
         }
-    }
-    ;
+    };
     MPEG1.IDCT = function(block) {
         var b1, b3, b4, b6, b7, tmp1, tmp2, m0, x0, x1, x2, x3, x4, y3, y4, y5, y6, y7;
         for (var i = 0; i < 8; ++i) {
@@ -1724,8 +1693,7 @@ JSMpeg.Decoder.MPEG1Video = function() {
             block[6 + i] = y3 - x4 + 128 >> 8;
             block[7 + i] = y4 - b7 + 128 >> 8
         }
-    }
-    ;
+    };
     MPEG1.PICTURE_RATE = [0, 23.976, 24, 25, 29.97, 30, 50, 59.94, 60, 0, 0, 0, 0, 0, 0, 0];
     MPEG1.ZIG_ZAG = new Uint8Array([0, 1, 8, 16, 9, 2, 3, 10, 17, 24, 32, 25, 18, 11, 4, 5, 12, 19, 26, 33, 40, 48, 41, 34, 27, 20, 13, 6, 7, 14, 21, 28, 35, 42, 49, 56, 57, 50, 43, 36, 29, 22, 15, 23, 30, 37, 44, 51, 58, 59, 52, 45, 38, 31, 39, 46, 53, 60, 61, 54, 47, 55, 62, 63]);
     MPEG1.DEFAULT_INTRA_QUANT_MATRIX = new Uint8Array([8, 16, 19, 22, 26, 27, 29, 34, 16, 16, 22, 24, 27, 29, 34, 37, 19, 22, 26, 27, 29, 34, 34, 38, 22, 22, 26, 27, 29, 34, 37, 40, 22, 26, 27, 29, 32, 35, 40, 48, 26, 27, 29, 32, 35, 40, 48, 58, 26, 27, 29, 34, 38, 46, 56, 69, 27, 29, 35, 38, 46, 56, 69, 83]);
@@ -1762,7 +1730,7 @@ JSMpeg.Decoder.MP2Audio = function() {
         JSMpeg.Decoder.Base.call(this, options);
         var bufferSize = options.audioBufferSize || 128 * 1024;
         var bufferMode = options.streaming ? JSMpeg.BitBuffer.MODE.EVICT : JSMpeg.BitBuffer.MODE.EXPAND;
-        this.bits = new JSMpeg.BitBuffer(bufferSize,bufferMode);
+        this.bits = new JSMpeg.BitBuffer(bufferSize, bufferMode);
         this.left = new Float32Array(1152);
         this.right = new Float32Array(1152);
         this.sampleRate = 44100;
@@ -1800,18 +1768,16 @@ JSMpeg.Decoder.MP2Audio = function() {
         }
         this.advanceDecodedTime(this.left.length / this.sampleRate);
         return true
-    }
-    ;
+    };
     MP2.prototype.getCurrentTime = function() {
         var enqueuedTime = this.destination ? this.destination.enqueuedTime : 0;
         return this.decodedTime - enqueuedTime
-    }
-    ;
+    };
     MP2.prototype.decodeFrame = function(left, right) {
-        var sync = this.bits.read(11)
-          , version = this.bits.read(2)
-          , layer = this.bits.read(2)
-          , hasCRC = !this.bits.read(1);
+        var sync = this.bits.read(11),
+            version = this.bits.read(2),
+            layer = this.bits.read(2),
+            hasCRC = !this.bits.read(1);
         if (sync !== MP2.FRAME_SYNC || version !== MP2.VERSION.MPEG_1 || layer !== MP2.LAYER.II) {
             return 0
         }
@@ -1828,9 +1794,9 @@ JSMpeg.Decoder.MP2Audio = function() {
             sampleRateIndex += 4;
             bitrateIndex += 14
         }
-        var padding = this.bits.read(1)
-          , privat = this.bits.read(1)
-          , mode = this.bits.read(2);
+        var padding = this.bits.read(1),
+            privat = this.bits.read(1),
+            mode = this.bits.read(2);
         var bound = 0;
         if (mode === MP2.MODE.JOINT_STEREO) {
             bound = this.bits.read(2) + 1 << 2
@@ -1842,9 +1808,9 @@ JSMpeg.Decoder.MP2Audio = function() {
         if (hasCRC) {
             this.bits.skip(16)
         }
-        var bitrate = MP2.BIT_RATE[bitrateIndex]
-          , sampleRate = MP2.SAMPLE_RATE[sampleRateIndex]
-          , frameSize = 144e3 * bitrate / sampleRate + padding | 0;
+        var bitrate = MP2.BIT_RATE[bitrateIndex],
+            sampleRate = MP2.SAMPLE_RATE[sampleRateIndex],
+            frameSize = 144e3 * bitrate / sampleRate + padding | 0;
         var tab3 = 0;
         var sblimit = 0;
         if (version === MP2.VERSION.MPEG_2) {
@@ -1883,22 +1849,22 @@ JSMpeg.Decoder.MP2Audio = function() {
                 if (this.allocation[ch][sb]) {
                     var sf = this.scaleFactor[ch][sb];
                     switch (this.scaleFactorInfo[ch][sb]) {
-                    case 0:
-                        sf[0] = this.bits.read(6);
-                        sf[1] = this.bits.read(6);
-                        sf[2] = this.bits.read(6);
-                        break;
-                    case 1:
-                        sf[0] = sf[1] = this.bits.read(6);
-                        sf[2] = this.bits.read(6);
-                        break;
-                    case 2:
-                        sf[0] = sf[1] = sf[2] = this.bits.read(6);
-                        break;
-                    case 3:
-                        sf[0] = this.bits.read(6);
-                        sf[1] = sf[2] = this.bits.read(6);
-                        break
+                        case 0:
+                            sf[0] = this.bits.read(6);
+                            sf[1] = this.bits.read(6);
+                            sf[2] = this.bits.read(6);
+                            break;
+                        case 1:
+                            sf[0] = sf[1] = this.bits.read(6);
+                            sf[2] = this.bits.read(6);
+                            break;
+                        case 2:
+                            sf[0] = sf[1] = sf[2] = this.bits.read(6);
+                            break;
+                        case 3:
+                            sf[0] = this.bits.read(6);
+                            sf[1] = sf[2] = this.bits.read(6);
+                            break
                     }
                 }
             }
@@ -1963,19 +1929,17 @@ JSMpeg.Decoder.MP2Audio = function() {
         }
         this.sampleRate = sampleRate;
         return frameSize
-    }
-    ;
+    };
     MP2.prototype.readAllocation = function(sb, tab3) {
         var tab4 = MP2.QUANT_LUT_STEP_3[tab3][sb];
         var qtab = MP2.QUANT_LUT_STEP4[tab4 & 15][this.bits.read(tab4 >> 4)];
         return qtab ? MP2.QUANT_TAB[qtab - 1] : 0
-    }
-    ;
+    };
     MP2.prototype.readSamples = function(ch, sb, part) {
-        var q = this.allocation[ch][sb]
-          , sf = this.scaleFactor[ch][sb][part]
-          , sample = this.sample[ch][sb]
-          , val = 0;
+        var q = this.allocation[ch][sb],
+            sf = this.scaleFactor[ch][sb][part],
+            sample = this.sample[ch][sb],
+            val = 0;
         if (!q) {
             sample[0] = sample[1] = sample[2] = 0;
             return
@@ -2006,8 +1970,7 @@ JSMpeg.Decoder.MP2Audio = function() {
         sample[1] = val * (sf >> 12) + (val * (sf & 4095) + 2048 >> 12) >> 12;
         val = (adj - sample[2]) * scale;
         sample[2] = val * (sf >> 12) + (val * (sf & 4095) + 2048 >> 12) >> 12
-    }
-    ;
+    };
     MP2.MatrixTransform = function(s, ss, d, dp) {
         var t01, t02, t03, t04, t05, t06, t07, t08, t09, t10, t11, t12, t13, t14, t15, t16, t17, t18, t19, t20, t21, t22, t23, t24, t25, t26, t27, t28, t29, t30, t31, t32, t33;
         t01 = s[0][ss] + s[31][ss];
@@ -2268,8 +2231,7 @@ JSMpeg.Decoder.MP2Audio = function() {
         d[dp + 17] = -t02;
         d[dp + 15] = t02;
         d[dp + 16] = 0
-    }
-    ;
+    };
     MP2.FRAME_SYNC = 2047;
     MP2.VERSION = {
         MPEG_2_5: 0,
@@ -2291,16 +2253,34 @@ JSMpeg.Decoder.MP2Audio = function() {
     MP2.BIT_RATE = new Uint16Array([32, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256, 320, 384, 8, 16, 24, 32, 40, 48, 56, 64, 80, 96, 112, 128, 144, 160]);
     MP2.SCALEFACTOR_BASE = new Uint32Array([33554432, 26632170, 21137968]);
     MP2.SYNTHESIS_WINDOW = new Float32Array([0, -.5, -.5, -.5, -.5, -.5, -.5, -1, -1, -1, -1, -1.5, -1.5, -2, -2, -2.5, -2.5, -3, -3.5, -3.5, -4, -4.5, -5, -5.5, -6.5, -7, -8, -8.5, -9.5, -10.5, -12, -13, -14.5, -15.5, -17.5, -19, -20.5, -22.5, -24.5, -26.5, -29, -31.5, -34, -36.5, -39.5, -42.5, -45.5, -48.5, -52, -55.5, -58.5, -62.5, -66, -69.5, -73.5, -77, -80.5, -84.5, -88, -91.5, -95, -98, -101, -104, 106.5, 109, 111, 112.5, 113.5, 114, 114, 113.5, 112, 110.5, 107.5, 104, 100, 94.5, 88.5, 81.5, 73, 63.5, 53, 41.5, 28.5, 14.5, -1, -18, -36, -55.5, -76.5, -98.5, -122, -147, -173.5, -200.5, -229.5, -259.5, -290.5, -322.5, -355.5, -389.5, -424, -459.5, -495.5, -532, -568.5, -605, -641.5, -678, -714, -749, -783.5, -817, -849, -879.5, -908.5, -935, -959.5, -981, -1000.5, -1016, -1028.5, -1037.5, -1042.5, -1043.5, -1040, -1031.5, 1018.5, 1e3, 976, 946.5, 911, 869.5, 822, 767.5, 707, 640, 565.5, 485, 397, 302.5, 201, 92.5, -22.5, -144, -272.5, -407, -547.5, -694, -846, -1003, -1165, -1331.5, -1502, -1675.5, -1852.5, -2031.5, -2212.5, -2394, -2576.5, -2758.5, -2939.5, -3118.5, -3294.5, -3467.5, -3635.5, -3798.5, -3955, -4104.5, -4245.5, -4377.5, -4499, -4609.5, -4708, -4792.5, -4863.5, -4919, -4958, -4979.5, -4983, -4967.5, -4931.5, -4875, -4796, -4694.5, -4569.5, -4420, -4246, -4046, -3820, -3567, 3287, 2979.5, 2644, 2280.5, 1888, 1467.5, 1018.5, 541, 35, -499, -1061, -1650, -2266.5, -2909, -3577, -4270, -4987.5, -5727.5, -6490, -7274, -8077.5, -8899.5, -9739, -10594.5, -11464.5, -12347, -13241, -14144.5, -15056, -15973.5, -16895.5, -17820, -18744.5, -19668, -20588, -21503, -22410.5, -23308.5, -24195, -25068.5, -25926.5, -26767, -27589, -28389, -29166.5, -29919, -30644.5, -31342, -32009.5, -32645, -33247, -33814.5, -34346, -34839.5, -35295, -35710, -36084.5, -36417.5, -36707.5, -36954, -37156.5, -37315, -37428, -37496, 37519, 37496, 37428, 37315, 37156.5, 36954, 36707.5, 36417.5, 36084.5, 35710, 35295, 34839.5, 34346, 33814.5, 33247, 32645, 32009.5, 31342, 30644.5, 29919, 29166.5, 28389, 27589, 26767, 25926.5, 25068.5, 24195, 23308.5, 22410.5, 21503, 20588, 19668, 18744.5, 17820, 16895.5, 15973.5, 15056, 14144.5, 13241, 12347, 11464.5, 10594.5, 9739, 8899.5, 8077.5, 7274, 6490, 5727.5, 4987.5, 4270, 3577, 2909, 2266.5, 1650, 1061, 499, -35, -541, -1018.5, -1467.5, -1888, -2280.5, -2644, -2979.5, 3287, 3567, 3820, 4046, 4246, 4420, 4569.5, 4694.5, 4796, 4875, 4931.5, 4967.5, 4983, 4979.5, 4958, 4919, 4863.5, 4792.5, 4708, 4609.5, 4499, 4377.5, 4245.5, 4104.5, 3955, 3798.5, 3635.5, 3467.5, 3294.5, 3118.5, 2939.5, 2758.5, 2576.5, 2394, 2212.5, 2031.5, 1852.5, 1675.5, 1502, 1331.5, 1165, 1003, 846, 694, 547.5, 407, 272.5, 144, 22.5, -92.5, -201, -302.5, -397, -485, -565.5, -640, -707, -767.5, -822, -869.5, -911, -946.5, -976, -1e3, 1018.5, 1031.5, 1040, 1043.5, 1042.5, 1037.5, 1028.5, 1016, 1000.5, 981, 959.5, 935, 908.5, 879.5, 849, 817, 783.5, 749, 714, 678, 641.5, 605, 568.5, 532, 495.5, 459.5, 424, 389.5, 355.5, 322.5, 290.5, 259.5, 229.5, 200.5, 173.5, 147, 122, 98.5, 76.5, 55.5, 36, 18, 1, -14.5, -28.5, -41.5, -53, -63.5, -73, -81.5, -88.5, -94.5, -100, -104, -107.5, -110.5, -112, -113.5, -114, -114, -113.5, -112.5, -111, -109, 106.5, 104, 101, 98, 95, 91.5, 88, 84.5, 80.5, 77, 73.5, 69.5, 66, 62.5, 58.5, 55.5, 52, 48.5, 45.5, 42.5, 39.5, 36.5, 34, 31.5, 29, 26.5, 24.5, 22.5, 20.5, 19, 17.5, 15.5, 14.5, 13, 12, 10.5, 9.5, 8.5, 8, 7, 6.5, 5.5, 5, 4.5, 4, 3.5, 3.5, 3, 2.5, 2.5, 2, 2, 1.5, 1.5, 1, 1, 1, 1, .5, .5, .5, .5, .5, .5]);
-    MP2.QUANT_LUT_STEP_1 = [[0, 0, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2], [0, 0, 0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2, 2]];
+    MP2.QUANT_LUT_STEP_1 = [
+        [0, 0, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2],
+        [0, 0, 0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2, 2]
+    ];
     MP2.QUANT_TAB = {
         A: 27 | 64,
         B: 30 | 64,
         C: 8,
         D: 12
     };
-    MP2.QUANT_LUT_STEP_2 = [[MP2.QUANT_TAB.C, MP2.QUANT_TAB.C, MP2.QUANT_TAB.D], [MP2.QUANT_TAB.A, MP2.QUANT_TAB.A, MP2.QUANT_TAB.A], [MP2.QUANT_TAB.B, MP2.QUANT_TAB.A, MP2.QUANT_TAB.B]];
-    MP2.QUANT_LUT_STEP_3 = [[68, 68, 52, 52, 52, 52, 52, 52, 52, 52, 52, 52], [67, 67, 67, 66, 66, 66, 66, 66, 66, 66, 66, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 32, 32, 32, 32, 32, 32, 32], [69, 69, 69, 69, 52, 52, 52, 52, 52, 52, 52, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36]];
-    MP2.QUANT_LUT_STEP4 = [[0, 1, 2, 17], [0, 1, 2, 3, 4, 5, 6, 17], [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 17], [0, 1, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17], [0, 1, 2, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 17], [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]];
+    MP2.QUANT_LUT_STEP_2 = [
+        [MP2.QUANT_TAB.C, MP2.QUANT_TAB.C, MP2.QUANT_TAB.D],
+        [MP2.QUANT_TAB.A, MP2.QUANT_TAB.A, MP2.QUANT_TAB.A],
+        [MP2.QUANT_TAB.B, MP2.QUANT_TAB.A, MP2.QUANT_TAB.B]
+    ];
+    MP2.QUANT_LUT_STEP_3 = [
+        [68, 68, 52, 52, 52, 52, 52, 52, 52, 52, 52, 52],
+        [67, 67, 67, 66, 66, 66, 66, 66, 66, 66, 66, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 32, 32, 32, 32, 32, 32, 32],
+        [69, 69, 69, 69, 52, 52, 52, 52, 52, 52, 52, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36]
+    ];
+    MP2.QUANT_LUT_STEP4 = [
+        [0, 1, 2, 17],
+        [0, 1, 2, 3, 4, 5, 6, 17],
+        [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 17],
+        [0, 1, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17],
+        [0, 1, 2, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 17],
+        [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+    ];
     MP2.QUANT_TAB = [{
         levels: 3,
         group: 1,
@@ -2416,8 +2396,7 @@ JSMpeg.Renderer.WebGL = function() {
         this.canvas.height = this.height;
         this.gl.useProgram(this.program);
         this.gl.viewport(0, 0, this.width, this.height)
-    }
-    ;
+    };
     WebGLRenderer.prototype.createTexture = function(index, name) {
         var gl = this.gl;
         var texture = gl.createTexture();
@@ -2428,8 +2407,7 @@ JSMpeg.Renderer.WebGL = function() {
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
         gl.uniform1i(gl.getUniformLocation(this.program, name), index);
         return texture
-    }
-    ;
+    };
     WebGLRenderer.prototype.createProgram = function(vsh, fsh) {
         var gl = this.gl;
         var program = gl.createProgram();
@@ -2438,8 +2416,7 @@ JSMpeg.Renderer.WebGL = function() {
         gl.linkProgram(program);
         gl.useProgram(program);
         return program
-    }
-    ;
+    };
     WebGLRenderer.prototype.compileShader = function(type, source) {
         var gl = this.gl;
         var shader = gl.createShader(type);
@@ -2449,50 +2426,45 @@ JSMpeg.Renderer.WebGL = function() {
             throw new Error(gl.getShaderInfoLog(shader))
         }
         return shader
-    }
-    ;
+    };
     WebGLRenderer.prototype.allowsClampedTextureData = function() {
         var gl = this.gl;
         var texture = gl.createTexture();
         gl.bindTexture(gl.TEXTURE_2D, texture);
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.LUMINANCE, 1, 1, 0, gl.LUMINANCE, gl.UNSIGNED_BYTE, new Uint8ClampedArray([0]));
         return gl.getError() === 0
-    }
-    ;
+    };
     WebGLRenderer.prototype.renderProgress = function(progress) {
         var gl = this.gl;
         var loc = gl.getUniformLocation(this.loadingProgram, "progress");
         gl.uniform1f(loc, progress);
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4)
-    }
-    ;
+    };
     WebGLRenderer.prototype.render = function(y, cb, cr) {
         if (!this.enabled) {
             return
         }
         var gl = this.gl;
-        var w = this.width + 15 >> 4 << 4
-          , h = this.height
-          , w2 = w >> 1
-          , h2 = h >> 1;
+        var w = this.width + 15 >> 4 << 4,
+            h = this.height,
+            w2 = w >> 1,
+            h2 = h >> 1;
         if (this.shouldCreateUnclampedViews) {
             y = new Uint8Array(y.buffer),
-            cb = new Uint8Array(cb.buffer),
-            cr = new Uint8Array(cr.buffer)
+                cb = new Uint8Array(cb.buffer),
+                cr = new Uint8Array(cr.buffer)
         }
         this.updateTexture(gl.TEXTURE0, this.textureY, w, h, y);
         this.updateTexture(gl.TEXTURE1, this.textureCb, w2, h2, cb);
         this.updateTexture(gl.TEXTURE2, this.textureCr, w2, h2, cr);
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4)
-    }
-    ;
+    };
     WebGLRenderer.prototype.updateTexture = function(unit, texture, w, h, data) {
         var gl = this.gl;
         gl.activeTexture(unit);
         gl.bindTexture(gl.TEXTURE_2D, texture);
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.LUMINANCE, w, h, 0, gl.LUMINANCE, gl.UNSIGNED_BYTE, data)
-    }
-    ;
+    };
     WebGLRenderer.IsSupported = function() {
         try {
             if (!window.WebGLRenderingContext) {
@@ -2503,8 +2475,7 @@ JSMpeg.Renderer.WebGL = function() {
         } catch (err) {
             return false
         }
-    }
-    ;
+    };
     WebGLRenderer.SHADER = {
         FRAGMENT_YCRCB_TO_RGBA: ["precision mediump float;", "uniform sampler2D textureY;", "uniform sampler2D textureCb;", "uniform sampler2D textureCr;", "varying vec2 texCoord;", "mat4 rec601 = mat4(", "1.16438,  0.00000,  1.59603, -0.87079,", "1.16438, -0.39176, -0.81297,  0.52959,", "1.16438,  2.01723,  0.00000, -1.08139,", "0, 0, 0, 1", ");", "void main() {", "float y = texture2D(textureY, texCoord).r;", "float cb = texture2D(textureCb, texCoord).r;", "float cr = texture2D(textureCr, texCoord).r;", "gl_FragColor = vec4(y, cr, cb, 1.0) * rec601;", "}"].join("\n"),
         FRAGMENT_LOADING: ["precision mediump float;", "uniform float progress;", "varying vec2 texCoord;", "void main() {", "float c = ceil(progress-(1.0-texCoord.y));", "gl_FragColor = vec4(c,c,c,1);", "}"].join("\n"),
@@ -2528,39 +2499,36 @@ JSMpeg.Renderer.Canvas2D = function() {
         this.canvas.height = this.height;
         this.imageData = this.context.getImageData(0, 0, this.width, this.height);
         JSMpeg.Fill(this.imageData.data, 255)
-    }
-    ;
+    };
     CanvasRenderer.prototype.renderProgress = function(progress) {
-        var w = this.canvas.width
-          , h = this.canvas.height
-          , ctx = this.context;
+        var w = this.canvas.width,
+            h = this.canvas.height,
+            ctx = this.context;
         ctx.fillStyle = "#222";
         ctx.fillRect(0, 0, w, h);
         ctx.fillStyle = "#fff";
         ctx.fillRect(0, h - h * progress, w, h * progress)
-    }
-    ;
+    };
     CanvasRenderer.prototype.render = function(y, cb, cr) {
         this.YCbCrToRGBA(y, cb, cr, this.imageData.data);
         this.context.putImageData(this.imageData, 0, 0)
-    }
-    ;
+    };
     CanvasRenderer.prototype.YCbCrToRGBA = function(y, cb, cr, rgba) {
         if (!this.enabled) {
             return
         }
-        var w = this.width + 15 >> 4 << 4
-          , w2 = w >> 1;
-        var yIndex1 = 0
-          , yIndex2 = w
-          , yNext2Lines = w + (w - this.width);
-        var cIndex = 0
-          , cNextLine = w2 - (this.width >> 1);
-        var rgbaIndex1 = 0
-          , rgbaIndex2 = this.width * 4
-          , rgbaNext2Lines = this.width * 4;
-        var cols = this.width >> 1
-          , rows = this.height >> 1;
+        var w = this.width + 15 >> 4 << 4,
+            w2 = w >> 1;
+        var yIndex1 = 0,
+            yIndex2 = w,
+            yNext2Lines = w + (w - this.width);
+        var cIndex = 0,
+            cNextLine = w2 - (this.width >> 1);
+        var rgbaIndex1 = 0,
+            rgbaIndex2 = this.width * 4,
+            rgbaNext2Lines = this.width * 4;
+        var cols = this.width >> 1,
+            rows = this.height >> 1;
         var ccb, ccr, r, g, b;
         for (var row = 0; row < rows; row++) {
             for (var col = 0; col < cols; col++) {
@@ -2595,14 +2563,13 @@ JSMpeg.Renderer.Canvas2D = function() {
             rgbaIndex2 += rgbaNext2Lines;
             cIndex += cNextLine
         }
-    }
-    ;
+    };
     return CanvasRenderer
 }();
 JSMpeg.AudioOutput.WebAudio = function() {
     "use strict";
     var WebAudioOut = function(options) {
-        this.context = WebAudioOut.CachedContext = WebAudioOut.CachedContext || new (window.AudioContext || window.webkitAudioContext);
+        this.context = WebAudioOut.CachedContext = WebAudioOut.CachedContext || new(window.AudioContext || window.webkitAudioContext);
         this.gain = this.context.createGain();
         this.gain.connect(this.context.destination);
         this.destination = this.gain;
@@ -2644,21 +2611,17 @@ JSMpeg.AudioOutput.WebAudio = function() {
         source.start(this.startTime);
         this.startTime += duration;
         this.wallclockStartTime += duration
-    }
-    ;
+    };
     WebAudioOut.prototype.stop = function() {
         this.gain.gain.value = 0
-    }
-    ;
+    };
     WebAudioOut.prototype.getEnqueuedTime = function() {
         return Math.max(this.wallclockStartTime - JSMpeg.Now(), 0)
-    }
-    ;
+    };
     WebAudioOut.prototype.resetEnqueuedTime = function() {
         this.startTime = this.context.currentTime;
         this.wallclockStartTime = JSMpeg.Now()
-    }
-    ;
+    };
     WebAudioOut.prototype.unlock = function(callback) {
         if (this.unlocked) {
             if (callback) {
@@ -2673,8 +2636,7 @@ JSMpeg.AudioOutput.WebAudio = function() {
         source.connect(this.destination);
         source.start(0);
         setTimeout(this.checkIfUnlocked.bind(this, source, 0), 0)
-    }
-    ;
+    };
     WebAudioOut.prototype.checkIfUnlocked = function(source, attempt) {
         if (source.playbackState === source.PLAYING_STATE || source.playbackState === source.FINISHED_STATE) {
             this.unlocked = true;
@@ -2685,16 +2647,13 @@ JSMpeg.AudioOutput.WebAudio = function() {
         } else if (attempt < 10) {
             setTimeout(this.checkIfUnlocked.bind(this, source, attempt + 1), 100)
         }
-    }
-    ;
+    };
     WebAudioOut.NeedsUnlocking = function() {
         return /iPhone|iPad|iPod/i.test(navigator.userAgent)
-    }
-    ;
+    };
     WebAudioOut.IsSupported = function() {
         return window.AudioContext || window.webkitAudioContext
-    }
-    ;
+    };
     WebAudioOut.CachedContext = null;
     return WebAudioOut
 }();
