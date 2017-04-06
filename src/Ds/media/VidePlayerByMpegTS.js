@@ -68,7 +68,7 @@
     }
 
 }(function(root, modelObj) {
-  
+
     root.Ds = root.Ds || {};
     root.Ds.media = root.Ds.media || {};
     root.Ds.media.VidePlayerByMpegTS = VidePlayerByMpegTS;
@@ -286,7 +286,7 @@
          */
         function PlayEnd() {
             console.log('PlayEnd');
-            if (opts.playEnd) opts.playEnd();
+            if (opts.onplayend) opts.onplayend();
             _Self.ds('playEnd');
         }
 
@@ -294,14 +294,16 @@
          * 触发播放
          */
         function OnPlay() {
-            console.log('OnPlay');
-            _Self.ds('play');
+          if (opts.onplay) opts.onplay();
+          // console.log('OnPlay');
+          _Self.ds('play');
         }
         /**
          * 触发暂停
          */
         function OnPause() {
-            console.log('OnPause');
+            if (opts.onpause) opts.onpause();
+            // console.log('OnPause');
             _Self.ds('pause');
         }
         /**

@@ -10,7 +10,6 @@
  * @param {[Object]} opts [初始化参数]
   [video类] Ds.media.VidePlayerByVideoTag=======================
   element                   //视频video标签
-  canplay                  //是否可以播放function
   append:                  //需要添加到div
   autoplay:                //是否自动播放
   loop:                    //是否循环
@@ -53,12 +52,13 @@
   onstartload:                      //开始加载 function
   onprogress:                       //加载进度 function
   onload:                           //加载完成 function
-  upDate:                           //帧触发 function
+
   onplayend                         //播放完成 function
   onplay:                           //触发播放 function
   onpause:                          //触发播放 function
   oncanPlay:                        //是否可以播放 function
   oncanPlayProgress:                //是否可以播放 function
+  upDate:                           //帧触发 function
  * @extends
  * @example: 举例
  [=================HTML===================]
@@ -98,7 +98,7 @@
   var video = document.querySelector('video');
   makeVideoPlayableInline(video);
   [=================项目使用===================]
-  //如果使用TS模式
+  //===================如果使用TS模式===================
   _VideoInteractivePlayer = new Ds.media.VideoInteractivePlayer('media/myVideo.ts', 'ts', {
       append: '#MyVideoPanel',
       autoplay: false,
@@ -109,12 +109,16 @@
       height: 640,
       oncanPlay: function() {
           console.log('myVideo.ts canPlay');
+          _VideoInteractivePlayer.Play();
       },
       onload: function() {
           console.log('myVideo.ts onload');
       },
   });
-  //如果使用MPG模式
+  //ts格式 与mpg格式可以通过 Load方法进行启动加载
+  _VideoInteractivePlayer.Load();
+
+  //===================如果使用MPG模式===================
   _VideoInteractivePlayer = new Ds.media.VideoInteractivePlayer('./media/myVideo.mpg', 'mpg', {
       append: '#MyVideoPanel',
       audio:'./media/myVideo.mp3',
@@ -133,8 +137,11 @@
           console.log('myVideo.mpeg onload');
       },
   });
-  //如果使用video标签模式
-  var _videoDom = $("#Story1Video")[0];
+  //ts格式 与mpg格式可以通过 Load方法进行启动加载
+  _VideoInteractivePlayer.Load();
+
+  //===================如果使用video标签模式===================
+  var _videoDom = $("#MyVideoPanel .MyVideo")[0];
   _VideoInteractivePlayer = new Ds.media.VideoInteractivePlayer(null, 'video', {
       element: _videoDom,
       autoplay: false,

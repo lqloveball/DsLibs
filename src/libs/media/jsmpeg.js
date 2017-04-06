@@ -172,7 +172,7 @@ JSMpeg.Player = function() {
         this.options = options || {};
         //maksim add code start
         this.externalStartLoadCallback = options.onstartload || null;
-        this.externalFrameUpDateCallback = options.onframe || null;
+        this.externalFrameUpDateCallback = options.upDate || null;
         this.externalPlayEndCallback = options.onplayend || null;
         this.externalPlayCallback = options.onplay || null;
         this.externalPauseCallback = options.onpause || null;

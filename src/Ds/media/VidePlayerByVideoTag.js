@@ -79,7 +79,7 @@
     }
 
 }(function (root, modelObj) {
-  
+
   root.Ds = root.Ds || {};
   root.Ds.media = root.Ds.media || {};
   root.Ds.media.VidePlayerByVideoTag = VidePlayerByVideoTag;
@@ -260,6 +260,7 @@
        * 触发播放
        */
       function OnPlay() {
+        if (opts.onplay) opts.onplay();
           // console.log('OnPlay',_Self.Playing);
           _Player.play();
           _Self.ds('play');
@@ -269,6 +270,7 @@
        */
       function OnPause() {
           // console.log('OnPause',_Self.Playing);
+          if (opts.onpause) opts.onpause(); 
           _Player.pause();
           _Self.ds('pause');
       }

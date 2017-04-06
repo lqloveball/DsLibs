@@ -326,7 +326,7 @@
        * 播放完成
        */
       function PlayEnd() {
-          if (opts.playEnd) opts.playEnd();
+          if (opts.onplayend) opts.onplayend();
           _Playing = false;
           if (_Audio) _Audio.pause();
           _Self.ds('playEnd');
@@ -336,7 +336,7 @@
        * 触发播放
        */
       function OnPlay() {
-          // _Playing = true;
+          if (opts.onplay) opts.onplay();
           if (_Audio) {
               if (_Player && _Player.currentTime) _Audio.currentTime = _Player.currentTime;
               _Audio.play();
@@ -347,13 +347,12 @@
        * 触发暂停
        */
       function OnPause() {
-          // _Playing = false;
+            if (opts.onpause) opts.onpause();
           if (_Audio) _Audio.pause();
           _Self.ds('pause');
       }
 
       var _CanPlayBool = false;
-
       function OnCanPlay() {
           console.log(url + ' >>OnCanPlay');
           if (_CanPlayBool) return;
