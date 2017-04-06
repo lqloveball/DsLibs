@@ -13,7 +13,7 @@ webpack
 npm install webpack -g
 ```
 
-webpack 开发模式 
+webpack 开发模式
 
 ```
 npm install webpack-dev-server -g
@@ -65,8 +65,8 @@ npm install  babel-loader --g
 一般我们只有gulp  webpack  vue这样模块我们会安装到全局下，一般平时都是本地安装 --save
 
 - 使用快速开发项目模板说明
-https://github.com/lqloveball/DsLibs/tree/master/simpleSiteTemp
-https://github.com/lqloveball/DsLibs/tree/master/siteTemp
+https://github.com/lqloveball/DsLibs/tree/master/other/simpleSiteTemp
+https://github.com/lqloveball/DsLibs/tree/master/other/siteTemp
 
 ```
 --assets/           //资源目录，如flash动画资源
