@@ -1,11 +1,14 @@
 /**
- * @class Ds.media.VidePlayerByMpeg
+ * @class Ds.media.VidePlayerByMpegTS
  * @classdesc:视频播放器 基于对mpeg视频格式解码 渲染到canvas上
  * 基于对mpeg视频格式解码 ，需要引用 src/libs/media/jsmpeg.js
- * 视频压缩工具
- *  默认压缩
+ * [安卓版本对video标签支持不好，但又支持webgl的项目可以使用这个视频解码播放器做替代方案]
+ * 因为需要同时对视频与音频进行解析，在性能上不如 Ds.media.VidePlayerByMpeg来实现的好，特别是大视频文件情况下。如果项目视频只是10-30秒的，这个类相对更方便使用。
+ *
+ * 视频压缩工具命令：
+ * 默认压缩
     ffmpeg -i in.mp4 -f mpegts -codec:v mpeg1video -codec:a mp2 -b 0 out.ts
-    压缩细节
+  压缩细节
     ffmpeg -i in.mp4 -f mpegts \
 	           -codec:v mpeg1video -s 960x540 -b:v 1500k -r 30 -bf 0 \
 	           -codec:a mp2 -ar 44100 -ac 1 -b:a 128k \
@@ -15,46 +18,60 @@
  * [down http://www.ffmpeg.org/]
  * @param {[String]} url  [description]
  * @param {[Object]} opts [description]
-     canvas: _Canvas, //渲染用的canvas对象  默认会创建
-     loop: opts.loop !== undefined ? opts.loop : true, //是否循环
-     autoplay: opts.autoplay !== undefined ? opts.autoplay : false, //是否自动播放
-     audio: opts.audio !== undefined ? opts.autoplay : true, //是否编译了声音
-     video: opts.video !== undefined ? opts.autoplay : true, //是否编译了视频
-     poster: opts.poster !== undefined ? opts.poster : '', //海报页面 默认没有 这个待研究
-     pauseWhenHidden: opts.pauseWhenHidden !== undefined ? opts.pauseWhenHidden : true, //浏览器不激活的时候不播放
-     disableGl: opts.disableGl !== undefined ? opts.disableGl : false, //禁止使用webgl
-     preserveDrawingBuffer: opts.preserveDrawingBuffer !== undefined ? opts.preserveDrawingBuffer : false, //canvas.toDataURL()创建缓存
-     progressive: opts.progressive !== undefined ? opts.progressive : true, //启用的可以渐进加载
-     throttled: opts.throttled !== undefined ? opts.throttled : true, //使用分段渐进加载，比如切分6段，加载2段，先不播放，那剩下就不做加载了。原来是默认是true，但我觉的渐进加载还是用false比较合适
-     chunkSize: opts.chunkSize !== undefined ? opts.chunkSize : 1024 * 1024, //切割渐进加载数据大小 默认1024*1024 (1mb)
-     decodeFirstFrame: opts.decodeFirstFrame !== undefined ? opts.decodeFirstFrame : true, //默认显示第一帧
-     maxAudioLag: opts.maxAudioLag !== undefined ? opts.maxAudioLag :0.25, //???未知
-     videoBufferSize: opts.videoBufferSize !== undefined ? opts.videoBufferSize : (512 * 1024), //视频缓存区Default 512*1024 (512kb)
-     audioBufferSize: opts.audioBufferSize !== undefined ? opts.audioBufferSize : (128 * 1024), //视频缓存区Default 512*1024 (512kb)
-     duration: opts.duration || 60, //视频总时间长度
-     autoLoad：false //是否自动加载
+    canvas: _Canvas, //渲染用的canvas对象  默认会创建
+    loop: opts.loop !== undefined ? opts.loop : true, //是否循环
+    autoplay: opts.autoplay !== undefined ? opts.autoplay : false, //是否自动播放
+    audio: opts.audio !== undefined ? opts.autoplay : true, //是否编译了声音
+    video: opts.video !== undefined ? opts.autoplay : true, //是否编译了视频
+    poster: opts.poster !== undefined ? opts.poster : '', //海报页面 默认没有 这个待研究
+    pauseWhenHidden: opts.pauseWhenHidden !== undefined ? opts.pauseWhenHidden : true, //浏览器不激活的时候不播放
+    disableGl: opts.disableGl !== undefined ? opts.disableGl : false, //禁止使用webgl
+    preserveDrawingBuffer: opts.preserveDrawingBuffer !== undefined ? opts.preserveDrawingBuffer : false, //canvas.toDataURL()创建缓存
+    progressive: opts.progressive !== undefined ? opts.progressive : true, //启用的可以渐进加载
+    throttled: opts.throttled !== undefined ? opts.throttled : true, //使用分段渐进加载，比如切分6段，加载2段，先不播放，那剩下就不做加载了。原来是默认是true，但我觉的渐进加载还是用false比较合适
+    chunkSize: opts.chunkSize !== undefined ? opts.chunkSize : 1024 * 1024, //切割渐进加载数据大小 默认1024*1024 (1mb)
+    decodeFirstFrame: opts.decodeFirstFrame !== undefined ? opts.decodeFirstFrame : true, //默认显示第一帧
+    maxAudioLag: opts.maxAudioLag !== undefined ? opts.maxAudioLag :0.25, //???未知
+    videoBufferSize: opts.videoBufferSize !== undefined ? opts.videoBufferSize : (512 * 1024), //视频缓存区Default 512*1024 (512kb)
+    audioBufferSize: opts.audioBufferSize !== undefined ? opts.audioBufferSize : (128 * 1024), //视频缓存区Default 512*1024 (512kb)
+    duration: opts.duration || 60, //视频总时间长度
+    autoLoad：false //是否自动加载
 
-     onstartload: StartLoad, //开始加载
-     onprogress: Progress, //加载进度
-     onload: LoadEnd, //加载完成
-     upDate: FrameUpDate, //帧触发
-     onplayend: PlayEnd, //播放完成
-     onplay: OnPlay, //触发播放
-     onpause: OnPause, //触发播放
-     oncanPlay: OnCanPlay, //触发可以播放
-     oncanPlayProgress: OnCanPlayProgress, //触发可以播放
+
+    onstartload:                      //开始加载 function
+    onprogress:                       //加载进度 function
+    onload:                           //加载完成 function
+    upDate:                           //帧触发 function
+    onplayend                         //播放完成 function
+    onplay:                           //触发播放 function
+    onpause:                          //触发播放 function
+    oncanPlay:                        //是否可以播放 function
+    oncanPlayProgress:                //是否可以播放 function
  *  @extends
  * @example: 举例
  * @author: maksim email:maksim.lin@foxmail.com
  * @copyright:  Ds是累积平时项目工作的经验代码库，不属于职位任务与项目的内容。里面代码大部分理念来至曾经flash 前端时代，尽力减小类之间耦合，通过webpack按需request使用。Ds库里内容多来至网络与参考其他开源代码库。Ds库也开源开放，随意使用在所属的职位任务与项目中。
  * @constructor
  **/
+(function(factory) {
+    var root = (typeof self == 'object' && self.self == self && self) ||
+        (typeof global == 'object' && global.global == global && global);
 
-(function() {
+    if (typeof define === 'function' && define.amd) {
+        define(['exports'], function(exports) {
+            module.exports = factory(root, exports);
+        });
+    } else if (typeof exports !== 'undefined') {
+        module.exports = factory(root, exports);
+    } else {
+        factory(root, {});
+    }
 
-    window.Ds = window.Ds || {};
-    window.Ds.media = window.Ds.media || {};
-    window.Ds.media.VidePlayerByMpegTS = VidePlayerByMpegTS;
+}(function(root, modelObj) {
+  
+    root.Ds = root.Ds || {};
+    root.Ds.media = root.Ds.media || {};
+    root.Ds.media.VidePlayerByMpegTS = VidePlayerByMpegTS;
 
     function VidePlayerByMpegTS(url, opts) {
         var _Self = this;
@@ -139,7 +156,7 @@
                 return _Player.volume;
             },
             set: function(value) {
-              _Player.volume=value;
+                _Player.volume = value;
             }
         });
         /**
@@ -151,7 +168,7 @@
                 return _Player.muted;
             },
             set: function(value) {
-              _Player.muted=value;
+                _Player.muted = value;
             }
         });
 
@@ -181,11 +198,11 @@
             throttled: opts.throttled !== undefined ? opts.throttled : true, //使用分段渐进加载，比如切分6段，加载2段，先不播放，那剩下就不做加载了。原来是默认是true，但我觉的渐进加载还是用false比较合适
             chunkSize: opts.chunkSize !== undefined ? opts.chunkSize : 1024 * 1024, //切割渐进加载数据大小 默认1024*1024 (1mb)
             decodeFirstFrame: opts.decodeFirstFrame !== undefined ? opts.decodeFirstFrame : true, //默认显示第一帧
-            maxAudioLag: opts.maxAudioLag !== undefined ? opts.maxAudioLag :0.25, //???未知
+            maxAudioLag: opts.maxAudioLag !== undefined ? opts.maxAudioLag : 0.25, //???未知
             videoBufferSize: opts.videoBufferSize !== undefined ? opts.videoBufferSize : (512 * 1024), //视频缓存区Default 512*1024 (512kb)
             audioBufferSize: opts.audioBufferSize !== undefined ? opts.audioBufferSize : (128 * 1024), //视频缓存区Default 512*1024 (512kb)
             duration: opts.duration || 60, //视频总时间长度
-            autoLoad:opts.autoLoad !== undefined ? opts.autoLoad : false,
+            autoLoad: opts.autoLoad !== undefined ? opts.autoLoad : false,
 
             onstartload: StartLoad, //加载完成
             onprogress: Progress, //加载进度
@@ -197,9 +214,13 @@
             oncanPlay: OnCanPlay, //触发可以播放
             oncanPlayProgress: OnCanPlayProgress, //触发可以播放
         });
-        this.Load=function(){
-          console.log('TS load');
-          _Player.load();
+
+        /**
+         * 开始加载
+         * @return {[type]} [description]
+         */
+        this.Load = function() {
+            _Player.load();
         };
         /**
          * 开始加载
@@ -208,6 +229,7 @@
             _Self.ds({
                 type: 'startLoad'
             });
+            if (opts.onstartload) opts.onstartload();
         }
         /**
          * 加载完成
@@ -238,7 +260,7 @@
             // console.log('OnCanPlay');
             if (_CanPlayBool) return;
             _CanPlayBool = true;
-            if (opts.canplay) opts.canplay();
+            if (opts.oncanPlay) opts.oncanPlay();
             _Self.ds('canplay');
         }
 
@@ -307,11 +329,7 @@
             // if(!this.isPlaying&&playBool)_Player.play();
             // if(this.isPlaying&&playBool===false)_Player.pause();
         };
-
-
-
-
-
     }
 
-})();
+    return VidePlayerByMpegTS;
+}));

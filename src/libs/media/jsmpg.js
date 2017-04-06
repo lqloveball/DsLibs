@@ -16,6 +16,7 @@ var jsmpeg = window.jsmpeg = function(url, opts) {
 	this.wantsToPlay = this.autoplay;
 	this.loop = !!opts.loop;
 	this.seekable = opts.seekable!==undefined?opts.seekable:true;
+	this.externalStartLoadCallback = options.onstartload || null;
 	this.externalLoadCallback = opts.onload || null;
 	this.externalDecodeCallback = opts.ondecodeframe || null;
 	this.externalFinishedCallback = opts.onfinished || null;
@@ -49,7 +50,7 @@ var jsmpeg = window.jsmpeg = function(url, opts) {
 		this.renderFrame = this.renderFrame2D;
 		this.updateLoader = this.updateLoader2D;
 	}
-
+	this.startLoadBool = false;
 	if (url instanceof WebSocket) {
 		this.client = url;
 		this.client.onopen = this.initSocketClient.bind(this);
@@ -273,7 +274,8 @@ jsmpeg.prototype.frameCount = 0;
 jsmpeg.prototype.duration = 0;
 
 jsmpeg.prototype.load = function(url) {
-	console.log('mepg load ');
+	if (this.startLoadBool) return;
+	this.startLoadBool = true;
 	this.url = url;
 
 	var request = new XMLHttpRequest();
@@ -288,6 +290,7 @@ jsmpeg.prototype.load = function(url) {
 	request.open('GET', url);
 	request.responseType = "arraybuffer";
 	request.send();
+	if(this.externalStartLoadCallback)this.externalStartLoadCallback();
 };
 
 jsmpeg.prototype.updateLoader2D = function(ev) {
@@ -446,6 +449,9 @@ jsmpeg.prototype.stop = function() {
 // Progressive loading via AJAX
 
 jsmpeg.prototype.beginProgressiveLoad = function(url) {
+
+	if (this.startLoadBool) return;
+	this.startLoadBool = true;
 	console.log('mepg beginProgressiveLoad:',url);
 	this.url = url;
 
@@ -466,6 +472,7 @@ jsmpeg.prototype.beginProgressiveLoad = function(url) {
 
 	request.open('HEAD', url);
 	request.send();
+	if(this.externalStartLoadCallback)this.externalStartLoadCallback();
 };
 
 jsmpeg.prototype.maybeLoadNextChunk = function() {
