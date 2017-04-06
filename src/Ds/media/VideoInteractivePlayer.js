@@ -49,16 +49,16 @@
   loop:                           //是否循环
 
   [Events] ==========================
-  onstartload:                      //开始加载 function
-  onprogress:                       //加载进度 function
-  onload:                           //加载完成 function
+  onstartload:                      //开始加载 function   事件名：startLoad
+  onprogress:                       //加载进度 function   事件名：progress
+  onload:                           //加载完成 function   事件名：loadEnd
 
-  onplayend                         //播放完成 function
-  onplay:                           //触发播放 function
-  onpause:                          //触发播放 function
-  oncanPlay:                        //是否可以播放 function
-  oncanPlayProgress:                //是否可以播放 function
-  upDate:                           //帧触发 function
+  onplayend                         //播放完成 function   事件名：playEnd
+  onplay:                           //触发播放 function   事件名：play
+  onpause:                          //触发播放 function   事件名：pause
+  oncanPlay:                        //是否可以播放 function 事件名：canPlay
+  oncanPlayProgress:                //是否可以播放 function 事件名：canPlayprogress
+  upDate:                           //帧触发 function    事件名：upDate
  * @extends
  * @example: 举例
  [=================HTML===================]
