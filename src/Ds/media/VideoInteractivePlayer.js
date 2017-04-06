@@ -59,7 +59,7 @@
   onpause:                          //触发播放 function
   oncanPlay:                        //是否可以播放 function
   oncanPlayProgress:                //是否可以播放 function
- *  @extends
+ * @extends
  * @example: 举例
  [=================HTML===================]
   <!-- 放视频的容器  -->
@@ -179,7 +179,7 @@
     }
 
 }(function (root, modelObj) {
-  
+
   root.Ds = root.Ds || {};
   root.Ds.media = root.Ds.media || {};
   root.Ds.media.VideoInteractivePlayer = VideoInteractivePlayer;
@@ -236,7 +236,6 @@
       }
       /**
        * 开始加载视频，只有非Video标签实现的交互播放器才有这功能
-       * @return {[type]} [description]
        */
       this.Load=function(){
         // console.log('load Video',_VideoType);
@@ -390,7 +389,7 @@
         pointData.runNum 	//自动创建  这个时间执行多少次 方便用来进行逻辑处理判断
         pointData.bool      //自动创建 是否被执行过
       *
-      * 例子
+      * @example
       * _VideoInteractivePlayer.AddCuePoint({
         name:'Test 5s',
         time:5,
