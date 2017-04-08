@@ -119,12 +119,14 @@
             //     return;
             // }
             _TouchStartDistance = sliderObject[valueName];
+            _Distance=_TouchStartDistance;
+              // console.log('_Slider start TouchStartDistance',_TouchStartDistance);
             //运动中不做
             if (_Tweening) return;
             //锁住不做更改
             if (_Lock) return;
             _AutoSpeedMoveBool = false; //设置不自运动
-            // console.log('_Slider start TouchStartDistance',_TouchStartDistance);
+
             _TouchStartTime = new Date().getTime();
 
         });
