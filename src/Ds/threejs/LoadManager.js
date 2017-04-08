@@ -20,7 +20,6 @@
     } else {
         factory(root, {});
     }
-
 }(function(root, modelObj) {
     root.Ds = root.Ds || {};
     root.Ds.threejs = root.Ds.threejs || {};
@@ -146,8 +145,8 @@
          * Texture格式模型加载队列
          * @param {[Array]} objList     [加载对象列表]
          * [
-         *      {src:'./assets/model/tree.png',name:'Car',type:'essence'},
-         *      {src:'./assets/obj/Car/l-car.obj',name:'Car',type:'low'},
+         *      {src:'./assets/model/tree.png',id:'Car',type:'essence'},
+         *      {src:'./assets/obj/Car/l-car.obj',id:'Car',type:'low'},
          *  ]
          * 加载完成后会多一个 object 参数，这个参数就是加载完成后3D对象
          * 需要对OBJLoader.js类修改才能获取到object

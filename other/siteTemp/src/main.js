@@ -207,7 +207,6 @@ function LoadBaseJS() {
               if(SiteModel.HasCreateJs)LoadCJSFrameWorkJS();
               else LoadFrameWorkJS();
             });
-
         },
         'base'
     );
