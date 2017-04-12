@@ -104,6 +104,9 @@
             },
             set: function(value) {
                 _Lock = value;
+                _AutoSpeedMoveBool=false;
+                // _TouchStartDistance = sliderObject[valueName];
+                // _Distance=sliderObject[valueName];
                 UpDateFrame();
             }
         });
@@ -111,6 +114,7 @@
         var _Slider = new Ds.gemo.PageSlider(_TouchDom, {
             limitY: 50
         });
+        // var _TouchBool=false;
         //开始交互触摸
         _Slider.on('start', function(e) {
             _Self.ds('start');
@@ -118,6 +122,9 @@
             //     _Self.Lock = false;
             //     return;
             // }
+            // if(_TouchBool)return;
+            // _TouchBool=true;
+
             _TouchStartDistance = sliderObject[valueName];
             _Distance=_TouchStartDistance;
               // console.log('_Slider start TouchStartDistance',_TouchStartDistance);
@@ -125,6 +132,8 @@
             if (_Tweening) return;
             //锁住不做更改
             if (_Lock) return;
+
+
             _AutoSpeedMoveBool = false; //设置不自运动
 
             _TouchStartTime = new Date().getTime();
@@ -137,12 +146,15 @@
             //     _Self.Lock = false;
             //     return;
             // }
+
             //运动中不做
             if (_Tweening) return;
             //锁住不做更改
             if (_Lock) return;
             //只计算纵向滚动 不是上下滑动忽略
             if (!e.upright) return;
+            if(_TouchStartDistance===null)_TouchStartDistance=sliderObject[valueName];
+            _AutoSpeedMoveBool=false;
             //纵向偏移量
             var _diffY = _TouchDirection ? e.diffY : -e.diffY;
             // console.log(_diffY);
@@ -167,13 +179,21 @@
             //     _Self.Lock = false;
             //     return;
             // }
+
             //运动中不做
-            if (_Tweening) return;
+            // if (_Tweening) return;
             //锁住不做更改
-            if (_Lock) return;
+            if (_Lock) {
+              _TouchStartDistance=null;
+              return;
+            }
+            // _TouchBool=false;
             // console.log('_Slider end TouchStartDistance',_TouchStartDistance);
-            _Slider.closeSliding();
+            //
             SliderEndAutoMove();
+            _Slider.closeSliding();
+
+
         });
 
         function SliderEndAutoMove() {
@@ -182,8 +202,10 @@
             var _bool = _dis <= 0 ? true : false; //判断方向
             var _pr = Math.abs(_dis / 400); //判断拖动距离百分比
             if (_pr >= 1) _pr = 1; //百分比不能超过1
-            var _speed = _pr * _MaxSpeed; //计算速度
+            var _speed =_MinSpeed+_pr * (_MaxSpeed-_MinSpeed); //计算速度
+            _speed = Math.min(_speed, _MaxSpeed); //最大速度判断
             _speed = Math.max(_speed, _MinSpeed); //最小速度判断
+            if(_pr===0)_speed=0;
             // console.log('方向',_bool,_dis,_pr,_speed,_time);
             if (_time >= 600) {
                 if (_bool) _Speed = _MinSpeed;
@@ -195,11 +217,20 @@
             // console.log('SliderEndAutoMove:',_Speed);
             _AutoSpeedMoveBool = true;
             UpDateFrame();
+            _TouchStartDistance=null;
             _Self.ds('autoMove');
         }
         //距离更新
         function DistanceUpDate() {
-            sliderObject[valueName] = _Distance;
+          if (_Distance <= _MinDistance){
+            _Self.ds({type:'MinDistance',value:_Distance});
+          }
+          if (_Distance >=_MaxDistance) {
+            // console.log('-----最大距离-');
+            _Self.ds({type:'MaxDistance',value:_Distance});
+          }
+          sliderObject[valueName] = _Distance;
+          _Self.ds({type:'upDate',value:_Distance});
         }
         //自运动额时候
         var _UpDateFramer;
@@ -213,8 +244,14 @@
             cancelAnimationFrame(_UpDateFramer);
             // console.log('UpDateFrame',_Speed);
             _Distance += _Speed;
-            if (_Distance <= _MinDistance) _Distance = _MinDistance;
-            if (_Distance > _MaxDistance) _Distance = _MaxDistance;
+            if (_Distance <= _MinDistance) {
+              _Distance = _MinDistance;
+              _AutoSpeedMoveBool=false;
+            }
+            if (_Distance >= _MaxDistance) {
+              _Distance = _MaxDistance;
+              _AutoSpeedMoveBool=false;
+            }
             DistanceUpDate();
             _UpDateFramer = requestAnimationFrame(UpDateFrame);
         }
@@ -227,9 +264,10 @@
           if (_Tweening) return;
           //锁住不做更改
           if (_Lock) return;
+
           _Speed=value||_Speed;
           _AutoSpeedMoveBool = true;
-          _TouchStartDistance = sliderObject[valueName];
+          _TouchStartDistance = null;
           _Distance=sliderObject[valueName];
           UpDateFrame();
         };
@@ -244,6 +282,7 @@
             if(_Tweening)return;
             var _obj = {value: _Distance};
             var _Olock=_Lock;
+            cancelAnimationFrame(_UpDateFramer);
             tweenData=tweenData||{};
 
             if (TweenMax) {

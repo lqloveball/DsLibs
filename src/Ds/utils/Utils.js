@@ -53,6 +53,14 @@
         return items;
     };
     /**
+     * 判断是否手机号码
+     * @param  {[type]} value [description]
+     * @return {[type]}       [description]
+     */
+    this.IsPhone=function(value){
+      return (value && /^1[3|4|5|8]\d{9}$/.test(value));
+    };
+    /**
      * 获取星座
      * @param  {[type]} month [description]
      * @param  {[type]} date  [description]
