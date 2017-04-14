@@ -22,7 +22,7 @@
  * @copyright:  Ds是累积平时项目工作的经验代码库，不属于职位任务与项目的内容。里面代码大部分理念来至曾经flash 前端时代，尽力减小类之间耦合，通过webpack按需request使用。Ds库里内容多来至网络与参考其他开源代码库。Ds库也开源开放，随意使用在所属的职位任务与项目中。
  * @constructor
  **/
-!(function() {
+(function() {
 
 window.Ds=window.Ds ||{};
 window.Ds.createjs=window.Ds.createjs ||{};
@@ -35,14 +35,14 @@ window.Ds.createjs.CJSLoadFontsModel=CJSLoadFontsModel;
 function CJSLoadFontsModel(pathUrl){
         var _Self=this;
         //基于事件扩展 AS.Eventer
-        cagoeAG.extend(this,cagoeAG.Eventer);
+        Ds.Extend(this, new Ds.EventDispatcher());
         var _PathUrl=pathUrl;
         var _UserFontsDc={};
         this.UserFontsDc=_UserFontsDc;
         // var _UserFontsBoxDc={}
         /**
-         *
-         * @param {[type]} nowInfo [description]
+         * 加载需要的文本内容的字体
+         * @param {[String]} nowInfo [description]
          */
         this.LoadUserWordFonts=function (nowInfo){
             //字符打散成数组
@@ -55,7 +55,7 @@ function CJSLoadFontsModel(pathUrl){
             for (var i = 0; i < textArr.length; i++) {
                 //str2unicode(textArr[i])//
                var info= textArr[i].charCodeAt(0);
-                // log(info)
+                // console.log(info);
                if(!textDc[info]&&!_UserFontsDc[info]){
                     var url=_PathUrl+info+'.txt';
                     textDc[info]={id:info, src:url};
@@ -63,7 +63,7 @@ function CJSLoadFontsModel(pathUrl){
                     textCodeList.push(info);
                }
             }
-            log('loadUserFonts length:',textManifest.length);
+            // log('loadUserFonts length:',textManifest.length);
             var queue = new createjs.LoadQueue(false);
             queue.loadManifest(textManifest);
             queue.on("complete",loadComplete);
@@ -76,7 +76,7 @@ function CJSLoadFontsModel(pathUrl){
                     // log(drawData)
                     _UserFontsDc[code]=drawData;
                 }
-                log('loadUserFonts complete');
+                // log('loadUserFonts complete');
                 _Self.ds({type:'loadFontsComplete'});
             }
         };
@@ -97,35 +97,34 @@ function CJSLoadFontsModel(pathUrl){
          */
         this.GetFontPathData=function(value){
             var pathString=_Self.GetFontData(value);
-            return analysisPathData(pathString);
+            return AnalysisPathData(pathString);
         };
         /**
          * [GetShapeFont description]
          * @param {[type]} value [description]
          * @param {[type]} color [description]
+         * @param {[type]} size [description]
          */
         this.GetShapeFont=function(value,color,size){
             // var code= value.charCodeAt(0);
             // if(_UserFontsBoxDc[code]){
             //     var font = new createjs.Container();
             //     if(font.shape){
-
             //     }
             // }
-
             var pathData=_Self.GetFontPathData(value);
             // log('GetShapeFont1');
             var font = new createjs.Container();
             // var fonts
             if(!pathData)return font;
             // log('GetShapeFont2')
-            var shape=drawFontByPathData(pathData,color);
+            var shape=DrawFontByPathData(pathData,color);
             font.shape=shape;
             font.addChild(shape);
             shape.scaleY=-1;
             shape.y=1000;
             if(size!==undefined){
-                log(size);
+                // log(size);
                 var s=size/1000;
                 shape.scaleY=-s;
                 shape.scaleX=s;
@@ -142,30 +141,42 @@ function CJSLoadFontsModel(pathUrl){
          * @param  {[type]} color [description]
          * @return {[type]}       [description]
          */
-        function drawFontByPathData(pathData,color){
+        function DrawFontByPathData(pathData,color){
             var shape=new createjs.Shape();
-            // log('drawFontByPathData1')
+            // console.log('DrawFontByPathData1');
             if(!pathData||pathData.length===0)return shape;
-            // log('drawFontByPathData2',pathData.length)
+            // console.log('drawFontByPathData2',pathData.length);
             var g=shape.graphics;
+            // g.clear();
             g.beginFill(color);
             for (var i = 0; i < pathData.length; i++) {
                 var gdata=pathData[i];
-                draw(gdata);
+                draw(gdata,i);
             }
             g.endFill();
 
-            function draw(gdata){
+            function draw(gdata,i){
                 var type=gdata.type;
                 var arr=gdata.arr;
-                // log('draw ',type,arr)
-                if(type=='M') {g.moveTo(arr[0], arr[1]);}
-                if(type=='L') {
+                // console.log(i,'draw ',type,arr);
+                if(type==='M') {
+                  g.moveTo(arr[0], arr[1]);
+
+                }
+                if(type==='L') {
                     // log('draw L',arr)
-                    g.lineTo(arr[0], arr[1]);}
-                if(type=='BC') {g.bezierCurveTo(arr[0], arr[1], arr[2], arr[3], arr[4], arr[5]);}
-                if(type=='QC') {g.quadraticCurveTo(arr[0], arr[1], arr[2], arr[3]);}
-                if(type=='E') g.endFill();
+                    g.lineTo(arr[0], arr[1]);
+                }
+                if(type==='BC') {
+                  g.bezierCurveTo(arr[0], arr[1], arr[2], arr[3], arr[4], arr[5]);
+                }
+                if(type==='QC') {
+                  g.quadraticCurveTo(arr[0], arr[1], arr[2], arr[3]);
+                }
+                if(type==='E'){
+                   g.endFill();
+                }
+
             }
             return shape;
         }
@@ -174,7 +185,7 @@ function CJSLoadFontsModel(pathUrl){
          * @param  {[String]} path
          * @return {[Array]}
          *
-         * M moveto  移动到 (x y)+
+         *  M moveto  移动到 (x y)+
             Z closepath  关闭路径 (none)
             L lineto  画线到 (x y)+
             H horizontal lineto  水平线到 x+
@@ -186,11 +197,11 @@ function CJSLoadFontsModel(pathUrl){
             A elliptical arc  椭圆弧 (rx ry x-axis-rotation large-arc-flag sweep-flag x y)+
             R Catmull-Rom curveto*  Catmull-Rom曲线 x1 y1 (x y)+
          */
-        function analysisPathData(path){
-                // log('analysisPathData1')
+        function AnalysisPathData(path){
+                // log('AnalysisPathData1')
                 var result=[];
                 if(!path)return result;
-                 // log('analysisPathData2')
+                 // log('AnalysisPathData2')
                 // var d = path;
                 var currentPoint = [0,0];
                 var lastControl = [0,0];
