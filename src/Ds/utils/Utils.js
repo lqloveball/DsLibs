@@ -58,7 +58,13 @@
      * @return {[type]}       [description]
      */
     this.IsPhone=function(value){
-      return (value && /^1[3|4|5|8]\d{9}$/.test(value));
+      var re=new RegExp(/^((\d{11})|^((\d{7,8})|(\d{4}|\d{3})-(\d{7,8})|(\d{4}|\d{3})-(\d{7,8})-(\d{4}|\d{3}|\d{2}|\d{1})|(\d{7,8})-(\d{4}|\d{3}|\d{2}|\d{1}))$)$/);
+        var retu=value.match(re);
+        if(retu){
+            return true;
+        }else{
+            return false;
+        }
     };
     /**
      * 获取星座
