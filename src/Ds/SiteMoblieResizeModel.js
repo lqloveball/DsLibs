@@ -103,12 +103,11 @@
         */
        this.InitResize = function() {
            $(window).resize(function() {
-               _Self.ReSize();
+              //  _Self.ReSize();
+              setTimeout(function() {_Self.ReSize();}, 50);
            });
            //部分手机自适应会有问题
-           setTimeout(function() {
-               _Self.ReSize();
-           }, 100);
+           setTimeout(function() {_Self.ReSize();}, 50);
            _Self.ReSize();
        };
        //自使用需相关参数
@@ -137,7 +136,7 @@
            _ScreenWidth = _reSizeData.screenWidth;
            if(!_OldActualH)_OldActualH=_ActualH;
 
-           $('#debug').html('_IsInputState:' + _IsInputState + '_ActualH:' + _ActualH);
+
            //设置场景宽高
            if (_Screen) {
                var _resizeObj={
@@ -193,9 +192,21 @@
            _Self.Horizontal = _Horizontal;
            _Self.ScreenWidth = _ScreenWidth;
            _Self.DensityDpi = _DensityDpi;
+           _ReizeNum++;
+           $('#debug').text('ReSize '+_ReizeNum+' :' + JSON.stringify({
+             width:_Width,
+             height:_Height,
+             actualH:_ActualH,
+             oldActualH:_OldActualH,
+             IsInputState:_IsInputState,
+             Horizontal:_Horizontal,
+             ScreenWidth:_ScreenWidth,
+             DensityDpi:_DensityDpi,
+           }));
            _Self.ds('resize');
        };
    }
+   var _ReizeNum=0;
    /**
     * 进行自动适应屏幕尺寸算法计算宽高 实际宽高比
     * @param {[type]} screenType      [屏幕缩放方式考虑横竖屏幕情况 默认‘auto’ ]
@@ -270,9 +281,11 @@
        if (_isWeixin) {
            // _viewport.setAttribute('content', 'width=640, target-densityDpi='+_densityDpi+',user-scalable=no');
            if (_OS == 'ios') {
+             console.log(_densityDpi);
+              // _viewport.setAttribute('content', 'target-densitydpi=device-dpi,maximum-scale=1.0, user-scalable=no');
                _viewport.setAttribute('content', 'target-densityDpi=' + _densityDpi + ',initial-scale=1.0, maximum-scale=1.0,user-scalable=no');
-               // _viewport.setAttribute('content', 'width='+_winWidth+',target-densityDpi='+_densityDpi+',initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
-               // _viewport.setAttribute('content', 'width=device-width,target-densityDpi='+_densityDpi+',initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
+              //  _viewport.setAttribute('content', 'width='+_winWidth+',target-densityDpi='+_densityDpi+',initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
+              //  _viewport.setAttribute('content', 'width=device-width,target-densityDpi='+_densityDpi+',initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
            } else {
                // _viewport.setAttribute('content', 'target-densityDpi=' + _densityDpi + ',initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
                // _viewport.setAttribute('content', 'width=device-width,target-densityDpi=' + _densityDpi + ',initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
