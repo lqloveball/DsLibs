@@ -62,6 +62,46 @@
     };
     /**======================Rectangle 扩展 End========================**/
     /**
+     * 获取一个显示对象的BitmapData
+     * 注意需要有createjs.BitmapData
+     * @param  {[DisplayObject]} display [description]
+     * @param  {[Rectangle]} rect    [description]
+     * @return {[type]}         [description]
+     */
+    ccjs.GetDisplayObjectBitmapData=function(display,rect){
+      if(!createjs.BitmapData){
+        console.warn('no has createjs.BitmapData');
+        return null;
+      }
+      rect=rect||display.getBounds();
+      var _bitmapData=new createjs.BitmapData(null,rect.width,rect.height,"rgba(0,0,0,0)");
+      _bitmapData.draw(display);
+      display.uncache();
+      return _bitmapData;
+    };
+
+    /**
+     * 判断2个图形是否碰撞
+     * 注意需要有createjs.BitmapData
+     * 判碰撞会以源文件的大小去与目标文件进行对比（目前没做取做场景的位置偏移判断，所以2个图形最好坐标是统一的）;
+     * @param  {[DisplayObject]} source [对比源文件]
+     * @param  {[DisplayObject]} target [对比目标文件]
+     * @return {[type]}        [description]
+     */
+    ccjs.HitTestByDisplayObject=function(source,target){
+      var _bitmapData=ccjs.GetDisplayObjectBitmapData(source);
+      if(_bitmapData){
+        target.cache(0,0,_bitmapData.width,_bitmapData.height);
+        var _hitTest=_ObstacleBMP.hitTest({x:0,y:0},0xFF,target2,{x:0,y:0},0xff);
+        target2.uncache();
+        return _hitTest;
+      }else{
+        console.warn('no has createjs.BitmapData');
+        return null;
+      }
+
+    };
+    /**
      * 对文本进行换行处理
      * @param {[create.Text]} label [文本框对象]
      * @param {[String]} info  [内容]
