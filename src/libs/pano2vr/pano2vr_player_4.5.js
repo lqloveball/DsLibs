@@ -818,7 +818,7 @@ License:
 
           b.mouse.x = d[0].pageX - c.x;
           b.mouse.y = d[0].pageY - c.y;
-            Dd(b.mouse.x+','+b.mouse.y)
+            // Dd(b.mouse.x+','+b.mouse.y+'>>'+c.x)
           if (!ca) {
               d[0] && (Bb = d[0].pageX,
               Cb = d[0].pageY);
@@ -840,6 +840,7 @@ License:
               K(),
               a.preventDefault()))
           }
+          // event.preventDefault();
       }
       function Md(a) {
           a || (a = window.event);
@@ -1532,8 +1533,11 @@ License:
           fc = l
       }
       function Dd(a) {
+        if (location.href.indexOf(':800') != -1){
           if (debug = document.getElementById("debug"))
-              debug.innerHTML = a + "<br />";
+          debug.innerHTML = a + "<br />";
+        }
+          
           window.console && window.console.log(a)
       }
       var Sb, R, ja, ya, Dc, Ec, Fc, Gc, Hc;
@@ -2461,7 +2465,7 @@ License:
       ;
       var Rb = -1;
       b.isTouching = function() {
-          // console.log((b.m != o || 0 <= Q));
+          // Dd((b.m != o || 0 <= Q));
           return b.m != o || 0 <= Q
       }
       ;

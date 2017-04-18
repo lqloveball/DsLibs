@@ -17,6 +17,7 @@ function pano2vrGyro(panoObject,containerId) {
 		if (isDeviceEnabled && !isEnabled) {
 			window.addEventListener("deviceorientation", handleDeviceOrientation, true);
 			container.addEventListener("touchstart", handleTouchStart, true);
+			container.addEventListener("touchmove", handleTouchMove, true),
 			container.addEventListener("touchend", handleTouchEnd, true);
 			container.addEventListener("touchcancel", handleTouchEnd, true);
 			container.addEventListener("MSPointerDown", handleTouchStart, true);
@@ -61,15 +62,101 @@ function pano2vrGyro(panoObject,containerId) {
 	}
 
 	////////////////////////////////////////////////////////////
+	var _oldObj,startX,startY,endY = 0,
+	endX = 0,
+	diffY = 0,
+	diffX = 0;
+	var _touchid=null;
+	var limit = 15; //判断方向的最小滑动距离
 
 	function handleTouchStart(event) {
 		isTouching = true;
-		$('#debug').html('handleTouchStart');
+
+		var _targetTouches = event.targetTouches || event.originalEvent.targetTouches;
+		if(_targetTouches){
+			var touch = _targetTouches[0];
+
+			if(_touchid===null)_touchid=touch.identifier;
+			if(_touchid!==touch.identifier)return;
+
+			startY = touch.pageY;
+			startX = touch.pageX;
+			endY = 0;
+			endX = 0;
+			diffY = 0;
+			diffX = 0;
+
+
+
+			_oldObj={
+				pan:panoObject.getPan(),
+				tilt:panoObject.getTilt(),
+			};
+		}
+
+		// $('#debug').html('handleTouchStart:'+JSON.stringify(_oldObj));
 	}
 
 	function handleTouchEnd(event) {
 		isTouching = false;
-		$('#debug').html('handleTouchEnd');
+		// $('#debug').html('handleTouchEnd');
+		// panoObject.setPan(_oldObj.pan+10)
+		// panoObject.setTilt(_oldObj.tilt+10);
+
+
+
+		var _targetTouches = event.targetTouches || event.originalEvent.targetTouches;
+		if(_targetTouches){
+			var touch = _targetTouches[0];
+			if(touch&&touch.identifier&&_touchid!==touch.identifier){
+				return;
+			}
+			_touchid=null;
+		}
+
+		diffPan = panoObj.getPan();
+		diffTilt = panoObj.getTilt();
+
+	}
+
+	function handleTouchMove(event){
+		var _targetTouches = event.targetTouches || event.originalEvent.targetTouches;
+		var touch = _targetTouches[0];
+
+		if(_touchid===null)return;
+		if(_touchid!==touch.identifier)return;
+
+
+		endX = touch.pageX;
+		endY = touch.pageY;
+
+		diffX = endX - startX;
+		diffY = endY - startY;
+
+		diffY = diffY > 0 ? (diffY - limit) : (diffY + limit);
+		diffX = diffX > 0 ? (diffX - limit) : (diffX + limit);
+
+		var _w=window.innerWidth;
+		var _h=window.innerHeight;
+
+		diffX=diffX/_w;
+		diffY=diffY/_h;
+
+
+
+
+		var _pan=_oldObj.pan+90*diffX;
+		var _tilt=_oldObj.tilt+90*diffY;
+		panoObj.setPanNorth(_pan);
+		panoObj.setTilt(_tilt);
+
+		panoObj.moveTo(_pan ,_tilt,panoObj.getFov(),10);
+		//  $('#debug').html('move:'+JSON.stringify(
+		// 	 {
+		// 		 diffX:diffX,
+		// 		 diffY:diffY,
+		// 	 }
+		//  ));
 	}
 
 	var lastYaw=0;
@@ -131,10 +218,11 @@ function pano2vrGyro(panoObject,containerId) {
 				factor = Math.min( 1, ( Math.abs( pitch ) - 70 ) / 10 );
 				yaw = yaw * ( 1-factor ) + altyaw * factor;
 			}
-
+			// isTrueNorth=true;
 			if (isTrueNorth) {
 
 				var panoHeading = panoObj.getPanNorth() - panoObj.getPanN();
+				// $('#debug').html('ignoreInit:'+panoObj.getPanNorth()+'   '+panoObj.getPanN());
 				var deviceHeading=-event["alpha"];
 				if ((event.webkitCompassHeading) && ((!event.webkitCompassAccuracy) || (event.webkitCompassAccuracy>=0))) {
 					deviceHeading = event.webkitCompassHeading;
@@ -144,7 +232,7 @@ function pano2vrGyro(panoObject,containerId) {
 				}
 				diffPan= - (deviceHeading + panoHeading + yaw);
 			}
-			$('#debug').html('ignoreInit:'+ignoreInit);
+
 			if (ignoreInit==0) {
 				panoObj.moveTo(diffPan + yaw ,diffTilt - pitch,panoObj.getFov(),10);
 			}
