@@ -65,12 +65,17 @@
             if (_opt.limit) limit = _opt.limit;
             if (_opt.lock !== undefined) _self.lock = _opt.lock;
         }
+        var _touchid=null;
         // log('init',scenes)
         $scenes.bind('touchstart', function(event) {
             if (_self.lock) return;
-            // log(event,event.originalEvent)
+            // console.log('touchstart:',event);
             var _targetTouches = event.targetTouches || event.originalEvent.targetTouches;
             var touch = _targetTouches[0];
+            // console.log(touch.identifier,_touchid);
+            if(_touchid===null)_touchid=touch.identifier;
+            if(_touchid!==touch.identifier)return;
+
             var target = $(event.target);
             if (_self.capture) return;
 
@@ -95,9 +100,15 @@
         });
         $scenes.bind('touchmove', function(event) {
             if (_self.lock) return;
+
+
             //console.log(sliding)
             var _targetTouches = event.targetTouches || event.originalEvent.targetTouches;
             var touch = _targetTouches[0];
+
+            if(_touchid===null)return;
+            if(_touchid!==touch.identifier)return;
+
             if (!_self.sliding && _self.capture) {
                 event.preventDefault();
 
@@ -144,8 +155,13 @@
             });
         });
         $scenes.bind('touchend touchcancel', function(event) {
+
             var _targetTouches = event.targetTouches || event.originalEvent.targetTouches;
             var touch = _targetTouches[0];
+            if(touch&&touch.identifier&&_touchid!==touch.identifier){
+              return;
+            }
+            _touchid=null;
             // event.preventDefault();
             if (!_self.sliding && _self.capture) {
                 //如果是纵向滑动
