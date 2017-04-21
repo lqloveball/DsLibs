@@ -45,7 +45,11 @@
       } catch (e) {
         return;
       }
-     _hmt.push(['_trackPageview', pageurl]);
+      if(pageurl.indexOf('/')!==0){
+        pageurl='/'+pageurl;
+      }
+      console.log('BaiduPV:',pageurl);
+      _hmt.push(['_trackPageview', pageurl]);
     };
     /**
      * 百度监测事件
@@ -76,6 +80,9 @@
         if(!ga)return null;
       } catch (e) {
         return;
+      }
+      if(pageurl.indexOf('/')!==0){
+        pageurl='/'+pageurl;
       }
       ga('send', 'pageview',pageurl);
     };
@@ -116,8 +123,9 @@
      * 虚拟PV
      */
     this.PV=function(pageurl){
-      _Self.GAPV(pageurl);
       _Self.BaiduPV(pageurl);
+      _Self.GAPV(pageurl);
+
     };
   }
 
