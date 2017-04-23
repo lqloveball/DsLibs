@@ -103,11 +103,11 @@
         */
        this.InitResize = function() {
            $(window).resize(function() {
-              //  _Self.ReSize();
-              setTimeout(function() {_Self.ReSize();}, 50);
+              _Self.ReSize();
+              setTimeout(function() {_Self.ReSize();}, 100);
            });
            //部分手机自适应会有问题
-           setTimeout(function() {_Self.ReSize();}, 50);
+           setTimeout(function() {_Self.ReSize();}, 100);
            _Self.ReSize();
        };
        //自使用需相关参数
@@ -193,16 +193,16 @@
            _Self.ScreenWidth = _ScreenWidth;
            _Self.DensityDpi = _DensityDpi;
            _ReizeNum++;
-           $('#debug').text('ReSize '+_ReizeNum+' :' + JSON.stringify({
-             width:_Width,
-             height:_Height,
-             actualH:_ActualH,
-             oldActualH:_OldActualH,
-             IsInputState:_IsInputState,
-             Horizontal:_Horizontal,
-             ScreenWidth:_ScreenWidth,
-             DensityDpi:_DensityDpi,
-           }));
+          //  $('#debug').text('ReSize '+_ReizeNum+' :' + JSON.stringify({
+          //    width:_Width,
+          //    height:_Height,
+          //    actualH:_ActualH,
+          //    oldActualH:_OldActualH,
+          //    IsInputState:_IsInputState,
+          //    Horizontal:_Horizontal,
+          //    ScreenWidth:_ScreenWidth,
+          //    DensityDpi:_DensityDpi,
+          //  }));
            _Self.ds('resize');
        };
    }

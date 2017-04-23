@@ -12,6 +12,41 @@ http://creativecommons.org/licenses/by/3.0/
 */
 window.pano2vrGyro=pano2vrGyro;
 function pano2vrGyro(panoObject,containerId) {
+	var _self=this;
+	var _IsOnleyInteractive=false;
+	Object.defineProperty(this, "IsOnleyInteractive", {get: function() {return _IsOnleyInteractive;},});
+	var _IsOnlyTouch=false;
+	Object.defineProperty(this, "IsOnlyTouch", {get: function() {return _IsOnlyTouch;},});
+	//只有陀螺仪
+	this.onlyDevice=function(){
+		_IsOnleyInteractive=true;
+		_IsOnlyTouch=false;
+		diffPan = panoObj.getPan();
+		diffTilt = panoObj.getTilt();
+		panoObj.setLockedMouse(true);
+		console.log('onlyDevice');
+	};
+
+	//只有touch
+	this.onlyTouch=function(){
+		_IsOnleyInteractive=true;
+		_IsOnlyTouch=true;
+		panoObj.setLockedMouse(false);
+		console.log('onlyTouch');
+	};
+
+	/**
+	 * 两种炒作兼顾
+	 * @return {[type]} [description]
+	 */
+	this.interactiveByTouchAndDevice=function(){
+		_IsOnleyInteractive=false;
+		diffPan = panoObj.getPan();
+		diffTilt = panoObj.getTilt();
+		panoObj.setLockedMouse(false);
+		// panoObj.moveTo(diffPan ,diffTilt,panoObj.getFov(),10);
+	};
+
 
 	this.enable=function() {
 		if (isDeviceEnabled && !isEnabled) {
@@ -70,6 +105,7 @@ function pano2vrGyro(panoObject,containerId) {
 	var limit = 15; //判断方向的最小滑动距离
 
 	function handleTouchStart(event) {
+		if(!_IsOnlyTouch&&_IsOnleyInteractive)return;
 		isTouching = true;
 
 		var _targetTouches = event.targetTouches || event.originalEvent.targetTouches;
@@ -85,11 +121,8 @@ function pano2vrGyro(panoObject,containerId) {
 			endX = 0;
 			diffY = 0;
 			diffX = 0;
-
-
-
 			_oldObj={
-				pan:panoObject.getPan(),
+				pan:panoObject.getPanNorth(),
 				tilt:panoObject.getTilt(),
 			};
 		}
@@ -97,29 +130,10 @@ function pano2vrGyro(panoObject,containerId) {
 		// $('#debug').html('handleTouchStart:'+JSON.stringify(_oldObj));
 	}
 
-	function handleTouchEnd(event) {
-		isTouching = false;
-		// $('#debug').html('handleTouchEnd');
-		// panoObject.setPan(_oldObj.pan+10)
-		// panoObject.setTilt(_oldObj.tilt+10);
 
-
-
-		var _targetTouches = event.targetTouches || event.originalEvent.targetTouches;
-		if(_targetTouches){
-			var touch = _targetTouches[0];
-			if(touch&&touch.identifier&&_touchid!==touch.identifier){
-				return;
-			}
-			_touchid=null;
-		}
-
-		diffPan = panoObj.getPan();
-		diffTilt = panoObj.getTilt();
-
-	}
 
 	function handleTouchMove(event){
+		if(!_IsOnlyTouch)return;
 		var _targetTouches = event.targetTouches || event.originalEvent.targetTouches;
 		var touch = _targetTouches[0];
 
@@ -145,18 +159,40 @@ function pano2vrGyro(panoObject,containerId) {
 
 
 
+		// var _pan=_oldObj.pan+90*diffX;
 		var _pan=_oldObj.pan+90*diffX;
 		var _tilt=_oldObj.tilt+90*diffY;
-		panoObj.setPanNorth(_pan);
-		panoObj.setTilt(_tilt);
+		// panoObj.setPanNorth(_pan);
+		// panoObj.setTilt(_tilt);
 
-		panoObj.moveTo(_pan ,_tilt,panoObj.getFov(),10);
+		panoObj.moveTo(_pan,_tilt,panoObj.getFov(),10);
 		//  $('#debug').html('move:'+JSON.stringify(
 		// 	 {
 		// 		 diffX:diffX,
 		// 		 diffY:diffY,
 		// 	 }
 		//  ));
+	}
+
+	function handleTouchEnd(event) {
+		if(!_IsOnlyTouch&&_IsOnleyInteractive)return;
+		isTouching = false;
+		// $('#debug').html('handleTouchEnd');
+		// panoObject.setPan(_oldObj.pan+10)
+		// panoObject.setTilt(_oldObj.tilt+10);
+
+		var _targetTouches = event.targetTouches || event.originalEvent.targetTouches;
+		if(_targetTouches){
+			var touch = _targetTouches[0];
+			if(touch&&touch.identifier&&_touchid!==touch.identifier){
+				return;
+			}
+			_touchid=null;
+		}
+
+		diffPan = panoObj.getPanNorth();
+		diffTilt = panoObj.getTilt();
+
 	}
 
 	var lastYaw=0;
@@ -166,11 +202,11 @@ function pano2vrGyro(panoObject,containerId) {
 	var ignoreInit=10;
 
 	function handleDeviceOrientation(event) {
-
+		if(_IsOnlyTouch&&_IsOnleyInteractive)return;
 		if ((!event["alpha"]) || (!event["beta"]) || (!event["gamma"])) return;
 
 		var d = new Date();
-		var isTouching=(panoObj.isTouching());
+		// var isTouching=(panoObj.isTouching());
 
 		// $('#debug').html('isTouching:',isTouching);
 		if (isTouching) {

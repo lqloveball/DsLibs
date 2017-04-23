@@ -33,7 +33,7 @@
     root.Ds.gemo = root.Ds.gemo || {};
     root.Ds.gemo.Pano2vr45Manager = Pano2vr45Manager;
 
-    function Pano2vr45Manager(domID,path) {
+    function Pano2vr45Manager(domID,path,GyroDomID) {
         var _Self = this;
         Ds.Extend(this, new Ds.EventDispatcher());
         //全景资源路径
@@ -49,7 +49,8 @@
         _Skin = new pano2vrSkin(_Pano, _PathBase);
         Object.defineProperty(this, "Skin", {get: function() {return _Skin;},});
         //添加控制器
-        var _Gyro = new pano2vrGyro(_Pano, domID);
+        var _GyroDomID=GyroDomID||domID;
+        var _Gyro = new pano2vrGyro(_Pano, _GyroDomID);
         Object.defineProperty(this, "Gyro", {get: function() {return _Gyro;},});
         // window.gyro = _Gyro;
         //对Pano2vr进行扩展
@@ -123,6 +124,23 @@
           }
         };
         /**
+         * 跳转到制定节点场景
+         * @param  {[type]} value [description]
+         * @return {[type]}       [description]
+         */
+        this.OpenNext=function(value){
+          _Pano.openNext(value);
+        };
+        /**
+         * [description]
+         * @param  {[type]} value   [description]
+         * @param  {[type]} hotspot [description]
+         * @return {[type]}         [description]
+         */
+        this.OpenUrl=function(value,hotspot){
+          _Pano.openUrl(value,hotspot.target);
+        };
+        /**
          * 热点
          * @return {[type]} [description]
          */
@@ -132,6 +150,34 @@
          * @return {[type]} [description]
          */
         Object.defineProperty(this, "CurrentScene", {get: function() {return _Pano.getCurrentNode();},});
+        //是否只允许一次交互方式存在
+        var _IsOnleyInteractive=false;
+        Object.defineProperty(this, "IsOnleyInteractive", {
+            get: function() {
+                return _Gyro.IsOnleyInteractive;
+            }
+        });
+        //是否只存在拖拽
+      	var _IsOnlyTouch=false;
+        Object.defineProperty(this, "IsOnlyTouch", {
+            get: function() {
+                return _Gyro.IsOnlyTouch;
+            }
+        });
+        this.OnlyDevice=function(){
+      		_Gyro.onlyDevice();
+      	};
+      	//只有touch
+      	this.OnlyTouch=function(){
+          _Gyro.onlyTouch();
+      	};
+      	/**
+      	 * 两种交互操作兼顾
+      	 * @return {[type]} [description]
+      	 */
+      	this.InteractiveByTouchAndDevice=function(){
+      		_Gyro.interactiveByTouchAndDevice();
+      	};
         /**
          * 对Pano2vr进行扩展
          * @param {[Pano2vr]} pano [全景的对象]
@@ -152,7 +198,11 @@
                     type: 'openNext'
                 });
             };
-
+            pano.__upHotspot=function(){
+              _Self.ds({
+                  type: 'upHotspot'
+              });
+            };
             //改造帧触发update
             pano._update = pano.update;
             pano.update = function() {

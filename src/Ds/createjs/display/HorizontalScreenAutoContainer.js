@@ -82,6 +82,7 @@
         };
         //监听屏幕尺寸变化
         $(window).resize(function() {
+            setTimeout(function(){_Self.Resize();},100);
             _Self.Resize();
         });
         //马上计算屏幕现实状态
