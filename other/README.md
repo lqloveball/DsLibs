@@ -4,8 +4,8 @@
 ###  SiteTemp [通用项目模板]
 - 这个模板适合绝大部分项目
 - 输出结构
-```
-/*
+``` javaScript
+/* 
 极小10k内内置实现
 1、通用loading[dom or createjs]
 2、背景声音自动播放与绑定设置
