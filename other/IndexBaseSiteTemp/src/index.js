@@ -56,6 +56,8 @@ function LoadSinglePageApplicationJS(){
  *  初始化Dom loading界面
  */
 function InitLoadPanel(){
+  //如果是需要creatjs的loading 使用这段，屏蔽下面的LoadSinglePageApplicationJS();
+  // InitCreateJsLoadPanel();
   //加载这单页面应用
   LoadSinglePageApplicationJS();
 }
@@ -106,6 +108,52 @@ function InitAudioAutoPlayLister(){
   SiteModel.AudioAutoPlayLister.InitLoadAndSetBGM(SiteModel.AudioAutoPlayListerData);
 }
 /**
+ * 构建createjs模块
+ */
+function InitCJSModel(){
+  //构建createjs模块
+  SiteModel.CJSModel = ccjs.CCJSModel.Create({
+      appendTo:$('#cjsBox')[0],
+      width: 640,
+      height: 1040,
+      fps: 30
+  });
+}
+/**
+ *  初始化CreateJs loading界面
+ */
+function InitCreateJsLoadPanel(){
+  //loading加载配置
+  var _loadObj = {
+      basePath: './assets/',
+      //js路径
+      jsUrl: 'loading.js',
+      jsNS: 'loadlib',
+      imgNS: 'loadimages',
+      //加载完成后调用的方法
+      complete: onComplete,
+      //加载进行调用的方法
+      // progress: onProgress,
+      //加载方式 初始化LoadQueue的crossOrigin参数
+      loadType: true,
+  };
+  //loading加载完成后的方法处理
+  function onComplete(e) {
+    console.log('LoadPanel加载完成');
+    //创建加载界面
+    SiteModel.LoadPanel=new loadlib.LoadPanel();
+    //添加到场景
+    SiteModel.CJSModel.Root.addChild(SiteModel.LoadPanel);
+    SiteModel.LoadPanel.gotoAndStop(0);
+    SiteResizeModel.ReSize();
+    ShowProgress(10);
+    //加载这单页面应用
+    LoadSinglePageApplicationJS();
+  }
+  //开始加载loading的资源
+  ccjs.LoadCJSAssets(_loadObj);
+}
+/**
  * 自适应
  */
 function ReSize(){
@@ -120,29 +168,13 @@ function LoadBaseJS() {
     require('ds/EventDispatcher.min');
     require('sitemoblieresizemodel');
     require('ds/media/MobileAudioAutoPlayLister');
-    // require('jstween');
     InitSiteResizeModel();
     InitAudioAutoPlayLister();
+    // require('jstween'); //是否需要运动引擎
+    // require('createjs'); //是否需要createjs
+    // require('ds/createjs/DsCreatejs'); //配套扩展支持
+    // InitCJSModel();  //初始化createjs模块
     InitLoadPanel();
-
-    // require.ensure(
-    //     [
-    //       'jquery',
-    //       'eventdispatcher',
-    //       'sitemoblieresizemodel',
-    //     ],
-    //     function() {
-    //         require([
-    //           'jquery',
-    //           'eventdispatcher',
-    //           'sitemoblieresizemodel',
-    //         ],function(){
-    //           InitLoadPanel();
-    //           InitSiteResizeModel();
-    //         });
-    //     },
-    //     'base'
-    // );
 }
 //开始加载代码
 LoadBaseJS();
