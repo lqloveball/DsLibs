@@ -15,14 +15,9 @@ function AppMain() {
       console.log('AppMain Init');
 
       InitResizeModel();
+      WeiShare();
     };
-    /**
-     * 进行自适应
-     */
-    function InitResizeModel(){
-      SiteModel.SiteResizeModel.on('resize',ReSize);
-      ReSize();
-    }
+
     /**
      * 如果拥有Createjs运行这个代码
      * 记的需要引用下面库
@@ -43,6 +38,14 @@ function AppMain() {
       _Root = _CJSModel.Root;
       _Stage = _CJSModel.Stage;
     }
+
+    /**
+     * 进行自适应
+     */
+    function InitResizeModel(){
+      SiteModel.SiteResizeModel.on('resize',ReSize);
+      ReSize();
+    }
     /**
      * 自适应
      */
@@ -57,6 +60,21 @@ function AppMain() {
         var _densityDpi=SiteModel.SiteResizeModel.DensityDpi ;
 
         //_CJSModel.SetSize(640,_actualH);
+    }
+    /**
+     * 微信分享接口
+     */
+    function WeiShare() {
+        if(window['CallJsApiWXConfigItf']===undefined){
+          console.warn('WeiShare Error CallJsApiWXConfigItf');
+          return;
+        }
+        CallJsApiWXConfigItf("http://wechat.cagoe.com/JsApiWXConfig.aspx");
+        SetWechatShare("分享标题", "分享内容", location.origin + "/index.aspx", "images/ShareImg.jpg", function() {
+            Ds.gemo.QuickTrack.baiduEvent('WechatShare');
+        });
+        SetWechatShareToFriend("分享标题", "分享内容");
+        SetWechatShareToTimeline("分享标题", "分享内容");
     }
 
 }
