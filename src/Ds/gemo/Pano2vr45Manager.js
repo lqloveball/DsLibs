@@ -249,7 +249,22 @@
                 });
                 // console.log('upHotspot', this._DsHotspots);
             };
-
+            pano._changeViewMode = pano.changeViewMode;
+            pano.changeViewMode = function() {
+                this._changeViewMode();
+                _Self.ds({
+                    type: 'changeViewMode',
+                });
+                // console.log('changeViewMode');
+            };
+            pano._setViewerSize = pano.setViewerSize;
+            pano.setViewerSize = function(a, d) {
+                this._setViewerSize(a, d);
+                _Self.ds({
+                    type: 'resize',
+                });
+                // console.log('resize');
+            };
         }
     }
 

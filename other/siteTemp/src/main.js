@@ -185,7 +185,6 @@ function LoadBaseJS() {
         [
           'jquery',
           'eventdispatcher',
-          'log',
           'ds/gemo/QuickTrack',
           'ds/media/MobileAudioAutoPlayLister',
           'sitemoblieresizemodel',
@@ -194,7 +193,6 @@ function LoadBaseJS() {
             require([
               'jquery',
               'eventdispatcher',
-              'log',
               'ds/gemo/QuickTrack',
               'ds/media/MobileAudioAutoPlayLister',
               'sitemoblieresizemodel',
