@@ -16,7 +16,7 @@ var jsmpeg = window.jsmpeg = function(url, opts) {
 	this.wantsToPlay = this.autoplay;
 	this.loop = !!opts.loop;
 	this.seekable = opts.seekable!==undefined?opts.seekable:true;
-	this.externalStartLoadCallback = options.onstartload || null;
+	this.externalStartLoadCallback = opts.onstartload || null;
 	this.externalLoadCallback = opts.onload || null;
 	this.externalDecodeCallback = opts.ondecodeframe || null;
 	this.externalFinishedCallback = opts.onfinished || null;
