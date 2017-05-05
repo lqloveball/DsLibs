@@ -3,6 +3,12 @@
  * @classdesc: 简化工作中项目做数据请求操作相关代码编写
  * @extends
  * @example: 举例
+ *
+   Ds.net.QuickAjax.Post('xxxx.aspx?R=1',{WorkID:10},function(data){
+     alert(data);
+   },function(error){
+     alert('error');
+   });
  * @author: maksim email:maksim.lin@foxmail.com
  * @copyright: Ds是累积平时项目工作的经验代码库，不属于职位任务与项目的内容。里面代码大部分理念来至曾经flash 前端时代，尽力减小类之间耦合，通过webpack按需request使用。Ds库里内容多来至网络与参考其他开源代码库。Ds库也开源开放，随意使用在所属的职位任务与项目中。
  * @constructor
@@ -159,14 +165,15 @@
      * @param  {[String]} url [description]
      * @return {[Object]} _request   [description]
      */
-    this.GetUrlParamList = function(url) {
+    this.GetUrlParamDc = function(url) {
       if (url === undefined || url === null) url = location.href;
       var _name, _value;
-      var str = location.href; //取得整个地址栏
+
       var _num = url.indexOf("?");
       url = url.substr(_num + 1); //取得所有参数   stringvar.substr(start [, length ]
+      // console.log(url);
       var _request=null;
-      var arr = str.split("&"); //各个参数放到数组里
+      var arr = url.split("&"); //各个参数放到数组里
       for (var i = 0; i < arr.length; i++) {
         _num = arr[i].indexOf("=");
         if (_num > 0) {
@@ -178,12 +185,13 @@
       }
       return _request;
     };
-    
+
   }
   //为了快速使用
   root.Ds.net.Get = root.Ds.net.QuickAjax.Get;
   root.Ds.net.Post = root.Ds.net.QuickAjax.Post;
   root.Ds.net.GetUrlParam = root.Ds.net.QuickAjax.GetUrlParam;
+  root.Ds.net.GetUrlParamDc = root.Ds.net.QuickAjax.GetUrlParamDc;
 
   return root.Ds.net.QuickAjax;
 }));
