@@ -751,12 +751,12 @@
             }
         }
         return true;
-    }
+    };
 
     EXIF.getTag = function(img, tag) {
         if (!imageHasData(img)) return;
         return img.exifdata[tag];
-    }
+    };
 
     EXIF.getAllTags = function(img) {
         if (!imageHasData(img)) return {};
@@ -769,7 +769,7 @@
             }
         }
         return tags;
-    }
+    };
 
     EXIF.pretty = function(img) {
         if (!imageHasData(img)) return "";
@@ -790,11 +790,11 @@
             }
         }
         return strPretty;
-    }
+    };
 
     EXIF.readFromBinaryFile = function(file) {
         return findEXIFinJPEG(file);
-    }
+    };
 
     if (typeof define === 'function' && define.amd) {
         define('exif-js', [], function() {
@@ -802,4 +802,3 @@
         });
     }
 }.call(this));
-
