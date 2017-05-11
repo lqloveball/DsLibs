@@ -528,7 +528,7 @@
         this.Stage.mouseMoveOutside = true;
         this.Stage.mouseInBounds = true;
         this.Pause=false;
-
+        createjs.MotionGuidePlugin.install();
 
         /**
          * 幀设置
@@ -558,9 +558,8 @@
          * @param {[type]} _h [description]
          */
         this.SetSize = function(_w, _h) {
-            var _canvas = $(_Self.Canvas);
-            _canvas.attr('width', _w);
-            _canvas.attr('height', _h);
+            _Self.Canvas.setAttribute('width', _w);
+            _Self.Canvas.setAttribute('height', _h);
         };
     };
     /**
@@ -588,7 +587,8 @@
         var _canvas = param.canvas ? param.canvas : document.createElement("canvas");
         // log( typeof canvas === 'string')
         if (typeof _canvas === 'string') {
-            _canvas = $(_canvas)[0];
+            // _canvas = $(_canvas)[0];
+            _canvas =  document.getElementById(_canvas);
         }
         if (_canvas instanceof HTMLElement) _canvas = _canvas;
         else if (_canvas[0] instanceof HTMLElement) _canvas = _canvas[0];
@@ -604,11 +604,21 @@
         //默认 {position:'absolute',left:0,top:0}
         if (param.css !== undefined) $(_Canvas).css(css);
         //appendTo不是空就进行appendTo
-        if (appendTo !== '') $(appendTo).append($(_Canvas));
-        createjs.MotionGuidePlugin.install();
+        if (appendTo !== '') {
+          if (typeof appendTo === 'string') {
+            document.getElementById(appendTo).appendChild(_Canvas);
+          }else if (appendTo instanceof HTMLElement){
+            appendTo.appendChild(_Canvas);
+          }else{
+            console.warn('param.appendTo 参数非法');
+          }
+
+        }
+
+
         //设置尺寸
-				if (param.width) $(_Canvas).attr('width', width);
-				if (param.height) $(_Canvas).attr('height', height);
+				if (param.width) _Canvas.setAttribute('width', width);
+				if (param.height) _Canvas.setAttribute('height', height);
         return _cjsModel;
     };
     ccjs.CCJSModel = CCJSModel;
