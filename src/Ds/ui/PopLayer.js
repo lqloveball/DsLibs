@@ -254,6 +254,18 @@
    * 快捷弹出提示框
    * @param  {[String]} info   [提示内容]
    * @param  {[Object]} config [提示框配置]
+   * config.title 提示框标题 默认'' 会不出现头部标题
+   * config.btns 按钮文案 可以是string 或者 Array,如：不需要按钮'' 单个按钮:'确定' ['确定']  双按钮：'确定,取消' ['确定','取消']
+   * config.ok 确定执行方法  默认空
+   * config.no 取消执行方法  默认空
+   * config.close 关闭执行方法  默认使用config.noFun代替 如果有背景关闭与关闭按钮下会执行
+   * config.hasClose 是否有关闭按钮  默认无关闭按钮
+   * config.bgClose 是否支持背景关闭  默认不支持
+   * config.color 字体颜色  默认#000;
+   * config.panelColor 框颜色  默认#fff;
+   * config.bgColor 框颜色  默认#000;
+   * config.bgAlpha 框颜色  默认0.8;
+   * config.hasBg 是否有背景遮罩  默认true;
    * @return {[PopAlert]}  result   [这个alert框对象 ]
    */
   root.Ds.ui.PopLayer.alert = function(info, config) {
