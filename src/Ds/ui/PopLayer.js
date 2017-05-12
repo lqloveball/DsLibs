@@ -111,9 +111,9 @@
      * @param {[Object]} config [配置参数]
      * config.title 提示框标题 默认'' 会不出现标题
      * config.btns 按钮文案 可以是string 或者 Array,如：不需要按钮'' 单个按钮:'确定' ['确定']  双按钮：'确定,取消' ['确定','取消']
-     * config.okFun 确定执行方法  默认空
-     * config.noFun 取消执行方法  默认空
-     * config.closeFun 关闭执行方法  默认使用config.noFun代替 如果有背景关闭与关闭按钮下会执行
+     * config.ok 确定执行方法  默认空
+     * config.no 取消执行方法  默认空
+     * config.close 关闭执行方法  默认使用config.noFun代替 如果有背景关闭与关闭按钮下会执行
      * config.hasClose 是否有关闭按钮  默认无关闭按钮
      * config.bgClose 是否支持背景关闭  默认不支持
      * config.color 字体颜色  默认#000;
@@ -128,11 +128,11 @@
       //头部
       _Title = _config.title || '';
       //确定事件
-      _OkFun = _config.okFun || null;
+      _OkFun = _config.ok || null;
       //取消事件
-      _NoFun = _config.noFun || null;
+      _NoFun = _config.no || null;
       //关闭按钮，如果没事件 那就用取消
-      _CloseFun = _config.closeFun || _NoFun;
+      _CloseFun = _config.close || _NoFun;
       //按钮
       var _btns = _config.btns !== undefined ? _config.btns : '确定';
       if (typeof(_btns) == 'string') {
@@ -211,7 +211,7 @@
         });
       }
       //是否拥有背景遮罩
-      var _hasBg = config.hasBg !== undefined ? config.hasBg : true;
+      var _hasBg = _config.hasBg!== undefined?  _config.hasBg:true ;
       if (_hasBg) {
         _BgDom.show();
       } else {
