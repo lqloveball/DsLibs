@@ -20,12 +20,8 @@
      * @param {[type]} obj [一个用来判断是否是dom对象的参数]
      */
     this.IsDOM=function(obj){
-      if( typeof HTMLElement === 'object' ){
-        return obj instanceof HTMLElement;
-      }
-      else{
-        return obj && typeof obj === 'object' && obj.nodeType === 1 && typeof obj.nodeName === 'string';
-      }
+      if( typeof HTMLElement === 'object' ) return obj instanceof HTMLElement;
+      else return obj && typeof obj === 'object' && obj.nodeType === 1 && typeof obj.nodeName === 'string';
     };
     /**
      * [获取地址上面的？后的参数]
