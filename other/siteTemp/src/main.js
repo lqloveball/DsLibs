@@ -10,23 +10,26 @@
 _time = new Date().getTime();
 //网址主模块
 window.SiteModel = {
-    ShowProgress: ShowProgress,//设置加载进度方法
-    HitLoadPanel: HitLoadPanel,//隐藏加载进度方法 [如需要使用这个函数进行设置隐藏加载进度条，Dom默认直接hide(),Createjs的loading 直接删除父级对象]
+    // ShowProgress: 自动创建 通过SiteModel.LoadModel 实现
+    // HitLoadPanel: 自动创建 通过SiteModel.LoadModel 实现
+    Devicer:require('ds/gemo/Devicer'),//设备判断，依托于Ds.gemo.Devicer类
+    AppModel:null,//这个单页面程序主逻辑模块  自动创建通过LoadSinglePageApplicationJS;
+    LoadModel:require('app/LoadModel.js'),//设置加载loading的逻辑模块  [这个里如果是多页面可以根据自己页面Load的js来设置]
     Debug:false,//是否debug  会根据端口号进行判断
-    SiteResizeModel:null,//也可以通过这里获取自适应模块
+    LoadSinglePageApplicationJS:LoadSinglePageApplicationJS,//加载单页面应用逻辑代码
+    SiteResizeModel:null,//网站自适应模块 自动创建
     LoadPanel:null,//加载界面 [Dom的loading 请在InitLoadPanel函数内进行实现   Createjs的loading，正常来说不需要修改，如果需要修改InitCreateJsLoadPanel函数内修改实现]
     CJSModel:null,//createjs项目模块  [设置IsCJSSiteModel=true 时候才会创建]
-    AudioAutoPlayLister:null,//声音自动播放加载与控制器类对象
-    //对整个网站框架进行ReSize方法执行
-    ReSize:function(){
-      SiteModel.SiteResizeModel.ReSize();
-    },
+    AudioAutoPlayLister:null,//声音自动播放加载与控制器类对象  自动创建
+    //对整个网站框架进行ReSize方法执行 重置执行强制resize计算
+    ReSize:function(){SiteModel.SiteResizeModel.ReSize();},
     //==============以上参数不做修改，会根据下列配置进行生成===================
     ScreenType:'v',//网站自适应方式
     Screen:'#screen',//网站自适应容器
     HasCreateJs:false,//网站是否需要是否是用createjs    [设置开发网站的类型,true会使用vendors2.js false使用vendors1.js]
     IsCJSSiteModel:false,//是否是用createjs方式网站    [需要设置HasCreateJs 等于true]
     IsCJSLoadPanel:false,//是否用createjs的loading  [设置使用什么方式做loading]
+
     //声音自动播放加载与控制器类对象参数，不需要可以设置成null。
     AudioAutoPlayListerData:{
     //加载声音列表  list=null list=undefined list.length<=0没有这个列表不会执行
@@ -37,64 +40,31 @@ window.SiteModel = {
     button:'#BGMBtn'
   },
 };
+//loading 方法
+SiteModel.ShowProgress=SiteModel.LoadModel.ShowProgress;
+SiteModel.HitLoadPanel=SiteModel.LoadModel.HitLoadPanel;
+//基本的浏览器与设备的判断
+SiteModel.IsWeixin=SiteModel.Devicer.IsWeixin;
+SiteModel.IsIOS=SiteModel.Devicer.IsIOS;
+SiteModel.IsMobile=SiteModel.Devicer.IsMobile;
+//设置变量确保LoadSinglePageApplicationJS只能执行一次
+var _LoadSinglePageApplicationEnd=false;
 /**
  * 加载单页面应用的代码
  */
 function LoadSinglePageApplicationJS(){
+  if(_LoadSinglePageApplicationEnd)return;
+  _LoadSinglePageApplicationEnd=true;
   require.ensure(
       ['app/AppMain.js'],
       function() {
-          ShowProgress(20);
+          SiteModel.LoadModel.ShowProgress(20);
           _SinglePageApplication = require('app/AppMain.js');
-          SiteModel.SinglePageApplication = _SinglePageApplication;
-          SiteModel.SinglePageApplication.Init();
+          SiteModel.AppModel = _SinglePageApplication;
+          SiteModel.AppModel.Init();
       },
       'AppMain'//单页面应用打包的js名称
   );
-}
-/**
- *  初始化Dom loading界面
- */
-function InitLoadPanel(){
-  //开始初始化Domloading
-  SiteModel.LoadPanel=$('#siteLoadPanel');
-  //加载这单页面应用
-  LoadSinglePageApplicationJS();
-}
-/**
- * 设置加载进度方法
- * @param {[Number]} progress [loading的百分比 0-100]
- */
-function ShowProgress(progress){
-  //获取load界面
-  var _loadPanel=SiteModel.LoadPanel;
-
-  //判断是Dom方式的loading
-  if((_loadPanel instanceof HTMLElement)||(_loadPanel.length>=1&&_loadPanel[0] instanceof HTMLElement)){
-    //【Dom Loading 请在这里实现】
-    $('#siteLoadPanel .progress').css({width:(progress+1)+'%'});
-    $('#siteLoadPanel .label').html((progress+1)+'%');
-  }
-  //判断是createjs类型loading
-  else if(window['createjs']!==undefined&&_loadPanel instanceof createjs.DisplayObject){
-    if(progress>=99)progress=99;
-    if(_loadPanel instanceof createjs.MovieClip)_loadPanel.gotoAndStop(progress);
-    if(_loadPanel.label)_loadPanel.label.text=progress<10?'0'+progress+'%':progress+'%';
-  }
-}
-/**
- * 隐藏进度条方法
- */
-function HitLoadPanel(){
-  var _loadPanel=SiteModel.LoadPanel;
-  if(!_loadPanel)return;
-  //判断是Dom方式的loading
-  if((_loadPanel instanceof HTMLElement)||(_loadPanel.length>=1&&_loadPanel[0] instanceof HTMLElement)){
-    $(_loadPanel).hide();
-  }
-  else if(window['createjs']!==undefined&&_loadPanel instanceof createjs.DisplayObject){
-    if(_loadPanel.parent)_loadPanel.parent.removeChild(_loadPanel);
-  }
 }
 /*=================以下部分基本通用可以不需要修改===================*/
 //进行判断是否进行debug的判断
@@ -107,47 +77,12 @@ document.addEventListener('touchmove', function(e) {e.preventDefault();}, false)
 function InitCJSModel(){
   //构建createjs模块
   SiteModel.CJSModel = ccjs.CCJSModel.Create({
-      appendTo:$('#cjsBox')[0],
+    appendTo:$('#cjsBox')[0],
       width: 640,
-      height: 1040,
+      height: 1140,
       fps: 30
   });
 }
-/**
- *  初始化CreateJs loading界面
- */
-function InitCreateJsLoadPanel(){
-  //loading加载配置
-  var _loadObj = {
-      basePath: './assets/',
-      //js路径
-      jsUrl: 'loading.js',
-      jsNS: 'loadlib',
-      imgNS: 'loadimages',
-      //加载完成后调用的方法
-      complete: onComplete,
-      //加载进行调用的方法
-      // progress: onProgress,
-      //加载方式 初始化LoadQueue的crossOrigin参数
-      loadType: true,
-  };
-  //loading加载完成后的方法处理
-  function onComplete(e) {
-    console.log('LoadPanel加载完成');
-    //创建加载界面
-    SiteModel.LoadPanel=new loadlib.LoadPanel();
-    //添加到场景
-    SiteModel.CJSModel.Root.addChild(SiteModel.LoadPanel);
-    SiteModel.LoadPanel.gotoAndStop(0);
-    SiteResizeModel.ReSize();
-    ShowProgress(10);
-    //加载这单页面应用
-    LoadSinglePageApplicationJS();
-  }
-  //开始加载loading的资源
-  ccjs.LoadCJSAssets(_loadObj);
-}
-
 /**
  * 初始化网站自适应模块
  */
@@ -172,11 +107,8 @@ function InitSiteResizeModel(){
  */
 function ReSize(){
   //var _Width, _Height, _PageScale, _ActualH, _Horizontal = false,_IsInputState = false,_ScreenWidth, _DensityDpi;
-  if(SiteResizeModel.ScreenType=='auto'){
-
-  }
+  // if(SiteResizeModel.ScreenType=='auto'){}
 }
-
 /**
  * 加载基础库的
  */
@@ -238,8 +170,8 @@ function LoadCJSFrameWorkJS(){
             //是否CJS类型网站
             if(SiteModel.IsCJSSiteModel) InitCJSModel();
             //使用什么模式的加载loading
-            if(SiteModel.IsCJSLoadPanel)InitCreateJsLoadPanel();
-            else InitLoadPanel();
+            if(SiteModel.IsCJSLoadPanel) SiteModel.LoadModel.InitCreateJsLoadPanel();
+            else  SiteModel.LoadModel.InitDomLoadPanel();
           });
 
       },

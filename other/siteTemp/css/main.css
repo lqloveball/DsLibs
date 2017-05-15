@@ -450,6 +450,10 @@ li {
   padding: 0;
 }
 
+/*如果需要layer的话开启*/
+
+/*@import './libs/layer.less';*/
+
 #screen {
   position: absolute;
   left: 0;
@@ -457,6 +461,7 @@ li {
   width: 100%;
   height: 100%;
   overflow: hidden;
+  display: none;
 }
 
 /*#siteLoadPanel{
