@@ -193,7 +193,7 @@ function LoadFrameWorkJS(){
               'touchjs',
           ],function(){
             console.log('LoadFrameWorkJS:', new Date().getTime() - _time);
-            InitLoadPanel();
+            SiteModel.LoadModel.InitDomLoadPanel();
           });
 
       },
