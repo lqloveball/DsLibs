@@ -52,7 +52,7 @@
   $('body').append(_Style);
   //抽取提示框dom结构备用
   _AlertDom = $(_PopLayerDom.find('.Ds_PopLayer')[0]);
-  console.log(_AlertDom);
+  // console.log(_AlertDom);
   // alert 弹出框列表
   var _AlertList = [];
   /**

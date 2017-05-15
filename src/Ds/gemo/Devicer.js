@@ -33,7 +33,7 @@
     if (ua.match(/MicroMessenger/i) == "micromessenger") _isWeixin = true;
     //判断ios 还是 android
     var _isAndroid = u.indexOf('Android') > -1 || u.indexOf('Adr') > -1; //android终端
-    var _isiOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); //ios终端
+    var _isIOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); //ios终端
     //其他移动终端
     //判断是否ipad
     var _isIpad = u.match(/ipad/i) == "ipad";
@@ -44,7 +44,7 @@
     var _isWM = u.match(/windows mobile/i) == "windows mobile";
     //判断是否移动终端还是pc
     var _isMobile = true;
-    if (_isAndroid || _isiOS || _isIpad || _isMidp || _isUc7 || _isUc || _isCE || _isWM) {
+    if (_isAndroid || _isIOS || _isIpad || _isMidp || _isUc7 || _isUc || _isCE || _isWM) {
         _isMobile = true;
     } else {
         _isMobile = false;
@@ -54,7 +54,7 @@
     //是否安卓
     Devicer.IsAndroid = _isAndroid;
     //是否IOS
-    Devicer.IsiOS = _isiOS;
+    Devicer.IsIOS = _isIOS;
     Devicer.IsIpad = _isIpad;
     Devicer.IsMidp = _isMidp;
     Devicer.IsUc7 = _isUc7;
