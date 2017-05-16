@@ -140,6 +140,7 @@
     if (typeof value == 'string') {
       value = mc.timeline._labels[value];
     }
+    if(value<0)value=mc.totalFrames;
     mc.__mcMovieToData = undefined;
     var mcObj = {};
     mcObj.mc = mc;
