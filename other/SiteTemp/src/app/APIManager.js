@@ -104,14 +104,15 @@ function APIManager(){
       console.warn('地址内作品id参数不存在!');
       return;
     }
-    title=title||_ShareTitle;
-    info=info||_ShareInfo;
-    var _url=location.origin+_WorkPageUrl+workid;
+    var _workid=_urlParamDc.WorkID;
+    title = title || _ShareTitle;
+    info = info || _ShareInfo;
+    var _url = location.origin + _WorkPageUrl + _workid;
     SetWechatShare(title, info, _url, "images/ShareImg.jpg", function() {
       Ds.gemo.QuickTrack.Event('WechatShare');
     });
-    SetWechatShareToFriend(title,info);
-    SetWechatShareToTimeline(title,title);
+    SetWechatShareToFriend(title, info);
+    SetWechatShareToTimeline(title, title);
   };
 
 }
