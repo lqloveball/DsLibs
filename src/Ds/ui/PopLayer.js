@@ -140,7 +140,10 @@
       //按钮
       var _btns = _config.btns !== undefined ? _config.btns : '确定';
       if (typeof(_btns) == 'string') {
-        if (_btns.indexOf(',') != -1) {
+        if (_btns==='') {
+          _BtnArr = [];
+        }
+        else if (_btns.indexOf(',') != -1) {
           _BtnArr = _btns.split(',');
         } else {
           _BtnArr = [_btns];
@@ -232,7 +235,12 @@
       _Info = info || _Info;
       _TitleDom.html(_Title);
       _InftoDom.html(_Info);
-      $('body').append(_View);
+      if($('#screen').length>0){
+        $('#screen').append(_View);
+      }else{
+        $('body').append(_View);
+      }
+
       //弹出框索引
       if (_AlertList.indexOf(_Self) == -1) {
         _AlertList.push(_Self);
