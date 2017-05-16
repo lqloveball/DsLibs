@@ -13,6 +13,8 @@ function AppMain() {
     _Root = _CJSModel.Root;
     _Stage = _CJSModel.Stage;
   }
+  //一般会需要touchjs
+  require('touchjs');
   //接口管理器
   var _APIer=require('app/APIManager');
   SiteModel.APIer=this.APIer=_APIer;

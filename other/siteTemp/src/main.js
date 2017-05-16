@@ -26,8 +26,8 @@ window.SiteModel = {
     //==============以上参数不做修改，会根据下列配置进行生成===================
     ScreenType:'v',//网站自适应方式
     Screen:'#screen',//网站自适应容器
-    HasCreateJs:true,//网站是否需要是否是用createjs    [设置开发网站的类型,true会使用vendors2.js false使用vendors1.js]
-    IsCJSSiteModel:true,//是否是用createjs方式网站    [需要设置HasCreateJs 等于true]
+    HasCreateJs:false,//网站是否需要是否是用createjs    [设置开发网站的类型,true会使用vendors2.js false使用vendors1.js]
+    IsCJSSiteModel:false,//是否是用createjs方式网站    [需要设置HasCreateJs 等于true]
     IsCJSLoadPanel:false,//是否用createjs的loading  [设置使用什么方式做loading]
 
     //声音自动播放加载与控制器类对象参数，不需要可以设置成null。
@@ -56,10 +56,10 @@ function LoadSinglePageApplicationJS(){
   if(_LoadSinglePageApplicationEnd)return;
   _LoadSinglePageApplicationEnd=true;
   require.ensure(
-      ['app/AppMain.js'],
+      ['app/BackMain.js'],
       function() {
           SiteModel.LoadModel.ShowProgress(20);
-          _SinglePageApplication = require('app/AppMain.js');
+          _SinglePageApplication = require('app/BackMain.js');
           SiteModel.AppMain = _SinglePageApplication;
           SiteModel.AppMain.Init();
       },
@@ -157,14 +157,14 @@ function LoadCJSFrameWorkJS(){
           'createjs',//需要create
           'dscreatejs',//需要create 扩展
           'jstween',//需要运动引擎
-          'touchjs',//需要touch事件
+          // 'touchjs',//需要touch事件
       ],
       function() {
           require([
               'createjs',
               'dscreatejs',
               'jstween',
-              'touchjs',
+              // 'touchjs',
           ],function(){
             console.log('LoadCJSFrameWorkJS:', new Date().getTime() - _time);
             //是否CJS类型网站
@@ -185,12 +185,12 @@ function LoadFrameWorkJS(){
   require.ensure(
       [
           'jstween',//需要运动引擎
-          'touchjs',//需要touch事件
+          // 'touchjs',//需要touch事件
       ],
       function() {
           require([
               'jstween',
-              'touchjs',
+              // 'touchjs',
           ],function(){
             console.log('LoadFrameWorkJS:', new Date().getTime() - _time);
             SiteModel.LoadModel.InitDomLoadPanel();
