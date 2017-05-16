@@ -14,7 +14,7 @@ function APIManager(){
 
   //==================通用的分享接口使用代码==============================
   //设置默认分享 标题  内容  链接
-  var _ShareTilte='分享标题';
+  var _ShareTitle='分享标题';
   var _ShareInfo='分享内容';
   var _ShareUrl=location.origin + "/index.aspx";
   //作品回流页面地址
@@ -29,7 +29,7 @@ function APIManager(){
   });
   /**
    * 默认微信分享接口
-   * @param  {[string]} title [分享标题 默认_ShareTilte]
+   * @param  {[string]} title [分享标题 默认_ShareTitle]
    * @param  {[string]} info  [分享内容 默认_ShareInfo]
    * @param  {[string]} url   [分享链接地址 默认_ShareUrl 传参参考：'/index.html','index.html','http://xxx.xx.com/index.html' ]
    * @param  {[string]} domain  [设定需要使用指定的域分享接口地址  如："zedigital.com.cn" ，那接口地址会按"http://wechat."+domain+".cn/JsApiWXConfig.aspx" 进行拼接 ]
@@ -52,13 +52,13 @@ function APIManager(){
   };
   /**
    * 设置微信分享
-   * @param  {[string]} title [分享标题 默认_ShareTilte]
+   * @param  {[string]} title [分享标题 默认_ShareTitle]
    * @param  {[string]} info  [分享内容 默认_ShareInfo]
    * @param  {[string]} url   [分享链接地址 默认_ShareUrl 传参参考：'/index.html','index.html','http://xxx.xx.com/index.html' ]
    * @return {[type]}       [description]
    */
   this.SetWeiShare=function(title,info,url){
-    _ShareTilte=title||_ShareTilte;
+    _ShareTitle=title||_ShareTitle;
     _ShareInfo=info||_ShareInfo;
     if(url){
       if(url.indexOf('http')===-1){
@@ -68,11 +68,11 @@ function APIManager(){
     }
     _ShareUrl=url||_ShareUrl;
     //进行分享设置
-    SetWechatShare(_ShareTilte,_ShareInfo, _ShareUrl, "images/ShareImg.jpg", function() {
+    SetWechatShare(_ShareTitle,_ShareInfo, _ShareUrl, "images/ShareImg.jpg", function() {
         Ds.gemo.QuickTrack.Event('WechatShare');
     });
-    SetWechatShareToFriend(_ShareTilte,_ShareInfo);
-    SetWechatShareToTimeline(_ShareTilte,_ShareInfo);
+    SetWechatShareToFriend(_ShareTitle,_ShareInfo);
+    SetWechatShareToTimeline(_ShareTitle,_ShareInfo);
   };
   /**
    * 做回流页面分享

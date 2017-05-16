@@ -192,6 +192,7 @@
   root.Ds.net.Post = root.Ds.net.QuickAjax.Post;
   root.Ds.net.GetUrlParam = root.Ds.net.QuickAjax.GetUrlParam;
   root.Ds.net.GetUrlParamDc = root.Ds.net.QuickAjax.GetUrlParamDc;
+  root.Ds.net.OpenUrl = function(value){location.href=value;};
 
   return root.Ds.net.QuickAjax;
 }));

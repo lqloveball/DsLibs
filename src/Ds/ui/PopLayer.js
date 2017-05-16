@@ -123,6 +123,10 @@
      * config.hasBg 是否有背景遮罩  默认true;
      */
     function InitConfig(config) {
+      //如果传递是一个function进行下转换
+      if(typeof(config)==='function'){
+        config={ok:config};
+      }
       //初始化配置
       var _config = config || {};
       //头部
