@@ -15,13 +15,13 @@ function AppMain() {
   }
   //接口管理器
   var _APIer=require('app/APIManager');
-  SiteModel.APIer=_APIer;
+  SiteModel.APIer=this.APIer=_APIer;
   //通用的提示浮动层，alert代替解决方案
   require('ds/ui/PopLayer');
   //页面跳转管理器
   require('ds/gemo/SitePageManager');
   var _Pager=new Ds.gemo.SitePageManager();
-  SiteModel.Pager=_Pager;
+  SiteModel.Pager=this.Pager=_Pager;
   //兼容原来写法，与方便添加监测代码
   this.GotoPage=GotoPage;
   /**
