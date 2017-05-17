@@ -19,7 +19,7 @@ function AppMain() {
   var _APIer=require('app/APIManager');
   SiteModel.APIer=this.APIer=_APIer;
   //通用的提示浮动层，alert代替解决方案
-  require('ds/ui/PopLayer');
+  require('ds/ui/PopLayer.min');
   //页面跳转管理器
   require('ds/gemo/SitePageManager');
   var _Pager=new Ds.gemo.SitePageManager();
