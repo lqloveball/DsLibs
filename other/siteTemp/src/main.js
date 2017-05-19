@@ -56,10 +56,10 @@ function LoadSinglePageApplicationJS(){
   if(_LoadSinglePageApplicationEnd)return;
   _LoadSinglePageApplicationEnd=true;
   require.ensure(
-      ['app/BackMain.js'],
+      ['app/AppMain.js'],
       function() {
           SiteModel.LoadModel.ShowProgress(20);
-          _SinglePageApplication = require('app/BackMain.js');
+          _SinglePageApplication = require('app/AppMain.js');
           SiteModel.AppMain = _SinglePageApplication;
           SiteModel.AppMain.Init();
       },
