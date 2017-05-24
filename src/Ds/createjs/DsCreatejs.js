@@ -27,30 +27,30 @@
   window.ccjs = window.Ds.createjs;
   window.ccjs.Version = 'v1.0';
   /**======================Rectangle 扩展 Start========================**/
-  /**
-   * 判断2个矩形是否碰
-   * @param  {[Rectangle]} rect [是否碰到矩形]
-   * @return {[Boolean]}      [是否碰撞]
-   */
-  createjs.Rectangle.prototype.intersects = function(rect) {
-    return (this.x <= rect.x + rect.width && rect.x <= this.x + this.width &&
-      this.y <= rect.y + rect.height && rect.y <= this.y + this.height);
-  };
-  /**
-   * 计算出2个矩形交集
-   * @param  {[Rectangle]} rect [是否碰到矩形]
-   * @return {[Rectangle]}      [交际的矩形]
-   */
-  createjs.Rectangle.prototype.intersection = function(rect) {
-    var x0 = Math.max(this.x, rect.x);
-    var x1 = Math.min(this.x + this.width, rect.x + rect.width);
-    if (x0 <= x1) {
-      var y0 = Math.max(this.y, rect.y);
-      var y1 = Math.min(this.y + this.height, rect.y + rect.height);
-      if (y0 <= y1) return new Rectangle(x0, y0, x1 - x0, y1 - y0);
-    }
-    return null;
-  };
+  // /**
+  //  * 判断2个矩形是否碰
+  //  * @param  {[Rectangle]} rect [是否碰到矩形]
+  //  * @return {[Boolean]}      [是否碰撞]
+  //  */
+  // createjs.Rectangle.prototype.intersects = function(rect) {
+  //   return (this.x <= rect.x + rect.width && rect.x <= this.x + this.width &&
+  //     this.y <= rect.y + rect.height && rect.y <= this.y + this.height);
+  // };
+  // /**
+  //  * 计算出2个矩形交集
+  //  * @param  {[Rectangle]} rect [是否碰到矩形]
+  //  * @return {[Rectangle]}      [交际的矩形]
+  //  */
+  // createjs.Rectangle.prototype.intersection = function(rect) {
+  //   var x0 = Math.max(this.x, rect.x);
+  //   var x1 = Math.min(this.x + this.width, rect.x + rect.width);
+  //   if (x0 <= x1) {
+  //     var y0 = Math.max(this.y, rect.y);
+  //     var y1 = Math.min(this.y + this.height, rect.y + rect.height);
+  //     if (y0 <= y1) return new Rectangle(x0, y0, x1 - x0, y1 - y0);
+  //   }
+  //   return null;
+  // };
   /**
    * 矩形是否包含点
    * @param  {[Number]} x [x坐标]

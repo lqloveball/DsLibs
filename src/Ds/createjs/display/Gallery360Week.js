@@ -1,6 +1,8 @@
 /**
  * @class Ds.gemo.Gallery360Week
- * @classdesc:一周360度浏览画廊 头尾衔接，在茶π项目中使用过
+ * @classdesc:
+ * 一周360度浏览画廊 头尾衔接，在茶π项目中使用过
+ * 带陀螺仪控制  带拖动控制   横竖屏幕都兼容使用
  * @extends
  * @example: 举例
  * @author: maksim email:maksim.lin@foxmail.com
