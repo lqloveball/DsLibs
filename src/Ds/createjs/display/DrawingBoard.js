@@ -41,13 +41,14 @@
     window.Ds.createjs.display = window.Ds.createjs.display || {};
     window.Ds.createjs.display.DrawingBoard = DrawingBoard;
 
-    function DrawingBoard(w, h, pdata) {
+    function DrawingBoard(w, h, opts) {
         var _Self = this;
-
+        opts=opts||{};
+        //最大历史记录
+        var _MaxHitory = opts.maxHitory!==undefined?opts.maxHitory:50;
         var _View, _Bitmap, _Canvas, _Context;
         var _PencilColor = 'rgba(0,0,0,0.7)',
             _PencilSize = 5;
-
         var _PathArray = [];
         var _Stage;
         var _W = w || 546,
@@ -82,9 +83,8 @@
             min: 0.2,
             max: 4
         };
-        //最大历史记录
-        var _MaxHitory = 50;
-        if (pdata && pdata.maxHitory) _MaxHitory = pdata.maxHitory;
+
+
 
 
         /**
@@ -297,7 +297,6 @@
                 rotation: display.rotation,
             };
             _tempData = _PathArray[_PathArray.length - 1];
-
             if (_tempData) {
                 log((_tempData.type == _data.type &&
                     _tempData.mc == _data.mc &&
