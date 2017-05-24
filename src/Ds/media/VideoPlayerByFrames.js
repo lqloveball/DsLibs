@@ -3,6 +3,13 @@
  * @classdesc:视频播放序列帧播放器
  *  事件 progress加载进度   complete 加载完成  canplaythrough可以缓冲播放  playEnd播放完成  play播放  pause暂停
  * @param {[Object]} data [初始化参数]
+ * @event
+ * progress  加载进度
+ * complete 加载完成
+ * play  开始播放
+ * pause  暂停
+ * cuePoint  时间节点
+ * playEnd  播放完成
  * @extends
  * @example://默认初始化的时候 视频不放到可见区域
    _VideoInteractivePlayer = new Ds.media.VideoPlayerByFrames({
@@ -74,7 +81,7 @@
    root.Ds = root.Ds || {};
    root.Ds.media = root.Ds.media || {};
    root.Ds.media.VideoPlayerByFrames = VideoPlayerByFrames;
-   
+
    function VideoPlayerByFrames(data) {
        data = data || {};
        var _self = this;
@@ -666,7 +673,6 @@
                }
            }
            _self.currentTime = currentTime;
-
            // $('#soundDebug').html(currentTime+'/'+totalTime+'<br>'+drawNum+'/'+totalframes
            //     +'<br>'+currentTime+'/'+bufferTime
            //     +'<br>imageload:'+imagesLoadNum

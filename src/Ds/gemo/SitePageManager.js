@@ -84,6 +84,7 @@
     Ds.Extend(this, new Ds.EventDispatcher());
     //页面索引字典
     var _PageDc = {};
+    Object.defineProperty(this, "PageDc", {get: function() {return _PageDc;},});
     //页面列表
     var _PageList=[];
     //当前页面标签
