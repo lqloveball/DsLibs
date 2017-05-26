@@ -13,6 +13,9 @@
  * opts.debug      是否进行debug
  * @event
  * e.type='update' 场景进行更新
+ * e.sceneID        当前在第几个场景
+ * e.inViewScenes  在视图内的场景
+ * e.scenes[0].inRect   场景与视图相交的区域大小
  * e.scenes   更新的场景列表
  * e.scenes[0].progress 场景相对画布 进行显示的百分比
  *                   <_SceneWidth progress 30%----------------------------------|
@@ -157,6 +160,7 @@
       _Box.addChild(scene);
       _AllDistance=_Loop?_SceneWidth*(_SceneList.length):_SceneWidth*(_SceneList.length)-_ViewWidth;
       _SliderDistance.MaxDistance=_AllDistance;
+      scene.sceneID=_SceneList.length-1;//记录场景的编号
       scene.upChildList=[];
     };
     //如果有场景列表就进行场景列表的添加
@@ -198,8 +202,10 @@
       if(_Distance>=0&&_Distance<=_SceneWidth)_sceneEnd.x=-_SceneWidth;
       else _sceneEnd.x=_SceneWidth*(_SceneList.length-1);
       _Box.x=-_Distance;
-
+      //进行显示的列表
       var _upList=[];
+      //在场景里面的列表
+      var _inViewList=[];
       //进行显示对象剔除算法
       var _scene;
       for (var i = 0; i < _SceneList.length; i++) {
@@ -224,11 +230,27 @@
           //对子对象进行更新处理
           ChildUpDate(_scene);
         }
+        //计算在显示视图内的场景
+        var _inRect=_ViewRect.intersection(_rect);
+        _scene.inRect=_inRect;
+        if(_inRect){
+          _scene.inRectWidth=_inRect.width;
+          _inViewList.push(_scene);
+        }
       }
-
+      var _sceneID=0;
+      var _inViewList2=_inViewList.concat();
+      // console.log('_inViewList2',_inViewList2);
+      if(_inViewList2.length>=1){
+        ArraySort(_inViewList2,'inRectWidth');
+        _scene=_inViewList2[_inViewList2.length-1];
+        _sceneID=_scene.sceneID;
+      }
       _Self.ds({
         type:'update',
         scenes:_upList,//这里只会放需要显示的元素，相对场景上 当前移动进度比
+        inViewScenes:_inViewList,//在视图内的场景
+        sceneID:_sceneID,//当前在第几个场景
       });
     }
     /**
@@ -246,7 +268,28 @@
         _child.x=(_child.ox-_child.speed/2)+_progress*_child.speed;
       }
     }
-
+    /**
+     * 按数组内指定参数升续排列
+     * @param       {[type]} arr   [description]
+     * @param       {[type]} value [description]
+     * @constructor
+     */
+    function ArraySort(arr, value) {
+      var compare = function(prop) {
+        return function(obj1, obj2) {
+          var val1 = obj1[prop];
+          var val2 = obj2[prop];
+          if (val1 < val2) {
+            return -1;
+          } else if (val1 > val2) {
+            return 1;
+          } else {
+            return 0;
+          }
+        };
+      };
+      return arr.sort(compare(value));
+    };
     //自适应
     window.addEventListener("resize", function() {
       ReSize();
