@@ -107,7 +107,12 @@ function InitSiteResizeModel(){
  */
 function ReSize(){
   //var _Width, _Height, _PageScale, _ActualH, _Horizontal = false,_IsInputState = false,_ScreenWidth, _DensityDpi;
-  // if(SiteResizeModel.ScreenType=='auto'){}
+  if(SiteResizeModel.ScreenType=='auto'){
+    if(SiteModel.CJSModel){
+      if(SiteResizeModel.ScreenWidth===640)SiteModel.CJSModel.SetSize(SiteResizeModel.ScreenWidth,1140);
+      else SiteModel.CJSModel.SetSize(SiteResizeModel.ScreenWidth,640);
+    }
+  }
 }
 /**
  * 加载基础库的
