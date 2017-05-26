@@ -15,7 +15,7 @@
 
     if (typeof define === 'function' && define.amd) {
         define(['exports'], function (exports) {
-          require('ds/gemo/OGerModel');
+            require('ds/gemo/OGerModel');
             module.exports= factory(root, exports);
         });
     } else if (typeof exports !== 'undefined') {
