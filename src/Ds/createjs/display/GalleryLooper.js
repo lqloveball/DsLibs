@@ -1,6 +1,9 @@
 /**
  * @class Ds.createjs.GalleryLooper
- * @classdesc:环形作品画廊 基于Ds.gemo.GalleryAnnularLoopManager进行逻辑计算
+ * @classdesc:
+ * 环形作品画廊 基于Ds.gemo.GalleryAnnularLoopManager进行逻辑计算
+ *  比如作品有 0-15 ，一共显示3个显示第0个时候   呈现的数据是 14  0 1 这样格式
+ *
  * @param {[Object]} opts     [初始化参数]
  * opts.box   [容器 createjs.Container]
  * 显示容器 定位显示对象命名规范 mc0-mc3
@@ -12,17 +15,21 @@
  * opts.touchDom 滑动触发的dom元素，默认是body
  * opts.touchDirection 滑动触发方向，默认true 是左右滑动
  *
+ * flash 内皮肤参考结构
+ *                                    [----------]
+ *                        [------]    |          |    [------]
+ *    [  beforeOut ]      | mc0  |    |    mc1   |    | mc2  |       [  afterOut ]
+ *                        [------]    [----------]    [------]
  * 某种情况下需要手动控制开始构建初始化，
  * 如：一开始场景需要提前渲染，然后回执行setTimeout对box进行删除所有的内容，这时候如果自动今天构建，那就会发生先添加元素到box内，然后setTimeout对box进行删除所有的内容错误
  *
- * 事件:upData movieEnd
+ * 事件:upDate movieEnd
  * @extends
  * @example: 举例
  *
  //webpack 进行 require
- // require('ds/createjs/GalleryLooper');
- var _GalleryLooper = new Ds.createjs.GalleryLooper({
-
+ // require('ds/createjs/display/GalleryLooper');
+ var _GalleryLooper = new Ds.createjs.display.GalleryLooper({
      box:_Panel,//动画显示与参考容器
      list:_ItemList,//选项内容
      showNum:3,//显示项目个数
@@ -32,7 +39,7 @@
  //如果创建参数里面autoInit值为false,没有进行自动构建，可以在实例需要构建初始化时候执行
 _GalleryLooper.Init();
  //监听事件
- _GalleryLooper.on('upData', function(e){});
+ _GalleryLooper.on('upDate', function(e){});
  //上一页
  _GalleryLooper.Previous();
  //下一页
@@ -84,8 +91,7 @@ _GalleryLooper.Lock=true;
       var _touchDom=opts.touchDom!==undefined?$(opts.touchDom)[0]:$('body')[0];
       //滑动方向
       var _touchDirection=opts.touchDirection!==undefined?opts.touchDirection:true;
-      //清空显示容器
-      _Box.removeAllChildren();
+
       //是否锁定
       this.Lock = false;
       //是否运动中
@@ -113,10 +119,11 @@ _GalleryLooper.Lock=true;
       for (var i = 0; i < _showNum; i++) {
           var _rf = _Box['mc' + i];
           _ReferenceArr.push(_rf);
-          // console.log(_rf.filters);
+          //if(_rf.parent)_rf.parent.removeChild(_rf);
       }
+
       //画廊滚动管理对象
-      var _GalleryLoopManager = new Ds.gemo.GalleryAnnularLoopManager(null, _showNum);
+      var _GalleryLoopManager = new Ds.gemo.GalleryAnnularLoopManager(null,_showNum);
       this.GalleryLoopManager = _GalleryLoopManager;
       var _AutoInit=opts.autoInit!==undefined?opts.autoInit:true;
       var _InitBool=false;
@@ -141,8 +148,27 @@ _GalleryLooper.Lock=true;
       this.Init=function(){
         if(_InitBool)return;
         _InitBool=true;
+
         //监听事件
-        _GalleryLoopManager.on(_GalleryLoopManager.event.UP_DATA, UpData);
+        _GalleryLoopManager.on(_GalleryLoopManager.event.UP_DATE, UpData);
+        setTimeout(function () {
+          //清空显示容器
+          _Box.removeAllChildren();
+          //初始化数据
+          _GalleryLoopManager.InitData(_DataArr);
+        },200);
+
+      };
+      /**
+       * 数据构建
+       * @param  {[type]} list [description]
+       * @return {[type]}      [description]
+       */
+      this.InitData=function(list) {
+        _DataArr=list;
+        //清空显示容器
+        _Box.removeAllChildren();
+        //初始化数据
         _GalleryLoopManager.InitData(_DataArr);
       };
 
@@ -175,7 +201,7 @@ _GalleryLooper.Lock=true;
        * [UpData 数据更新]
        * @param {[type]} e [事件对象]
        * {
-          type:_Self.event.UP_DATA,				//更新数据
+          type:_Self.event.UP_DATE,				//更新数据
           old:_OldShowObjects,    				//旧数据组
           now:_NowShowObjects,    				//新数据组
           oldNums:_OldNumArr,    					//旧编号数据组
@@ -192,18 +218,20 @@ _GalleryLooper.Lock=true;
           var i,_mc,_rf,_nowArr,_oldArr;
           //判断是否初始化
           if (e.isInit) {
-              // console.log('isInit');
               _Box.removeAllChildren();
               _nowArr = e.now;
+              console.log('isInit',_nowArr.length);
               for (i = 0; i < _nowArr.length; i++) {
                   _mc = _nowArr[i];
-                  _rf = _ReferenceArr[i];
-                  _mc.scaleX = _mc.scaleY = _rf.scaleX;
-                  _mc.x = _rf.x;
-                  _mc.y = _rf.y;
-                  //是否更新滤镜
-                  if(_filters)UpFilters(_mc,_rf);
-                  _Box.addChild(_mc);
+                  if(_mc){
+                    _rf = _ReferenceArr[i];
+                    _mc.scaleX = _mc.scaleY = _rf.scaleX;
+                    _mc.x = _rf.x;
+                    _mc.y = _rf.y;
+                    //是否更新滤镜
+                    if(_filters)UpFilters(_mc,_rf);
+                    _Box.addChild(_mc);
+                  }
               }
               _Self.MovieIng = false;
           }
@@ -215,7 +243,7 @@ _GalleryLooper.Lock=true;
               var _inMc = e.direction ? _AfterOut : _BeforeOut;
               for ( i = 0; i < _oldArr.length; i++) {
                    _mc = _oldArr[i];
-                  if (_nowArr.indexOf(_mc) == -1) {
+                  if (_nowArr.indexOf(_mc) == -1&&_mc) {
                       JT.to(_mc, _time, {
                           x: _outMc.x,
                           y: _outMc.y,

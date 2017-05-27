@@ -187,7 +187,7 @@
       }
       child.speed=_speed;
       if(_childs.indexOf(child)===-1)_childs.push(child);
-    }
+    };
     /**
      * 场景更新
      * @constructor

@@ -7,13 +7,26 @@
  * @copyright: Ds是累积平时项目工作的经验代码库，不属于职位任务与项目的内容。里面代码大部分理念来至曾经flash 前端时代，尽力减小类之间耦合，通过webpack按需request使用。Ds库里内容多来至网络与参考其他开源代码库。Ds库也开源开放，随意使用在所属的职位任务与项目中。
  * @constructor
  **/
-(function(){
-  window.Ds=window.Ds ||{};
-  window.Ds.utils=window.Ds.utils||{};
-  window.Ds.utils.Utils=new Utils();
-  /**
-   * 常用处理方式
-   */
+
+(function (factory) {
+    var root = (typeof self == 'object' && self.self == self && self) ||
+        (typeof global == 'object' && global.global == global && global);
+
+    if (typeof define === 'function' && define.amd) {
+        define(['exports'], function (exports) {
+            module.exports= factory(root, exports);
+        });
+    } else if (typeof exports !== 'undefined') {
+        module.exports=factory(root, exports);
+    } else {
+         factory(root, {});
+    }
+
+}(function (root, modelObj) {
+  root.Ds = root.Ds || {};
+  root.Ds.utils=root.Ds.utils||{};
+  root.Ds.utils.Utils=new Utils();
+  //操作处理类
   function Utils(){
     /**
      * 判断是否是DOM对象
@@ -47,6 +60,44 @@
             }
         }
         return items;
+    };
+    /**
+     * 对数组进行按指定值升续排列
+     * @param  {[Array]} arr   [排序的数组]
+     * @param  {[String]} value [指定值]
+     * @param  {[Boolean]} litre [升续]
+     * @return {[type]}       [description]
+     */
+    this.ArraySort=function(arr, value,litre) {
+      litre=litre!==undefined?litre:true;
+      var compare = function(prop) {
+        return function(obj1, obj2) {
+          var val1 = obj1[prop];
+          var val2 = obj2[prop];
+          if (val1 < val2) {
+            return -1;
+          } else if (val1 > val2) {
+            return 1;
+          } else {
+            return 0;
+          }
+        };
+      };
+      var compare2 = function(prop) {
+        return function(obj1, obj2) {
+          var val1 = obj1[prop];
+          var val2 = obj2[prop];
+          if (val1 > val2) {
+            return -1;
+          } else if (val1 < val2) {
+            return 1;
+          } else {
+            return 0;
+          }
+        };
+      };
+      if(litre) return arr.sort(compare(value));
+      else return arr.sort(compare2(value));
     };
     /**
      * 判断是否手机号码
@@ -96,6 +147,7 @@
       if (month == 12 && date > 31) {value = "No way!";}
       return value;
     };
-
   }
-})();
+
+  return root.Ds.utils.Utils;
+}));

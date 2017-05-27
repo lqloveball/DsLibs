@@ -6,7 +6,7 @@
  * 具体实现可以参考 Ds.createjs.GalleryLooper
  * var _GalleryLoopManager=new Ds.gemo.GalleryAnnularLoopManager(null,showNum);
  * //监听事件
- * _GalleryLoopManager.on('upData',UpData);
+ * _GalleryLoopManager.on('upDate',UpData);
  * //填充数据
  * _GalleryLoopManager.InitData(_DataArr);
  * //数据更新具体界面处理
@@ -52,7 +52,7 @@
          * @type {String}
          * event Data:
          * {
-           type:_Self.event.UP_DATA,				//更新数据
+           type:_Self.event.UP_DATE,				//更新数据
            old:_OldShowObjects,    				//旧数据组
            now:_NowShowObjects,    				//新数据组
            oldNums:_OldNumArr,    					//旧编号数据组
@@ -63,7 +63,7 @@
            direction:_Direction,					//方向
          }
          */
-        this.event.UP_DATA = 'upData';
+        this.event.UP_DATE = 'upDate';
         /**
          * 填充翻页数据 dom对象 或者 cjs对象
          * @type {Array}
@@ -246,7 +246,7 @@
             // log('NowShowObjects:',_NowShowObjects);
             //数据更新事件
             _Self.ds({
-                type: _Self.event.UP_DATA, //更新数据
+                type: _Self.event.UP_DATE, //更新数据
                 old: _OldShowObjects, //旧数据组
                 now: _NowShowObjects, //新数据组
                 oldNums: _OldNumArr, //旧编号数据组

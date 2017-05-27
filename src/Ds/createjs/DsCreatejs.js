@@ -79,7 +79,6 @@
     display.uncache();
     return _bitmapData;
   };
-
   /**
    * 判断2个图形是否碰撞
    * 注意需要有createjs.BitmapData
@@ -105,7 +104,6 @@
       console.warn('no has createjs.BitmapData');
       return null;
     }
-
   };
   /**
    * 对文本进行换行处理
@@ -127,6 +125,111 @@
       }
       _info = label.text;
     }
+  };
+  /**
+   * 格式化数字显示
+   * @param  {[Number]} value  [数字]
+   * @param  {[Array]} mcList [格式化显示用的影片剪辑列表]
+   * @param  {[Boolean]} hitZero [是否隐藏前面的零]
+   * @return {[type]}        [description]
+   */
+  ccjs.ShowFormatNumber =function(value,mcList,hitZero){
+    hitZero=hitZero!==undefined?hitZero:false;
+    var _info=value+'';
+    var i;
+    if(_info.length<mcList.length){
+      var _l=mcList.length-_info.length;
+      for ( i = 0; i < _l; i++) {
+        _info='0'+_info;
+      }
+    }
+    var _arr=_info.split('');
+    var _starNoZero=false;
+    for ( i = 0; i < _arr.length; i++) {
+      var _mc=mcList[i];
+      var _num=Number(_arr[i]);
+      _mc.gotoAndStop(_num);
+      _mc.visible=true;
+      if(hitZero){
+        if(_num!==0)_starNoZero=true;
+        if(!_starNoZero&&_num===0){
+          _mc.visible=false;
+        }
+      }
+    }
+  };
+  var _SetInputTextContainer=$("<div id='CCJSSetInputTextContainer'><div/>");
+  _SetInputTextContainer.css({position: 'absolute',left:-10000, top:0});
+  /**
+   * 进行设置一个输入框
+   * @param  {[MovieChilp]} inputMc     [一个MovieChilp对象，内部一个label的text文本]
+   * @param  {[String]} defaultText [默认字体]
+   * @param  {[object]} opts [配置]
+   * @return {[type]}             [description]
+   */
+  ccjs.SetInputText = function(inputMc,defaultText,opts){
+      if(!inputMc.label){
+        console.warn('ccjs.SetInputText inputMc格式错误');
+        return;
+      }
+      defaultText=defaultText||'';
+      inputMc.defaultText=defaultText;
+      opts=opts||{};
+      var _inputDom=$("<input type='text'/>");
+      _inputDom.css({position: 'absolute',left:0, top:0,width:1});
+      if(_SetInputTextContainer.parent().length<=0)$('body').append(_SetInputTextContainer);
+      _SetInputTextContainer.append(_inputDom);
+      var _domElement = new createjs.DOMElement(_inputDom[0]);
+      inputMc.addChild(_domElement);
+
+      _inputDom.on('change',function(e){
+        upUserLabel();
+        _inputDom[0].blur();
+      });
+      _inputDom.on('blur',function(e){
+        inputMc.gotoAndStop(0);
+        var _info=_inputDom[0].value;
+        console.log('_inputDom blur',_info,defaultText);
+        if(_info===''&&defaultText!==''){
+          inputMc.label.text=defaultText;
+        }else{
+          upUserLabel();
+        }
+      });
+      _inputDom.on('focus',function(e){
+        // console.log('_inputDom focus');
+        if(defaultText==inputMc.label.text){
+          _inputDom[0].value='';
+          inputMc.label.text='';
+        }else{
+          _inputDom[0].value=inputMc.label.text;
+        }
+        if(inputMc instanceof createjs.MovieClip)inputMc.gotoAndStop(inputMc.totalFrames-1);
+      });
+      _inputDom.on('input',function(e){
+        //console.log('_inputDom input',e);
+        upUserLabel();
+      });
+      function upUserLabel(){
+        var _info=_inputDom[0].value;
+        inputMc.label.text=_info;
+      }
+      inputMc.mouseChildren = false;
+      inputMc.on('mousedown',inputMcMouseDonw);
+      function inputMcMouseDonw(e){
+        var mc = e.target;
+        var stage = mc.getStage();
+        stage.addEventListener('stagemousedown', stagemousedown);
+        // if (inputMc instanceof createjs.MovieClip)inputMc.gotoAndStop(inputMc.totalFrames-1);
+        _inputDom[0].focus();
+      }
+      function stagemousedown(e) {
+        var _temp = e.target;
+        if(!inputMc.contains(_temp)){
+          inputMc.gotoAndStop(0);
+          _inputDom[0].blur();
+        }
+      }
   };
   /**
    * 控制动画MovieClip播放
