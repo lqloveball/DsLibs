@@ -155,6 +155,8 @@
          */
         this.InitData = function(data) {
             _Data = data;
+            _OldNumArr = [];
+            _NowNumArr = [];
             _SelectNum = -1;
             this.Select(0);
         };
@@ -164,7 +166,6 @@
         this.Previous = function() {
             // log('Previous')
             if (!_Data) return;
-
             var _num = _SelectNum - 1;
             if (_num < 0) _num = _Data.length - 1;
             this.Select(_num);
@@ -186,7 +187,7 @@
          * @param {[type]} value [description]
          */
         this.Select = function(value) {
-            // log('Select:',value)
+            // console.log('Select:',value)
             if (!_Data) return;
             if (typeof(value) != 'number') {
                 var _num = _Data.indexOf(value);
@@ -231,8 +232,8 @@
                     _NowShowObjects.splice(0, 0, _pobj);
                 }
             }
-            // log('old>',_OldNumArr)
-            // log('now>',_NowNumArr)
+            // console.log('old>',_OldNumArr)
+            // console.log('now>',_NowNumArr)
             //计算方向
             if (_SelectNum === _Data.length - 1 && _OldSelectNum === 0) {
                 _Direction = false;
