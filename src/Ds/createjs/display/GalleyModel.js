@@ -92,6 +92,7 @@
     //总场景距离  _SceneWidth*(_SceneList.length);
     var _AllDistance=0;
     //var _AllDistance=_SceneWidth*(_SceneList.length);
+  
     //平滑拖动管理对象
     var _SliderDistance = new Ds.gemo.SliderHVDistance(_Self, 'Distance', {
       touchDom:$('#screen'),
@@ -106,6 +107,7 @@
       min:0,
       max:_AllDistance,
     });
+
     //是否锁定
     Object.defineProperty(this, "Lock", {
         get: function() {
@@ -289,7 +291,7 @@
         };
       };
       return arr.sort(compare(value));
-    };
+    }
     //自适应
     window.addEventListener("resize", function() {
       ReSize();

@@ -191,16 +191,16 @@
    * type  类型  tel  number text
    *
    * @return {[type]}             [description]
+   * inputMc.blur();  可以直接移除焦点
+   *
    */
   ccjs.SetInputText = function(inputMc,defaultText,opts){
       if(!inputMc.label){
         console.warn('ccjs.SetInputText inputMc格式错误');
         return;
       }
-      defaultText=defaultText||'';
-      inputMc.defaultText=defaultText;
-      inputMc.label.defaultText=defaultText;
       opts=opts||{};
+
       var _inputDom=$("<input type='text'/>");
       _inputDom.css({position: 'absolute',left:0, top:0,width:1});
       if(opts.max)_inputDom[0].maxLength=opts.max;
@@ -210,8 +210,18 @@
       var _domElement = new createjs.DOMElement(_inputDom[0]);
       inputMc.addChild(_domElement);
 
+      defaultText=defaultText||'';
+
+      inputMc.defaultText=defaultText;
+      inputMc.label.defaultText=defaultText;
       inputMc.dom=_inputDom[0];
       inputMc.label.dom=_inputDom[0];
+      inputMc.blur=function () {
+        inputMc.dom.value='';
+        inputMc.label.text='';
+        inputMc.dom.blur();
+        inputMc.dispatchEvent('blur');
+      }
 
       _inputDom.on('change',function(e){
         upUserLabel();
