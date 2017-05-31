@@ -110,8 +110,14 @@
    * @param {[create.Text]} label [文本框对象]
    * @param {[String]} info  [内容]
    * @param {[Number]} width [最大长度]
+   * @param {[Boolean]} crop [是否裁切，如果裁切就不做换行]
    */
-  ccjs.Wrap = function(label, info, width) {
+  ccjs.Wrap = function(label, info, width,crop) {
+    crop=crop||false;
+    if(info.length<=0){
+      label.text ='';
+      return;
+    }
     var _info = '',
       _oinfo;
     for (var i = 0; i < info.length; i++) {
@@ -119,6 +125,10 @@
       _info = _oinfo + info[i];
       label.text = _info;
       var _w = label.getMetrics().width;
+      if(crop&&_w > width){
+        label.text = _oinfo
+        return;
+      }
       if (_w > width) {
         label.text = _oinfo + '\n' + info[i];
         _w = label.getMetrics().width;
@@ -161,10 +171,25 @@
   var _SetInputTextContainer=$("<div id='CCJSSetInputTextContainer'><div/>");
   _SetInputTextContainer.css({position: 'absolute',left:-10000, top:0});
   /**
+   * 判断是否是默认输入字
+   * @param  {[type]} inputMc [description]
+   * @return {[type]}         [description]
+   */
+  ccjs.IsDefaultText=function(inputMc) {
+    var _label;
+    if(inputMc instanceof createjs.Text) _label=inputMc
+    else _label=inputMc.label;
+    if(_label&&(_label.defaultText===_label.text||_label.text===''))return true;
+    return false;
+  }
+  /**
    * 进行设置一个输入框
    * @param  {[MovieChilp]} inputMc     [一个MovieChilp对象，内部一个label的text文本]
    * @param  {[String]} defaultText [默认字体]
    * @param  {[object]} opts [配置]
+   * max  输入最大字符
+   * type  类型  tel  number text
+   *
    * @return {[type]}             [description]
    */
   ccjs.SetInputText = function(inputMc,defaultText,opts){
@@ -174,45 +199,59 @@
       }
       defaultText=defaultText||'';
       inputMc.defaultText=defaultText;
+      inputMc.label.defaultText=defaultText;
       opts=opts||{};
       var _inputDom=$("<input type='text'/>");
       _inputDom.css({position: 'absolute',left:0, top:0,width:1});
+      if(opts.max)_inputDom[0].maxLength=opts.max;
+      if(opts.type)_inputDom[0].type=opts.type;
       if(_SetInputTextContainer.parent().length<=0)$('body').append(_SetInputTextContainer);
       _SetInputTextContainer.append(_inputDom);
       var _domElement = new createjs.DOMElement(_inputDom[0]);
       inputMc.addChild(_domElement);
 
+      inputMc.dom=_inputDom[0];
+      inputMc.label.dom=_inputDom[0];
+
       _inputDom.on('change',function(e){
         upUserLabel();
         _inputDom[0].blur();
+        inputMc.dispatchEvent('change');
       });
       _inputDom.on('blur',function(e){
         inputMc.gotoAndStop(0);
         var _info=_inputDom[0].value;
-        console.log('_inputDom blur',_info,defaultText);
+        // console.log('_inputDom blur',_info,defaultText);
         if(_info===''&&defaultText!==''){
           inputMc.label.text=defaultText;
+          inputMc.dispatchEvent('update');
         }else{
           upUserLabel();
         }
+        inputMc.dispatchEvent('blur');
       });
       _inputDom.on('focus',function(e){
         // console.log('_inputDom focus');
         if(defaultText==inputMc.label.text){
           _inputDom[0].value='';
           inputMc.label.text='';
+          inputMc.dispatchEvent('update');
         }else{
           _inputDom[0].value=inputMc.label.text;
+          inputMc.dispatchEvent('update');
         }
         if(inputMc instanceof createjs.MovieClip)inputMc.gotoAndStop(inputMc.totalFrames-1);
+        inputMc.dispatchEvent('focus');
       });
       _inputDom.on('input',function(e){
-        //console.log('_inputDom input',e);
         upUserLabel();
+        inputMc.dispatchEvent('input');
       });
       function upUserLabel(){
+        if(opts.max)if(_inputDom[0].value.length>=opts.max)_inputDom[0].value=_inputDom[0].value.slice(0,opts.max);
         var _info=_inputDom[0].value;
         inputMc.label.text=_info;
+        inputMc.dispatchEvent('update');
       }
       inputMc.mouseChildren = false;
       inputMc.on('mousedown',inputMcMouseDonw);
@@ -220,7 +259,6 @@
         var mc = e.target;
         var stage = mc.getStage();
         stage.addEventListener('stagemousedown', stagemousedown);
-        // if (inputMc instanceof createjs.MovieClip)inputMc.gotoAndStop(inputMc.totalFrames-1);
         _inputDom[0].focus();
       }
       function stagemousedown(e) {
