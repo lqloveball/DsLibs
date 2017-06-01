@@ -67,7 +67,7 @@
       }
       if(!category)category='Event';
       if(!action)action='Click';
-      if(!opt_value)opt_value='one';
+      if(!opt_value)opt_value='1';
       if(!opt_label)return;
       _hmt.push(['_trackEvent', category, action, opt_label, opt_value]);
     };
