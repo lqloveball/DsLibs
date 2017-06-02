@@ -126,7 +126,7 @@
       label.text = _info;
       var _w = label.getMetrics().width;
       if(crop&&_w > width){
-        label.text = _oinfo
+        label.text = _oinfo;
         return;
       }
       if (_w > width) {
@@ -177,11 +177,11 @@
    */
   ccjs.IsDefaultText=function(inputMc) {
     var _label;
-    if(inputMc instanceof createjs.Text) _label=inputMc
+    if(inputMc instanceof createjs.Text) _label=inputMc;
     else _label=inputMc.label;
     if(_label&&(_label.defaultText===_label.text||_label.text===''))return true;
     return false;
-  }
+  };
   /**
    * 进行设置一个输入框
    * @param  {[MovieChilp]} inputMc     [一个MovieChilp对象，内部一个label的text文本]
@@ -216,12 +216,12 @@
       inputMc.label.defaultText=defaultText;
       inputMc.dom=_inputDom[0];
       inputMc.label.dom=_inputDom[0];
-      inputMc.blur=function () {
+      inputMc.clearBlur=function () {
         inputMc.dom.value='';
-        inputMc.label.text='';
+        inputMc.label.text=inputMc.label.defaultText;
         inputMc.dom.blur();
         inputMc.dispatchEvent('blur');
-      }
+      };
 
       _inputDom.on('change',function(e){
         upUserLabel();

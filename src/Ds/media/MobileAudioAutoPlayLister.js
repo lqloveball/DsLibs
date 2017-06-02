@@ -84,7 +84,7 @@
             //队列加载播放声音，微信设置默认播放声音
             _Self.LoadAudioListAndFirstAutoPlay(opts);
             //有设置按钮与声音 才会做捆绑 声音按钮的控制。
-            if (opts.button !== undefined && opts.button !== null && opts.id !== null && opts.id !== undefined) {
+            if (opts.button !== undefined && opts.button !== null && opts.button !== ''&& opts.id !== null && opts.id !== undefined) {
                 var _audio = _AudioDc[opts.id];
                 if (_audio) _Self.SetBMGButton(_audio, opts.button);
             }
@@ -93,7 +93,7 @@
          * 加载默认初始化播放声音的队列,并播放第一个声音
          * @param {[Array]} list [加载的声音列表队列]
          * [
-         * {src:'./media/BGM1.mp3',id:'BGM1',loop:true},
+         * {src:'./media/BGM1.mp3',id:'BGM1',loop:false,volume:0.5},
          * {src:'./media/BGM2.mp3',id:'BGM2',loop:true},
          * ]
          */
