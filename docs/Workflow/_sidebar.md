@@ -1,6 +1,6 @@
 - [返回](/README)
   - [H5项目开发工作流](/Workflow/README.md)
   - [开发环境配置](/Workflow/WorkFlowInstallation.md)
-  - [快速使用项目模板流程](/Workflow/TemplateFlow.md)
+  - [快速使用项目模板工作流](/Workflow/TemplateFlow.md)
   - [通用项目模板代码说明文档](/Workflow/SiteTempDoc.md)
   - [NPM 常用命令详解](/Workflow/NPMAPIDoc.md)
