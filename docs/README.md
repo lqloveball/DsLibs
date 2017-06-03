@@ -7,5 +7,4 @@ Ds库里代码参考网络与其他开源代码库,在自己理解上进行整�
 Ds库是代码工具类的集合，每个工具类尽量做属于自己负责的工作内容，实际执行项目希望如搭积木一样去使用这些类。尽力减小类之间依赖关系。
 
 ## 测试嵌入代码示例
-
-<script async src="//jsfiddle.net/maksim84/gsan4ph1/embed/"></script>
+<iframe  src="http://jsfiddle.net/maksim84/gsan4ph1/6/embedded/result,js,html,css" allowfullscreen="allowfullscreen" frameborder="0" style="width:100%;height:300px;"></iframe>
