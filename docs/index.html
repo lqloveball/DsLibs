@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>Document</title>
@@ -7,54 +8,63 @@
   <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
   <link rel="stylesheet" href="//unpkg.com/docsify/lib/themes/vue.css">
 </head>
+
 <body>
   <div id="app"></div>
 </body>
 <script>
   window.$docsify = {
     name: 'Dslibs',
-    repo: 'https://github.com/lqloveball/DsLibs/',
-    executeScript: true,
+    // repo: 'https://github.com/lqloveball/DsLibs/',
+    // coverpage: true, //拥有封面
+    executeScript: true, //支持外部脚本
+    loadSidebar: true, //配置自定义侧边栏
+    subMaxLevel: 5, //侧边栏 目标层级
+    autoHeader: true, //同时设置 loadSidebar 和 autoHeader 后，可以根据 _sidebar.md 的内容自动为每个页面增加标题
+
+    mergeNavbar: true, //小屏设备下合并导航栏到侧边栏。
+    //显示编辑时间
+    formatUpdated: '{MM}/{DD} {HH}:{mm}',
+    formatUpdated: function(time) {
+      return time
+    },
     //============搜索配置==================start
-    search: 'auto', // 默认值
-
-    search : [
-      '/',            // => /README.md
-      '/guide',       // => /guide.md
-      '/get-started', // => /get-started.md
-      '/zh-cn/',      // => /zh-cn/README.md
-    ],
-
+    search: 'auto',
     // 完整配置参数
-    search: {
-      maxAge: 86400000, // 过期时间，单位毫秒，默认一天
-      paths: [], // or 'auto'
-      placeholder: 'Type to search',
-
-      // 支持本地化
-      placeholder: {
-        '/zh-cn/': '搜索',
-        '/': 'Type to search'
-      },
-
-      noData: 'No Results!',
-
-      // 支持本地化
-      noData: {
-        '/zh-cn/': '找不到结果',
-        '/': 'No Results'
-      }
-    }
+    // search: {
+    //   maxAge: 86400000, // 过期时间，单位毫秒，默认一天
+    //   paths: [
+    //     '/Ds',
+    //     '/Ds/SiteMoblieResizeModel',
+    //     '/Ds/EventDispatcher',
+    //   ],
+    //   placeholder: 'Type to search',
+    //   noData: 'No Results!',
+    // },
     //============搜索配置==================end
+    // plugins: [
+    //   function(hook, vm) {  hook.beforeEach(function (html) {
+    //       var url = 'https://github.com/lqloveball/DsLibs/tree/master/docs' + vm.route.file
+    //       var editHtml = '[📝 EDIT DOCUMENT](' + url + ')\n'
+    //
+    //       return editHtml
+    //         + html
+    //         + '\n----\n'
+    //         + 'Last modified 06/03 20:12 '
+    //         + editHtml
+    //     })
+    //   }
+    // ],
   }
 </script>
 <script src="//unpkg.com/docsify/lib/docsify.min.js"></script>
-<!-- <script src="//unpkg.com/docsify/lib/plugins/ga.js"></script> -->
+<script src="//unpkg.com/docsify/lib/plugins/search.js"></script>
+<script src="//unpkg.com/docsify/lib/plugins/external-script.js"></script>
+<script src="//unpkg.com/docsify/lib/plugins/ga.js"></script>
 <script src="//unpkg.com/docsify/lib/plugins/emoji.js"></script>
 <script src="//unpkg.com/prismjs/components/prism-actionscript.min.js"></script>
-<script src="//unpkg.com/docsify/lib/plugins/external-script.js"></script>
-
+<!-- vue插件 -->
 <script src="//unpkg.com/vue/dist/vue.min.js"></script>
 <script src="//unpkg.com/vuep/dist/vuep.min.js"></script>
-<script src="//unpkg.com/docsify/lib/docsify.min.js"></script>
+
 </html>
