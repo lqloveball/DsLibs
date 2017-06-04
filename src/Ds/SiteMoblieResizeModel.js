@@ -7,12 +7,9 @@
  * @classdesc:创建一个可以横树立屏幕都支持的自适应网站模板模块。
  * 屏幕宽 高会根据横竖屏幕去切换 640  还是 1138宽;
  * @param {[Object]} param [创建设置模板的参数];
-  param.width              设置canvas宽 数值或者为空（默认设定640 param.canvas不为空，不会进行附值）；  如果是param.canvas与param.width都为空 一定会设置width。
-  param.height             设置canvas高 数值或者为空（默认设定1030 param.canvas不为空，不会进行附值）；  如果是param.canvas与param.height都为空 一定会设置height。
-  param.css                设置canvas的css样式 Object（空值null设定{position:'absolute',left:0,top:0}  空值undefined不做css变化);
   param.screen             设置网站主画面DIV,这个网站使用适应屏幕的主div
   param.screenType         设置横竖屏，默认竖屏幕 'v' 'h' 'auto'
-  param._ScreenWidthData   设置屏幕等比自动适应 使用的宽 默认[640,1138] 竖屏:640 或者 横屏1138
+  param.screenWidthData   设置屏幕等比自动适应 使用的宽 默认[640,1138] 竖屏:640 或者 横屏1138
  * @extends
  * @example: 举例
  * @author: maksim email:maksim.lin@foxmail.com
