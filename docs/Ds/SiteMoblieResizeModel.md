@@ -32,6 +32,70 @@ param `Object` 设置构建自适应模块的初始化参数<br/>
 
 使用何种自适应计算方式  `h`横屏 `v`竖屏  `auto` 自动 横竖屏皆可。
 
+> #### Width `Number`<br/>
+
+当前window宽
+
+> #### Height `Number`<br/>
+
+当前window高;
+
+> #### ActualH `Number`<br/>
+
+当前场场景实际高（根据ScreenWidth 进行换算实际高）
+
+> #### ScreenWidth `Number`<br/>
+
+当前场场景实际宽
+
+> #### OldActualH `Number`<br/>
+
+进行自适应前的场景实际高
+
+> #### PageScale `Number`<br/>
+
+场景进行缩放计算比例
+
+> #### IsInputState `Boolean`<br/>
+
+当前是否是输入状态
+
+> #### Horizontal `Boolean`<br/>
+
+当前是否横屏
+
+> #### DensityDpi `Number`<br/>
+
+当前使用计算的 densityDpi
+
+### 事件
+
+> #### resize <br/>
+
+场景进行自适应计算完成的事件
+
+```js
+
+var _SiteResizeModel=new Ds.SiteMoblieResizeModel({
+  screen:'#screen',
+  screenType:'v',
+});
+
+_SiteResizeModel.on('resize',ReSize);
+
+function ReSize(e){
+  var _width=_SiteResizeModel.Width;
+  var _height=_SiteResizeModel.Height ;
+  var _actualH=_SiteResizeModel.ActualH;
+  var _pageScale=_SiteResizeModel.PageScale;
+  var _isInputState=_SiteResizeModel.IsInputState;
+  var _horizontal=_SiteResizeModel.Horizontal;
+  var _screenWidth=_SiteResizeModel.ScreenWidth;
+  var _densityDpi=_SiteResizeModel.DensityDpi;
+}
+
+```
+
 ### 方法
 
 >  #### InitResize<br/>
