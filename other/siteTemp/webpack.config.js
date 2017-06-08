@@ -48,6 +48,7 @@ module.exports = function(env) {
       resolve: {
           alias: {
               //一些主要目录路径设置
+              assets: resolveBowerPath('./assets'),
               images: resolveBowerPath('./images'),
               libs: resolveBowerPath('./src/libs'),
               app: resolveBowerPath('./src/app'),
@@ -66,7 +67,7 @@ module.exports = function(env) {
               tweenmax: 'libs/greensock/TweenMax.min.js',
               hammer: 'libs/touch/hammer.min.js',
               touchjs: 'libs/touch/touch.min.js',
-              iscrolllite: 'libs/iscroll-lite.min.js',
+              iscrolllite: 'libs/iscroll/iscroll-lite.min.js',
               uaparser: 'libs/parser/ua-parser.min.js',
               socketio: 'libs/socket.io/socket.io.js',
               //视频媒体
@@ -80,7 +81,6 @@ module.exports = function(env) {
               soundjs: 'libs/createjs/soundjs-0.6.2.min.js',
               //高端项目组核心库  事件  log  与网站模块SiteMoblieTemplate
               eventdispatcher: 'ds/EventDispatcher.js',
-              log: 'ds/Log.js',
               sitemoblieresizemodel: 'ds/SiteMoblieResizeModel.js',
               //高端项目组 Createjs 项目开发需求
               dscreatejs: 'ds/createjs/DsCreatejs.js',
@@ -101,13 +101,11 @@ module.exports = function(env) {
                   options: {
                       //vue里面其他加载器
                       loaders: {
-
                         // Since sass-loader (weirdly) has SCSS as its default parse mode, we map
                         // the "scss" and "sass" values for the lang attribute to the right configs here.
                         // other preprocessors should work out of the box, no loader config like this necessary.
                         'scss': 'vue-style-loader!css-loader!sass-loader',
                         'sass': 'vue-style-loader!css-loader!sass-loader?indentedSyntax'
-
                       }
                   }
               },
