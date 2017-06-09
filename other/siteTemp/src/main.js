@@ -13,7 +13,7 @@ window.SiteModel = {
     // ShowProgress: 自动创建 通过SiteModel.LoadModel 实现
     // HitLoadPanel: 自动创建 通过SiteModel.LoadModel 实现
     Devicer:require('ds/gemo/Devicer'),//设备判断，依托于Ds.gemo.Devicer类
-    AppModel:null,//这个单页面程序主逻辑模块  自动创建通过LoadSinglePageApplicationJS;
+    AppMain:null,//这个单页面程序主逻辑模块  自动创建通过LoadSinglePageApplicationJS;
     LoadModel:require('app/LoadModel.js'),//设置加载loading的逻辑模块  [这个里如果是多页面可以根据自己页面Load的js来设置]
     Debug:false,//是否debug  会根据端口号进行判断
     LoadSinglePageApplicationJS:LoadSinglePageApplicationJS,//加载单页面应用逻辑代码
@@ -76,8 +76,8 @@ document.addEventListener('touchmove', function(e) {e.preventDefault();}, false)
  */
 function InitCJSModel(){
   //构建createjs模块
-  SiteModel.CJSModel = ccjs.CCJSModel.Create({
-    appendTo:$('#cjsBox')[0],
+  SiteModel.CJSModel = Ds.createjs.CJSModel.Create({
+      appendTo:$('#cjsBox')[0],
       width: 640,
       height: 1140,
       fps: 30

@@ -1,66 +1,39 @@
 /**
  * @class Ds.createjs 快速访问是ccjs
- * @classdesc:这是对createjs项目快速开发一些扩展
- * Rectangle.intersects         判断2个矩形是否碰
- * Rectangle.intersection       计算出2个矩形交集
- * Rectangle.containsPoint      矩形是否包含点
+ * @classdesc:这是对createjs开发常用功能快速实现工具类集合
  * ccjs.MovieTo                 快速控制动画MovieClip 播放 [常用]
  * ccjs.RemoveMovie             删除快速控制动画MovieClip 播放
  * ccjs.SetButton               快速把一个动画转化成按钮
  * ccjs.LoadJS                  加载一个脚本
  * ccjs.LoadCJSAssets           加载createjs项目资源 [常用]
- * ccjs.CCJSModel               轻量createjs框架模型
- * ccjs.CCJSModel.Create        轻量createjs框架模型快速创建方法 [常用]
+ * ccjs.CJSModel               轻量createjs框架模型
+ * ccjs.CJSModel.Create        轻量createjs框架模型快速创建方法 [常用]
  * @extends
  * @example:
  * @author: maksim email:maksim.lin@foxmail.com
  * @copyright: Ds是累积平时项目工作的经验代码库，不属于职位任务与项目的内容。里面代码大部分理念来至曾经flash 前端时代，尽力减小类之间耦合，通过webpack按需request使用。Ds库里内容多来至网络与参考其他开源代码库。Ds库也开源开放，随意使用在所属的职位任务与项目中。
  * @constructor
  **/
-(function(window) {
-  /**
-  对CJS进行扩张
-  插件进行把类 放到window中 方便全局调用  (不主张这样做，这样会影响到其他类库)
-  */
-  window.Ds = window.Ds || {};
-  window.Ds.createjs = window.Ds.createjs || {};
-  window.ccjs = window.Ds.createjs;
-  window.ccjs.Version = 'v1.0';
-  /**======================Rectangle 扩展 Start========================**/
-  // /**
-  //  * 判断2个矩形是否碰
-  //  * @param  {[Rectangle]} rect [是否碰到矩形]
-  //  * @return {[Boolean]}      [是否碰撞]
-  //  */
-  // createjs.Rectangle.prototype.intersects = function(rect) {
-  //   return (this.x <= rect.x + rect.width && rect.x <= this.x + this.width &&
-  //     this.y <= rect.y + rect.height && rect.y <= this.y + this.height);
-  // };
-  // /**
-  //  * 计算出2个矩形交集
-  //  * @param  {[Rectangle]} rect [是否碰到矩形]
-  //  * @return {[Rectangle]}      [交际的矩形]
-  //  */
-  // createjs.Rectangle.prototype.intersection = function(rect) {
-  //   var x0 = Math.max(this.x, rect.x);
-  //   var x1 = Math.min(this.x + this.width, rect.x + rect.width);
-  //   if (x0 <= x1) {
-  //     var y0 = Math.max(this.y, rect.y);
-  //     var y1 = Math.min(this.y + this.height, rect.y + rect.height);
-  //     if (y0 <= y1) return new Rectangle(x0, y0, x1 - x0, y1 - y0);
-  //   }
-  //   return null;
-  // };
-  /**
-   * 矩形是否包含点
-   * @param  {[Number]} x [x坐标]
-   * @param  {[Number]} y [y坐标]
-   * @return {[Boolean]}   [是否包含]
-   */
-  createjs.Rectangle.prototype.containsPoint = function(x, y) {
-    return (this.x <= x && x <= this.x + this.width && this.y <= y && y <= this.y + this.height);
-  };
-  /**======================Rectangle 扩展 End========================**/
+(function (factory) {
+    var root = (typeof self == 'object' && self.self == self && self) ||
+        (typeof global == 'object' && global.global == global && global);
+
+    if (typeof define === 'function' && define.amd) {
+        define(['exports'], function (exports) {
+            module.exports= factory(root, exports);
+        });
+    } else if (typeof exports !== 'undefined') {
+        module.exports=factory(root, exports);
+    } else {
+         factory(root, {});
+    }
+
+}(function (root, modelObj) {
+  root.Ds = root.Ds || {};
+  root.Ds.createjs=createjs|| {};
+  root.Ds.createjs.Version = 'v1.5';
+  root.ccjs=Ds.createjs;
+
   /**
    * 获取一个显示对象的BitmapData
    * 注意需要有createjs.BitmapData
@@ -79,6 +52,7 @@
     display.uncache();
     return _bitmapData;
   };
+
   /**
    * 判断2个图形是否碰撞
    * 注意需要有createjs.BitmapData
@@ -651,7 +625,6 @@
     //队列对象
     return queue;
   };
-
   /**
    * 轻量createjs框架模型 [CCJSModel]
    * 拥有属性
@@ -663,7 +636,7 @@
    *  SetSize 进行设置宽高
    * @param {[Canvas]} canvas [一个canvas对象或者空  空会自动创建一个canvas]
    */
-  var CCJSModel = function(canvas) {
+  var CJSModel = function(canvas) {
     var _Self = this;
     canvas = canvas ? canvas : document.createElement("canvas");
 
@@ -723,7 +696,7 @@
     };
   };
   /**
-   * 快速创建一个canvas对象的CCJSModel控制模块
+   * 快速创建一个canvas对象的CJSModel控制模块
    * @param  {[Object]} param [参数]
    * param.canvas 	设置一个canvas对象 可以是canvas对象\jQuery对象\字符串通过jQuery检索\空(创建一个canvas对象)
    * param.width  	设置canvas宽 数值或者为空（默认设定640 param.canvas不为空，不会进行附值）；  如果是param.canvas与param.width都为空 一定会设置width。
@@ -731,9 +704,9 @@
    * param.fps    	设置fps高    数值或者为空（默认设定30)
    * param.css 		设置canvas的css样式 Object（空值null设定{position:'absolute',left:0,top:0}  空值undefined不做css变化);
    * param.appendTo 	设置canvas的被添加什么容器内 String（默认不做添加);
-   * @return {[CCJSModel]}       [CCJSModel控制模块]
+   * @return {[CJSModel]}       [CJSModel控制模块]
    */
-  CCJSModel.Create = function(param) {
+  CJSModel.Create = function(param) {
     var width = param.width ? param.width : 640;
     var height = param.height ? param.height : 1030;
     var fps = param.fps ? param.fps : 30;
@@ -750,7 +723,7 @@
       console.log('Error param.canvas:', param.canvas);
       return;
     }
-    var _cjsModel = new CCJSModel(_canvas);
+    var _cjsModel = new CJSModel(_canvas);
     _cjsModel.SetFPS(fps);
     var _Stage = _cjsModel.Stage;
     var _Root = _cjsModel.Root;
@@ -768,14 +741,14 @@
       } else {
         console.warn('param.appendTo 参数非法');
       }
-
     }
-
-
     //设置尺寸
     if (param.width) _Canvas.setAttribute('width', width);
     if (param.height) _Canvas.setAttribute('height', height);
     return _cjsModel;
   };
-  ccjs.CCJSModel = CCJSModel;
-}(window));
+
+  ccjs.CJSModel = CJSModel;
+
+  return root.Ds.createjs;
+}));
