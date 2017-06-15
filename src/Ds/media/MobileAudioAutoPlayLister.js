@@ -200,6 +200,10 @@
         this.SetBMGButton = function(audio, button) {
             //按钮设置
             var _button = $(button);
+            if(!_button[0]){
+              console.warn('SetBMGButton Error no Has Button DOM');
+              return;
+            }
             //旧音乐控制事件删除
             if (_button[0]._BMGclickFun) {
                 _button.off('click', _button[0]._BMGclickFun);
