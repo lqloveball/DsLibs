@@ -101,6 +101,9 @@
         return _PageModel;
       },
     });
+    var _OldPageLabel,_OldPage
+    Object.defineProperty(this, "OldPageLabel", {get: function() {return _OldPageLabel;},});
+    Object.defineProperty(this, "OldPage", {get: function() {return _OldPage;},});
     /**
      * 页面跳转控制
      * @param  {[String or Number ]} value [description]
@@ -112,11 +115,20 @@
       var _temp = _PageDc[value];
       //如果没有这个对象，不做页面跳转
       if (!_temp) return;
+      _OldPageLabel=_PageLabel;
       //记录当前页面名称
       _PageLabel = value;
+      _OldPage=_PageModel;
       //记录当前页面对象
       _PageModel = _temp;
       if (_PageModel && _PageModel.MovieIn) _PageModel.MovieIn();
+      this.ds({
+        type:'update',
+        label:_PageLabel,
+        page:_PageModel,
+        oldPage:_OldPage,
+        oldLabel:_OldPageLabel,
+      });
     };
     /**
      * 添加页面模块

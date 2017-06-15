@@ -111,6 +111,74 @@
     }
   };
   /**
+   * 快速创建dom输入框
+   * @param  {[createjs.Container]} inputBox [输入框的容器]
+   * @param  {[Object]} opts    [设置]
+   * @return {[$DOM]}          [输入框的DOM对象]
+   */
+  ccjs.CreateInputMc=function(inputBox,opts,defaultText){
+    opts=opts||{};
+    var _inputDom
+    if(opts.type=='tel')_inputDom=$('<input type="tel" value="" />');
+    else if(opts.type=='number')_inputDom=$('<input  type="number" value="" />');
+    else if(opts.type=='textarea')_inputDom=$('<textarea name="" type="text" value="" rows ="3"/>');
+    else _inputDom=$('<input  type="text" value="" />');
+    if(opts.max!==undefined){_inputDom[0].maxlength=opts.max;}
+
+    _inputDom.css({
+      position:'absolute',
+      top:0,
+      left:0,
+      'border-style':' none',
+      'outline': 'none',
+      '-webkit-outline': 'none',
+      'transform': 'translate(-1000px,-1000px)',
+      '-webkit-transform': 'translate(-1000px,-1000px)',
+      'background-color': 'transparent',
+      width:opts.width||100,
+      color:opts.color||'#000',
+      resize:'none',
+      'font-size':opts.size||25,
+      'line-height':opts.size?opts.size+'px':25+'px',
+    });
+    var _domElement = new createjs.DOMElement(_inputDom[0]);
+
+    if(opts.domBox)_domBox=$(opts.domBox);
+    else _domBox=$('#cjsBox');
+
+    var _DefaultText=defaultText||'';
+    _inputDom[0].value=_DefaultText;
+    _inputDom.on('input',function(e){
+      if(opts.max!==undefined){
+        if(_inputDom[0].value.length>opts.max){
+          _inputDom[0].value=_inputDom[0].value.substring(0,opts.max);
+        }
+      }
+    });
+    _inputDom.on('blur',function(e){
+      if(_inputDom[0].value===''&&_DefaultText!==''){
+        _inputDom[0].value=_DefaultText;
+      }
+    });
+
+    _inputDom.on('focus',function(e){
+      if(_inputDom[0].value===_DefaultText&&_DefaultText!==''){
+        _inputDom[0].value='';
+      }
+    });
+    //判断是否输入
+    _inputDom.IsInput=function () {
+      if(_inputDom[0].value===_DefaultText)return false
+      if(_inputDom[0].value==='')return false
+      return true;
+    }
+
+    _domBox.append(_inputDom);
+    inputBox.addChild(_domElement);
+    return _inputDom;
+  }
+
+  /**
    * 格式化数字显示
    * @param  {[Number]} value  [数字]
    * @param  {[Array]} mcList [格式化显示用的影片剪辑列表]
