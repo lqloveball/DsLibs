@@ -118,7 +118,7 @@
    */
   ccjs.CreateInputMc=function(inputBox,opts,defaultText){
     opts=opts||{};
-    var _inputDom
+    var _inputDom;
     if(opts.type=='tel')_inputDom=$('<input type="tel" value="" />');
     else if(opts.type=='number')_inputDom=$('<input  type="number" value="" />');
     else if(opts.type=='textarea')_inputDom=$('<textarea name="" type="text" value="" rows ="3"/>');
@@ -141,6 +141,7 @@
       'font-size':opts.size||25,
       'line-height':opts.size?opts.size+'px':25+'px',
     });
+
     var _domElement = new createjs.DOMElement(_inputDom[0]);
 
     if(opts.domBox)_domBox=$(opts.domBox);
@@ -168,15 +169,15 @@
     });
     //判断是否输入
     _inputDom.IsInput=function () {
-      if(_inputDom[0].value===_DefaultText)return false
-      if(_inputDom[0].value==='')return false
+      if(_inputDom[0].value===_DefaultText)return false;
+      if(_inputDom[0].value==='')return false;
       return true;
-    }
+    };
 
     _domBox.append(_inputDom);
     inputBox.addChild(_domElement);
     return _inputDom;
-  }
+  };
 
   /**
    * 格式化数字显示
