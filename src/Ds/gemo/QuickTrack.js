@@ -112,19 +112,69 @@
         eventValue:opt_value,
       });
     };
+
+    /**
+     * 秒针虚拟PV
+     *  stm_clicki('send', 'pageview', {'page': '/virtualpage/...', 'title': '标题'});
+     * "1、使用场景：指当网页内容改变，而页面URL不变时，为了记录不同内容的页面浏览，人为设定相关URL及其它参数。
+     * 2、其中‘/virtualpage/...’和‘标题’需要自定义，send和pageview都不用动。
+     * 示例：stm_clicki('send', 'pageview', {'page': '/mzh5/2', 'title': 'solution'});
+     * 3、根据需求来添加到相关位置。
+     * 例如：如果用虚拟页面统计H5页面不同屏的浏览量，那么可以当显示某个屏的时候触发相应的虚拟页面跟踪代码
+     * 4、虚拟页面设定的URL不可重复,title可重复。
+     * 5、进入 ‘首页‘时无需使用虚拟，而从第二页回到首页时需使用虚拟PV代码。
+     * 6、Url无需填写http协议开头至domain这部分。"
+     */
+    this.STMPV=function(pageurl,title){
+      try {
+        if(!stm_clicki)return null;
+      } catch (e) {
+        return;
+      }
+      if(pageurl.indexOf('/')!==0){
+        pageurl='/'+pageurl;
+      }
+      stm_clicki('send', 'pageview', {'page': pageurl, 'title': title!==undefined?title:''});
+    };
+    /**
+     * 秒针监测事件
+     * stm_clicki('send', 'event', 'Category', 'Action', 'Label', Value);
+     *"1、事件由4个可用于描述用户与网站互动操作的字段组成：
+     *必填项： 'Category', 'Action';
+     *非必填项： 'Label', Value;
+     *其中Value 为Number型，非负数。 其余字段为字符串型。
+     *2、其中Category, Action, Value 需要自定义，send和event无需改动。
+     *3、如以下实例，监测按钮统计事件，可绑定<a>标签 onclick事件。
+     *示例：需要监测某网站导航栏-返回首页按钮，代码是：
+     *<a href=""url"" onclick=""stm_clicki('send', 'event', '返回首页按钮', '点击', '导航按钮');"">返回首页</a>"
+     */
+    this.STMEvent=function( opt_label, opt_value,category, action){
+      try {
+        if(!stm_clicki)return null;
+      } catch (e) {
+        return;
+      }
+      if(!category)category='ClickEvent';//类型描述
+      if(!action)action='点击';//事件
+      if(!opt_value)opt_value=1;//可选 默认1
+      if(!opt_label)return;//必须
+      stm_clicki('send', 'event', opt_label, action, category, opt_value);
+    };
     /**
      * 事件
      */
     this.Event=function(opt_label, opt_value,category, action){
       _Self.GAEvent(opt_label, opt_value,category, action);
       _Self.BaiduEvent(opt_label, opt_value,category, action);
+      _Self.STMEvent(opt_label, opt_value,category, action);
     };
     /**
      * 虚拟PV
      */
-    this.PV=function(pageurl){
+    this.PV=function(pageurl,title){
       _Self.BaiduPV(pageurl);
       _Self.GAPV(pageurl);
+      _Self.STMPV(pageurl,title);
 
     };
   }
