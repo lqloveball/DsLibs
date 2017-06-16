@@ -51,7 +51,7 @@
      */
     this.Select=function () {
       _SelectImager.select();
-    }
+    };
     //选择器
     var _SelectImager;
     /**

@@ -171,6 +171,7 @@
     _inputDom.IsInput=function () {
       if(_inputDom[0].value===_DefaultText)return false;
       if(_inputDom[0].value==='')return false;
+      if(_inputDom[0].value.length<=0)return false;
       return true;
     };
 
