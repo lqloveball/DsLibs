@@ -53,24 +53,39 @@
      * @param  {[type]} errorBack [description]
      * @return {[type]}           [description]
      */
-    this.Post = function(url, postData, callBack, errorBack) {
+    this.Post = function(url, postData, callBack, errorBack,opts) {
       var _type = 'POST';
       var _postData = postData || {};
+      opts=opts||{};
 
-      console.log('QuickAjax Post:', url, _postData);
-      if (_IsLocalDebug) {
+      if (_IsLocalDebug) { _type = 'GET';}
+
+      if(opts.dataType&&opts.dataType==='jsonp'){
+        // console.log('走JSONP 跨域');
         _type = 'GET';
-        _postData = {};
+        // var _postDataString='';
+        // for (var _name in _postData) {
+        //   console.log(_name);
+        //   if (_postData.hasOwnProperty(_name)) {
+        //     _postDataString+=('&'+_name+'='+encodeURIComponent(_postData[_name]));
+        //   }
+        // }
+        // if(url.indexOf('?')!=-1)url+=_postDataString;
+        // else url=url+'?'+_postDataString.slice(1);
       }
+      console.log('QuickAjax Post:', url, _postData);
+
+
       $.ajax({
         type: _type,
         url: url,
+        dataType:opts.dataType||'json',
         data: _postData,
         success: function(data) {
           //如果是字符串 转下 object
           if (typeof(data) === 'string') data = JSON.parse(data);
           console.log('post End:' + url + ':', data);
-          if (Number(data.IsSuccess) === 1) {
+          if (data&&data.IsSuccess&&Number(data.IsSuccess) === 1) {
             if (callBack) callBack(data);
           } else {
             if (errorBack) errorBack(data.ErrMsg);
@@ -90,9 +105,10 @@
      * @param  {[type]} errorBack [description]
      * @return {[type]}           [description]
      */
-    this.Get = function(url, postData, callBack, errorBack) {
+    this.Get = function(url, postData, callBack, errorBack,opts) {
       var _type = 'GET';
       var _url = url;
+      opts=opts||{};
       //把数据转成地址栏参数
       if (postData) {
         var _parameter = '';
@@ -109,21 +125,25 @@
           }
         }
         if (_url.indexOf('?') == -1) {
-          console.warn('QuickAjax Get Url 没有?开头参数');
-          return;
+          _url=_url+'?'+_parameter.slice(1);
+          console.warn('QuickAjax Get Url 没有?开头参数 程序自动拼接：',_url);
+          // return;
+        }else{
+            _url = _url + _parameter;
         }
-        _url = _url + _parameter;
+
       }
       console.log('QuickAjax Get:', url, _postData);
       $.ajax({
         type: _type,
         url: _url,
+        dataType:opts.dataType||'json',
         // data: _postData,
         success: function(data) {
           //如果是字符串 转下 object
           if (typeof(data) === 'string') data = JSON.parse(data);
           console.log('get End: ' + url + ':', data);
-          if (Number(data.IsSuccess) === 1) {
+          if (data&&data.IsSuccess&&Number(data.IsSuccess) === 1) {
             if (callBack) callBack(data);
           } else {
             if (errorBack) errorBack(data.ErrMsg);

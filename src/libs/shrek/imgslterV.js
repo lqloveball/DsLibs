@@ -38,6 +38,8 @@
             var _config = config || {};
             this.el = _config.el || function () {
                     var input = document.createElement("INPUT");
+
+                    input.id='SelectImage_'+new Date().getTime();
                     input.type = 'file';
                     // input.accept = 'image/png,image/jpeg,image/gif';
                     input.accept = 'image/*';

@@ -24,7 +24,7 @@
  * @copyright:  Ds是累积平时项目工作的经验代码库，不属于职位任务与项目的内容。里面代码大部分理念来至曾经flash 前端时代，尽力减小类之间耦合，通过webpack按需request使用。Ds库里内容多来至网络与参考其他开源代码库。Ds库也开源开放，随意使用在所属的职位任务与项目中。
  * @constructor
  **/
-!(function(factory) {
+(function(factory) {
     var root = (typeof self == 'object' && self.self == self && self) ||
         (typeof global == 'object' && global.global == global && global);
 
@@ -52,10 +52,12 @@
          * opts.progress
          * opts.complete
          */
-        this.ImageQueueLoad = function(opts) {
-            var _complete = opts.complete;
-            var _progress = opts.progress;
-            var _list = opts.list !== undefined ? opts.list : [];
+        this.ImageQueueLoad = function(list,completeFun,progressFun,opts) {
+            var _complete = completeFun||null;
+            var _progress = progressFun||null;
+            var _list =[];
+            if(list&&list.length>0)  _list=list;
+
             var _basePath = opts.basePath !== undefined ? opts.basePath : '';
             var _queueArr = [];
             var _loadNum = 0;
@@ -86,8 +88,8 @@
             }
             //队列加载完成
             function complete() {
-                if (_progress !== undefined) _progress(1);
-                if (_complete !== undefined) _complete();
+                if (_progress) _progress(1);
+                if (_complete) _complete();
             }
             //队列加载进度
             function progress() {
@@ -101,8 +103,6 @@
                 _img.src = _obj.src;
                 if (_progress !== undefined) _progress(_loadNum / _queueArr.length);
             }
-
-
         };
     }
 
