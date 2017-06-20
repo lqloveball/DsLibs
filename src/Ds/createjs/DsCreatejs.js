@@ -175,6 +175,12 @@
       return true;
     };
 
+    $('body').on('click',function (e) {
+      if(_inputDom.children(e.target).length<=0){
+        _inputDom[0].blur();
+      }
+    });
+
     _domBox.append(_inputDom);
     inputBox.addChild(_domElement);
     return _inputDom;
