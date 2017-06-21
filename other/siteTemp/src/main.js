@@ -161,15 +161,11 @@ function LoadCJSFrameWorkJS(){
       [
           'createjs',//需要create
           'dscreatejs',//需要create 扩展
-          'jstween',//需要运动引擎
-          // 'touchjs',//需要touch事件
       ],
       function() {
           require([
               'createjs',
               'dscreatejs',
-              'jstween',
-              // 'touchjs',
           ],function(){
             console.log('LoadCJSFrameWorkJS:', new Date().getTime() - _time);
             //是否CJS类型网站
@@ -180,30 +176,15 @@ function LoadCJSFrameWorkJS(){
           });
 
       },
-      'vendors2'
+      'createjsFrameWork'
   );
 }
 /**
  * 加载项目需要支持的第三方库
  */
 function LoadFrameWorkJS(){
-  require.ensure(
-      [
-          'jstween',//需要运动引擎
-          // 'touchjs',//需要touch事件
-      ],
-      function() {
-          require([
-              'jstween',
-              // 'touchjs',
-          ],function(){
-            console.log('LoadFrameWorkJS:', new Date().getTime() - _time);
-            SiteModel.LoadModel.InitDomLoadPanel();
-          });
-
-      },
-      'vendors1'
-  );
+  console.log('LoadFrameWorkJS:', new Date().getTime() - _time);
+  SiteModel.LoadModel.InitDomLoadPanel();
 }
 //开始加载代码
 LoadBaseJS();

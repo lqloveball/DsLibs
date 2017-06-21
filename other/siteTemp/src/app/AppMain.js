@@ -15,6 +15,12 @@ function AppMain() {
   }
   //一般会需要touchjs
   require('touchjs');
+  //一般会需要jstween,当然还能使用tweenlite或 tweenmax
+  require('jstween');//15k
+  // require('jstimeline');//11 KB
+  // require('tweenlite');//28k
+  // require('timelinelite');//13 KB
+  // require('tweenmax');//113 KB
   //接口管理器
   var _APIer=require('app/APIManager');
   SiteModel.APIer=this.APIer=_APIer;

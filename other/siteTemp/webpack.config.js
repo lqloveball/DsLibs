@@ -65,6 +65,8 @@ module.exports = function(env) {
               orienter: 'libs/shrek/orienter.js',
               //常用第三方库
               tweenmax: 'libs/greensock/TweenMax.min.js',
+              timelinelite: 'libs/greensock/TimelineLite.min.js',
+              tweenlite: 'libs/greensock/TweenLite.min.js',
               hammer: 'libs/touch/hammer.min.js',
               touchjs: 'libs/touch/touch.min.js',
               iscrolllite: 'libs/iscroll/iscroll-lite.min.js',
