@@ -175,9 +175,9 @@
       return true;
     };
 
-    $('body').on('click',function (e) {
-      if(_inputDom.children(e.target).length<=0){
-        _inputDom[0].blur();
+    $('body').on('touchstart',function (e) {
+      if(_inputDom[0]!==e.target){
+         _inputDom[0].blur();
       }
     });
 
