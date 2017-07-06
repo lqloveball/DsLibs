@@ -171,7 +171,7 @@ module.exports = function(env) {
           //提供全局的变量，在模块中使用无需用require引入 注意js类的写法需要指出AMD CMD 模式
           //调用模块的别名ProvidePlugin，例如想在js中用$，如果通过webpack加载，需要将$与jQuery对应起来
           new webpack.ProvidePlugin({
-              // $: 'jquery',
+              //$: 'jquery',
           }),
           new webpack.DefinePlugin({
               'process.env': {
@@ -181,11 +181,12 @@ module.exports = function(env) {
           // 抽离公共模块
           // new webpack.optimize.CommonsChunkPlugin('common', 'common.js'),
           //代码压缩 webpack 自带了一个压缩插件 UglifyJsPlugin，只需要在配置文件中引入即可。
-          // new webpack.optimize.UglifyJsPlugin({
-          //   compress: {
-          //     warnings: false
-          //   }
-          // }),
+          new webpack.optimize.UglifyJsPlugin({
+            comments: false,        //去掉注释
+            compress: {
+              warnings: false
+            }
+          }),
 
       ]
   };
