@@ -36,7 +36,11 @@ function APIManager(){
    */
   this.DefaultWeiShare=function (title,info,url,domain) {
     //请确保插入的了分享接口js
-    if(!CallJsApiWXConfigItf)return;
+    try {
+      if(!CallJsApiWXConfigItf)return;
+    } catch (e) {
+      return;
+    }
     var _apiUrl="http://wechat.cagoe.com/JsApiWXConfig.aspx";
     if (location.href.indexOf(domain) != -1){
       _apiUrl="http://wechat."+domain+"/JsApiWXConfig.aspx";
