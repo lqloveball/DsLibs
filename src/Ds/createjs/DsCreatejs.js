@@ -558,7 +558,8 @@
    * 加载flash资源队列
    * @param {[Object]} param [加载参数对象]
    * param.jsUrl		加载js对象
-   * param.ssList		加载spritesheet资源数组
+   * param.judge		是否指定2017以后版本，如果不指定，会进行createjs.TextLoader加载后进行字符判断抽取。
+   * param.id		     2017以后版本导出的库有指定id，可以指定id 并且不适用judge判断，这样就不需要多做一次createjs.TextLoader加载后获取 库的id号
    * param.otherList	顺带加载一些其他资源
    *
    * param.jsNS		js命名空间
@@ -574,14 +575,22 @@
    *
    */
   ccjs.LoadCJSAssets = function(param) {
-    var ss = window.ss = window.ss || {};
+
     //这个方法就是为了加载flash导出的资源，怎么可以没有jsUrl参数?
     if (!param.jsUrl) {
       alert('参数jsUrl是必须!');
       return;
     }
     var basePath = param.basePath ? param.basePath : null;
+    //是否需要进行判断是否是最新的AnimateCC2017导出的资源
+    var _judgeAnimateCC2017=param.judge!==undefined?param.judge:true;
+    //命名空间的id
+    var _isCompositionID=param.id;
+    //是否最新AdobeAnimateCC2017以后的版本 如果不进行判断，但有填写id那还默认为是最新的AnimateCC2017导出的资源
+    var _isAdobeAnimateCC2017=(!_judgeAnimateCC2017&&_isCompositionID)?true:false;
 
+    //获取导出库对象
+    var _comp;
     //加载js对象
     var jsUrl = param.jsUrl;
     //加载spritesheet资源数组
@@ -608,41 +617,69 @@
     queue.addEventListener("complete", queueComplete);
     //先开始加载导出的JS
     var _jsUrl = basePath ? basePath + jsUrl : jsUrl;
+
+    var textloader = new createjs.TextLoader({
+      src: _jsUrl,
+      id: _jsUrl,
+    });
     var jsloader = new createjs.JavaScriptLoader({
       src: _jsUrl,
       id: _jsUrl,
       type: "javascript"
     });
+    textloader.addEventListener('complete', textComplete);
     jsloader.addEventListener('complete', jsComplete);
-    jsloader.load();
-    //js加载完成
+    //需要判断并且没指定库对象id的 必须进行判断加载
+    if(_judgeAnimateCC2017)textloader.load();
+    //不需要判断，有库的id号，说明是AdobeAnimateCC2017以后的版本
+    else if(!_judgeAnimateCC2017&&_isCompositionID){
+      console.log('no Judge is AnimateCC 2017');
+      jsloader.load();
+    }
+    //老版本导出
+    else{
+      jsloader.load();
+    }
+    //进行判断后执行重新加载js
+    function textComplete(e) {
+      var jsText=textloader.getResult();
+      //判断是否最新AdobeAnimateCC2017以后的版本
+      if(jsText.indexOf("an.compositions['")>=0)_isAdobeAnimateCC2017=true;
+      if(_isAdobeAnimateCC2017){
+        var reg = /an\.compositions\['(\w*)'\]/;
+        jsText.replace(reg, function() {
+            _isCompositionID=arguments[1];
+        });
+      }
+      jsloader.load();
+    }
     function jsComplete(e) {
-      // log('jsComplete');
       queueStartLoad();
     }
-    var iscc20152 = false;
-    var ssMetadata;
 
+    var queueArr,ssMetadata;
     function queueStartLoad() {
-      // log('queueStartLoad');
-      var queueArr = window[jsNS].properties.manifest;
-      //判断是否最新AnimateCC20152以后版本
-      ssMetadata = window[jsNS].ssMetadata;
-      iscc20152 = ssMetadata ? true : false;
+      //老版本
+      if(!_isAdobeAnimateCC2017){
+        queueArr = window[jsNS].properties.manifest;
+        ssMetadata = window[jsNS].ssMetadata;
+      }
+      //新版本
+      else{
+        _comp=AdobeAn.getComposition(_isCompositionID);
+        var lib=_comp.getLibrary();
+        window[jsNS]=lib;
+        window[imgNS]=_comp.getImages();
+        queueArr = lib.properties.manifest;
+        ssMetadata = lib.ssMetadata;
+      }
+
+
       var i;
       //如果存在basePath设置选择对window[jsNS].properties.manifest进行设置
       if (basePath) {
         for (i = 0; i < queueArr.length; i++) {
-          var obj = queueArr[i];
-          obj.src = basePath + obj.src;
-        }
-      }
-      //spritesheet精灵图片加载
-      if (ssList !== null) {
-        for (i = 0; i < ssList.length; i++) {
-          var _ssurl = ssList[i];
-          _ssurl = basePath ? basePath + _ssurl : _ssurl;
-          queueArr.push(_ssurl);
+          queueArr[i].src = basePath + queueArr[i].src;
         }
       }
       //其他资源的加载
@@ -654,8 +691,8 @@
         }
       }
       if (queueArr.length <= 0) {
-        console.log('LoadCJSAssets 加载队列是空,你确定正确嘛？');
         complete();
+        return;
       }
       queue.loadManifest(queueArr);
     }
@@ -672,28 +709,22 @@
       var images = window[imgNS];
       if (images === undefined) window[imgNS] = {};
       images = window[imgNS];
-      // log(e.item)
       //加载的图片对象放进图片字典中
       if (e.item.type == createjs.LoadQueue.IMAGE) images[e.item.id] = e.result;
     }
     //队列加载完成
     function queueComplete(e) {
-      //判断是否最新AnimateCC20152以后版本
-      var i;
-      if (iscc20152 && ssMetadata) {
-
-        for (i = 0; i < ssMetadata.length; i++) {
-          ss[ssMetadata[i].name] = new createjs.SpriteSheet({
-            "images": [queue.getResult(ssMetadata[i].name)],
-            "frames": ssMetadata[i].frames
-          });
-        }
+      var ss;
+      if(!_isAdobeAnimateCC2017){
+        ss= window.ss = window.ss || {};
+      }else{
+        ss=_comp.getSpriteSheet();
       }
-      //有spritesheet精灵图片  需要进行下处理
-      if (ssList !== null) {
-        for (i = 0; i < ssList.length; i++) {
-          var temp = ssList[i];
-          ss[temp.id] = queue.getResult(temp.id);
+
+      var i;
+      if (ssMetadata) {
+        for (i = 0; i < ssMetadata.length; i++) {
+          ss[ssMetadata[i].name] = new createjs.SpriteSheet({"images": [queue.getResult(ssMetadata[i].name)],"frames": ssMetadata[i].frames});
         }
       }
       if (complete !== null) complete(e);
