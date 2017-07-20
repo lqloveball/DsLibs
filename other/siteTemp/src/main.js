@@ -113,6 +113,7 @@ function ReSize(){
       else SiteModel.CJSModel.SetSize(SiteResizeModel.ScreenWidth,640);
     }
   }
+  if(!SiteResizeModel.IsInputState)setTimeout(function () {$('#screen').scrollTop(0);},30);
 }
 /**
  * 加载基础库的
