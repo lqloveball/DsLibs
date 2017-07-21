@@ -1,3 +1,63 @@
+/**
+ * @class 空间穿越类
+ * @classdesc:类说明:
+ * @extends
+ * @example:
+ //场景可以通过一个function对象来创建
+ scene: function() {
+    var _start = 0;
+    return {
+      type: 'group',
+        // name: 'scene0',// 自动构建 根据在_ConfigData名称
+        // group: null,   // 自动构建  子对象组 THREE.Group
+        // scene: null,   // 自动构建  当前场景对象 THREE.Group
+        // start:0,       // 自动构建  场景开始位置
+        // end:0,         // 自动构建  场景结束位置
+        //背景
+        bg: {
+          x: 0,y: 0,z:_BgFar + 10,  //坐标定位
+          src: './images/models/bg0.jpg',   //设置纹理图片地址
+          s: 8,                             //缩放比例
+        },
+        //子元素列表
+        childs: {
+          cloud0: {
+            //type: 'group',                  //默认自动构建 sprite
+            //obj: null,                      //自动构建 创建后的3d对象
+            //texture: null,                  //自动构建 使用纹理
+            x: 0,y: 0,z: _start=_start +100,  //坐标定位
+            src: _Path0 + 'cloud0.png',       //设置纹理图片地址
+            s: 8,                             //缩放比例 不填写自动构建 默认1
+            opacity:0.6,                      //透明度
+            rotation:0,                         //z轴的旋转
+            effects:'opacity rotation',              //自带动画  内置类型，可以是Array 也可以是字符串靠空格区分
+            movie:function(){var _obj=this.obj;}, //可为空，初始化执行的函数，内部可以对自身这个对象的动画控制
+            //这个对象到场景中的 根据当前距离进行 自计算
+            upDate:function(e){
+              var _obj=this.obj;
+              // //获取世界坐标
+              var _pt=e.pt;
+              // //计算出从背景穿出的位置
+              var _z=e.z;
+              // //计算用1000做渐变动画
+              var _s=e.speed;
+              _obj.material.opacity=this.opacity*_s;
+              // console.log(_pt.z,'---',_BgFar,'---',_z);
+            }
+            float:{y:10,x:-10,time:1}         //进行漂浮动画设置
+          },
+          cloud1: {
+            x: 0,y: 0,z: _start=_start +100,  //坐标定位
+            src: _Path0 + 'cloud0.png',       //设置纹理图片地址
+            s: 8,                             //缩放比例 不填写自动构建
+          }
+        }
+    }
+  }
+ * @author: maksim email:maksim.lin@foxmail.com
+ * @copyright: Ds是累积平时项目工作的经验代码库，不属于职位任务与项目的内容。里面代码大部分理念来至曾经flash 前端时代，尽力减小类之间耦合，通过webpack按需request使用。Ds库里内容多来至网络与参考其他开源代码库。Ds库也开源开放，随意使用在所属的职位任务与项目中。
+ * @constructor
+ **/
 (function(factory) {
   var root = (typeof self == 'object' && self.self == self && self) || (typeof global == 'object' && global.global == global && global);
 
@@ -11,7 +71,6 @@
   } else {
     factory(root, {});
   }
-
 }(function(root, modelObj) {
   root.Ds = root.Ds || {};
   root.Ds.threejs = root.Ds.threejs || {};
@@ -127,61 +186,12 @@
       }
     });
     /**
-         * 初始化
-         * @param  {[Object]} config [配置文件]
-         * //总配置
-         * _ConfigData={scene0:{...},scene1:{...},scene1:{...}}
-         * //场景配置
-         scene: function() {
-            var _start = 0;
-            return {
-              type: 'group',
-                // name: 'scene0',// 自动构建 根据在_ConfigData名称
-                // group: null,   // 自动构建  子对象组 THREE.Group
-                // scene: null,   // 自动构建  当前场景对象 THREE.Group
-                // start:0,       // 自动构建  场景开始位置
-                // end:0,         // 自动构建  场景结束位置
-                //背景
-                bg: {
-                  x: 0,y: 0,z:_BgFar + 10,  //坐标定位
-                  src: './images/models/bg0.jpg',   //设置纹理图片地址
-                  s: 8,                             //缩放比例
-                },
-                //子元素列表
-                childs: {
-                  cloud0: {
-                    //type: 'group',                  //默认自动构建 sprite
-                    //obj: null,                      //自动构建 创建后的3d对象
-                    //texture: null,                  //自动构建 使用纹理
-                    x: 0,y: 0,z: _start=_start +100,  //坐标定位
-                    src: _Path0 + 'cloud0.png',       //设置纹理图片地址
-                    s: 8,                             //缩放比例 不填写自动构建 默认1
-                    opacity:0.6,                      //透明度
-                    rotation:0,                         //z轴的旋转
-                    effects:'opacity rotation',              //自带动画  内置类型，可以是Array 也可以是字符串靠空格区分
-                    movie:function(){var _obj=this.obj;}, //可为空，初始化执行的函数，内部可以对自身这个对象的动画控制
-                    //这个对象到场景中的 根据当前距离进行 自计算
-                    upDate:function(e){
-                      var _obj=this.obj;
-                      // //获取世界坐标
-                      var _pt=e.pt;
-                      // //计算出从背景穿出的位置
-                      var _z=e.z;
-                      // //计算用1000做渐变动画
-                      var _s=e.speed;
-                      _obj.material.opacity=this.opacity*_s;
-                      // console.log(_pt.z,'---',_BgFar,'---',_z);
-                    }
-                  },
-                  cloud1: {
-                    x: 0,y: 0,z: _start=_start +100,  //坐标定位
-                    src: _Path0 + 'cloud0.png',       //设置纹理图片地址
-                    s: 8,                             //缩放比例 不填写自动构建
-                  }
-                }
-            }
-          }
-         */
+     * 初始化
+     * @param  {[Object]} config [配置文件]
+     * //总配置
+     * _ConfigData={scene0:{...},scene1:{...},scene1:{...}}
+     * //场景配置
+     */
     this.Init = function(config, bgFar) {
       _SceneConfig = config;
       _BgFar = bgFar || 6000;
@@ -423,6 +433,7 @@
         //创建纹理
 
         _material = new THREE.SpriteMaterial({map: map});
+        _material.needsUpdate=true;
         if (data.blending) {
           _material.blending = data.blending;
         }
@@ -464,15 +475,15 @@
         _object3D.position.y = data.y || 0;
         _object3D.position.z = -data.z || 0;
         //旋转角度
-        _object3D.rotation.z = -data.rotation || 0;
+        _object3D.rotation.z = -(Math.PI/180)*data.rotation || 0;
         //如果纯在动画这里进行动画控制
         if (data.movie)
           data.movie();
-
         }
       else if (data.type == 'plane') {
         var _geometry = new THREE.PlaneGeometry(1, 1, 1);
         _material = new THREE.MeshBasicMaterial({color: 0xffffff, side: THREE.DoubleSide, transparent: true, alphaTest: 0.8, map: map});
+        _material.needsUpdate=true;
         _object3D = new THREE.Mesh(_geometry, _material);
         data.obj = _object3D;
         if (data.blending) {
@@ -529,9 +540,28 @@
         _object3D.position.y = data.y || 0;
         _object3D.position.z = -data.z || 0;
         //旋转角度
-        _object3D.rotation.z = -data.rotation || 0;
+        _object3D.rotation.z = -(Math.PI/180)*data.rotation || 0;
         if (data.movie)
           data.movie();
+      }
+      //开始处理一些快速动画 比如漂浮
+      if(_object3D&&data.float){
+        var _float=data.float;
+        var _x=_float.x||0;
+        var _y=_float.y||0;
+        var _time=(_float.time!==undefined)?_float.time:1;
+        _x=_object3D.position.x+_x;
+        _y=_object3D.position.y+_y;
+        TweenMax.to(_object3D.position,_time,{y:_y,x:_x,yoyo:true,repeat:-1});
+        var _rotation=_float.rotation||0;
+        // if(_float.rotation)TweenMax.fromTo(_object3D.rotation,_time,{z:data.rotation?-(Math.PI/180)*data.rotation:0},{z:Math.PI/180*_rotation,yoyo:true,repeat:-1});
+        //设置透明度 但测试有问题  在plane模式下会闪
+        if(_material&&_float.opacity!==undefined){
+          // console.log('----------',_float.opacity,data.opacity,_material.opacity);
+          var _opacity=data.opacity!==undefined?data.opacity:1;
+          TweenMax.fromTo(_material,0.5,{opacity:_opacity},{opacity:_float.opacity,yoyo:true,repeat:-1});
+
+        }
       }
       return _object3D;
     };
@@ -577,8 +607,8 @@
     });
 
     /**
-         * 场景刷新更新
-         */
+     * 场景刷新更新
+     */
     function UpDateScene() {
       if (_Lock)
         return;
