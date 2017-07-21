@@ -102,7 +102,7 @@
                 _obj = _queueArr[_loadNum];
                 _img = _obj.img;
                 _img.src = _obj.src;
-                if (_progress !== undefined) _progress(_loadNum / _queueArr.length);
+                if (_progress) _progress(_loadNum / _queueArr.length);
             }
         };
     }
