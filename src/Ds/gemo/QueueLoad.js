@@ -53,6 +53,7 @@
          * opts.complete
          */
         this.ImageQueueLoad = function(list,completeFun,progressFun,opts) {
+            opts=opts||{};
             var _complete = completeFun||null;
             var _progress = progressFun||null;
             var _list =[];
