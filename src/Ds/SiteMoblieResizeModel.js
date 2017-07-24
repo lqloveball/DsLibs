@@ -223,7 +223,7 @@
        if (_width / _height > 3) {
            //算出竖屏幕下输入框状态下比例
            _isInputState = true;
-       } else if (_width / _height < 12 / 6.5 && _width / _height > 1) {
+       } else if (_width / _height < 640/400 && _width / _height > 1) {
            //算出竖屏幕下输入框状态下比例
            _isInputState = true;
            //说明这时候不会是横屏
