@@ -402,9 +402,7 @@
         this.InitSiteResizeModelReSize = function() {
             if (SiteModel && SiteModel.SiteResizeModel) SiteModel.SiteResizeModel.on('resize', ReSize);
             else {
-                $(window).resize(function() {
-                    ReSize();
-                });
+                $(window).resize(function() {ReSize();});
             }
             ReSize();
         };
@@ -412,7 +410,7 @@
          * 自适应
          */
         function ReSize() {
-            // console.log('3D ReSize');
+            console.log('3D ReSize');
             var _width = window.innerWidth;
             var _height = window.innerHeight;
             if (SiteModel && SiteModel.SiteResizeModel) {

@@ -154,7 +154,7 @@
          * @param {[Function]} progressFun [加载进度]
          * @return {[Object]} _textureDc [返回一个检索字典]
          */
-        this.LoadTextureList = function(loadList, endFun, progressFun) {
+        this.LoadTextureList = function(loadList, endFun, progressFun,fileLoadFun) {
             //纹理图片字典
             var _textureDc = {};
             //加载对象列表
@@ -188,6 +188,8 @@
                     // 图片加载完成
                     function(texture) {
                         _obj.texture = texture;
+                        //单个文件加载完成
+                        if(fileLoadFun)fileLoadFun(_obj);
                         startLoad();
                     },
                     // 加载进度

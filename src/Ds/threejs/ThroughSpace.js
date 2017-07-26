@@ -94,13 +94,8 @@
     var _LoadManager = require('ds/threejs/LoadManager');
     //3D空间构建
     var _Three3DModel = new Ds.threejs.Three3DModel({
-      appendTo: three3DModelOpts.appendTo !== undefined
-        ? three3DModelOpts.appendTo
-        : '#threeBox',
-      addDebugBox: three3DModelOpts.debug !== undefined
-        ? three3DModelOpts.debug
-        : false,
-      resizeEvent: false,
+      appendTo: three3DModelOpts.appendTo !== undefined? three3DModelOpts.appendTo: '#threeBox',
+      addDebugBox: three3DModelOpts.debug !== undefined? three3DModelOpts.debug: false,
       width: 640,
       height: 1138,
       resizeType: 'fixed',
@@ -112,9 +107,8 @@
         y: 0,
         z: 1000
       },
-      hasControls: three3DModelOpts.hasControls !== undefined
-        ? three3DModelOpts.hasControls
-        : false
+      hasControls: three3DModelOpts.hasControls !== undefined? three3DModelOpts.hasControls: false,
+      resizeEvent: three3DModelOpts.hasResize !== undefined? three3DModelOpts.hasResize: true,
     });
     Object.defineProperty(this, "Three3DModel", {
       get: function() {
