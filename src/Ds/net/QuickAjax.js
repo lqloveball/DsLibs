@@ -51,10 +51,10 @@
      * @param  {[type]} postData      [description]
      * @param  {[type]} callBack      [description]
      * @param  {[type]} errorBack     [description]
-     * @param  {[type]} isCrossDomain [description]
+     * @param  {[type]} opts          [description]
      * @return {[type]}               [description]
      */
-    this.Post = function (url, postData, callBack, errorBack, opts, isCrossDomain) {
+    this.Post = function (url, postData, callBack, errorBack, opts ) {
       var _type = 'POST';
       var _postData = postData || {};
       opts=opts||{};
@@ -75,7 +75,7 @@
         // else url=url+'?'+_postDataString.slice(1);
       }
 
-      if (isCrossDomain) {
+      if (opts.isCrossDomain) {
           if (url.indexOf(location.host) < 0) {
               opts.dataType = 'jsonp';
               _type = 'GET';
