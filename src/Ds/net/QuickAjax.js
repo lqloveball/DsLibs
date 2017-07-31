@@ -76,8 +76,10 @@
       }
 
       if (isCrossDomain) {
-          opts.dataType = 'jsonp';
-          _type = 'GET';
+          if (url.indexOf(location.host) < 0) {
+              opts.dataType = 'jsonp';
+              _type = 'GET';
+          } 
       }
 
       console.log('QuickAjax Post:', url, _postData);
