@@ -37,16 +37,10 @@ module.exports = function(env) {
           filename: "[name].js?[hash]",
           //指定静态资源的位置
           publicPath: './js/app/', // 设置require.ensure路径
-          //publicPath: 'http://s6.pdim.gs/static/',
           //输出第三方支持库压缩
           chunkFilename: "[name].js?[hash]",
-          // chunkFilename: "chunk.js?[hash]",// 设置require.ensure 文件名
       },
-      // vue: {
-      //     loaders: {
-      //         js: 'babel?{"presets":["es2015"],"plugins": ["transform-object-rest-spread"]}'
-      //     }
-      // },
+
       //文件路径的指向
       resolve: {
           alias: {
@@ -173,6 +167,8 @@ module.exports = function(env) {
           //提供全局的变量，在模块中使用无需用require引入 注意js类的写法需要指出AMD CMD 模式
           //调用模块的别名ProvidePlugin，例如想在js中用$，如果通过webpack加载，需要将$与jQuery对应起来
           new webpack.ProvidePlugin({}),
+          //webpack3 将一些有联系的模块，放到一个闭包函数里面去，通过减少闭包函数数量从而加快JS的执行速度。
+          new webpack.optimize.ModuleConcatenationPlugin(),
           new webpack.DefinePlugin({
               'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development')
           }),
