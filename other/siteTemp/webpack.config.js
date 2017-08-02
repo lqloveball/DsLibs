@@ -2,8 +2,6 @@ var path = require('path');
 var fs = require('fs'); //文件系统
 var glob = require('glob');
 var webpack = require('webpack');
-var ExtractTextPlugin = require("extract-text-webpack-plugin");
-
 function resolveBowerPath(componentPath) {
     return path.join(__dirname, componentPath);
 }
@@ -44,6 +42,11 @@ module.exports = function(env) {
           chunkFilename: "[name].js?[hash]",
           // chunkFilename: "chunk.js?[hash]",// 设置require.ensure 文件名
       },
+      // vue: {
+      //     loaders: {
+      //         js: 'babel?{"presets":["es2015"],"plugins": ["transform-object-rest-spread"]}'
+      //     }
+      // },
       //文件路径的指向
       resolve: {
           alias: {
@@ -54,7 +57,11 @@ module.exports = function(env) {
               app: resolveBowerPath('./src/app'),
               ds: resolveBowerPath('./src/Ds'),
               //vue需要用到
-              'vue$': 'vue/dist/vue.common.js',
+              'vue$': 'vue/dist/vue.esm.js',
+              'vuex$': 'vuex/dist/vuex.esm.js',
+              // 'vue$': 'libs/vue/vue.min.js',
+              // 'vuex$': 'libs/vue/vuex.min.js',
+              // 'vuex$': 'libs/vue/vuex.esm.js',
               //jquery: 'libs/base/jquery-2.1.3.min.js',
               //jquery: 'libs/base/jquery-1.9.1.min.js',
               jquery: 'libs/base/zepto.min.js',
@@ -89,9 +96,7 @@ module.exports = function(env) {
           }
       },
       //设置外部加载，这个不会做打包
-      externals: {
-          // TianWei: 'app/TianWei.js',
-      },
+      externals: {},
       //模块loader进行字符串的处理
       module: {
           // webpack 2.0后的loader方式
@@ -103,23 +108,19 @@ module.exports = function(env) {
                   options: {
                       //vue里面其他加载器
                       loaders: {
-                        // Since sass-loader (weirdly) has SCSS as its default parse mode, we map
-                        // the "scss" and "sass" values for the lang attribute to the right configs here.
-                        // other preprocessors should work out of the box, no loader config like this necessary.
                         'scss': 'vue-style-loader!css-loader!sass-loader',
-                        'sass': 'vue-style-loader!css-loader!sass-loader?indentedSyntax'
+                        'sass': 'vue-style-loader!css-loader!sass-loader?indentedSyntax',
+                        'less': 'vue-style-loader!css-loader!less-loader?indentedSyntax',
                       }
                   }
               },
-              //rect的jsx加载
-              {test: /\.js$/,loader: "jsx-loader?harmony"},
               //html处理
               {test: /\.html$/,loader:'html-loader'},
               //处理ES6
               {
-                test: /\.js$/,
+                test: /\.(js|jsx)$/,
                 loader: 'babel-loader',
-                exclude: /node_modules/
+                exclude: /node_modules/,
               },
               //处理样式，转成css，如：less-loader, sass-loader
               {test: /\.css$/,
@@ -152,6 +153,7 @@ module.exports = function(env) {
               },
           ],
       },
+
       devServer: {
           historyApiFallback: true,
           noInfo: true
@@ -163,20 +165,16 @@ module.exports = function(env) {
       //开发
       // devtool: '#cheap-module-eval-source-map',
       // 生产
-      // devtool: '#cheap-module-source-map',
+      devtool: '#cheap-module-source-map',
       //是否观察者模式
       watch: false,
       //插件，比loader更强大，能使用更多webpack的api
       plugins: [
           //提供全局的变量，在模块中使用无需用require引入 注意js类的写法需要指出AMD CMD 模式
           //调用模块的别名ProvidePlugin，例如想在js中用$，如果通过webpack加载，需要将$与jQuery对应起来
-          new webpack.ProvidePlugin({
-              //$: 'jquery',
-          }),
+          new webpack.ProvidePlugin({}),
           new webpack.DefinePlugin({
-              'process.env': {
-                  NODE_ENV: '"production"'
-              }
+              'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development')
           }),
           // 抽离公共模块
           // new webpack.optimize.CommonsChunkPlugin('common', 'common.js'),
@@ -184,10 +182,12 @@ module.exports = function(env) {
           new webpack.optimize.UglifyJsPlugin({
             comments: false,        //去掉注释
             compress: {
-              warnings: false
+              warnings: false//去经过
             }
           }),
-
+          new webpack.LoaderOptionsPlugin({
+            minimize: true
+          }),
       ]
   };
 };
