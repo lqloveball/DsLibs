@@ -77,6 +77,7 @@
                 _img.onload = progress;
                 _img.onerror = progress;
                 _obj.img = _img;
+                _obj.loadEnd=false;
                 _queueArr.push(_obj);
             }
             //开始加载
@@ -94,6 +95,8 @@
             }
             //队列加载进度
             function progress() {
+                _obj = _queueArr[_loadNum];
+                _obj.loadEnd=true;
                 _loadNum++;
                 if (_loadNum >= _queueArr.length) {
                     complete();
@@ -104,6 +107,8 @@
                 _img.src = _obj.src;
                 if (_progress) _progress(_loadNum / _queueArr.length);
             }
+            //给到加载对象队列 进行img索引复制操作
+            return _queueArr;
         };
     }
 
