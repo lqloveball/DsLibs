@@ -101,7 +101,7 @@
         return _PageModel;
       },
     });
-    var _OldPageLabel,_OldPage
+    var _OldPageLabel,_OldPage;
     Object.defineProperty(this, "OldPageLabel", {get: function() {return _OldPageLabel;},});
     Object.defineProperty(this, "OldPage", {get: function() {return _OldPage;},});
     /**
