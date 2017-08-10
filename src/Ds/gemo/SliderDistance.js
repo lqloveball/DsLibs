@@ -283,10 +283,13 @@
             var _Olock=_Lock;
             cancelAnimationFrame(_UpDateFramer);
             tweenData=tweenData||{};
+            var _end=tweenData.end;
+            tweenData.end=null;
 
             if (TweenMax) {
                 _Tweening=true;
                 _Lock = true;
+
                 tweenData.value=value;
                 tweenData.onUpdate=function() {
                   _Distance=_obj.value;
@@ -297,9 +300,11 @@
                   DistanceUpDate();
                   _Tweening=false;
                   _Lock=_Olock;
-                  if(tweenData.end)tweenData.end();
+                  // console.log('-----');
+                  if(_end)_end();
+
                 };
-                TweenMax.to(_obj, time,tweenData);
+                TweenMax.to(_obj,time,tweenData);
             } else if (JT) {
                 _Tweening=true;
                 _Lock = true;
@@ -313,7 +318,7 @@
                   DistanceUpDate();
                   _Tweening=false;
                   _Lock=_Olock;
-                  if(tweenData.end)tweenData.end();
+                  if(_end)_end();
                 };
                 JT.to(_obj, time,tweenData);
             } else {
