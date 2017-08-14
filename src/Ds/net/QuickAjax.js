@@ -79,7 +79,7 @@
           if (url.indexOf(location.host) < 0) {
               opts.dataType = 'jsonp';
               _type = 'GET';
-          } 
+          }
       }
 
       console.log('QuickAjax Post:', url, _postData);
@@ -97,7 +97,7 @@
           if (data&&data.IsSuccess&&Number(data.IsSuccess) === 1) {
             if (callBack) callBack(data);
           } else {
-            if (errorBack) errorBack(data.ErrMsg);
+            if (errorBack) errorBack(data.ErrMsg,data);
           }
         },
         error: function(xhr, type) {
@@ -155,7 +155,7 @@
           if (data&&data.IsSuccess&&Number(data.IsSuccess) === 1) {
             if (callBack) callBack(data);
           } else {
-            if (errorBack) errorBack(data.ErrMsg);
+            if (errorBack) errorBack(data.ErrMsg,data);
           }
         },
         error: function(xhr, type) {
