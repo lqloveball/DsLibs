@@ -76,7 +76,7 @@ function APIManager(){
         Ds.gemo.QuickTrack.Event('WechatShare');
     });
     SetWechatShareToFriend(_ShareTitle,_ShareInfo);
-    SetWechatShareToTimeline(_ShareTitle,_ShareInfo);
+    SetWechatShareToTimeline(_ShareInfo,_ShareInfo);
   };
   /**
    * 做回流页面分享
