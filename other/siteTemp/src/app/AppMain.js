@@ -44,7 +44,9 @@ function AppMain() {
     LoadMainAssets();
   };
   //加载资源 可以参考下面注释
-  function LoadMainAssets() {}
+  function LoadMainAssets() {
+    InitModels();
+  }
   /*
   //加载动画资源代码 这里是flash 类型资源加载例子
   function LoadMainAssets() {
@@ -78,9 +80,13 @@ function AppMain() {
   function InitModels() {
     //隐藏loading
     SiteModel.HitLoadPanel();
+    var _home0=require('app/HomePage');
     //添加一个页面模块
-    // _Pager.Add(require('app/HomePage'));
-    // GotoPage('HomePage');
+    _Pager.Add(_home0);
+    GotoPage('HomePage');
+
+    var _home1=require('app/HomePage');
+    console.log('<>>>',_home0==_home1);
   }
   //页面跳转控制
   function GotoPage(value){

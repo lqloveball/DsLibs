@@ -76,7 +76,7 @@ function APIManager(){
         Ds.gemo.QuickTrack.Event('WechatShare');
     });
     SetWechatShareToFriend(_ShareTitle,_ShareInfo);
-    SetWechatShareToTimeline(_ShareTitle,_ShareInfo);
+    SetWechatShareToTimeline(_ShareInfo,_ShareInfo);
   };
   /**
    * 做回流页面分享
@@ -93,7 +93,7 @@ function APIManager(){
       Ds.gemo.QuickTrack.Event('WechatShare');
     });
     SetWechatShareToFriend(title,info);
-    SetWechatShareToTimeline(title,title);
+    SetWechatShareToTimeline(info,info);
   };
   /**
    * 默认作品回流分享
@@ -116,7 +116,7 @@ function APIManager(){
       Ds.gemo.QuickTrack.Event('WechatShare');
     });
     SetWechatShareToFriend(title, info);
-    SetWechatShareToTimeline(title, title);
+    SetWechatShareToTimeline(info, info);
   };
 
 }

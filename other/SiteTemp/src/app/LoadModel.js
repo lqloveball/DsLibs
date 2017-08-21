@@ -62,14 +62,15 @@ function LoadModel(){
     //判断是Dom方式的loading
     if((_loadPanel instanceof HTMLElement)||(_loadPanel.length>=1&&_loadPanel[0] instanceof HTMLElement)){
       //【Dom Loading 请在这里实现】
-      $('#siteLoadPanel .progress').css({width:(progress+1)+'%'});
-      $('#siteLoadPanel .label').html((progress+1)+'%');
+      if(progress>=100)progress=100;
+      $('#siteLoadPanel .progress').css({width:(progress)+'%'});
+      $('#siteLoadPanel .label').html((progress)+'%');
     }
     //判断是createjs类型loading
     else if(window['createjs']!==undefined&&_loadPanel instanceof createjs.DisplayObject){
       if(progress>=99)progress=99;
       if(_loadPanel instanceof createjs.MovieClip)_loadPanel.gotoAndStop(progress);
-      if(_loadPanel.label)_loadPanel.label.text=progress<10?'0'+progress+'%':progress+'%';
+      if(_loadPanel.label)_loadPanel.label.text=progress<10?'0'+(progress+1)+'%':(progress+1)+'%';
     }
   }
   this.HitLoadPanel=HitLoadPanel;
