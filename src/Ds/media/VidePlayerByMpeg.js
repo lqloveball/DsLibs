@@ -38,6 +38,7 @@
  *  @extends
  * @example: 举例
  * @author: maksim email:maksim.lin@foxmail.com
+ * 基于对mpeg视频格式解码 ，需要引用 src/libs/media/jsmpg.js
  * @copyright:  Ds是累积平时项目工作的经验代码库，不属于职位任务与项目的内容。里面代码大部分理念来至曾经flash 前端时代，尽力减小类之间耦合，通过webpack按需request使用。Ds库里内容多来至网络与参考其他开源代码库。Ds库也开源开放，随意使用在所属的职位任务与项目中。
  * @constructor
  **/
@@ -79,11 +80,14 @@
               return _Canvas;
           }
       });
+      var _autoplay= opts.autoplay!== undefined?opts.autoplay:true;
+      var _autoload= opts.autoload !== undefined ? opts.autoload : true;
+      // if(_autoplay)_autoload=true;
       //MPEG 解码播放器
       var _Player = new jsmpeg(url, {
           canvas: _Canvas,
-          autoload: opts.autoplay !== undefined ? opts.autoplay : true,
-          autoplay: !!opts.autoplay, //是否自动播放
+          autoplay: _autoplay, //是否自动播放
+          autoload: _autoload,//是否自动加载  如果是设置自动播放 肯定是要自动加载
           progressShow: !!opts.progressShow, //默认加载进度
           loop: !!opts.loop, //是否循环
           seekable: opts.seekable !== undefined ? opts.seekable : false, //是否计算头文件 计算出时间
@@ -392,6 +396,7 @@
        */
       this.Play = function() {
           if (!_CanPlayBool) return;
+          console.log('Play',_Player.playing);
           // _Playing = true;
           _Player.play();
           if (_Audio) {

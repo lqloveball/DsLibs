@@ -62,6 +62,8 @@
  * @extends
  * @example: 举例
  [=================HTML===================]
+  插入iphone-inline-video.browser.js
+  <script src="js/libs/iphone-inline-video.browser.js"></script>
   <!-- 放视频的容器  -->
   <div id="MyVideoPanel">
    <!-- 进行需要控制的视频 -->
@@ -75,9 +77,9 @@
     </video>
   </div>
   注意对 preload的设置
-  preload="auto" 当页面加载后载入整个视频
-  preload="meta" 当页面加载后只载入元数据
-  preload="none" 当页面加载后只载入元数据
+  preload="auto" 	指示一旦页面加载，则开始加载音频/视频。
+  preload="metadata" 	指示当页面加载后仅加载音频/视频的元数据。
+  preload="none" 指示页面加载后不应加载音频/视频。
   视频不能进行diplay:none;但可以设置left: 3000px;
   [=================CSS===================]
    .IIV::-webkit-media-controls-play-button,
@@ -153,7 +155,7 @@
       name: 'play',
       time: 0.1,
       fun: function(e) {
-        console.log('这时候的视频可以确保是有画面的);
+        console.log('这时候的视频可以确保是有画面的');
       }
   });
   //其他时间点交互触发
