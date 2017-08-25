@@ -44,7 +44,7 @@
       set: function(value) {
         _IsLocalDebug = value;
       }
-    });
+    }); 
     /**
      * 快速post请求
      * @param  {[type]} url           [description]
