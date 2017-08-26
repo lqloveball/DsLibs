@@ -1,3 +1,8 @@
+/**
+ * PIXI 快速使用实现方法
+ *
+ *
+ */
 !(function (factory) {
     var root = (typeof self == 'object' && self.self == self && self) ||
         (typeof global == 'object' && global.global == global && global);
@@ -43,7 +48,6 @@
     if(!_list||_list.length<=0){
       console.warn('加载列表内没有加载对象');
     }
-
 
     var _loader = new PIXI.loaders.Loader();
     for (var i = 0; i < _list.length; i++) {
@@ -147,6 +151,10 @@
     app.ticker.add(function(delta) {
       _Self.emit('update',delta);
     });
+    //进行重设置canvas大小
+    this.setSize = function(_w, _h) {
+      app.renderer.resize(_w, _h);
+    };
   };
   DsPixi.PixiModel.prototype=new PIXI.utils.EventEmitter();
   /**
