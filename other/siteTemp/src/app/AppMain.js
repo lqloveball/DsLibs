@@ -62,6 +62,8 @@ function AppMain() {
       progress: onProgress,
       //加载方式 初始化LoadQueue的crossOrigin参数
       loadType: true,
+      judge: true,
+      id: null,
     };
     //loading加载完成后的方法处理
     function onComplete(e) {
@@ -80,7 +82,7 @@ function AppMain() {
   function InitModels() {
     //隐藏loading
     SiteModel.HitLoadPanel();
-   
+
     //添加一个页面模块
     // _Pager.Add(require('HomePage'));
     // GotoPage('HomePage');

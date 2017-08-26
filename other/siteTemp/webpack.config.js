@@ -82,6 +82,10 @@ module.exports = function(env) {
               tweenjs: 'libs/createjs/tweenjs-0.6.2.min.js',
               preloadjs: 'libs/createjs/preloadjs-0.6.2.min.js',
               soundjs: 'libs/createjs/soundjs-0.6.2.min.js',
+              pixi: 'libs/pixi',
+              piximin: 'libs/pixi/pixi.min.js',
+              pixianimate: 'libs/pixi/pixi-animate.min.js',
+              pixidragonBones: 'libs/pixi/dragonBones.min.js',
               //高端项目组核心库  事件  log  与网站模块SiteMoblieTemplate
               eventdispatcher: 'ds/EventDispatcher.js',
               sitemoblieresizemodel: 'ds/SiteMoblieResizeModel.js',
