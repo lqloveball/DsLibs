@@ -19,8 +19,8 @@ window.SiteModel = {
     LoadSinglePageApplicationJS:LoadSinglePageApplicationJS,//加载单页面应用逻辑代码
     SiteResizeModel:null,//网站自适应模块 自动创建
     LoadPanel:null,//加载界面 [Dom的loading 请在InitLoadPanel函数内进行实现   Createjs的loading，正常来说不需要修改，如果需要修改InitCreateJsLoadPanel函数内修改实现]
-    CJSModel:null,//createjs项目模块  [设置IsCJSSiteModel=true 时候才会创建]
-    PIXIModel:null,//pixi项目模块
+
+
     //对整个网站框架进行ReSize方法执行 重置执行强制resize计算
     ReSize:function(){SiteModel.SiteResizeModel.ReSize();},
     //==============以上参数不做修改，会根据下列配置进行生成===================
@@ -30,11 +30,13 @@ window.SiteModel = {
     LoadBaseJS:LoadBaseJS,
     //================createjs框架
     LoadCJSFrameWorkJS:LoadCJSFrameWorkJS,//开始在加载createjs框架  如果不需要createjs框架建议在LoadCJSFrameWorkJS方法内把require.ensure屏蔽就不会进行打包
+    CJSModel:null,//createjs项目模块  [设置IsCJSSiteModel=true 时候才会创建]
     HasCreateJs:false,//网站是否需要用createjs
     IsCJSSiteModel:false,//是否是用createjs方式网站
     IsCJSLoadPanel:false,//是否用createjs的loading
     //================pixi框架  注意因为pixi框架比较大，目前结构设计会把pixi框架放到loaidng之后
     LoadPIXIFrameWorkJS:LoadPIXIFrameWorkJS,//开始在加载pixijs框架  如果不需要pixijs框架建议在LoadPIXIFrameWorkJS方法内把require.ensure屏蔽就不会进行打包
+    PIXIModel:null,//pixi项目模块
     HasPIXIJs:false,//网站是否需要用到PIXI
     IsPIXISiteModel:false,//网站是否适用PIXI做动画主体
     //================loading模块构建完成后需要做的事情
@@ -48,7 +50,7 @@ window.SiteModel = {
     AudioAutoPlayListerData:{
     //加载声音列表  list=null list=undefined list.length<=0没有这个列表不会执行
     list:[
-      //{src:'./media/BGM.mp3',id:'BGM',loop:true},//项格式 
+      //{src:'./media/BGM.mp3',id:'BGM',loop:true},//项格式
     ],
     //默认播放声音背景
     id:'BGM',
