@@ -48,6 +48,7 @@
 
     if(opts.width&&opts.height)_SaveImageWebGLRenderer.resize(opts.width,opts.height);
 
+    //目前还未解决背景问题
     // if(opts.background){
     //   _SaveImageWebGLRenderer.backgroundColor=opts.background;_SaveImageWebGLRenderer.clear(opts.background);
     // }
@@ -55,15 +56,8 @@
 
     _SaveImageWebGLRenderer.render(displayObject,null,true,false);
 
-    if(opts.type=='jpg'){
-
-
-      _base64=_SaveImageWebGLRenderer.view.toDataURL("image/jpeg",opts.encoder!==undefined?opts.encoder:0.8);
-    }
-    else{
-
-      _base64=_SaveImageWebGLRenderer.view.toDataURL("image/png");
-    }
+    if(opts.type=='jpg')_base64=_SaveImageWebGLRenderer.view.toDataURL("image/jpeg",opts.encoder!==undefined?opts.encoder:0.8);
+    else _base64=_SaveImageWebGLRenderer.view.toDataURL("image/png");
     //这个官方方法不好用
     // _base64=_SaveImageWebGLRenderer.extract.canvas(displayObject).toDataURL("image/jpeg");
     if(opts.debug){
@@ -71,6 +65,100 @@
       w.document.write("<img src='"+_base64+"' alt='from canvas'/>");
     }
     return _base64;
+  };
+  /**
+   * 获取js 并插入到html内
+   * @param  {[type]} src      [description]
+   * @param  {[type]} complete [description]
+   * @return {[type]}          [description]
+   */
+  DsPixi.GetScript=function(src,complete){
+    var _script = document.createElement("script");
+    _script.setAttribute("type","text/javascript");
+    //ie下
+    if(_script.onreadystatechange){
+      _script.onreadystatechange = function() {
+        if(this.readyState == "loaded" || this.readyState == "complete"){
+          if(complete)complete();
+        }
+      };
+    }else{
+    //其他浏览器
+      _script.onload = function() {
+        if(complete)complete();
+      };
+    }
+    document.getElementsByTagName("head")[0].appendChild(_script);
+    _script.src = src;
+  };
+  /**
+   * 加载flash导出的动画资源
+   * @return {[type]} [description]
+   */
+  DsPixi.LoadJSAnimateAssets=function(opts){
+    opts = opts || {};
+    var _basePath = opts.basePath || "/";
+    if (!opts.jsUrl&&!opts.src) {console.warn('参数jsUrl是必须!');return;}
+    if (!opts.mainClass) {console.warn('必须传入mainClass来获取资源');return;}
+    //js命名空间
+    var _jsNS = opts.jsNS ? opts.jsNS : 'lib';
+    var _src=opts.jsUrl?opts.jsUrl:opts.src;
+
+    DsPixi.GetScript(_basePath+_src,function(){
+      var lib=window[_jsNS];
+      console.log(lib);
+      DsPixi.LoadAnimateAssets(lib,opts);
+    });
+  };
+  /**
+   * 加载flash导出的动画资源
+   * @param  {[type]} assetsData [加载的资源库文件]
+   * var assetsData = require('assets/main.js');
+   * @param  {[type]} opts       [description]
+   *  opts.basePath './assets/'
+   *  opts.progress  加载进度回调 progress 0-1
+   *  opts.complete  加载完成回调 loader, resources
+   * @return {[type]}            [description]
+   */
+  DsPixi.LoadAnimateAssets=function(assetsData, opts) {
+    opts = opts || {};
+    var basePath = opts.basePath || "/";
+    var _complete;
+    if (opts.complete)
+      _complete = opts.complete;
+    else if (opts.onEnd)
+      _complete = opts.onEnd;
+
+    var _loader = new PIXI.loaders.Loader();
+    var assets;
+    //直接通过 require方法 进来的 传入是module.exports
+    if(assetsData.stage&&assetsData.stage.assets)assets=assetsData.stage.assets;
+    //直接通过 js插入方法 进来的 传入是lib,需要通过lib中找出首文件class ，找出下列加载对象后进行加载处理
+    else if(assetsData&&opts.mainClass&&assetsData[opts.mainClass]&&assetsData[opts.mainClass].assets){
+      assets=assetsData[opts.mainClass].assets;
+    }else{
+      assets={};
+    }
+    if (assets && Object.keys(assets).length) {
+      for (var key in assets) {
+        if (assets.hasOwnProperty(key))_loader.add(key, basePath + assets[key]);
+      }
+    } else {
+      complete();
+    }
+    function complete(loader, resources) {
+      console.log('complete');
+      if (_complete)   _complete(loader, resources);
+    }
+    _loader.on("progress", function() {
+      console.log('progress:', _loader.progress / 100);
+      if (opts.progress)
+        opts.progress(_loader.progress / 100);
+      }
+    );
+    _loader.once("complete", complete);
+    _loader.load();
+    return _loader;
   };
   /**
    * 加载资源
@@ -116,7 +204,6 @@
       if(opts.progress)opts.progress(_loader.progress/100);
     });
     _loader.once("complete", function(loader, resources){
-
       if(complete)complete(loader, resources);
     });
     _loader.load();
@@ -139,7 +226,7 @@
    */
   DsPixi.LoadDragonBones=function(opts){
     if(window['dragonBones']!==undefined)DsPixi.DBFactory=dragonBones.PixiFactory.factory;
-    if(!dragonBones)console.warn('请先载入 dragonBones框架');
+    if(!window.dragonBones)console.warn('请先载入 dragonBones框架');
     opts=opts||{};
     var basePath = opts.basePath ? opts.basePath : '';
     var _list=opts.list;
