@@ -24,9 +24,7 @@
   var DsPixi=root.Ds.DsPixi;
 
   //DragonBones 工厂方法
-  if(dragonBones){
-    DsPixi.DBFactory=dragonBones.PixiFactory.factory;
-  }
+  if(window['dragonBones']!==undefined)DsPixi.DBFactory=dragonBones.PixiFactory.factory;
   /**
    * 加载DragonBones素材给到pixi使用
    * 需要进行加载 pixi dragonBones 支持库
@@ -41,6 +39,7 @@
    * @return {[type]}      [PIXI.loaders.Loader]
    */
   DsPixi.LoadDragonBones=function(opts){
+    if(window['dragonBones']!==undefined)DsPixi.DBFactory=dragonBones.PixiFactory.factory;
     if(!dragonBones)console.warn('请先载入 dragonBones框架');
     opts=opts||{};
     var basePath = opts.basePath ? opts.basePath : '';
@@ -131,7 +130,12 @@
     _Self.app=app;
     _Self.stage=_stage;
     _Self.root=_root;
-    _Self.ccanvas=_canvas;
+    _Self.canvas=_canvas;
+    _Self.renderer=app.renderer;
+
+    _Self.Stage=_stage;
+    _Self.Root=_root;
+    _Self.Canvas=_canvas;
 
     if (appendTo !== '') {
       if (typeof appendTo === 'string') {
