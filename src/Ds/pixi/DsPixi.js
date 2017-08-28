@@ -290,25 +290,34 @@
     var width = opts.width ? opts.width : 640;
     var height = opts.height ? opts.height : 1140;
     var fps = opts.fps ? opts.fps : 30;
+    var autoStart = opts.autoStart!==undefined ? opts.autoStart : true;
     var transparent = opts.transparent!==undefined ? opts.transparent : true;//是否透明
-    var antialias = opts.antialias!==undefined ? opts.antialias : true;//是否抗锯齿 目前chrome支持
-    var preserveDrawingBuffer = opts.preserveDrawingBuffer!==undefined ? opts.preserveDrawingBuffer : true;//是否启用绘图缓冲区保存
+    var antialias = opts.antialias!==undefined ? opts.antialias : false;//是否抗锯齿 目前chrome支持
+    var preserveDrawingBuffer = opts.preserveDrawingBuffer!==undefined ? opts.preserveDrawingBuffer : false;//是否启用绘图缓冲区保存
     var resolution = opts.resolution!==undefined ? opts.resolution : 1;//renderer 时候是否使用device pixel 可以使用如 2
     var forceCanvas = opts.forceCanvas!==undefined ? opts.forceCanvas : false;//是否不使用webgl渲染
+    var backgroundColor = opts.backgroundColor!==undefined ? opts.backgroundColor : 	0x103322;
+    var clearBeforeRender = opts.clearBeforeRender!==undefined ? opts.clearBeforeRender : true;
     var legacy = opts.legacy!==undefined ? opts.legacy : false;//是否只使用webgl渲染 考虑到旧的/不太先进的设备兼容  可以设置成true
-    var backgroundColor = opts.backgroundColor!==undefined ? opts.backgroundColor : 0x000;//默认背景颜色
+    var sharedLoader = opts.sharedLoader!==undefined ? opts.sharedLoader : false;
+    var sharedTicker = opts.sharedTicker!==undefined ? opts.sharedTicker : false;
     var appendTo = opts.appendTo ? opts.appendTo : '';
+
 
     var app = new PIXI.Application({
       width:width,
       height:height,
+      autoStart:autoStart,
       transparent:transparent,
       antialias:antialias,
       preserveDrawingBuffer:preserveDrawingBuffer,
       resolution:resolution,
       forceCanvas:forceCanvas,
+      backgroundColor:backgroundColor,
+      clearBeforeRender:clearBeforeRender,
       legacy:legacy,
-      backgroundColor : backgroundColor,
+      sharedLoader : sharedLoader,
+      sharedTicker : sharedTicker,
     });
 
     var _canvas=app.view;
@@ -341,9 +350,9 @@
       // console.log('添加到body');
       document.body.appendChild(_canvas);
     }
-    app.ticker.add(function(delta) {
-      _Self.emit('update',delta);
-    });
+    // app.ticker.add(function(delta) {
+    //   _Self.emit('update',delta);
+    // });
     //进行重设置canvas大小
     this.setSize = function(_w, _h) {
       app.renderer.resize(_w, _h);

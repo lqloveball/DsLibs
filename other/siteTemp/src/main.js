@@ -95,9 +95,9 @@ function LoadPIXIFrameWorkJS(){
   if(_LoadPIXIFrameWorkJSBool)return;
   _LoadPIXIFrameWorkJSBool=true;
   require.ensure(
-      ['piximin','pixianimate','ds/pixi/DsPixi',],
+      ['piximin','pixianimate','libs/pixi/pixi-projection.min.js','ds/pixi/DsPixi',],
       function() {
-          require(['piximin','pixianimate','ds/pixi/DsPixi',],function(){
+          require(['piximin','pixianimate','libs/pixi/pixi-projection.min.js','ds/pixi/DsPixi',],function(){
             console.log('LoadPIXIFrameWorkJS:', new Date().getTime() - _time);
             // //是否pixi类型网站
             if(SiteModel.IsPIXISiteModel) InitPIXISiteModel();
