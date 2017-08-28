@@ -13,7 +13,7 @@ function LoadModel(){
     //开始初始化Domloading
     SiteModel.LoadPanel=$('#siteLoadPanel');
     //加载这单页面应用
-    SiteModel.LoadSinglePageApplicationJS();
+    SiteModel.LoadingModelEnd();
   };
 
   /**
@@ -43,9 +43,9 @@ function LoadModel(){
       SiteModel.CJSModel.Root.addChild(SiteModel.LoadPanel);
       SiteModel.LoadPanel.gotoAndStop(0);
       SiteResizeModel.ReSize();
-      ShowProgress(10);
-      //加载这单页面应用
-      SiteModel.LoadSinglePageApplicationJS();
+      ShowProgress(SiteModel.BaseProgress);
+      //loading UI构建完成
+      SiteModel.LoadingModelEnd();
     }
     //开始加载loading的资源
     ccjs.LoadCJSAssets(_loadObj);

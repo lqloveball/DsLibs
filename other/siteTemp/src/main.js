@@ -20,20 +20,36 @@ window.SiteModel = {
     SiteResizeModel:null,//网站自适应模块 自动创建
     LoadPanel:null,//加载界面 [Dom的loading 请在InitLoadPanel函数内进行实现   Createjs的loading，正常来说不需要修改，如果需要修改InitCreateJsLoadPanel函数内修改实现]
     CJSModel:null,//createjs项目模块  [设置IsCJSSiteModel=true 时候才会创建]
-    AudioAutoPlayLister:null,//声音自动播放加载与控制器类对象  自动创建
+    PIXIModel:null,//pixi项目模块
     //对整个网站框架进行ReSize方法执行 重置执行强制resize计算
     ReSize:function(){SiteModel.SiteResizeModel.ReSize();},
     //==============以上参数不做修改，会根据下列配置进行生成===================
     ScreenType:'v',//网站自适应方式
     Screen:'#screen',//网站自适应容器
-    HasCreateJs:false,//网站是否需要是否是用createjs    [设置开发网站的类型,true会使用vendors2.js false使用vendors1.js]
-    IsCJSSiteModel:false,//是否是用createjs方式网站    [需要设置HasCreateJs 等于true]
-    IsCJSLoadPanel:false,//是否用createjs的loading  [设置使用什么方式做loading]
-
+    //================基础框架
+    LoadBaseJS:LoadBaseJS,
+    //================createjs框架
+    LoadCJSFrameWorkJS:LoadCJSFrameWorkJS,//开始在加载createjs框架  如果不需要createjs框架建议在LoadCJSFrameWorkJS方法内把require.ensure屏蔽就不会进行打包
+    HasCreateJs:false,//网站是否需要用createjs
+    IsCJSSiteModel:false,//是否是用createjs方式网站
+    IsCJSLoadPanel:false,//是否用createjs的loading
+    //================pixi框架  注意因为pixi框架比较大，目前结构设计会把pixi框架放到loaidng之后
+    LoadPIXIFrameWorkJS:LoadPIXIFrameWorkJS,//开始在加载pixijs框架  如果不需要pixijs框架建议在LoadPIXIFrameWorkJS方法内把require.ensure屏蔽就不会进行打包
+    HasPIXIJs:false,//网站是否需要用到PIXI
+    IsPIXISiteModel:false,//网站是否适用PIXI做动画主体
+    //================loading模块构建完成后需要做的事情
+    LoadingModelEnd:LoadingModelEnd,
+    //================加载进度控制显示
+    BaseProgress:10,  //loading 基础框架的进度比
+    FrameWorkProgress:20,  //framework 框架的进度比
+    //==============自动播放背景声音===================
+    AudioAutoPlayLister:null,//声音自动播放加载与控制器类对象  自动创建
     //声音自动播放加载与控制器类对象参数，不需要可以设置成null。
     AudioAutoPlayListerData:{
     //加载声音列表  list=null list=undefined list.length<=0没有这个列表不会执行
-    list:[],//项格式 {src:'./media/BGM.mp3',id:'BGM',loop:true}
+    list:[
+      //{src:'./media/BGM.mp3',id:'BGM',loop:true},//项格式 
+    ],
     //默认播放声音背景
     id:'BGM',
     //这个BMG 绑定的控制的按钮
@@ -47,6 +63,56 @@ SiteModel.HitLoadPanel=SiteModel.LoadModel.HitLoadPanel;
 SiteModel.IsWeixin=SiteModel.Devicer.IsWeixin;
 SiteModel.IsIOS=SiteModel.Devicer.IsIOS;
 SiteModel.IsMobile=SiteModel.Devicer.IsMobile;
+//loading界面构建完成
+function LoadingModelEnd(){
+  if(SiteModel.HasPIXIJs)SiteModel.LoadPIXIFrameWorkJS();
+  else LoadSinglePageApplicationJS();
+}
+var _LoadCJSFrameWorkJSBool=false;
+function LoadCJSFrameWorkJS(){
+  if(_LoadCJSFrameWorkJSBool)return;
+  _LoadCJSFrameWorkJSBool=true;
+  //需要create与create 扩展
+  require.ensure(
+      ['createjs','dscreatejs',],
+      function() {
+          require(['createjs','dscreatejs',],function(){
+            console.log('LoadCJSFrameWorkJS:', new Date().getTime() - _time);
+            //是否CJS类型网站
+            if(SiteModel.IsCJSSiteModel) InitCJSModel();
+            //使用什么模式的加载loading
+            if(SiteModel.IsCJSLoadPanel) SiteModel.LoadModel.InitCreateJsLoadPanel();
+            else  SiteModel.LoadModel.InitDomLoadPanel();
+          });
+      },
+      'createjsFrameWork'
+  );
+}
+var _LoadPIXIFrameWorkJSBool=false;
+function LoadPIXIFrameWorkJS(){
+  if(_LoadPIXIFrameWorkJSBool)return;
+  _LoadPIXIFrameWorkJSBool=true;
+  require.ensure(
+      ['piximin','pixianimate','ds/pixi/DsPixi',],
+      function() {
+          require(['piximin','pixianimate','ds/pixi/DsPixi',],function(){
+            console.log('LoadPIXIFrameWorkJS:', new Date().getTime() - _time);
+            // //是否pixi类型网站
+            if(SiteModel.IsPIXISiteModel) InitPIXISiteModel();
+            LoadSinglePageApplicationJS();
+          });
+      },
+      'pixiFrameWork'
+  );
+}
+/**
+ * 加载项目需要支持的第三方库
+ */
+function LoadFrameWorkJS(){
+  console.log('LoadFrameWorkJS:', new Date().getTime() - _time);
+  SiteModel.LoadModel.InitDomLoadPanel();
+}
+
 //设置变量确保LoadSinglePageApplicationJS只能执行一次
 var _LoadSinglePageApplicationEnd=false;
 /**
@@ -58,7 +124,7 @@ function LoadSinglePageApplicationJS(){
   require.ensure(
       ['app/AppMain.js'],
       function() {
-          SiteModel.LoadModel.ShowProgress(20);
+          SiteModel.LoadModel.ShowProgress(SiteModel.FrameWorkProgress);
           _SinglePageApplication = require('app/AppMain.js');
           SiteModel.AppMain = _SinglePageApplication;
           SiteModel.AppMain.Init();
@@ -66,6 +132,30 @@ function LoadSinglePageApplicationJS(){
       'AppMain'//单页面应用打包的js名称
   );
 }
+var _LoadBaseJSBool=false;
+/**
+ * 加载基础库的
+ */
+function LoadBaseJS() {
+    if(_LoadBaseJSBool)return;
+    _LoadBaseJSBool=true;
+    require.ensure(
+        ['jquery','eventdispatcher','ds/gemo/QuickTrack','ds/media/MobileAudioAutoPlayLister','sitemoblieresizemodel',],
+        function() {
+          require(['jquery','eventdispatcher','ds/gemo/QuickTrack','ds/media/MobileAudioAutoPlayLister','sitemoblieresizemodel',],function(){
+            console.log('LoadBaseJS:', new Date().getTime() - _time);
+            //初始化背景声音与声音加载对象
+            if(SiteModel.AudioAutoPlayListerData){InitAudioAutoPlayLister();}
+            InitSiteResizeModel();
+            //判断是否需要createjs
+            if(SiteModel.HasCreateJs)LoadCJSFrameWorkJS();
+            else LoadFrameWorkJS();
+          });
+        },
+        'base'
+    );
+}
+
 /*=================以下部分基本通用可以不需要修改===================*/
 //进行判断是否进行debug的判断
 if (location.href.indexOf(':800') != -1) SiteModel.Debug = true;
@@ -78,6 +168,17 @@ function InitCJSModel(){
   //构建createjs模块
   SiteModel.CJSModel = Ds.createjs.CJSModel.Create({
       appendTo:$('#cjsBox')[0],
+      width: 640,
+      height: 1140,
+      fps: 30
+  });
+}
+/**
+ * 构建PIXI模块
+ */
+function InitPIXISiteModel(){
+  SiteModel.PIXIModel = Ds.DsPixi.Create({
+      appendTo:$('#pixiBox')[0],
       width: 640,
       height: 1140,
       fps: 30
@@ -116,76 +217,11 @@ function ReSize(){
   if(!SiteResizeModel.IsInputState)setTimeout(function () {$('#screen').scrollTop(0);},30);
 }
 /**
- * 加载基础库的
- */
-function LoadBaseJS() {
-    require.ensure(
-        [
-          'jquery',
-          'eventdispatcher',
-          'ds/gemo/QuickTrack',
-          'ds/media/MobileAudioAutoPlayLister',
-          'sitemoblieresizemodel',
-        ],
-        function() {
-            require([
-              'jquery',
-              'eventdispatcher',
-              'ds/gemo/QuickTrack',
-              'ds/media/MobileAudioAutoPlayLister',
-              'sitemoblieresizemodel',
-            ],function(){
-              console.log('LoadBaseJS:', new Date().getTime() - _time);
-              if(SiteModel.AudioAutoPlayListerData){
-                InitAudioAutoPlayLister();
-              }
-              InitSiteResizeModel();
-              if(SiteModel.HasCreateJs)LoadCJSFrameWorkJS();
-              else LoadFrameWorkJS();
-            });
-        },
-        'base'
-    );
-}
-/**
  * 初始化默认背景声音播放
  */
 function InitAudioAutoPlayLister(){
   SiteModel.AudioAutoPlayLister=new Ds.media.MobileAudioAutoPlayLister();
   SiteModel.AudioAutoPlayLister.InitLoadAndSetBGM(SiteModel.AudioAutoPlayListerData);
 }
-/**
- * 加载项目需要支持的第三方库
- */
-function LoadCJSFrameWorkJS(){
-  require.ensure(
-      [
-          'createjs',//需要create
-          'dscreatejs',//需要create 扩展
-      ],
-      function() {
-          require([
-              'createjs',
-              'dscreatejs',
-          ],function(){
-            console.log('LoadCJSFrameWorkJS:', new Date().getTime() - _time);
-            //是否CJS类型网站
-            if(SiteModel.IsCJSSiteModel) InitCJSModel();
-            //使用什么模式的加载loading
-            if(SiteModel.IsCJSLoadPanel) SiteModel.LoadModel.InitCreateJsLoadPanel();
-            else  SiteModel.LoadModel.InitDomLoadPanel();
-          });
-
-      },
-      'createjsFrameWork'
-  );
-}
-/**
- * 加载项目需要支持的第三方库
- */
-function LoadFrameWorkJS(){
-  console.log('LoadFrameWorkJS:', new Date().getTime() - _time);
-  SiteModel.LoadModel.InitDomLoadPanel();
-}
 //开始加载代码
-LoadBaseJS();
+SiteModel.LoadBaseJS();
