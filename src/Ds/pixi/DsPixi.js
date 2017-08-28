@@ -23,6 +23,105 @@
   root.Ds.DsPixi.Version = 'v0.5';
   var DsPixi=root.Ds.DsPixi;
 
+  var _SaveImageWebGLRenderer;
+  /**
+   * 截图保存
+   * @param  {[type]} displayObject [description]
+   * @param  {[type]} opts          [description]
+   * opts.width
+   * opts.height
+   * opts.type  png
+   * opts.encoder 0.8
+   * opts.background 0xffffff; jpg下目前还不能进行draw透明通道图片时候设置颜色值，这个后续会进行解决这个问题
+   * @return {[type]}               [description]
+   */
+  DsPixi.GetSaveImageBase64=function(displayObject,opts){
+    opts=opts||{};
+    var _base64;
+    if(!_SaveImageWebGLRenderer)_SaveImageWebGLRenderer=new PIXI.WebGLRenderer({
+      width:opts.width||640,
+      height:opts.height||1040,
+      transparent:true,
+      preserveDrawingBuffer:true,
+      backgroundColor:opts.background||0xffffff,
+    });
+
+    if(opts.width&&opts.height)_SaveImageWebGLRenderer.resize(opts.width,opts.height);
+
+    // if(opts.background){
+    //   _SaveImageWebGLRenderer.backgroundColor=opts.background;_SaveImageWebGLRenderer.clear(opts.background);
+    // }
+    // else _SaveImageWebGLRenderer.clear();
+
+    _SaveImageWebGLRenderer.render(displayObject,null,true,false);
+
+    if(opts.type=='jpg'){
+
+
+      _base64=_SaveImageWebGLRenderer.view.toDataURL("image/jpeg",opts.encoder!==undefined?opts.encoder:0.8);
+    }
+    else{
+
+      _base64=_SaveImageWebGLRenderer.view.toDataURL("image/png");
+    }
+    //这个官方方法不好用
+    // _base64=_SaveImageWebGLRenderer.extract.canvas(displayObject).toDataURL("image/jpeg");
+    if(opts.debug){
+      var w=window.open('about:blank','image from canvas');
+      w.document.write("<img src='"+_base64+"' alt='from canvas'/>");
+    }
+    return _base64;
+  };
+  /**
+   * 加载资源
+   * @param  {[type]} opts
+   * opts.basePath  素材根目录设置 如：'./assets/'
+   * opts.list  素材列表
+   *   {id:'Dragon',src:''},
+   * opts.progress  加载进度
+   * opts.complete  加载完成
+   * @return {[type]}      [description]
+   */
+  DsPixi.LoadAssets=function(opts){
+    opts=opts||{};
+    var basePath = opts.basePath ? opts.basePath : '';
+    var _list=opts.list;
+    if(!_list||_list.length<=0){
+      console.warn('加载列表内没有加载对象');
+    }
+    var _loader;
+    if(opts.loader&&(opts.loader instanceof PIXI.loaders.Loader)){
+      _loader=opts.loader;
+    }else{
+       _loader= new PIXI.loaders.Loader();
+    }
+    // console.log('LoadAssets',_loader);
+    var complete;
+    if(opts.complete)complete=opts.complete;
+    else if(opts.onEnd)complete=opts.onEnd;
+
+    for (var i = 0; i < _list.length; i++) {
+      var _temp=_list[i];
+
+       if (typeof _temp === 'string'){
+         _temp={id:_temp,url:_temp};
+       }else if(_temp.id===undefined&&_temp.src){
+         _temp.id=_temp.src;
+       }
+       if(_temp.id!==undefined&&_temp.src!==undefined){
+         _loader.add(_temp.id, basePath+'/'+_temp.src);
+       }
+    }
+    _loader.on("progress", function(){
+      if(opts.progress)opts.progress(_loader.progress/100);
+    });
+    _loader.once("complete", function(loader, resources){
+
+      if(complete)complete(loader, resources);
+    });
+    _loader.load();
+    return _loader;
+  };
   //DragonBones 工厂方法
   if(window['dragonBones']!==undefined)DsPixi.DBFactory=dragonBones.PixiFactory.factory;
   /**
@@ -33,7 +132,7 @@
    * @param  {[type]} opts [description]
    * opts.basePath  素材根目录设置 如：'./assets/'
    * opts.list  素材列表
-   *   {name:'Dragon',path:''},
+   *   {id:'Dragon',path:''},
    * opts.progress  加载进度
    * opts.complete  加载完成
    * @return {[type]}      [PIXI.loaders.Loader]
@@ -47,19 +146,22 @@
     if(!_list||_list.length<=0){
       console.warn('加载列表内没有加载对象');
     }
+    var complete;
+    if(opts.complete)complete=opts.complete;
+    else if(opts.onEnd)complete=opts.onEnd;
 
     var _loader = new PIXI.loaders.Loader();
     for (var i = 0; i < _list.length; i++) {
       var _temp=_list[i];
       /**
        * _temp.path 素材子目录名称  没有子目录就空
-       * _temp.name 素材输出名
+       * _temp.id 素材输出名
        */
       var _path=_temp.path?_temp.path:'';
-      var _name=_temp.name?_temp.name:'';
-      _loader.add(_name+'_bonesData', basePath+_path+'/'+_name+'_ske.json');
-      _loader.add(_name+'_textureData', basePath+_path+'/'+_name+'_tex.json');
-      _loader.add(_name+'_texture', basePath+_path+'/'+_name+'_tex.png');
+      var _id=_temp.id?_temp.id:'';
+      _loader.add(_id+'_bonesData', basePath+_path+'/'+_id+'_ske.json');
+      _loader.add(_id+'_textureData', basePath+_path+'/'+_id+'_tex.json');
+      _loader.add(_id+'_texture', basePath+_path+'/'+_id+'_tex.png');
     }
 
     _loader.on("progress", function(){
@@ -69,12 +171,11 @@
       //加载素材完成 DragonBones构建素材
       for (var i = 0; i < _list.length; i++) {
         var _temp=_list[i];
-        var _name=_temp.name?_temp.name:'';
-        DsPixi.DBFactory.parseDragonBonesData(resources[_name+'_bonesData'].data);
-        DsPixi.DBFactory.parseTextureAtlasData(resources[_name+'_textureData'].data, resources[_name+'_texture'].texture);
+        var _id=_temp.id?_temp.id:'';
+        DsPixi.DBFactory.parseDragonBonesData(resources[_id+'_bonesData'].data);
+        DsPixi.DBFactory.parseTextureAtlasData(resources[_id+'_textureData'].data, resources[_id+'_texture'].texture);
       }
-
-      if(opts.complete)opts.complete(loader, resources);
+      if(complete)complete(loader, resources);
     });
 
     _loader.load();
@@ -82,13 +183,13 @@
   };
   /**
    * 获取tDragonBones动画
-   * @param  {[type]} name [description]
+   * @param  {[type]} id [description]
    * @return {[type]}      [description]
    * dragonBones.Animation
-   * http://developer.egret.com/cn/apidoc/index/name/dragonBones.Animation
+   * http://developer.egret.com/cn/apidoc/index/id/dragonBones.Animation
    */
-  DsPixi.GetDragonBonesMovie=function(name){
-    var _movie = DsPixi.DBFactory.buildArmatureDisplay(name);
+  DsPixi.GetDragonBonesMovie=function(id){
+    var _movie = DsPixi.DBFactory.buildArmatureDisplay(id);
     return _movie;
   };
   /**
@@ -136,6 +237,7 @@
     _Self.Stage=_stage;
     _Self.Root=_root;
     _Self.Canvas=_canvas;
+    _Self.App=app;
 
     if (appendTo !== '') {
       if (typeof appendTo === 'string') {
