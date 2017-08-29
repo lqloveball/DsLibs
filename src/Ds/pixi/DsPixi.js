@@ -23,6 +23,104 @@
   root.Ds.DsPixi.Version = 'v0.5';
   var DsPixi=root.Ds.DsPixi;
 
+  /**
+   * 设置一个对象可以被拖动
+   * @param  {[type]} displayObject [一个显示对象]
+   * obj.draging  //拖动状态  0不拖动  1准备拖动  2开始拖动
+   * obj.dragLock  //是否锁定不拖动
+   * obj.dragData  //拖动是的 e.data 不拖动会被置null
+   * obj.dragRect  //PIXI. Rectangle  可以拖动的范围
+   *
+   * 对象会发出拖动事件
+   * dragDown  按下准备拖动
+   * dragStart  开始拖动
+   * draging   拖动中
+   * dragEnd   拖动完成
+   * @param  {[type]} opts          [description]
+   * opts.lock 是否默认锁定不能拖动
+   * opts.rect 相对父亲级坐标可以拖动的范围
+   * @return {[type]}               [description]
+   */
+  DsPixi.SetDragObject=function(displayObject,opts){
+    opts=opts||{};
+    displayObject.interactive=true;
+    displayObject.cursor = 'pointer';
+    displayObject.draging=0;
+    displayObject.dragLock=opts.lock?opts.lock:false;
+    displayObject.dragRect=null;
+    if(opts.rect&&(opts.rect instanceof PIXI.Rectangle))displayObject.dragRect=opts.rect;
+    displayObject.on('pointerdown',onDragStart);
+    function onDragStart(e){
+      var _obj = e.currentTarget;
+      if(_obj.dragLock)return;
+      _obj.dragData = e.data;
+      _obj.draging = 1;//记录拖动状态
+      _obj.dragPointerStart = e.data.getLocalPosition(_obj.parent);//鼠标指针转换成相对父亲内坐标
+      _obj.dragGlobalStart = new PIXI.Point();
+      _obj.dragGlobalStart.copy(e.data.global);//记录全局坐标坐标
+      _obj.dragObjStart = new PIXI.Point();
+      _obj.dragObjStart.copy(_obj.position);//记录显示对象相对父亲的坐标
+      // console.log(_obj.dragPointerStart,_obj.dragObjStart);
+      _obj.emit('dragDown',e);
+      _obj.on('pointerup', onDragEnd)
+      .on('pointerupoutside', onDragEnd)
+      .on('pointermove', onDragMove);
+    }
+    function onDragEnd(e){
+      var _obj = e.currentTarget;
+      if(_obj.dragLock)return;
+      _obj.draging = 0;
+      _obj.dragData = null;
+      _obj.emit('dragEnd',e);
+      _obj.off('pointerup', onDragEnd)
+      .off('pointerupoutside', onDragEnd)
+      .off('pointermove', onDragMove);
+      e.stopPropagation();
+    }
+    function onDragMove(e){
+      var _obj = e.currentTarget;
+      if(_obj.dragLock)return;
+      if (!_obj.draging) return;
+      var _data = _obj.dragData;
+      if (_obj.draging == 1) {
+          //开始拖动  判断 x  y偏移和超过3 说明开始拖动
+          if (Math.abs(_data.global.x - _obj.dragGlobalStart.x) +Math.abs(_data.global.y - _obj.dragGlobalStart.y) >= 3)_obj.draging = 2;
+          _obj.emit('dragStart',e);
+      }
+      //已经开始拖动
+      if (_obj.draging == 2) {
+          var _dragPointerEnd = _data.getLocalPosition(_obj.parent);//鼠标指针转换成相对父亲内坐标
+          // 开始拖动
+          var _x=_obj.dragObjStart.x + (_dragPointerEnd.x - _obj.dragPointerStart.x);
+          var _y=_obj.dragObjStart.y + (_dragPointerEnd.y - _obj.dragPointerStart.y);
+          if(_obj.dragRect){
+            _x=Math.max(_obj.dragRect.x,_x);
+            _x=Math.min(_obj.dragRect.x+_obj.dragRect.width,_x);
+            _y=Math.max(_obj.dragRect.y,_y);
+            _y=Math.min(_obj.dragRect.y+_obj.dragRect.height,_y);
+            // console.log(_x,_y);
+            _obj.position.set(_x,_y);
+          }else{
+            _obj.position.set(_x,_y);
+          }
+
+          _obj.emit('draging',e);
+      }
+    }
+  };
+  /**
+   * 设置按钮交互
+   * @param  {[type]} displayObject [description]
+   * @param  {[type]} clickFun      [description]
+   * @param  {[type]} context       [description]
+   * @return {[type]}               [description]
+   */
+  DsPixi.SetButton=function(displayObject,clickFun,context){
+    displayObject.interactive=true;
+    displayObject.cursor = 'pointer';
+    if(clickFun&&context)displayObject.on('click',clickFun,context);
+    else if(clickFun)displayObject.on('click',clickFun);
+  };
   var _SaveImageWebGLRenderer;
   /**
    * 截图保存
@@ -192,7 +290,7 @@
       var _temp=_list[i];
 
        if (typeof _temp === 'string'){
-         _temp={id:_temp,url:_temp};
+         _temp={id:_temp,src:_temp};
        }else if(_temp.id===undefined&&_temp.src){
          _temp.id=_temp.src;
        }
@@ -230,9 +328,8 @@
     opts=opts||{};
     var basePath = opts.basePath ? opts.basePath : '';
     var _list=opts.list;
-    if(!_list||_list.length<=0){
-      console.warn('加载列表内没有加载对象');
-    }
+    if(!_list||_list.length<=0)console.warn('加载列表内没有加载对象');
+
     var complete;
     if(opts.complete)complete=opts.complete;
     else if(opts.onEnd)complete=opts.onEnd;
@@ -329,11 +426,15 @@
     _Self.root=_root;
     _Self.canvas=_canvas;
     _Self.renderer=app.renderer;
+    _Self.screen=app.screen;
+    _Self.width=width;
+    _Self.height=height;
 
     _Self.Stage=_stage;
     _Self.Root=_root;
     _Self.Canvas=_canvas;
     _Self.App=app;
+    _Self.Screen=app.screen;
 
     if (appendTo !== '') {
       if (typeof appendTo === 'string') {
@@ -350,11 +451,13 @@
       // console.log('添加到body');
       document.body.appendChild(_canvas);
     }
-    // app.ticker.add(function(delta) {
-    //   _Self.emit('update',delta);
-    // });
+    app.ticker.add(function(delta) {
+      _Self.emit('update',delta);
+    });
     //进行重设置canvas大小
     this.setSize = function(_w, _h) {
+      _Self.width=_w;
+      _Self.height=_h;
       app.renderer.resize(_w, _h);
     };
   };
