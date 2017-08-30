@@ -6,7 +6,7 @@
   "scripts": {
     "webpack-dev": "webpack --config build/webpack.dev.config.js",
     "webpack-bin": "webpack --config build/webpack.bin.config.js",
-    "dev": "npm run webpack-dev & npm run server ",
+    "dev": "npm run server & npm run webpack-dev",
     "bin": "npm run server & npm run webpack-bin",
     "server": "gulp --gulpfile build/gulpServer.js"
   },
