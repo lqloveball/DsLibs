@@ -1,32 +1,25 @@
 # 快速建站模板
-1. copy 这个目录作为开发目录
-2. copy 相关的代码库到src目录下  Ds库与libs库（第三方库）
-3. 开发模式下开发 在命令行工具内输入 gulp webpack-dev
-4. 发布模式下开发 在命令行工具内输入 gulp webpack
 
-### 项目结构说明
+为了更好进行配置开发环境，使用 node 与 npm 来进行配置开发环境。
 
-```
---assets/               //资源目录，如flash动画资源
---css/                  //less编译后的样式文件
---js/                   //webpack编译完成的代码文件
---images/               //项目图片资源
---less/                 //less源代码
-    |-libs/             //less代码库
-    |-main.less         //less首文件
---src/                  //项目开发源代码
-    |-main.js           //程序入口文件
-    |-app/              //项目源文件
-        |-AppMain.js    //项目主文件
-```
+`webpack`进行模块打包，`gulp`负责 less编译、运行web环境、调试刷新。
 
+### 无配置过本地开发环境，需要进行npm安装下环境。
 
-### 注意点
-- src/main.js H5网站开发类型相关设置，这里代码基本无需修改
-- src/app/ 项目源文件目录，项目相关代码都在这里创建
-- css/  项目是通过less进行编译的所以css下文件都是编译生成的。请不要直接修改这里css
-- js/app 项目的js是通过webpack编译的，所以这里代码请不要直接修改
-- js/libs 项目中一些js不适合通过webpack编译 请放到这里然后插入到html内
+`运行环境分两种，如下：`
 
-###开发环境配置
-[https://github.com/lqloveball/DsLibs/tree/master/other/开发环境配置](https://github.com/lqloveball/DsLibs/tree/master/other/%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE)
+1. `项目环境` 当前项目目录下直接运行 `npm install` ,命令会根据`package.json` 这种是会把 `webpack` `gulp`环境安装到当前这个项目下
+
+2. `推荐:工作开发环境` 拷贝`package.json` 到你的工作环境目录，运行`npm install`。这种是会把 `webpack` `gulp`环境安装到整个开发工作环境中
+
+### 运行开发环境
+
+`弃用gulp启动开发环境命令` gulp webpack-dev
+
+`推荐使用新的 npm 方式来运行项目`
+
+- `npm run webpack-dev`  运行 webpack 编译打包，开发使用，代码不压缩
+- `npm run webpack-bin ` 运行 webpack 编译打包，正式发布，代码压缩
+- `npm run dev`   webpack 运行开发编译，gulp 运行 less编译、运行web环境、调试刷新
+- `npm run bin`   webpack 正式发布编译，gulp 运行 less编译、运行web环境、调试刷新
+- `npm run server` gulp 运行 less编译、运行web环境、调试刷新

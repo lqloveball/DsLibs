@@ -1,6 +1,6 @@
 /**
  * @class
- * @classdesc: webpack2 快速开发网站项目模板入口
+ * @classdesc: webpack3 快速开发网站项目模板入口
  * @extends
  * @example:
  * @author: maksim email:maksim.lin@foxmail.com
@@ -19,10 +19,9 @@ window.SiteModel = {
     LoadSinglePageApplicationJS:LoadSinglePageApplicationJS,//加载单页面应用逻辑代码
     SiteResizeModel:null,//网站自适应模块 自动创建
     LoadPanel:null,//加载界面 [Dom的loading 请在InitLoadPanel函数内进行实现   Createjs的loading，正常来说不需要修改，如果需要修改InitCreateJsLoadPanel函数内修改实现]
-
-
     //对整个网站框架进行ReSize方法执行 重置执行强制resize计算
     ReSize:function(){SiteModel.SiteResizeModel.ReSize();},
+    GetScript:GetScript,
     //==============以上参数不做修改，会根据下列配置进行生成===================
     ScreenType:'v',//网站自适应方式
     Screen:'#screen',//网站自适应容器
@@ -70,45 +69,38 @@ function LoadingModelEnd(){
   if(SiteModel.HasPIXIJs)SiteModel.LoadPIXIFrameWorkJS();
   else LoadSinglePageApplicationJS();
 }
+/**
+ * createjs框架加载
+ */
 var _LoadCJSFrameWorkJSBool=false;
 function LoadCJSFrameWorkJS(){
   if(_LoadCJSFrameWorkJSBool)return;
   _LoadCJSFrameWorkJSBool=true;
-  //需要create与create 扩展
-  require.ensure(
-      ['createjs','dscreatejs',],
-      function() {
-          require(['createjs','dscreatejs',],function(){
-            console.log('LoadCJSFrameWorkJS:', new Date().getTime() - _time);
-            //是否CJS类型网站
-            if(SiteModel.IsCJSSiteModel) InitCJSModel();
-            //使用什么模式的加载loading
-            if(SiteModel.IsCJSLoadPanel) SiteModel.LoadModel.InitCreateJsLoadPanel();
-            else  SiteModel.LoadModel.InitDomLoadPanel();
-          });
-      },
-      'createjsFrameWork'
-  );
+  SiteModel.GetScript('./js/app/createjsFrameWork.js',function(){
+    console.log('LoadCJSFrameWorkJS:', new Date().getTime() - _time);
+    //是否CJS类型网站
+    if(SiteModel.IsCJSSiteModel) InitCJSModel();
+    //使用什么模式的加载loading
+    if(SiteModel.IsCJSLoadPanel) SiteModel.LoadModel.InitCreateJsLoadPanel();
+    else  SiteModel.LoadModel.InitDomLoadPanel();
+  });
 }
+/**
+ * PIXI框架加载
+ */
 var _LoadPIXIFrameWorkJSBool=false;
 function LoadPIXIFrameWorkJS(){
   if(_LoadPIXIFrameWorkJSBool)return;
   _LoadPIXIFrameWorkJSBool=true;
-  require.ensure(
-      ['piximin','pixianimate','libs/pixi/pixi-projection.min.js','ds/pixi/DsPixi',],
-      function() {
-          require(['piximin','pixianimate','libs/pixi/pixi-projection.min.js','ds/pixi/DsPixi',],function(){
-            console.log('LoadPIXIFrameWorkJS:', new Date().getTime() - _time);
-            // //是否pixi类型网站
-            if(SiteModel.IsPIXISiteModel) InitPIXISiteModel();
-            LoadSinglePageApplicationJS();
-          });
-      },
-      'pixiFrameWork'
-  );
+  SiteModel.GetScript('./js/app/pixiFrameWork.js',function(){
+    console.log('LoadPIXIFrameWorkJS:', new Date().getTime() - _time);
+    // //是否pixi类型网站
+    if(SiteModel.IsPIXISiteModel) InitPIXISiteModel();
+    LoadSinglePageApplicationJS();
+  });
 }
 /**
- * 加载项目需要支持的第三方库
+ * 其他第三方框架加载，这里空没做其他框架加载
  */
 function LoadFrameWorkJS(){
   console.log('LoadFrameWorkJS:', new Date().getTime() - _time);
@@ -141,23 +133,16 @@ var _LoadBaseJSBool=false;
 function LoadBaseJS() {
     if(_LoadBaseJSBool)return;
     _LoadBaseJSBool=true;
-    require.ensure(
-        ['jquery','eventdispatcher','ds/gemo/QuickTrack','ds/media/MobileAudioAutoPlayLister','sitemoblieresizemodel',],
-        function() {
-          require(['jquery','eventdispatcher','ds/gemo/QuickTrack','ds/media/MobileAudioAutoPlayLister','sitemoblieresizemodel',],function(){
-            console.log('LoadBaseJS:', new Date().getTime() - _time);
-            //初始化背景声音与声音加载对象
-            if(SiteModel.AudioAutoPlayListerData){InitAudioAutoPlayLister();}
-            InitSiteResizeModel();
-            //判断是否需要createjs
-            if(SiteModel.HasCreateJs)LoadCJSFrameWorkJS();
-            else LoadFrameWorkJS();
-          });
-        },
-        'base'
-    );
+    SiteModel.GetScript('./js/app/base.js',function(){
+      console.log('LoadBaseJS:', new Date().getTime() - _time);
+      //初始化背景声音与声音加载对象
+      if(SiteModel.AudioAutoPlayListerData){InitAudioAutoPlayLister();}
+      InitSiteResizeModel();
+      //判断是否需要createjs
+      if(SiteModel.HasCreateJs)LoadCJSFrameWorkJS();
+      else LoadFrameWorkJS();
+    });
 }
-
 /*=================以下部分基本通用可以不需要修改===================*/
 //进行判断是否进行debug的判断
 if (location.href.indexOf(':800') != -1) SiteModel.Debug = true;
@@ -224,6 +209,26 @@ function ReSize(){
 function InitAudioAutoPlayLister(){
   SiteModel.AudioAutoPlayLister=new Ds.media.MobileAudioAutoPlayLister();
   SiteModel.AudioAutoPlayLister.InitLoadAndSetBGM(SiteModel.AudioAutoPlayListerData);
+}
+//加载插入js代码
+function GetScript(src,complete){
+  var _script = document.createElement("script");
+  _script.setAttribute("type","text/javascript");
+  //ie下
+  if(_script.onreadystatechange){
+    _script.onreadystatechange = function() {
+      if(this.readyState == "loaded" || this.readyState == "complete"){
+        if(complete)complete();
+      }
+    };
+  }else{
+    //其他浏览器
+    _script.onload = function() {
+      if(complete)complete();
+    };
+  }
+  document.getElementsByTagName("head")[0].appendChild(_script);
+  _script.src = src;
 }
 //开始加载代码
 SiteModel.LoadBaseJS();

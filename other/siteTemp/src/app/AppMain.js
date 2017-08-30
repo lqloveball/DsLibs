@@ -84,7 +84,7 @@ function AppMain() {
     SiteModel.HitLoadPanel();
 
     //添加一个页面模块
-    // _Pager.Add(require('HomePage'));
+    // _Pager.Add(require('./HomePage'));
     // GotoPage('HomePage');
 
   }
