@@ -62,7 +62,8 @@
  * @extends
  * @example: 举例
  [=================HTML===================]
- /===============video标签=================
+ ================video标签=================
+
   插入iphone-inline-video.browser.js
   <script src="js/libs/iphone-inline-video.browser.js"></script>
   <!-- 放视频的容器  -->

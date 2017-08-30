@@ -28,6 +28,8 @@
  SiteModel.AudioAutoPlayLister.AudioDc.VideoBg.volume=1;
  SiteModel.AudioAutoPlayLister.AudioDc.VideoBg.play();
  SiteModel.AudioAutoPlayLister.TemporarilyPaused(SiteModel.AudioAutoPlayLister.AudioDc.BGM);
+
+ SiteModel.AudioAutoPlayLister.AudioDc['声音id']
  * @author: maksim email:maksim.lin@foxmail.com
  * @copyright:  我发起Ds库目的，简化方便工作项目开发。里面代码大部分理念来至曾经flash 前端时代，尽力减小类之间耦合，通过webpack按需request使用。Ds库里代码很多也都来源至或参考网络开源开放代码，所以这个库也开源开放。更多希望团队成员把积累工作中常用的代码，加快自己开发效率。
  * @constructor

@@ -176,3 +176,38 @@ gulp.task('webpack-dev', ['dev:webpack'], function() {
         browserReload('*.css');
     });
 });
+// 只要server
+gulp.task('server',function(){
+  //启动browserSync服务
+  browserSync.init({
+      server: './',
+      port: 8001,
+      open: "external"
+  });
+  //less编译监听
+  watch(developmentConfig.lesswatch, {
+      verbose: true
+  }, function(e) {
+      var cb = e.history[0];
+      gulp.src(developmentConfig.lessbuild)
+          .pipe(less().on('error', function(error) {
+              console.log(error.message);
+          }))
+          .pipe(lazyImageCSS()) //自动为图片样式添加 宽/高/background-size 属性
+          // .pipe(minifyCss({compatibility: 'ie8'}))
+          .pipe(gulp.dest(developmentConfig.cssPath));
+  });
+
+  //html变化监听
+  watch(developmentConfig.html, {
+      verbose: true
+  }, function(event) {
+      browserReload('*.html');
+  });
+  //css 变化监听
+  watch(developmentConfig.css, {
+      verbose: true
+  }, function(e) {
+      browserReload('*.css');
+  });
+});
