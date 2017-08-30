@@ -62,6 +62,9 @@
  * @extends
  * @example: 举例
  [=================HTML===================]
+ /===============video标签=================
+  插入iphone-inline-video.browser.js
+  <script src="js/libs/iphone-inline-video.browser.js"></script>
   <!-- 放视频的容器  -->
   <div id="MyVideoPanel">
    <!-- 进行需要控制的视频 -->
@@ -75,9 +78,9 @@
     </video>
   </div>
   注意对 preload的设置
-  preload="auto" 当页面加载后载入整个视频
-  preload="meta" 当页面加载后只载入元数据
-  preload="none" 当页面加载后只载入元数据
+  preload="auto" 	指示一旦页面加载，则开始加载音频/视频。
+  preload="metadata" 	指示当页面加载后仅加载音频/视频的元数据。
+  preload="none" 指示页面加载后不应加载音频/视频。
   视频不能进行diplay:none;但可以设置left: 3000px;
   [=================CSS===================]
    .IIV::-webkit-media-controls-play-button,
@@ -93,6 +96,18 @@
      position: absolute;
      left:0;top:0;
    }
+   /===============序列帧=================
+   <div id="VideoFramesContainer"></div>
+   [=================CSS===================]
+   #VideoFramesContainer {
+       position: absolute;
+       left: 0;
+       top: 0;
+       width: 640px;
+       height: 1138px;
+       transform-origin: 0 0;
+   }
+
   [=================JS===================]
   //在HTML页面上插入code解决IOS自动全屏的问题
   var video = document.querySelector('video');
@@ -140,6 +155,41 @@
   //ts格式 与mpg格式可以通过 Load方法进行启动加载
   _VideoInteractivePlayer.Load();
 
+  //====================如果使用序列帧模式======================
+  _VideoInteractivePlayer = new Ds.media.VideoInteractivePlayer(null, 'FPS', {
+      // imagesList:_ImagesList,//如果提前传入图片队列，那就会忽略 imagesPath imagePrefix imgType totalframes参数 因为提前传入队列 所有没 complete事件的发出，但有loadEndFunc这个参数的方法执行
+      imagesPath: './images/video/', //图片的文件夹地址
+      imagePrefix: 'v', //图片前缀
+      imgType: 'jpg', //图片类型
+      //audioPath: './media/video.mp3',
+      duration: 71, //总时间
+      totalframes: 862, //序列图片数
+      width: 640 , //宽
+      height: 1040, //高
+      fps: 12, //刷新率
+      appendTo: '#VideoFramesContainer', //canvas添加到dom的容器
+      bufferedime: 3, //缓冲多少秒开始播放
+      autoplay: false, //是否自动播放，这次项目不播放
+      repairImgQname: true, //是否需要做补全图片名称，如有时候会使用0001.jpg需要设置true,使用1.jpg开始就不设置false
+      rendFrameType: true, //渲染方式默认true Frame 帧方式
+      autoLoad: true, //是否自动加载
+      //播放完成事件
+      playEnd: function() {
+          console.log('VideoPlayEnd');
+          VideoPlayEnd();
+      },
+      onload: function() {
+          console.log('onload');
+      },
+      onprogress:function(e){
+        var _pro = parseInt(100 * e.progress);
+        console.log(_pro);
+      },
+      oncomplete:function(){
+        console.log('VideoPanel2 complete');
+      },
+  });
+
   //===================如果使用video标签模式===================
   var _videoDom = $("#MyVideoPanel .MyVideo")[0];
   _VideoInteractivePlayer = new Ds.media.VideoInteractivePlayer(null, 'video', {
@@ -153,7 +203,7 @@
       name: 'play',
       time: 0.1,
       fun: function(e) {
-        console.log('这时候的视频可以确保是有画面的);
+        console.log('这时候的视频可以确保是有画面的');
       }
   });
   //其他时间点交互触发
@@ -171,294 +221,298 @@
  * @copyright:  Ds是累积平时项目工作的经验代码库，不属于职位任务与项目的内容。里面代码大部分理念来至曾经flash 前端时代，尽力减小类之间耦合，通过webpack按需request使用。Ds库里内容多来至网络与参考其他开源代码库。Ds库也开源开放，随意使用在所属的职位任务与项目中。
  * @constructor
  **/
-(function (factory) {
+(function(factory) {
     var root = (typeof self == 'object' && self.self == self && self) ||
         (typeof global == 'object' && global.global == global && global);
 
     if (typeof define === 'function' && define.amd) {
-        define(['exports'], function (exports) {
-            module.exports= factory(root, exports);
+        define(['exports'], function(exports) {
+            module.exports = factory(root, exports);
         });
     } else if (typeof exports !== 'undefined') {
-        module.exports=factory(root, exports);
+        module.exports = factory(root, exports);
     } else {
-         factory(root, {});
+        factory(root, {});
     }
 
-}(function (root, modelObj) {
+}(function(root, modelObj) {
 
-  root.Ds = root.Ds || {};
-  root.Ds.media = root.Ds.media || {};
-  root.Ds.media.VideoInteractivePlayer = VideoInteractivePlayer;
+    root.Ds = root.Ds || {};
+    root.Ds.media = root.Ds.media || {};
+    root.Ds.media.VideoInteractivePlayer = VideoInteractivePlayer;
 
-  function VideoInteractivePlayer(url, type, opts) {
-      var _Self = this;
-      //这个类支持事件扩展
-      Ds.Extend(this, new Ds.EventDispatcher());
-      /**
-       * 播放器
-       */
-      var _VideoPlayer;
-      Object.defineProperty(this, "VideoPlayer", {
-          get: function() {
-              return _VideoPlayer;
-          }
-      });
-      /**
-       * 是否交互播放器类型
-       * @type {String}
-       */
-      var _VideoType = '';
-      Object.defineProperty(this, "VideoType", {
-          get: function() {
-              return _VideoType;
-          },
-      });
-      // console.log(type);
-      //初始化视频的交互使用播放器方式
-      //使用版本1的播放器
-      if (type === 'canvas' || type === 'mpeg'|| type === 'mpg') {
-          _VideoType = 'MPEG';
-          console.log('创建mpeg的交互对象');
-          _VideoPlayer = new Ds.media.VidePlayerByMpeg(url, opts);
-          InitVideoEvent();
-      }
-      //使用序列帧播放器
-      else if (type === 'mpegByts'|| type === 'ts') {
-          _VideoType = 'TS';
-          console.log('创建mpegByTS的交互对象');
-          _VideoPlayer = new Ds.media.VidePlayerByMpegTS(url, opts);
-          InitVideoEvent();
-      }
-      //使用序列帧播放器
-      else if (type === 'frames' || type === 'FPS') {
-          _VideoType = 'FPS';
-      }
-      //使用默认video标签
-      else {
-          _VideoType = 'Video';
-          console.log('创建Video标签的交互对象');
-          _VideoPlayer = new Ds.media.VidePlayerByVideoTag(url, opts);
-          InitVideoEvent();
-      }
-      /**
-       * 开始加载视频，只有非Video标签实现的交互播放器才有这功能
-       */
-      this.Load=function(){
-        // console.log('load Video',_VideoType);
-        if(_VideoType!='Video'){
-          _VideoPlayer.Load();
+    function VideoInteractivePlayer(url, type, opts) {
+        var _Self = this;
+        //这个类支持事件扩展
+        Ds.Extend(this, new Ds.EventDispatcher());
+        /**
+         * 播放器
+         */
+        var _VideoPlayer;
+        Object.defineProperty(this, "VideoPlayer", {
+            get: function() {
+                return _VideoPlayer;
+            }
+        });
+        /**
+         * 是否交互播放器类型
+         * @type {String}
+         */
+        var _VideoType = '';
+        Object.defineProperty(this, "VideoType", {
+            get: function() {
+                return _VideoType;
+            },
+        });
+        // console.log(type);
+        //初始化视频的交互使用播放器方式
+        //使用版本1的播放器
+        if (type === 'canvas' || type === 'mpeg' || type === 'mpg') {
+            _VideoType = 'MPEG';
+            console.log('创建mpeg的交互对象');
+            _VideoPlayer = new Ds.media.VidePlayerByMpeg(url, opts);
+            InitVideoEvent();
         }
-      };
-
-      function InitVideoEvent() {
-          //事件
-          _VideoPlayer.on('canplay', function() {
-              _Self.ds('canplay');
-          });
-          _VideoPlayer.on('progress', function(e) {
-              _Self.ds(e);
-          });
-          _VideoPlayer.on('loadEnd', function(e) {
-              _Self.ds(e);
-          });
-          _VideoPlayer.on('play', function() {
-              _Self.ds('play');
-          });
-          _VideoPlayer.on('pause', function() {
-              _Self.ds('pause');
-          });
-          _VideoPlayer.on('playEnd', function() {
-              _Self.ds('playEnd');
-          });
-          _VideoPlayer.on('upDate', function() {
-              _Self.ds('upDate');
-          });
-      }
-      /**
-       * 当前时间
-       * @type {[Number]}
-       */
-      Object.defineProperty(this, "CurrentTime", {
-          get: function() {
-              return _VideoPlayer.CurrentTime;
-          }
-      });
-
-      /**
-       * 时间长度
-       * @type {[Number]}
-       */
-      Object.defineProperty(this, "Duration", {
-          get: function() {
-              return _VideoPlayer.Duration;
-          }
-      });
-
-      var _Playing = false;
-      Object.defineProperty(this, "Playing", {
-          get: function() {
-              return _VideoPlayer.Playing;
-          },
-          set: function(bool) {
-              if (bool) _Self.Play();
-              else _Self.Pause();
-          }
-      });
-
-      /**
-       * 播放
-       */
-      this.Play = function() {
-          if (_VideoPlayer) _VideoPlayer.Play();
-      };
-
-      /**
-       * 暂停
-       */
-      this.Pause = function() {
-          if (_VideoPlayer) _VideoPlayer.Pause();
-      };
-      /**
-       * 跳转到制定时间
-       * @param {[type]} seconds [秒数]
-       */
-      this.SeekToTime = function(seconds) {
-          _VideoPlayer.SeekToTime(seconds);
-      };
-      /**
-       * 声音大小
-       * @type {[type]}
-       */
-      Object.defineProperty(this, "Volume", {
-          get: function() {
-              return _VideoPlayer.Volume;
-          },
-          set: function(value) {
-            _VideoPlayer.Volume=value;
-          }
-      });
-      /**
-       * 是否禁音
-       * @type {[type]}
-       */
-      Object.defineProperty(this, "Muted", {
-          get: function() {
-              return _VideoPlayer.Muted;
-          },
-          set: function(value) {
-            _VideoPlayer.Muted=value;
-          }
-      });
-
-
-
-      _VideoPlayer.on('upDate', TimeUpDate);
-      /*使用Video标签的TimeUpDate*/
-      function TimeUpDate(e) {
-          // log('TimeUpDate',_VideoPlayer.CurrentTime)
-          if (!_VideoPlayer) return;
-          var _currentTime = 0;
-          _currentTime = _VideoPlayer.CurrentTime;
-          // log('--->',_VideoDom.currentTime)
-          for (var i = 0; i < _VideoCuePointList.length; i++) {
-              var _pointData = _VideoCuePointList[i];
-              if (_pointData.time && _currentTime >= _pointData.time && !_pointData.bool) {
-                  _pointData.bool = true;
-                  _pointData.runNum += 1;
-                  var _eventData = {
-                      type: 'cuePoint',
-                      data: _pointData,
-                      time: _currentTime
-                  };
-                  if (_pointData.fun) _pointData.fun(_eventData);
-                  _Self.ds(_eventData);
-              }
-          }
-      }
-      /**
-      添加提示点，对应时间与处理方法
-      */
-      var _VideoCuePointList = [];
-      Object.defineProperty(this, "VideoCuePointList", {
-          get: function() {
-              return _VideoCuePointList.concat();
-          }
-      });
-
-      /**
-      * 添加交互的时间节点
-      * @param {[type]} pointData [时间节点事件]
-      * pointData.name   	//这个时间点的名称
-        pointData.time   	//时间点   必须的
-        pointData.fun     //时间节点事件
-
-        pointData.runNum 	//自动创建  这个时间执行多少次 方便用来进行逻辑处理判断
-        pointData.bool      //自动创建 是否被执行过
-      *
-      * @example
-      * _VideoInteractivePlayer.AddCuePoint({
-        name:'Test 5s',
-        time:5,
-        fun:function(e){
-          console.log(e.data.name,e.time);
+        //使用序列帧播放器
+        else if (type === 'mpegByts' || type === 'ts') {
+            _VideoType = 'TS';
+            console.log('创建mpegByTS的交互对象');
+            _VideoPlayer = new Ds.media.VidePlayerByMpegTS(url, opts);
+            InitVideoEvent();
         }
-      });
-      */
-      this.AddCuePoint = function(pointData) {
-          if (!pointData.time) {
-              return;
-          }
-          if (!pointData.name) pointData.name = 'time_' + pointData.time;
-          pointData.runNum = 0;
-          pointData.bool = false;
-          _VideoCuePointList.push(pointData);
-      };
-      /**
-       * 获取互动节点
-       * @param  {[type]} name [description]
-       * @return {[type]}      [description]
-       */
-      this.GetCuePoints = function(name) {
-        var _list=[];
-        for (var i = 0; i < _VideoCuePointList.length; i++) {
-            var _pointData = _VideoCuePointList[i];
-            if(_pointData.name.indexOf(name)!=-1){
-              _list.push(_pointData);
+        //使用序列帧播放器
+        else if (type === 'frames' || type === 'FPS') {
+            _VideoType = 'FPS';
+            console.log('创建FPS的交互对象');
+            _VideoPlayer = new Ds.media.VideoPlayerByFrames(opts);
+            InitVideoEvent();
+        }
+        //使用默认video标签
+        else {
+            _VideoType = 'Video';
+            console.log('创建Video标签的交互对象');
+            _VideoPlayer = new Ds.media.VidePlayerByVideoTag(url, opts);
+            InitVideoEvent();
+        }
+        /**
+         * 开始加载视频，只有非Video标签实现的交互播放器才有这功能
+         */
+        this.Load = function() {
+            // console.log('load Video',_VideoType);
+            if (_VideoType != 'Video') {
+                _VideoPlayer.Load();
+            }
+        };
+
+        function InitVideoEvent() {
+            //事件
+            _VideoPlayer.on('canplay', function() {
+                _Self.ds('canplay');
+            });
+            _VideoPlayer.on('progress', function(e) {
+                _Self.ds(e);
+                //console.log(e);
+            });
+            _VideoPlayer.on('loadEnd', function(e) {
+                _Self.ds(e);
+            });
+            _VideoPlayer.on('play', function() {
+                _Self.ds('play');
+            });
+            _VideoPlayer.on('pause', function() {
+                _Self.ds('pause');
+            });
+            _VideoPlayer.on('playEnd', function() {
+                _Self.ds('playEnd');
+            });
+            _VideoPlayer.on('upDate', function() {
+                _Self.ds('upDate');
+            });
+        }
+        /**
+         * 当前时间
+         * @type {[Number]}
+         */
+        Object.defineProperty(this, "CurrentTime", {
+            get: function() {
+                return _VideoPlayer.CurrentTime;
+            }
+        });
+
+        /**
+         * 时间长度
+         * @type {[Number]}
+         */
+        Object.defineProperty(this, "Duration", {
+            get: function() {
+                return _VideoPlayer.Duration;
+            }
+        });
+
+        var _Playing = false;
+        Object.defineProperty(this, "Playing", {
+            get: function() {
+                return _VideoPlayer.Playing;
+            },
+            set: function(bool) {
+                if (bool) _Self.Play();
+                else _Self.Pause();
+            }
+        });
+
+        /**
+         * 播放
+         */
+        this.Play = function() {
+            if (_VideoPlayer) _VideoPlayer.Play();
+        };
+
+        /**
+         * 暂停
+         */
+        this.Pause = function() {
+            if (_VideoPlayer) _VideoPlayer.Pause();
+        };
+        /**
+         * 跳转到制定时间
+         * @param {[type]} seconds [秒数]
+         */
+        this.SeekToTime = function(seconds) {
+            _VideoPlayer.SeekToTime(seconds);
+        };
+        /**
+         * 声音大小
+         * @type {[type]}
+         */
+        Object.defineProperty(this, "Volume", {
+            get: function() {
+                return _VideoPlayer.Volume;
+            },
+            set: function(value) {
+                _VideoPlayer.Volume = value;
+            }
+        });
+        /**
+         * 是否禁音
+         * @type {[type]}
+         */
+        Object.defineProperty(this, "Muted", {
+            get: function() {
+                return _VideoPlayer.Muted;
+            },
+            set: function(value) {
+                _VideoPlayer.Muted = value;
+            }
+        });
+
+
+
+        _VideoPlayer.on('upDate', TimeUpDate);
+        /*使用Video标签的TimeUpDate*/
+        function TimeUpDate(e) {
+            // log('TimeUpDate',_VideoPlayer.CurrentTime)
+            if (!_VideoPlayer) return;
+            var _currentTime = 0;
+            _currentTime = _VideoPlayer.CurrentTime;
+            // log('--->',_VideoDom.currentTime)
+            for (var i = 0; i < _VideoCuePointList.length; i++) {
+                var _pointData = _VideoCuePointList[i];
+                if (_pointData.time && _currentTime >= _pointData.time && !_pointData.bool) {
+                    _pointData.bool = true;
+                    _pointData.runNum += 1;
+                    var _eventData = {
+                        type: 'cuePoint',
+                        data: _pointData,
+                        time: _currentTime
+                    };
+                    if (_pointData.fun) _pointData.fun(_eventData);
+                    _Self.ds(_eventData);
+                }
             }
         }
-        return _list;
-      };
-      /**
-       * 重置所有时间交互点
-       */
-      this.ResetCuePointListData = function() {
-          for (var i = 0; i < _VideoCuePointList.length; i++) {
-              var _pointData = _VideoCuePointList[i];
-              _pointData.runNum = 0;
-              _pointData.bool = false;
-          }
-      };
-      /**
-       * 重置制定时间交互点
-       * @param {[type]} name [description]
-       */
-      this.ResetCuePointByName = function(name) {
-          for (var i = 0; i < _VideoCuePointList.length; i++) {
-              var _pointData = _VideoCuePointList[i];
-              if (_pointData.name == name) {
-                  _pointData.bool = false;
-                  _pointData.runNum = 0;
-              }
-          }
-      };
-      /**
-       * 清空清除所有的交互节点
-       */
-      this.ClearCuePointList = function() {
-          _VideoCuePointList = [];
-      };
-  }
+        /**
+        添加提示点，对应时间与处理方法
+        */
+        var _VideoCuePointList = [];
+        Object.defineProperty(this, "VideoCuePointList", {
+            get: function() {
+                return _VideoCuePointList.concat();
+            }
+        });
 
-  return VideoInteractivePlayer;
+        /**
+        * 添加交互的时间节点
+        * @param {[type]} pointData [时间节点事件]
+        * pointData.name   	//这个时间点的名称
+          pointData.time   	//时间点   必须的
+          pointData.fun     //时间节点事件
+
+          pointData.runNum 	//自动创建  这个时间执行多少次 方便用来进行逻辑处理判断
+          pointData.bool      //自动创建 是否被执行过
+        *
+        * @example
+        * _VideoInteractivePlayer.AddCuePoint({
+          name:'Test 5s',
+          time:5,
+          fun:function(e){
+            console.log(e.data.name,e.time);
+          }
+        });
+        */
+        this.AddCuePoint = function(pointData) {
+            if (!pointData.time) {
+                return;
+            }
+            if (!pointData.name) pointData.name = 'time_' + pointData.time;
+            pointData.runNum = 0;
+            pointData.bool = false;
+            _VideoCuePointList.push(pointData);
+        };
+        /**
+         * 获取互动节点
+         * @param  {[type]} name [description]
+         * @return {[type]}      [description]
+         */
+        this.GetCuePoints = function(name) {
+            var _list = [];
+            for (var i = 0; i < _VideoCuePointList.length; i++) {
+                var _pointData = _VideoCuePointList[i];
+                if (_pointData.name.indexOf(name) != -1) {
+                    _list.push(_pointData);
+                }
+            }
+            return _list;
+        };
+        /**
+         * 重置所有时间交互点
+         */
+        this.ResetCuePointListData = function() {
+            for (var i = 0; i < _VideoCuePointList.length; i++) {
+                var _pointData = _VideoCuePointList[i];
+                _pointData.runNum = 0;
+                _pointData.bool = false;
+            }
+        };
+        /**
+         * 重置制定时间交互点
+         * @param {[type]} name [description]
+         */
+        this.ResetCuePointByName = function(name) {
+            for (var i = 0; i < _VideoCuePointList.length; i++) {
+                var _pointData = _VideoCuePointList[i];
+                if (_pointData.name == name) {
+                    _pointData.bool = false;
+                    _pointData.runNum = 0;
+                }
+            }
+        };
+        /**
+         * 清空清除所有的交互节点
+         */
+        this.ClearCuePointList = function() {
+            _VideoCuePointList = [];
+        };
+    }
+
+    return VideoInteractivePlayer;
 }));
