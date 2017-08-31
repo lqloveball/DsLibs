@@ -49,6 +49,7 @@
     displayObject.dragLock=opts.lock?opts.lock:false;
     displayObject.dragRect=null;
     if(opts.rect&&(opts.rect instanceof PIXI.Rectangle))displayObject.dragRect=opts.rect;
+    if(opts.hitArea&&(opts.hitArea instanceof PIXI.Rectangle))displayObject.hitArea=opts.hitArea;
     displayObject.on('pointerdown',onDragStart);
     function onDragStart(e){
       var _obj = e.currentTarget;
@@ -112,14 +113,18 @@
    * 设置按钮交互
    * @param  {[type]} displayObject [description]
    * @param  {[type]} clickFun      [description]
-   * @param  {[type]} context       [description]
+   * @param  {[type]} opts       [description]
+   * opts.context  事件函数里面的this指向
+   * opts.hitArea 这个对象触发区域
    * @return {[type]}               [description]
    */
-  DsPixi.SetButton=function(displayObject,clickFun,context){
+  DsPixi.SetButton=function(displayObject,clickFun,opts){
+    opts=opts||{};
     displayObject.interactive=true;
     displayObject.cursor = 'pointer';
-    if(clickFun&&context)displayObject.on('click',clickFun,context);
-    else if(clickFun)displayObject.on('click',clickFun);
+    if(opts.hitArea&&(opts.hitArea instanceof PIXI.Rectangle))displayObject.hitArea=opts.hitArea;
+    if(clickFun&&opts.context)displayObject.on('pointerdown',clickFun,opts.context);
+    else if(clickFun)displayObject.on('pointerdown',clickFun);
   };
   var _SaveImageWebGLRenderer;
   /**
@@ -164,13 +169,14 @@
     }
     return _base64;
   };
+
   /**
    * 获取js 并插入到html内
    * @param  {[type]} src      [description]
    * @param  {[type]} complete [description]
    * @return {[type]}          [description]
    */
-  DsPixi.GetScript=function(src,complete){
+  DsPixi.GetScript=function(src,complete,opts){
     var _script = document.createElement("script");
     _script.setAttribute("type","text/javascript");
     //ie下
@@ -187,35 +193,64 @@
       };
     }
     document.getElementsByTagName("head")[0].appendChild(_script);
+    if(opts.hash)src=src+'?hs='+opts.hash;
     _script.src = src;
   };
   /**
+   * 获取LoadJSAnimateAssets加载过的资源
+   * @param  {[type]} jsNS [加载空间名]
+   * @param  {[type]} name [加载对象名]
+   * @return {[type]}      [description]
+   */
+  DsPixi.GetJSAnimateAssets=function(jsNS,name,type){
+    type=type||'texture';
+    var _loader = window[jsNS+'_loader'];
+    if(!_loader||!(_loader instanceof PIXI.loaders.Loader)){console.warn('LoadJSAnimateAssets 创建过id为：'+_jsNS+' 的loader');return;}
+    if(!name){console.warn('GetJSAnimateAssets 需要传入资源id ');return;}
+    var _resources=_loader.resources;
+    var _temp=_resources[name];
+    if(type==='data')return _temp.data;
+    else if(type==='texture') return _temp.texture;
+    else return _temp;
+
+  };
+  /**
    * 加载flash导出的动画资源
+   * @param  {[type]} opts       [description]
+   *  opts.basePath './assets/'
+   *  opts.jsNS 'lib'
+   *  opts.src 'xxxx.js' 或者使用opts.jsUrl做为参数
+   *  opts.mainClass 'main'  不传会使用js的名字来作为类名
+   *  opts.hash 避免缓存传入hash值
    * @return {[type]} [description]
    */
   DsPixi.LoadJSAnimateAssets=function(opts){
     opts = opts || {};
     var _basePath = opts.basePath || "/";
     if (!opts.jsUrl&&!opts.src) {console.warn('参数jsUrl是必须!');return;}
-    if (!opts.mainClass) {console.warn('必须传入mainClass来获取资源');return;}
+    // if (!opts.mainClass) {console.warn('必须传入mainClass来获取资源');return;}
     //js命名空间
     var _jsNS = opts.jsNS ? opts.jsNS : 'lib';
     var _src=opts.jsUrl?opts.jsUrl:opts.src;
+    if(!opts.mainClass)opts.mainClass=_src.slice(0,_src.indexOf('.js'));
 
     DsPixi.GetScript(_basePath+_src,function(){
       var lib=window[_jsNS];
-      console.log(lib);
-      DsPixi.LoadAnimateAssets(lib,opts);
-    });
+      window[_jsNS+'_loader']=DsPixi.LoadAnimateAssets(lib,opts);
+    },opts);
   };
   /**
    * 加载flash导出的动画资源
    * @param  {[type]} assetsData [加载的资源库文件]
    * var assetsData = require('assets/main.js');
+   * 也或者是 导出js命名空间
+   * 如 lib
    * @param  {[type]} opts       [description]
    *  opts.basePath './assets/'
    *  opts.progress  加载进度回调 progress 0-1
    *  opts.complete  加载完成回调 loader, resources
+   *  opts.loader  可以不新创建 loader对象使用 已有loader对象
+   *  opts.list   加载其他资源对象
    * @return {[type]}            [description]
    */
   DsPixi.LoadAnimateAssets=function(assetsData, opts) {
@@ -227,23 +262,35 @@
     else if (opts.onEnd)
       _complete = opts.onEnd;
 
-    var _loader = new PIXI.loaders.Loader();
+    var _loader;
+    if(opts.loader&&(opts.loader instanceof PIXI.loaders.Loader))_loader=opts.loader;
+    else  _loader= new PIXI.loaders.Loader();
     var assets;
     //直接通过 require方法 进来的 传入是module.exports
     if(assetsData.stage&&assetsData.stage.assets)assets=assetsData.stage.assets;
     //直接通过 js插入方法 进来的 传入是lib,需要通过lib中找出首文件class ，找出下列加载对象后进行加载处理
-    else if(assetsData&&opts.mainClass&&assetsData[opts.mainClass]&&assetsData[opts.mainClass].assets){
-      assets=assetsData[opts.mainClass].assets;
-    }else{
-      assets={};
-    }
+    else if(assetsData&&opts.mainClass&&assetsData[opts.mainClass]&&assetsData[opts.mainClass].assets)  assets=assetsData[opts.mainClass].assets;
+    else assets={};
+
+
+
     if (assets && Object.keys(assets).length) {
       for (var key in assets) {
         if (assets.hasOwnProperty(key))_loader.add(key, basePath + assets[key]);
       }
-    } else {
-      complete();
     }
+
+    if(opts.list){
+      var _list=opts.list;
+      for (var i = 0; i < _list.length; i++) {
+         var _temp=_list[i];
+         if (typeof _temp === 'string')_temp={id:_temp,src:_temp};
+         else if(_temp.id===undefined&&_temp.src)_temp.id=_temp.src;
+         //添加到显示列表
+         if(_temp.id!==undefined&&_temp.src!==undefined)_loader.add(_temp.id,_temp.src);
+      }
+    }
+
     function complete(loader, resources) {
       console.log('complete');
       if (_complete)   _complete(loader, resources);
@@ -276,11 +323,9 @@
       console.warn('加载列表内没有加载对象');
     }
     var _loader;
-    if(opts.loader&&(opts.loader instanceof PIXI.loaders.Loader)){
-      _loader=opts.loader;
-    }else{
-       _loader= new PIXI.loaders.Loader();
-    }
+    if(opts.loader&&(opts.loader instanceof PIXI.loaders.Loader))_loader=opts.loader;
+    else _loader= new PIXI.loaders.Loader();
+
     // console.log('LoadAssets',_loader);
     var complete;
     if(opts.complete)complete=opts.complete;
@@ -288,7 +333,6 @@
 
     for (var i = 0; i < _list.length; i++) {
       var _temp=_list[i];
-
        if (typeof _temp === 'string'){
          _temp={id:_temp,src:_temp};
        }else if(_temp.id===undefined&&_temp.src){
@@ -427,6 +471,7 @@
     _Self.canvas=_canvas;
     _Self.renderer=app.renderer;
     _Self.screen=app.screen;
+    _Self.loader=app.loader;
     _Self.width=width;
     _Self.height=height;
 
@@ -435,6 +480,7 @@
     _Self.Canvas=_canvas;
     _Self.App=app;
     _Self.Screen=app.screen;
+    _Self.Loader=app.loader;
 
     if (appendTo !== '') {
       if (typeof appendTo === 'string') {
