@@ -47,8 +47,16 @@
    * opts.domBox   dom元素添加到的父级节点
    * opts.domRoot  dom元素父级dom添加到节点位置
    * opts.parent   父级pixi元素
-   * opts.ticker   进行触发的帧计算对象
-   * @constructor
+   * opts.ticker   进行触发的帧计算对象，如果设置opts.app 会以app.ticker为准
+   * opts.app   进行触发的计算ticker的app对象。
+   * opts.auto   进行触发的帧计算dom对应显示状态
+   *
+   * @description
+   * 是否进行自动更新dom显示状态，这个非常消耗性能。
+   * 但普通技术人员怕控制不好这个刷新，所以可以设置成true. 默认是false
+   * DsPixi.DOMAuto=true;
+   * 建议自己根据逻辑使用DsPixi.UpDOMListState();
+   * @return {[DsPixi.DOMElement]}
    */
   DsPixi.AddDOM=function(dom,parent,opts){
     opts=opts||{};
@@ -64,8 +72,8 @@
     if (dom instanceof HTMLElement) {_dom=$(dom);}
     else if (dom[0] instanceof HTMLElement){ dom=dom[0];_dom=$(dom);}
 
-    if(!opts.parent)opts.parent=parent;
-    // if(_app.)
+    if(!opts.app&&SiteModel&&SiteModel.PIXIModel)opts.app=SiteModel.PIXIModel;
+    if(parent)opts.parent=parent;
 
     var _domElement;
     if(dom.pixiDOMElement){
