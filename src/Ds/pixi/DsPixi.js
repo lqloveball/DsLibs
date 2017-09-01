@@ -9,9 +9,11 @@
 
     if (typeof define === 'function' && define.amd) {
         define(['exports'], function (exports) {
+            require('./display/DOMElement.js');
             module.exports= factory(root, exports);
         });
     } else if (typeof exports !== 'undefined') {
+        require('./display/DOMElement.js');
         module.exports=factory(root, exports);
     } else {
          factory(root, {});
@@ -19,10 +21,61 @@
 
 }(function (root, modelObj) {
   root.Ds = root.Ds || {};
-  root.DsPixi=root.Ds.DsPixi={};
-  root.Ds.DsPixi.Version = 'v0.5';
+  root.Ds.DsPixi=Ds.DsPixi||{};
+  root.DsPixi=root.Ds.DsPixi;
   var DsPixi=root.Ds.DsPixi;
+  root.Ds.DsPixi.Version = root.Ds.DsPixi.Version||'v0.5';
 
+  /**
+   * 让容器支持判断是否包含一个子对象
+   * @param  {[type]} child [description]
+   * @return {[type]}       [description]
+   */
+  PIXI.Container.prototype.contains = function(child) {
+    while (child) {
+      if (child == this) { return true; }
+      child = child.parent;
+    }
+    return false;
+  };
+
+  /**
+   * 创建一个关联pixi容器的dom对象
+   * @param       {[type]} dom  [dom对象]
+   * @param       {[type]} parent  [dom对象]
+   * @param       {[type]} opts [参数]
+   * opts.domBox   dom元素添加到的父级节点
+   * opts.domRoot  dom元素父级dom添加到节点位置
+   * opts.parent   父级pixi元素
+   * opts.ticker   进行触发的帧计算对象
+   * @constructor
+   */
+  DsPixi.AddDOM=function(dom,parent,opts){
+    opts=opts||{};
+    if(DsPixi.DomContainer.parent().length<=0){
+      if(opts.domRoot)$(opts.domRoot).append(DsPixi.DomContainer);
+      else {
+        if($('#pixiBox')[0])$('#pixiBox').append(DsPixi.DomContainer);
+        else $('body').append(DsPixi.DomContainer);
+      }
+    }
+
+    var _dom;
+    if (dom instanceof HTMLElement) {_dom=$(dom);}
+    else if (dom[0] instanceof HTMLElement){ dom=dom[0];_dom=$(dom);}
+
+    if(!opts.parent)opts.parent=parent;
+    // if(_app.)
+
+    var _domElement;
+    if(dom.pixiDOMElement){
+      _domElement=dom.pixiDOMElement;
+      _domElement.parent=opts.parent;
+    }
+    else _domElement=new DsPixi.DOMElement(dom,opts);
+
+    return _domElement;
+  };
   /**
    * 设置一个对象可以被拖动
    * @param  {[type]} displayObject [一个显示对象]
@@ -111,9 +164,9 @@
   };
   /**
    * 设置按钮交互
-   * @param  {[type]} displayObject [description]
-   * @param  {[type]} clickFun      [description]
-   * @param  {[type]} opts       [description]
+   * @param  {[type]} displayObject [PIXI.DisplayObject对象]
+   * @param  {[type]} clickFun      [执行代码]
+   * @param  {[type]} opts       [Object]
    * opts.context  事件函数里面的this指向
    * opts.hitArea 这个对象触发区域
    * @return {[type]}               [description]
@@ -439,7 +492,7 @@
     var forceCanvas = opts.forceCanvas!==undefined ? opts.forceCanvas : false;//是否不使用webgl渲染
     var backgroundColor = opts.backgroundColor!==undefined ? opts.backgroundColor : 	0x103322;
     var clearBeforeRender = opts.clearBeforeRender!==undefined ? opts.clearBeforeRender : true;
-    var legacy = opts.legacy!==undefined ? opts.legacy : false;//是否只使用webgl渲染 考虑到旧的/不太先进的设备兼容  可以设置成true
+    var legacy = opts.legacy!==undefined ? opts.legacy : true;//考虑到旧的/不太先进的设备兼容可以设置成true,只需要webgl可以是 false;
     var sharedLoader = opts.sharedLoader!==undefined ? opts.sharedLoader : false;
     var sharedTicker = opts.sharedTicker!==undefined ? opts.sharedTicker : false;
     var appendTo = opts.appendTo ? opts.appendTo : '';
@@ -472,6 +525,7 @@
     _Self.renderer=app.renderer;
     _Self.screen=app.screen;
     _Self.loader=app.loader;
+    _Self.ticker=app.ticker;
     _Self.width=width;
     _Self.height=height;
 
