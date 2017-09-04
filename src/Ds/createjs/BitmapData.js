@@ -977,7 +977,7 @@ _bmd02.fillRect(rect, color02);</code></pre>
             return new createjs.Rectangle(xMin, yMin, xMax - xMin + 1, yMax - yMin + 1);
         }
         // log('getColorBoundsRect2:',xMin, xMax, yMin, yMax)
-    };;;
+    };
     /**
      * Returns a number that represents a RGB color value from the specified point.<br>
      * 指定された座標のRGBカラー値を数値で返します。

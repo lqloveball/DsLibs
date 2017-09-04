@@ -28,6 +28,7 @@
    * opts.layoutType  默认：outSide撑满容器 inSide缩放到容器内
    * opts.width  显示区域  如果不做编辑就是做裁切区域
    * opts.height  显示区域 如果不做编辑就是做裁切区域
+   * opts.capture  选择方式 默认null ，比如：camera 照相机；camcorder 摄像机；microphone 录音。
    * @constructor
    */
   function SelectImageUper(width,box,hasEdit,opts){
@@ -60,6 +61,7 @@
      */
     function CreateSelectImager() {
       _SelectImager = new ImgSlter({
+        capture:opts.capture!==undefined?opts.capture:null,
         size: _Width,
         type: _Type,
         quality: _Quality,

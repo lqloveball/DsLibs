@@ -343,7 +343,7 @@
             var _end=tweenData.end;
             tweenData.end=null;
 
-            if (TweenMax) {
+            if (window['TweenMax']) {
                 _Tweening=true;
                 _Lock = true;
                 tweenData.value=value;

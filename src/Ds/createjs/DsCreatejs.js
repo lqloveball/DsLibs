@@ -114,7 +114,13 @@
    * 快速创建dom输入框
    * @param  {[createjs.Container]} inputBox [输入框的容器]
    * @param  {[Object]} opts    [设置]
-   * @return {[$DOM]}          [输入框的DOM对象]
+   * opts.type
+   * opts.width
+   * opts.color
+   * opts.size
+   * opts.max
+   * @param {[String]}  defaultText   [默认输入文本]
+   * @return {[$DOM]}                 [输入框的DOM对象]
    */
   ccjs.CreateInputMc=function(inputBox,opts,defaultText){
     opts=opts||{};
