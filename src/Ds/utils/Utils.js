@@ -115,6 +115,15 @@
             else return arr.sort(compare2(value));
         };
         /**
+         * 邮箱
+         * @param  {[type]} value [description]
+         * @return {[type]}       [description]
+         */
+        this.IsEmail=function (value) {
+          var pattern= /^([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+\.[a-zA-Z]{2,3}$/;
+          return pattern.test(value);
+        };
+        /**
          * 是否是一个空字符串
          * @param  {[type]} str [description]
          * @return {[type]}     [description]
