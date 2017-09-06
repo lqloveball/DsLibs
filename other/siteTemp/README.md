@@ -16,10 +16,12 @@
 
 `弃用gulp启动开发环境命令` gulp webpack-dev
 
-`推荐使用新的 npm 方式来运行项目`
+`推荐使用新的 npm run 方式来运行项目`
 
 - `npm run webpack-dev`  运行 webpack 编译打包，开发使用，代码不压缩
 - `npm run webpack-bin ` 运行 webpack 编译打包，正式发布，代码压缩
-- `npm run dev`   webpack 运行开发编译，gulp 运行 less编译、运行web环境、调试刷新
-- `npm run bin`   webpack 正式发布编译，gulp 运行 less编译、运行web环境、调试刷新
+- `npm run dev`   webpack 编译打包（代码不压缩），gulp 运行 less编译、运行web环境、调试刷新
+- `npm run bin`   webpack 编译打包（代码压缩），gulp 运行 less编译、运行web环境、调试刷新
+- `npm run gulpDev`  通过gulp 运行 webpack 编译打包（代码不压缩），gulp 运行 less编译、运行web环境、调试刷新
+- `npm run gulpBin`  通过gulp 运行 webpack 编译打包（代码压缩），gulp 运行 less编译、运行web环境、调试刷新
 - `npm run server` gulp 运行 less编译、运行web环境、调试刷新
