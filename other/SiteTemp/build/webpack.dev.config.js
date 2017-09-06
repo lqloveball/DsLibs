@@ -13,7 +13,7 @@ function resolveBowerPath(dir) {
 function getEntries(dir,ext) {
     var files = glob.sync(dir + '/*.' + ext),
         res = {};
-        console.log(files);
+    console.log(files);
     files.forEach(function(file) {
       var relativePath = path.relative(dir, file),
            relativeName = relativePath.slice(0, relativePath.lastIndexOf('.'));
@@ -22,7 +22,7 @@ function getEntries(dir,ext) {
     return res;
 }
 //根据src目录下js文件，来动态判断入口文件
-var webpackEntry=getEntries('./src','js');
+var webpackEntry=getEntries(resolveBowerPath('./src'),'js');
 //一些公共库
 webpackEntry.base=[
   'jquery',

@@ -1,7 +1,7 @@
 /**
   $(function(){
              CallJsApiWXConfigItf("http://wechat.cagoe.com/JsApiWXConfig.aspx");
-        
+
             SetWechatShare("天然之声", "天然之声！！", location.href,"images/ShareImg.jpg", function () {
                 _hmt.push(['_trackEvent', "ShareBackShare", "click"]);//百度监测
             });
@@ -43,8 +43,8 @@ function GetAbsoluteUrl(url) {
     if (url.indexOf("http:") >= 0 || url.indexOf("https:") >= 0) { return url; }
 
     var _a = document.createElement('A');
-    _a.href = url; // 设置相对路径给Image, 此时会发送出请求 
-    url = _a.href; // 此时相对路径已经变成绝对路径 
+    _a.href = url; // 设置相对路径给Image, 此时会发送出请求
+    url = _a.href; // 此时相对路径已经变成绝对路径
     return url;
 }
 /// <summary>微信分享类型</summary>
@@ -299,6 +299,7 @@ function BindJsApiEvent() {
         },
         success: function (res) {
             if (WechatShareSuccessCallBack != undefined) { WechatShareSuccessCallBack(WechatShareType.appmessage); }
+            if(WechatShareFriendSuccessCallBack)WechatShareFriendSuccessCallBack(WechatShareType.appmessage);
             //alert(JSON.stringify(res));
         },
         cancel: function (res) {
@@ -319,6 +320,7 @@ function BindJsApiEvent() {
         },
         success: function (res) {
             if (WechatShareSuccessCallBack != undefined) { WechatShareSuccessCallBack(WechatShareType.timeline); }
+            if(WechatShareTimelineSuccessCallBack)WechatShareTimelineSuccessCallBack(WechatShareType.timeline);
         },
         cancel: function (res) {
             //alert(JSON.stringify(res));

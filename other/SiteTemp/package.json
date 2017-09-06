@@ -8,6 +8,8 @@
     "webpack-bin": "webpack --config build/webpack.bin.config.js",
     "dev": "npm run server & npm run webpack-dev",
     "bin": "npm run server & npm run webpack-bin",
+    "gulpDev": "gulp --gulpfile build/gulpWebpack.js",
+    "gulpBin": "gulp --gulpfile build/gulpWebpackBin.js",
     "server": "gulp --gulpfile build/gulpServer.js"
   },
   "author": "maksim.lin@foxmail.com",
