@@ -133,13 +133,13 @@
    * @return {[type]}              [description]
    */
   InputInteractive.CreatSelectGetUrl=function(url,postData,selectDom,opts){
+    selectDom=getHTMLElement(selectDom);
     opts=opts||{};
     var _type=opts.type!==undefined?opts.type:'POST';
     var _dataType=opts.dataType!==undefined?opts.dataType:'json';
     if(_dataType==='jsonp')_type = 'GET';
     if(opts.debug)console.log('InputInteractive.CreatSelectGetUrl:',url);
     // console.log('InputInteractive.CreatSelectGetUrl:',url,postData,opts);
-
     $.ajax({
       type:_type,
       url:url,
@@ -187,6 +187,7 @@
    * @return {[type]}           [description]
    */
   InputInteractive.UpSelectListData=function(selectDom,dataList,opts){
+    selectDom=getHTMLElement(selectDom);
     selectDom.options.length=0;
     selectDom.options=[];
     var _option,_data,_label,_value;
@@ -238,6 +239,9 @@
    * @return {[type]}              [description]
    */
   InputInteractive.SetShowLabelUpChange=function(selectDom,showLabelDom,opts){
+    selectDom=getHTMLElement(selectDom);
+    showLabelDom=getHTMLElement(showLabelDom);
+    // console.log(selectDom,showLabelDom);
     opts=opts||{};
     if(selectDom&&selectDom.changeFun){
       selectDom.removeEventListener('change',selectDom.changeFun);
@@ -258,6 +262,8 @@
    * @return {[String]}              [渲染的文本]
    */
   InputInteractive.UpSelectShowLabel=function(selectDom,showLabelDom,opts){
+    selectDom=getHTMLElement(selectDom);
+    showLabelDom=getHTMLElement(showLabelDom);
     if(!selectDom.options||selectDom.options.length<=0)return;
     opts=opts||{};
     var _selectedIndex=selectDom.selectedIndex;
@@ -282,10 +288,7 @@
    * @return {[type]}           [description]
    */
   InputInteractive.GetOptionData=function(selectDom,value){
-    if(!(selectDom instanceof HTMLElement)){
-      if(selectDom[0] instanceof HTMLElement)selectDom=selectDom[0];
-      else return null;
-    }
+    selectDom=getHTMLElement(selectDom);
     var _index=selectDom.selectedIndex;
     var _option=selectDom.options[_index];
     var _data=_option.data;
@@ -293,6 +296,16 @@
     if(_data&&_data&&_data[value]!==undefined)return _data[value];
     return _option.value;
   };
+  /**
+   * $对象转换成HTMLElement对象
+   * @param  {[$ HTMLElement]} dom [一个dom对象]
+   * @return {[HTMLElement]}     [dom对象]
+   */
+  function getHTMLElement(dom){
+    if(dom instanceof HTMLElement)return dom;
+    else if(!(dom instanceof HTMLElement)&&(dom[0] instanceof HTMLElement))return dom[0];
+    else return null;
+  }
 
   return InputInteractive;
 }));
