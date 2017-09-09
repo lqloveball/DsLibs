@@ -30,6 +30,7 @@
      * opts.type  上传图片压缩类型 默认'jpg'
      * opts.quality  上传图片压缩质量 默认0.5
      * opts.clear    选择后图片 添加到容器内时候是否清空容器
+     * opts.clickDelay   点击选择延迟
      *
      * @constructor
      */
@@ -51,6 +52,10 @@
         var _height = opts.height !== undefined ? opts.height : _width;
         //是否自动清空容器 默认是清空
         var _clear = opts.clear !== undefined ? opts.clear : true;
+        //点击选择延迟
+        var _clickDelay = opts.clickDelay !== undefined ? opts.clickDelay : 2*1000;
+        //点击计时
+        var _time=new Date().getTime()-_clickDelay;
         //图片选择器
         var _selectImager;
         //图片选择器
@@ -68,10 +73,14 @@
 
         //创建一个选择器
         createSelectImager();
+
+
         /**
          * 选择上传
          */
         this.select = function () {
+            if(new Date().getTime()-_time<_clickDelay)return;
+            _time=new Date().getTime()-_clickDelay;
             _selectImager.select();
         };
 
@@ -85,6 +94,8 @@
                 quality: _quality,
             });
             _selectImager.handler = upImageData;
+
+            _time=new Date().getTime()-_clickDelay;
 
             _self.ds({
                 type: 'selectImager',
