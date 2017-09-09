@@ -170,6 +170,8 @@ function InitPIXISiteModel(){
       height: 1140,
       fps: 30
   });
+  //是否实时进行刷新dom与显示对象之间关系
+  DsPixi.DOMAuto=true;
 }
 /**
  * 初始化网站自适应模块
