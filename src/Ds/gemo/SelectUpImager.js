@@ -80,7 +80,7 @@
          */
         this.select = function () {
             if(new Date().getTime()-_time<_clickDelay)return;
-            _time=new Date().getTime()-_clickDelay;
+            _time=new Date().getTime();
             _selectImager.select();
         };
 
