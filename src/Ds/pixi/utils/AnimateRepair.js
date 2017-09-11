@@ -1,4 +1,5 @@
 !(function() {
+    //如果不存在 导出动画引擎代码，就跳过下面逻辑
     if(!PIXI||!PIXI.animate)return;
 
     /**
@@ -25,7 +26,7 @@
         if (this._totalFrames < startFrame) {
             this._totalFrames = startFrame;
         }
-        console.log('PIXI.animate.MovieClip addAction1:',startFrame);
+        // console.log('PIXI.animate.MovieClip addAction1:',startFrame);
         //add the action
         if (actions[startFrame]) {
             actions[startFrame].push(callback);
