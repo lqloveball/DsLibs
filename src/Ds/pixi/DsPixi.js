@@ -10,10 +10,12 @@
     if (typeof define === 'function' && define.amd) {
         define(['exports'], function (exports) {
             require('./display/DOMElement.js');
+            require('./utils/AnimateRepair.js');
             module.exports = factory(root, exports);
         });
     } else if (typeof exports !== 'undefined') {
         require('./display/DOMElement.js');
+        require('./utils/AnimateRepair.js');
         module.exports = factory(root, exports);
     } else {
         factory(root, {});
@@ -40,6 +42,7 @@
         }
         return false;
     };
+
     /**
      * 为一个显示对象添加 dom 触发区域
      * @param {[Object]} opts [参数]
@@ -56,7 +59,7 @@
         var _width = opts.width !== undefined ? opts.width : null;
         var _height = opts.height !== undefined ? opts.height : _width;
 
-        if (_width !== null && _height !== null)$(_div).css({width: _width, height: _height});
+        if (_width !== null && _height !== null) $(_div).css({width: _width, height: _height});
         else {
             var _rect = displayObject.getBounds();
             $(_div).css({width: _rect.width, height: _rect.height});
@@ -252,7 +255,7 @@
         opts = opts || {};
         var _base64;
         if (!_SaveImageWebGLRenderer) {
-            _SaveImageWebGLRenderer=PIXI.autoDetectRenderer({
+            _SaveImageWebGLRenderer = PIXI.autoDetectRenderer({
                 width: opts.width || 640,
                 height: opts.height || 1040,
                 transparent: true,

@@ -32,10 +32,11 @@
      * opts.height      容器高
      * opts.scaleMax      缩放最大 默认 3
      * opts.scaleMin      缩放最小 默认 0.2
-     * opts.drag      是否可以拖动 默认true
-     * opts.rectBool  是否需要按 opts.width opts.height 限制拖拽区域
-     * opts.zoom      是否可以缩放 默认true
      * opts.look      是否锁定 默认false
+     * opts.drag      是否可以拖动 默认true
+     * opts.zoom      是否可以缩放 默认true
+     * opts.rotation      是否可以旋转 默认true
+     * opts.rectBool  是否需要按 opts.width opts.height 限制拖拽区域
      * opts.clear     添加新元素到容器内时候 是否清空容器 默认true
      * @constructor
      */
@@ -81,6 +82,17 @@
                 _zoom = value;
             }
         });
+        var _rotation = opts.rotation != undefined ? opts.rotation : true;
+        //是否允许旋转
+        Object.defineProperty(this, "rotation", {
+            get: function () {
+                return _rotation;
+            },
+            set: function (value) {
+                _rotation = value;
+            }
+        });
+
         var _look = opts.look != undefined ? opts.look : false;
         //是否锁定
         Object.defineProperty(this, "look", {
@@ -111,11 +123,16 @@
                     touch.off(_touchDom, 'pinch', pinch);
                     touch.off(_touchDom, 'pinchstart', pinchstart);
                     touch.off(_touchDom, 'pinchend', pinchend);
+                    touch.off(_touchDom, 'rotate', rotate);
+
                 }
                 _touchDom = value;
                 touch.on(_touchDom, 'pinch', pinch);
                 touch.on(_touchDom, 'pinchstart', pinchstart);
                 touch.on(_touchDom, 'pinchend', pinchend);
+                touch.on(_touchDom, 'rotate', rotate);
+
+
             }
         });
         var _tempTouchDom;
@@ -132,10 +149,10 @@
             _dragRect = new PIXI.Rectangle(0, 0, _width, _height);
         }
         //创建选择上传对象
-        var _size= opts.size != undefined ? opts.size :1000;
-        var _selecter=new Ds.gemo.SelectUpImager(_size,null,{
-            width:_width!=null?_width:1000,
-            height:_height!=null?_height:1000,
+        var _size = opts.size != undefined ? opts.size : 1000;
+        var _selecter = new Ds.gemo.SelectUpImager(_size, null, {
+            width: _width != null ? _width : 1000,
+            height: _height != null ? _height : 1000,
         });
         //图片选择上传对象
         Object.defineProperty(this, "selecter", {
@@ -143,20 +160,30 @@
                 return _selecter;
             },
         });
-        _selecter.on('update',function (e) {
-            var _img=e.img;
-            // console.log('update................',_img);
+        _selecter.on('update', function (e) {
+            var _img = e.img;
             _self.add(_img);
-
         });
         /**
          * 选择上传的图片
          */
-        this.select=function () {
-            if(_selecter)_selecter.select();
+        this.select = function () {
+            if (_selecter) _selecter.select();
         }
 
+        //对象旋转
+        var _objRotation = 0;
+        var _objRotationStart = 0;
 
+        //对象旋转事件
+        function rotate(e) {
+
+            if (!_rotation) return;
+
+            _objRotation = _objRotationStart + e.rotation;
+            if (_element) _element.rotation = _objRotation * (Math.PI / 180);
+            // $('#debug').text(_objRotation)
+        }
 
         //就缩放比例
         var _scale = 1;
@@ -164,14 +191,16 @@
         var _scaleStart;
         var _scaleMax = opts.scaleMax != undefined ? opts.scaleMax : 3;
         var _scaleMin = opts.scaleMin != undefined ? opts.scaleMin : 0.2;
+
         //开始缩放手势
         function pinchstart(e) {
-            if(!_zoom)return;
-            _scaleStart = _scale;
+            if (_rotation) _objRotationStart = _objRotation;
+            if (_zoom) _scaleStart = _scale;
         }
+
         //缩放中
         function pinch(e) {
-            if(!_zoom)return;
+            if (!_zoom) return;
             var _temp = e.scale - 1;
             _temp = _scaleStart + _temp;
             if (_temp >= _scaleMax) _temp = _scaleMax;
@@ -181,9 +210,10 @@
             if (_element) _element.scale.set(_scale);
 
         }
+
         //缩放完成
         function pinchend(e) {
-            if(!_zoom)return;
+            if (!_zoom) return;
             _scaleStart = _scale;
         }
 
@@ -203,14 +233,15 @@
 
             _element = _temp;
             _scale = 1;
+            _objRotation = 0;
 
             if (_clear) _container.removeChildren();
             _container.addChild(_element);
 
             addDragEvent(_element);
             _self.ds({
-                type:'add',
-                element:_element,
+                type: 'add',
+                element: _element,
             })
         };
 
@@ -220,7 +251,7 @@
                 _obj = new PIXI.Sprite.fromImage(value);
                 _baseTexture = _obj.texture.baseTexture;
             }
-            else if (value instanceof Image){
+            else if (value instanceof Image) {
                 _obj = new PIXI.Sprite(PIXI.Texture.fromLoader(value));
                 _baseTexture = _obj.texture.baseTexture;
             }
@@ -229,6 +260,7 @@
                 _baseTexture = _obj.texture.baseTexture;
             } else if (value instanceof PIXI.DisplayObject) {
                 _obj = value;
+
             }
             if (!_obj) {
                 console.warn('添加拖拽对象类型错误');
@@ -237,10 +269,10 @@
             _box = new PIXI.Container();
             //属于输入图片路径与图片纹理
             if (_baseTexture) {
-                console.log('_baseTexture.isLoading:',_baseTexture.isLoading);
+                console.log('_baseTexture.isLoading:', _baseTexture.isLoading);
                 if (_baseTexture.isLoading) {
                     _baseTexture.on('loaded', function () {
-                        console.log('_baseTexture loaded:',_baseTexture.isLoading);
+                        console.log('_baseTexture loaded:', _baseTexture.isLoading);
                         buildSpriteBox(_obj, _box);
                         _self.ds('loaded');
                     });
@@ -249,21 +281,46 @@
                     _self.ds('loaded');
                 }
             } else {
-
+                buildDisplayObject(_obj,_box);
             }
             return _box;
         }
+
+        //如果传入的是一个显示对象处理
+        function buildDisplayObject(displayObject,box) {
+            box.addChild(displayObject);
+            box.object = displayObject;
+
+            if (_width !== null && _height !== null){
+                var _rect=displayObject.getBounds();
+                // console.log(_rect);
+                var _sw = _width / _rect.width, _sh = _height / _rect.height;
+                var _ss = 1;
+                if (_layoutType === 'inSide') _ss = Math.min(_sw, _sh);
+                else _ss = Math.max(_sw, _sh);
+
+                displayObject.width = _ss * _rect.width;
+                displayObject.height = _ss * _rect.height;
+                displayObject.x = -displayObject.width / 2;
+                displayObject.y = -displayObject.height / 2;
+
+                box.x = _width / 2;
+                box.y = _height / 2;
+            }
+            
+        }
+
         //这是处理传入的是url与PIXI.Texture类型的拖拽处理对象
         function buildSpriteBox(sprite, box) {
 
             box.addChild(sprite);
-            box.sprite = sprite;
+            box.object = sprite;
 
             if (_width !== null && _height !== null) {
                 _baseTexture = sprite.texture.baseTexture;
                 var _sw = _width / _baseTexture.width, _sh = _height / _baseTexture.height;
                 var _ss = 1;
-                if (_layoutType == 'inSide') _ss = Math.min(_sw, _sh);
+                if (_layoutType === 'inSide') _ss = Math.min(_sw, _sh);
                 else _ss = Math.max(_sw, _sh);
 
                 sprite.width = _ss * _baseTexture.width;
@@ -294,10 +351,11 @@
         function removeDragEvent(displayObject) {
             displayObject.off('pointerdown', onDragStart);
         }
+
         //开始拖动
         function onDragStart(e) {
             if (_look) return;
-            if(!_drag)return;
+            if (!_drag) return;
             var _obj = e.currentTarget;
             _obj.dragData = e.data;
             //记录拖动状态
@@ -315,10 +373,11 @@
                 .on('pointerupoutside', onDragEnd)
                 .on('pointermove', onDragMove);
         }
+
         //拖动
         function onDragMove(e) {
             if (_look) return;
-            if(!_drag)return;
+            if (!_drag) return;
             var _obj = e.currentTarget;
             if (!_obj.draging) return;
             var _data = _obj.dragData;
@@ -347,6 +406,7 @@
                 // _obj.emit('draging', e);
             }
         }
+
         //完成拖动
         function onDragEnd(e) {
             var _obj = e.currentTarget;
@@ -368,14 +428,14 @@
             opts = opts || {};
             var _base64;
             if (_width !== null && _height !== null) {
-                _base64=DsPixi.GetSaveImageBase64(_container, {
+                _base64 = DsPixi.GetSaveImageBase64(_container, {
                     type: 'png',
                     width: _width,
                     height: _height,
                     debug: opts.debug ? true : false,
                 });
-            }else if(opts.width&&opts.height){
-                _base64=DsPixi.GetSaveImageBase64(_container, {
+            } else if (opts.width && opts.height) {
+                _base64 = DsPixi.GetSaveImageBase64(_container, {
                     type: 'png',
                     width: opts.width,
                     height: opts.height,
@@ -388,17 +448,20 @@
          * 保存出一个Sprite
          */
         this.saveToSprite = function () {
-            var _base64=_self.saveToBase64();
+            var _base64 = _self.saveToBase64();
             var _img = new Image();
             var _sprite = new PIXI.Sprite(PIXI.Texture.fromLoader(_img));
             _img.onload = loadEnd;
+
             function loadEnd() {
                 _sprite.width = _img.width;
                 _sprite.height = _img.height;
             }
-            _img.src=_base64;
+
+            _img.src = _base64;
             return _sprite;
         };
+
         //获取是否dom
         function getHTMLElement(dom) {
             if (dom instanceof HTMLElement) return dom;
