@@ -234,7 +234,6 @@
                 console.warn('添加拖拽对象类型错误');
                 return null;
             }
-
             _box = new PIXI.Container();
             //属于输入图片路径与图片纹理
             if (_baseTexture) {
@@ -369,20 +368,38 @@
             opts = opts || {};
             var _base64;
             if (_width !== null && _height !== null) {
-                DsPixi.GetSaveImageBase64(_container, {
+                _base64=DsPixi.GetSaveImageBase64(_container, {
                     type: 'png',
                     width: _width,
                     height: _height,
                     debug: opts.debug ? true : false,
                 });
+            }else if(opts.width&&opts.height){
+                _base64=DsPixi.GetSaveImageBase64(_container, {
+                    type: 'png',
+                    width: opts.width,
+                    height: opts.height,
+                    debug: opts.debug ? true : false,
+                });
             }
             return _base64;
         };
-
+        /**
+         * 保存出一个Sprite
+         */
         this.saveToSprite = function () {
-
+            var _base64=_self.saveToBase64();
+            var _img = new Image();
+            var _sprite = new PIXI.Sprite(PIXI.Texture.fromLoader(_img));
+            _img.onload = loadEnd;
+            function loadEnd() {
+                _sprite.width = _img.width;
+                _sprite.height = _img.height;
+            }
+            _img.src=_base64;
+            return _sprite;
         };
-
+        //获取是否dom
         function getHTMLElement(dom) {
             if (dom instanceof HTMLElement) return dom;
             else if (!(dom instanceof HTMLElement) && (dom[0] instanceof HTMLElement)) return dom[0];
