@@ -49,12 +49,14 @@
          _cityDataUrl,
          _Dom,
          {
+           dataType: 'jsonp',//接口请求方式 这里可以使用jsonp方式
            pDesc:'province_desc',//省份数据描述字段
            cDesc:'c_desc',//城市数据描述字段
            pID:'province_id'//获取城市list 提交省份字段
          }
        );
-   * @return {[type]} [description]
+   *
+   *
    */
 
   InputInteractive.ProvincesCityLinkComponents=function(pUrl,cUrl,domBox,opts){

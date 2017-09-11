@@ -251,17 +251,19 @@
     DsPixi.GetSaveImageBase64 = function (displayObject, opts) {
         opts = opts || {};
         var _base64;
-        if (!_SaveImageWebGLRenderer) _SaveImageWebGLRenderer = new PIXI.WebGLRenderer({
-            width: opts.width || 640,
-            height: opts.height || 1040,
-            transparent: true,
-            preserveDrawingBuffer: true,
-            backgroundColor: opts.background || 0xffffff,
-        });
+        if (!_SaveImageWebGLRenderer) {
+            _SaveImageWebGLRenderer=PIXI.autoDetectRenderer({
+                width: opts.width || 640,
+                height: opts.height || 1040,
+                transparent: true,
+                preserveDrawingBuffer: true,
+                backgroundColor: opts.background || 0xffffff,
+            });
+        }
 
         if (opts.width && opts.height) _SaveImageWebGLRenderer.resize(opts.width, opts.height);
 
-        //目前还未解决背景问题
+        //TODO 目前还未解决背景问题
         // if(opts.background){
         //   _SaveImageWebGLRenderer.backgroundColor=opts.background;_SaveImageWebGLRenderer.clear(opts.background);
         // }
@@ -269,22 +271,23 @@
 
         _SaveImageWebGLRenderer.render(displayObject, null, true, false);
 
+        //这个官方方法不好用
+        //_base64=_SaveImageWebGLRenderer.extract.canvas(displayObject).toDataURL("image/jpeg");、
+
+        //还是直接通过rander对应的 canvas对象来进行截图保存base64靠谱
         if (opts.type == 'jpg') _base64 = _SaveImageWebGLRenderer.view.toDataURL("image/jpeg", opts.encoder !== undefined ? opts.encoder : 0.8);
         else _base64 = _SaveImageWebGLRenderer.view.toDataURL("image/png");
-        //这个官方方法不好用
-        // _base64=_SaveImageWebGLRenderer.extract.canvas(displayObject).toDataURL("image/jpeg");
         if (opts.debug) {
-            var w = window.open('about:blank', 'image from canvas');
-            w.document.write("<img src='" + _base64 + "' alt='from canvas'/>");
+            var _w = window.open('about:blank', 'image from canvas');
+            _w.document.write("<img src='" + _base64 + "' alt='from canvas'/>");
         }
         return _base64;
     };
 
     /**
      * 获取js 并插入到html内
-     * @param  {[type]} src      [description]
-     * @param  {[type]} complete [description]
-     * @return {[type]}          [description]
+     * @param  {[String]} src       [js文件url地址]
+     * @param  {[Funtion]} complete [加载完成事件]
      */
     DsPixi.GetScript = function (src, complete, opts) {
         var _script = document.createElement("script");
@@ -308,9 +311,9 @@
     };
     /**
      * 获取LoadJSAnimateAssets加载过的资源
-     * @param  {[type]} jsNS [加载空间名]
-     * @param  {[type]} name [加载对象名]
-     * @return {[type]}      [description]
+     * @param  {[String]} jsNS [加载空间名]
+     * @param  {[String]} name [加载对象名]
+     * @return {[Object]}      [加载命名空间对象]
      */
     DsPixi.GetJSAnimateAssets = function (jsNS, name, type) {
         type = type || 'texture';
@@ -332,13 +335,12 @@
     };
     /**
      * 加载flash导出的动画资源
-     * @param  {[type]} opts       [description]
+     * @param  {[Object]} opts       [参数]
      *  opts.basePath './assets/'
      *  opts.jsNS 'lib'
      *  opts.src 'xxxx.js' 或者使用opts.jsUrl做为参数
      *  opts.mainClass 'main'  不传会使用js的名字来作为类名
      *  opts.hash 避免缓存传入hash值
-     * @return {[type]} [description]
      */
     DsPixi.LoadJSAnimateAssets = function (opts) {
         opts = opts || {};
@@ -360,17 +362,17 @@
     };
     /**
      * 加载flash导出的动画资源
-     * @param  {[type]} assetsData [加载的资源库文件]
+     * @param  {[Object]} assetsData [加载的资源库文件]
      * var assetsData = require('assets/main.js');
      * 也或者是 导出js命名空间
      * 如 lib
-     * @param  {[type]} opts       [description]
+     * @param  {[Object]} opts       [加载参数]
      *  opts.basePath './assets/'
      *  opts.progress  加载进度回调 progress 0-1
      *  opts.complete  加载完成回调 loader, resources
      *  opts.loader  可以不新创建 loader对象使用 已有loader对象
      *  opts.list   加载其他资源对象
-     * @return {[type]}            [description]
+     * @return {[PIXI.loaders.Loader]}            [加载对象]
      */
     DsPixi.LoadAnimateAssets = function (assetsData, opts) {
         opts = opts || {};
@@ -426,13 +428,13 @@
     };
     /**
      * 加载资源
-     * @param  {[type]} opts
+     * @param  {[Object]} opts [加载参数]
      * opts.basePath  素材根目录设置 如：'./assets/'
      * opts.list  素材列表
      *   {id:'Dragon',src:''},
      * opts.progress  加载进度
      * opts.complete  加载完成
-     * @return {[type]}      [description]
+     * @return {[PIXI.loaders.Loader]}            [加载对象]
      */
     DsPixi.LoadAssets = function (opts) {
         opts = opts || {};
@@ -477,13 +479,13 @@
      * 需要进行加载 pixi dragonBones 支持库
      * https://github.com/DragonBones/DragonBonesJS/tree/master/Pixi
      * require('pixidragonBones');
-     * @param  {[type]} opts [description]
+     * @param  {[Object]} opts [加载参数]
      * opts.basePath  素材根目录设置 如：'./assets/'
      * opts.list  素材列表
      *   {id:'Dragon',path:''},
      * opts.progress  加载进度
      * opts.complete  加载完成
-     * @return {[type]}      [PIXI.loaders.Loader]
+     * @return {[PIXI.loaders.Loader]}            [加载对象]
      */
     DsPixi.LoadDragonBones = function (opts) {
         if (window['dragonBones'] !== undefined) DsPixi.DBFactory = dragonBones.PixiFactory.factory;
@@ -530,8 +532,8 @@
     };
     /**
      * 获取tDragonBones动画
-     * @param  {[type]} id [description]
-     * @return {[type]}      [description]
+     * @param  {[String]} id [动画对象名]
+     * @return {[dragonBones.Animation]}      [骨骼动画对象]
      * dragonBones.Animation
      * http://developer.egret.com/cn/apidoc/index/id/dragonBones.Animation
      */
@@ -539,10 +541,11 @@
         var _movie = DsPixi.DBFactory.buildArmatureDisplay(id);
         return _movie;
     };
+
     /**
      * Pixi模块
-     * @param  {[type]} opts [description]
-     * @return {[type]}      [description]
+     * @param  {[Object]} opts [构造参数]
+     * @constructor
      */
     DsPixi.PixiModel = function (opts) {
         var _Self = this;
@@ -630,8 +633,8 @@
     DsPixi.PixiModel.prototype = new PIXI.utils.EventEmitter();
     /**
      * 创建Pixi模块
-     * @param  {[type]} opts [description]
-     * @return {[type]}      [description]
+     * @param  {[Object]} opts [参数]
+     * @return {[DsPixi.PixiModel]}      [pixi模块对象]
      */
     DsPixi.Create = function (opts) {
         return new DsPixi.PixiModel(opts);
