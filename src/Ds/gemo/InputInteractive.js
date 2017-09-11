@@ -291,6 +291,7 @@
     selectDom=getHTMLElement(selectDom);
     var _index=selectDom.selectedIndex;
     var _option=selectDom.options[_index];
+    if(!_option) return undefined;
     var _data=_option.data;
     if(!value&&_data)return _data;
     if(_data&&_data&&_data[value]!==undefined)return _data[value];
