@@ -150,6 +150,7 @@
         displayObject.dragRect = null;
         if (opts.rect && (opts.rect instanceof PIXI.Rectangle)) displayObject.dragRect = opts.rect;
         if (opts.hitArea && (opts.hitArea instanceof PIXI.Rectangle)) displayObject.hitArea = opts.hitArea;
+
         displayObject.on('pointerdown', onDragStart);
 
         function onDragStart(e) {
@@ -555,7 +556,7 @@
         var preserveDrawingBuffer = opts.preserveDrawingBuffer !== undefined ? opts.preserveDrawingBuffer : false;//是否启用绘图缓冲区保存
         var resolution = opts.resolution !== undefined ? opts.resolution : 1;//renderer 时候是否使用device pixel 可以使用如 2
         var forceCanvas = opts.forceCanvas !== undefined ? opts.forceCanvas : false;//是否不使用webgl渲染
-        var backgroundColor = opts.backgroundColor !== undefined ? opts.backgroundColor : 0x103322;
+        var backgroundColor = opts.backgroundColor !== undefined ? opts.backgroundColor : 0x0;
         var clearBeforeRender = opts.clearBeforeRender !== undefined ? opts.clearBeforeRender : true;
         var legacy = opts.legacy !== undefined ? opts.legacy : true;//考虑到旧的/不太先进的设备兼容可以设置成true,只需要webgl可以是 false;
         var sharedLoader = opts.sharedLoader !== undefined ? opts.sharedLoader : false;

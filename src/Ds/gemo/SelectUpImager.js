@@ -130,17 +130,21 @@
                 }
 
                 //根据需要被添加到容器，判断需要转换这个上传图片创建对象类型
-                var _objType = 'div';
+                var _objType = '';
                 //根据容器类型创建需要的对象
                 var _obj;
                 if (window['createjs'] && addToContainer && (addToContainer instanceof createjs.Container)) {
                     _objType = 'createjs';
                 }
-                if (window['PIXI'] && addToContainer && (addToContainer instanceof PIXI.Container)) {
+                else if (window['PIXI'] && addToContainer && (addToContainer instanceof PIXI.Container)) {
                     _objType = 'pixi';
+                }else if(addToContainer&&getHTMLElement(addToContainer) instanceof HTMLElement){
+                    _objType = 'div';
                 }
-                if (_objType == 'div') {
 
+                console.log('_objTyp：',_objType);
+                if (_objType == 'div') {
+                    //TODO 准备之后进行实现
                 }
                 else if (_objType == 'createjs') {
                     //属于createjs类型进行创建对象
@@ -168,6 +172,11 @@
                     var _sprite = new PIXI.Sprite(PIXI.Texture.fromLoader(_img));
                     _box.addChild(_sprite);
                     _box.sprite = _sprite;
+
+                    var _baseTexture=_sprite.texture.baseTexture;
+                    _sprite.width=_baseTexture.width*_scale;
+                    _sprite.height=_baseTexture.height*_scale;
+
                     _sprite.scale.set(_scale);
                     if (_width !== null && _height !== null) {
                         _sprite.x = -_sprite.width / 2;
@@ -179,8 +188,8 @@
                         if (_clear) addToContainer.removeChildren();
                         addToContainer.addChild(_box);
                     }
+                    _obj = _box;
                 }
-
                 _self.ds({
                     type: 'update',
                     //上传后生成的images标签
@@ -199,6 +208,12 @@
             _img.src = _base64;
             _selectImager.destroy();
             createSelectImager();
+        }
+
+        function getHTMLElement(dom) {
+            if (dom instanceof HTMLElement) return dom;
+            else if (!(dom instanceof HTMLElement) && (dom[0] instanceof HTMLElement)) return dom[0];
+            else return null;
         }
 
 
