@@ -223,33 +223,38 @@
     };
     /**
      * 设置按钮交互
-     * @param  {[type]} displayObject [PIXI.DisplayObject对象]
-     * @param  {[type]} eventFun      [执行代码]
-     * @param  {[type]} opts       [Object]
+     * @param  {[PIXI.DisplayObject]} displayObject [PIXI.DisplayObject对象]
+     * @param  {[Function]} eventFun      [执行代码]
+     * @param  {[Object]} opts       [参数配置]
      * opts.context  事件函数里面的this指向
      * opts.hitArea 这个对象触发区域
-     * @return {[type]}               [description]
+     * opts.child 子对象是否允许交互
+     * opts.event 交互监听的事件
      */
     DsPixi.SetButton = function (displayObject, eventFun, opts) {
         opts = opts || {};
         displayObject.interactive = true;
         displayObject.cursor = 'pointer';
+        if(opts.child)displayObject.interactiveChildren=opts.child;
         var _event = opts.event || 'pointerdown';
         if (opts.hitArea && (opts.hitArea instanceof PIXI.Rectangle)) displayObject.hitArea = opts.hitArea;
-        if (eventFun && opts.context) displayObject.on(_event, eventFun, opts.context);
-        else if (eventFun) displayObject.on(_event, eventFun);
+        if(eventFun){
+            if (opts.context) displayObject.on(_event, eventFun, opts.context);
+            else displayObject.on(_event, eventFun);
+        }
+
     };
     var _SaveImageWebGLRenderer;
     /**
      * 截图保存
-     * @param  {[type]} displayObject [description]
-     * @param  {[type]} opts          [description]
+     * @param  {[PIXI.DisplayObject]} displayObject [description]
+     * @param  {[Object]} opts          [参数配置]
      * opts.width
      * opts.height
      * opts.type  png
      * opts.encoder 0.8
      * opts.background 0xffffff; jpg下目前还不能进行draw透明通道图片时候设置颜色值，这个后续会进行解决这个问题
-     * @return {[type]}               [description]
+     * @return {[String]}               [Base64字符串]
      */
     DsPixi.GetSaveImageBase64 = function (displayObject, opts) {
         opts = opts || {};
@@ -282,7 +287,7 @@
         else _base64 = _SaveImageWebGLRenderer.view.toDataURL("image/png");
         if (opts.debug) {
             var _w = window.open('about:blank', 'image from canvas');
-            _w.document.write("<img src='" + _base64 + "' alt='from canvas'/>");
+            if(_w)_w.document.write("<img src='" + _base64 + "' alt='from canvas'/>");
         }
         return _base64;
     };
