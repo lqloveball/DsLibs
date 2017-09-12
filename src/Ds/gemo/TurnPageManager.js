@@ -1,3 +1,38 @@
+/**
+ * @class Ds.gemo.TurnPageManager
+ * @classdesc 翻页管理器
+ * @extends
+ * @example:
+ *
+ *  //构建翻页组件
+     var _Pager = new Ds.gemo.TurnPageManager(_Items, 5);
+     _Pager.on('update', PageUpdate);
+     PageUpdate();
+     function PageUpdate(e) {
+            var _direction = true;
+            if (e) _direction = e.direction;
+            var _nowData = _Pager.nowData;
+            var _oldData = _Pager.oldData;
+            if (_oldData) {
+                for (var i = 0; i < _oldData.length; i++) {
+                    var _item = _oldData[i];
+                    if (_item.parent) _item.parent.removeChild(_item);
+                }
+            }
+            if (_nowData) {
+                for (var i = 0; i < _nowData.length; i++) {
+                    var _item = _nowData[i];
+                    _Box.addChild(_item);
+                    _item.x = _direction ? 97 * i + 30 : 97 * i - 30;
+                    _item.alpha = 0;
+                    JT.to(_item, 0.5, {delay: 0.1 * i, x: 97 * i, alpha: 1});
+                }
+            }
+        };
+ * @author: maksim email:maksim.lin@foxmail.com
+ *
+ **/
+
 (function (factory) {
     var root = (typeof self == 'object' && self.self == self && self) ||
         (typeof global == 'object' && global.global == global && global);
@@ -19,14 +54,14 @@
 
     /**
      *
-     * Ds.gemo.TurnPageManager
+     * 翻页管理器
      * @param data 翻页数据
      * @param show 每一页显示个数
      * @param opts 构建参数
      * opts.revolve   是否翻页循环 默认循环
      * @constructor
      */
-    function TurnPageManager(data,show, opts) {
+    function TurnPageManager(data, show, opts) {
         opts = opts || {};
 
         var _self = this;
@@ -37,7 +72,7 @@
 
 
         //每一页显示的个数
-        var _showNum = show||1;
+        var _showNum = show || 1;
         Object.defineProperty(this, "showNum", {
             get: function () {
                 return _showNum;
@@ -108,7 +143,7 @@
                 _nowData = null;
                 _index = -1;
 
-                _self.gotoPage(0,true);
+                _self.gotoPage(0, true);
 
 
                 _self.ds({
@@ -127,7 +162,7 @@
                 if (_revolve) _num = _length - 1;
                 else _num = 0;
             }
-            this.gotoPage(_num,false);
+            this.gotoPage(_num, false);
         };
         /**
          * 下一页
@@ -138,49 +173,49 @@
                 if (_revolve) _num = 0;
                 else _num = _length - 1;
             }
-            this.gotoPage(_num,true);
+            this.gotoPage(_num, true);
         };
         /**
          * 跳转页面
          * @param value    跳转页面
          * @param direction  方向
          */
-        this.gotoPage = function (value,direction) {
+        this.gotoPage = function (value, direction) {
             if (value < 0) value = 0;
             if (value >= _length) value = _length - 1;
             if (_index === value) return;
-            _oldIndex=_index;
+            _oldIndex = _index;
             _index = value;
             _oldData = _nowData;
             if (_data.length < _showNum) {
-                _nowData =_data.concat();
-            }else{
-                var _arr=[];
+                _nowData = _data.concat();
+            } else {
+                var _arr = [];
                 var _lt;
-                if (_showNum * (_index + 1)<=_data.length)_lt= _showNum * (_index + 1)
-                else _lt=_data.length;
-                for (var i= _showNum * _index; i <_lt ; i++ ) {
+                if (_showNum * (_index + 1) <= _data.length) _lt = _showNum * (_index + 1)
+                else _lt = _data.length;
+                for (var i = _showNum * _index; i < _lt; i++) {
                     _arr.push(data[i]);
                 }
-                _nowData=_arr;
+                _nowData = _arr;
             }
 
             var _direction;
-            if(direction!==undefined){
-                _direction=direction;
-            }else{
-                if(_index>=_oldIndex)_direction=true;
-                else _direction=false;
+            if (direction !== undefined) {
+                _direction = direction;
+            } else {
+                if (_index >= _oldIndex) _direction = true;
+                else _direction = false;
             }
 
             _self.ds({
-                type:'update',
-                nows:_nowData,
-                olds:_oldData,
-                data:_data,
-                direction:_direction,
+                type: 'update',
+                nows: _nowData,
+                olds: _oldData,
+                data: _data,
+                direction: _direction,
             })
-            console.log('_direction:',_direction);
+            console.log('_direction:', _direction);
         };
 
         //设置翻页数据
