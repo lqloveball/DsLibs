@@ -42,7 +42,31 @@
         }
         return false;
     };
+    /**
+     * 设置按钮交互
+     * @param  {[PIXI.DisplayObject]} displayObject [PIXI.DisplayObject对象]
+     * @param  {[Function]} eventFun      [执行代码]
+     * @param  {[Object]} opts       [参数配置]
+     * opts.context  事件函数里面的this指向
+     * opts.hitArea 这个对象触发区域
+     * opts.child 子对象是否允许交互
+     * opts.event 交互监听的事件
+     * @alias DsPixi.setButton
+     */
+    DsPixi.SetButton = function (displayObject, eventFun, opts) {
+        opts = opts || {};
+        displayObject.interactive = true;
+        displayObject.cursor = 'pointer';
+        if(opts.child)displayObject.interactiveChildren=opts.child;
+        var _event = opts.event || 'pointerdown';
+        if (opts.hitArea && (opts.hitArea instanceof PIXI.Rectangle)) displayObject.hitArea = opts.hitArea;
+        if(eventFun){
+            if (opts.context) displayObject.on(_event, eventFun, opts.context);
+            else displayObject.on(_event, eventFun);
+        }
 
+    };
+    DsPixi.setButton=DsPixi.SetButton;
     /**
      * 为一个显示对象添加 dom 触发区域
      * @param {[Object]} opts [参数]
@@ -50,7 +74,7 @@
      * opts.height  触发区域大小 不设置会取显示对象高
      * opts.bg      dom元素颜色 默认'rgba(255, 255, 255, 0)'
      * opts.event   触发事件类型 默认'click'
-     * @constructor
+     * @alias DsPixi.addHitDom
      */
     DsPixi.AddHitDom = function (displayObject, eventFun, opts) {
         opts = opts || {};
@@ -76,11 +100,12 @@
         }
 
     };
+    DsPixi.addHitDom=DsPixi.AddHitDom;
     /**
      * 创建一个关联pixi容器的dom对象
-     * @param       {[type]} dom  [dom对象]
-     * @param       {[type]} parent  [dom对象]
-     * @param       {[type]} opts [参数]
+     * @param       {[HTMLElement]} dom  [dom对象]
+     * @param       {[PIXI.Container]} parent  [dom对象]
+     * @param       {[Object]} opts [参数]
      * opts.domBox   dom元素添加到的父级节点
      * opts.domRoot  dom元素父级dom添加到节点位置
      * opts.parent   父级pixi元素
@@ -94,6 +119,7 @@
      * DsPixi.DOMAuto=true;
      * 建议自己根据逻辑使用DsPixi.UpDOMListState();
      * @return {[DsPixi.DOMElement]}
+     * @alias DsPixi.addDOM
      */
     DsPixi.AddDOM = function (dom, parent, opts) {
         opts = opts || {};
@@ -126,9 +152,10 @@
 
         return _domElement;
     };
+    DsPixi.addDOM=DsPixi.AddDOM;
     /**
      * 设置一个对象可以被拖动
-     * @param  {[type]} displayObject [一个显示对象]
+     * @param  {[PIXI.DisplayObject]} displayObject [一个显示对象]
      * obj.draging  //拖动状态  0不拖动  1准备拖动  2开始拖动
      * obj.dragLock  //是否锁定不拖动
      * obj.dragData  //拖动是的 e.data 不拖动会被置null
@@ -139,10 +166,10 @@
      * dragStart  开始拖动
      * draging   拖动中
      * dragEnd   拖动完成
-     * @param  {[type]} opts          [description]
+     * @param  {[Object]} opts          [参数]
      * opts.lock 是否默认锁定不能拖动
      * opts.rect 相对父亲级坐标可以拖动的范围
-     * @return {[type]}               [description]
+     * @alias DsPixi.setDragObject
      */
     DsPixi.SetDragObject = function (displayObject, opts) {
         opts = opts || {};
@@ -221,30 +248,9 @@
             }
         }
     };
-    /**
-     * 设置按钮交互
-     * @param  {[PIXI.DisplayObject]} displayObject [PIXI.DisplayObject对象]
-     * @param  {[Function]} eventFun      [执行代码]
-     * @param  {[Object]} opts       [参数配置]
-     * opts.context  事件函数里面的this指向
-     * opts.hitArea 这个对象触发区域
-     * opts.child 子对象是否允许交互
-     * opts.event 交互监听的事件
-     */
-    DsPixi.SetButton = function (displayObject, eventFun, opts) {
-        opts = opts || {};
-        displayObject.interactive = true;
-        displayObject.cursor = 'pointer';
-        if(opts.child)displayObject.interactiveChildren=opts.child;
-        var _event = opts.event || 'pointerdown';
-        if (opts.hitArea && (opts.hitArea instanceof PIXI.Rectangle)) displayObject.hitArea = opts.hitArea;
-        if(eventFun){
-            if (opts.context) displayObject.on(_event, eventFun, opts.context);
-            else displayObject.on(_event, eventFun);
-        }
+    DsPixi.setDragObject=DsPixi.SetDragObject;
 
-    };
-    var _SaveImageWebGLRenderer;
+    var _SaveImageRenderer;
     /**
      * 截图保存
      * @param  {[PIXI.DisplayObject]} displayObject [description]
@@ -255,12 +261,13 @@
      * opts.encoder 0.8
      * opts.background 0xffffff; jpg下目前还不能进行draw透明通道图片时候设置颜色值，这个后续会进行解决这个问题
      * @return {[String]}               [Base64字符串]
+     * @alias DsPixi.getBase64
      */
     DsPixi.GetSaveImageBase64 = function (displayObject, opts) {
         opts = opts || {};
         var _base64;
-        if (!_SaveImageWebGLRenderer) {
-            _SaveImageWebGLRenderer = PIXI.autoDetectRenderer({
+        if (!_SaveImageRenderer) {
+            _SaveImageRenderer = PIXI.autoDetectRenderer({
                 width: opts.width || 640,
                 height: opts.height || 1040,
                 transparent: true,
@@ -269,33 +276,79 @@
             });
         }
 
-        if (opts.width && opts.height) _SaveImageWebGLRenderer.resize(opts.width, opts.height);
+        if (opts.width && opts.height) _SaveImageRenderer.resize(opts.width, opts.height);
 
         //TODO 目前还未解决背景问题
         // if(opts.background){
-        //   _SaveImageWebGLRenderer.backgroundColor=opts.background;_SaveImageWebGLRenderer.clear(opts.background);
+        //   _SaveImageRenderer.backgroundColor=opts.background;_SaveImageRenderer.clear(opts.background);
         // }
-        // else _SaveImageWebGLRenderer.clear();
+        // else _SaveImageRenderer.clear();
 
-        _SaveImageWebGLRenderer.render(displayObject, null, true, false);
-
-        //这个官方方法不好用
-        //_base64=_SaveImageWebGLRenderer.extract.canvas(displayObject).toDataURL("image/jpeg");、
-
+        //记录原来在父级内transform信息
+        var _x=displayObject.x;
+        var _y=displayObject.y;
+        var _scalex=displayObject.scale.x;
+        var _scaley=displayObject.scale.x;
+        var _rotation=displayObject.rotation;
+        var _skewx=displayObject.skew.x;
+        var _skewy=displayObject.skew.x;
+        var _pivotx=displayObject.pivot.x;
+        var _pivoty=displayObject.pivot.x;
+        //transform信息 置换不缩放
+        displayObject.setTransform(0,0,1/displayObject.scale.x,1/displayObject.scale.y,0,0,0,0,0);
+        _SaveImageRenderer.render(displayObject, null, true);
+        //设置回原来在父级内transform信息
+        displayObject.setTransform(
+            _x,_y,
+            _scalex,_scaley,
+            _rotation,
+            _skewx,_skewy,
+            _pivotx,_pivoty);
         //还是直接通过rander对应的 canvas对象来进行截图保存base64靠谱
-        if (opts.type == 'jpg') _base64 = _SaveImageWebGLRenderer.view.toDataURL("image/jpeg", opts.encoder !== undefined ? opts.encoder : 0.8);
-        else _base64 = _SaveImageWebGLRenderer.view.toDataURL("image/png");
+        if (opts.type == 'jpg') _base64 = _SaveImageRenderer.view.toDataURL("image/jpeg", opts.encoder !== undefined ? opts.encoder : 0.8);
+        else _base64 = _SaveImageRenderer.view.toDataURL("image/png");
+
+
+
+
         if (opts.debug) {
             var _w = window.open('about:blank', 'image from canvas');
             if(_w)_w.document.write("<img src='" + _base64 + "' alt='from canvas'/>");
         }
         return _base64;
     };
+    DsPixi.getBase64=DsPixi.GetSaveImageBase64;
+    /**
+     * 缓存一个显示对象成Sprite
+     * @param displayObject
+     * @param opts
+     * @return {[PIXI.Sprite]}   PIXI.Sprite显示对象
+     * @alias DsPixi.getCacheSprite
+     */
+    DsPixi.GetCacheSprite=function (displayObject,opts) {
+        opts=opts||{};
+        var _base64=DsPixi.GetSaveImageBase64(displayObject,opts);
+        var _img = new Image();
+        var _sprite = new PIXI.Sprite(PIXI.Texture.fromLoader(_img));
+        var _baseTexture = _sprite.texture.baseTexture;
+        if (_baseTexture.isLoading){
+            _baseTexture.on('loaded', function () {
+                // console.log('_baseTexture loaded:', _baseTexture.width);
+                _sprite.width=_baseTexture.width;
+                _sprite.height=_baseTexture.height;
+                _sprite.emit('loaded');
+            });
+        }
+        _img.src = _base64;
+        return _sprite;
+    };
+    DsPixi.getCacheSprite=DsPixi.GetCacheSprite;
 
     /**
      * 获取js 并插入到html内
      * @param  {[String]} src       [js文件url地址]
      * @param  {[Funtion]} complete [加载完成事件]
+     * @alias DsPixi.getScript
      */
     DsPixi.GetScript = function (src, complete, opts) {
         var _script = document.createElement("script");
@@ -317,30 +370,10 @@
         if (opts.hash) src = src + '?hs=' + opts.hash;
         _script.src = src;
     };
-    /**
-     * 获取LoadJSAnimateAssets加载过的资源
-     * @param  {[String]} jsNS [加载空间名]
-     * @param  {[String]} name [加载对象名]
-     * @return {[Object]}      [加载命名空间对象]
-     */
-    DsPixi.GetJSAnimateAssets = function (jsNS, name, type) {
-        type = type || 'texture';
-        var _loader = window[jsNS + '_loader'];
-        if (!_loader || !(_loader instanceof PIXI.loaders.Loader)) {
-            console.warn('LoadJSAnimateAssets 创建过id为：' + _jsNS + ' 的loader');
-            return;
-        }
-        if (!name) {
-            console.warn('GetJSAnimateAssets 需要传入资源id ');
-            return;
-        }
-        var _resources = _loader.resources;
-        var _temp = _resources[name];
-        if (type === 'data') return _temp.data;
-        else if (type === 'texture') return _temp.texture;
-        else return _temp;
+    DsPixi.getScript=DsPixi.GetScript;
 
-    };
+
+
     /**
      * 加载flash导出的动画资源
      * @param  {[Object]} opts       [参数]
@@ -349,6 +382,7 @@
      *  opts.src 'xxxx.js' 或者使用opts.jsUrl做为参数
      *  opts.mainClass 'main'  不传会使用js的名字来作为类名
      *  opts.hash 避免缓存传入hash值
+     *  @alias DsPixi.loadJSAnimateAssets
      */
     DsPixi.LoadJSAnimateAssets = function (opts) {
         opts = opts || {};
@@ -368,6 +402,35 @@
             window[_jsNS + '_loader'] = DsPixi.LoadAnimateAssets(lib, opts);
         }, opts);
     };
+    DsPixi.loadJSAnimateAssets=DsPixi.LoadJSAnimateAssets;
+
+
+    /**
+     * 根据LoadJSAnimateAssets加载资源时候设置命名空间查找loader对象下的相应id的资源。
+     * @param  {[String]} jsNS [加载空间名]
+     * @param  {[String]} name [加载资源名]
+     * @param  {[String]} type [获取加载资源类型]
+     * @return {[Object]}      [资源对象]
+     * @alias DsPixi.getJSAnimateAssets
+     */
+    DsPixi.GetJSAnimateAssets = function (jsNS, name, type) {
+        type = type || 'texture';
+        var _loader = window[jsNS + '_loader'];
+        if (!_loader || !(_loader instanceof PIXI.loaders.Loader)) {
+            console.warn('LoadJSAnimateAssets 创建过id为：' + _jsNS + ' 的loader');
+            return;
+        }
+        if (!name) {
+            console.warn('GetJSAnimateAssets 需要传入资源id ');
+            return;
+        }
+        var _resources = _loader.resources;
+        var _temp = _resources[name];
+        if (type === 'data') return _temp.data;
+        else if (type === 'texture') return _temp.texture;
+        else return _temp;
+    };
+    DsPixi.getJSAnimateAssets=DsPixi.GetJSAnimateAssets;
     /**
      * 加载flash导出的动画资源
      * @param  {[Object]} assetsData [加载的资源库文件]
@@ -381,6 +444,7 @@
      *  opts.loader  可以不新创建 loader对象使用 已有loader对象
      *  opts.list   加载其他资源对象
      * @return {[PIXI.loaders.Loader]}            [加载对象]
+     * @alias DsPixi.loadAnimateAssets
      */
     DsPixi.LoadAnimateAssets = function (assetsData, opts) {
         opts = opts || {};
@@ -434,6 +498,9 @@
         _loader.load();
         return _loader;
     };
+    DsPixi.loadAnimateAssets=DsPixi.LoadAnimateAssets;
+
+
     /**
      * 加载资源
      * @param  {[Object]} opts [加载参数]
@@ -443,6 +510,7 @@
      * opts.progress  加载进度
      * opts.complete  加载完成
      * @return {[PIXI.loaders.Loader]}            [加载对象]
+     * @alias DsPixi.loadAssets
      */
     DsPixi.LoadAssets = function (opts) {
         opts = opts || {};
@@ -480,8 +548,11 @@
         _loader.load();
         return _loader;
     };
+    DsPixi.loadAssets=DsPixi.LoadAssets;
+
     //DragonBones 工厂方法
-    if (window['dragonBones'] !== undefined) DsPixi.DBFactory = dragonBones.PixiFactory.factory;
+    //if (window['dragonBones'] !== undefined) DsPixi.DBFactory = dragonBones.PixiFactory.factory;
+
     /**
      * 加载DragonBones素材给到pixi使用
      * 需要进行加载 pixi dragonBones 支持库
@@ -494,6 +565,7 @@
      * opts.progress  加载进度
      * opts.complete  加载完成
      * @return {[PIXI.loaders.Loader]}            [加载对象]
+     * @alias DsPixi.loadDragonBones
      */
     DsPixi.LoadDragonBones = function (opts) {
         if (window['dragonBones'] !== undefined) DsPixi.DBFactory = dragonBones.PixiFactory.factory;
@@ -538,17 +610,21 @@
         _loader.load();
         return _loader;
     };
+    DsPixi.loadDragonBones=DsPixi.LoadDragonBones;
+
     /**
      * 获取tDragonBones动画
      * @param  {[String]} id [动画对象名]
      * @return {[dragonBones.Animation]}      [骨骼动画对象]
      * dragonBones.Animation
      * http://developer.egret.com/cn/apidoc/index/id/dragonBones.Animation
+     * @alias DsPixi.getDragonBonesMovie
      */
     DsPixi.GetDragonBonesMovie = function (id) {
         var _movie = DsPixi.DBFactory.buildArmatureDisplay(id);
         return _movie;
     };
+    DsPixi.getDragonBonesMovie=DsPixi.GetDragonBonesMovie;
 
     /**
      * Pixi模块
@@ -643,10 +719,12 @@
      * 创建Pixi模块
      * @param  {[Object]} opts [参数]
      * @return {[DsPixi.PixiModel]}      [pixi模块对象]
+     * @alias DsPixi.create
      */
     DsPixi.Create = function (opts) {
         return new DsPixi.PixiModel(opts);
     };
+    DsPixi.create=DsPixi.Create;
 
     return root.Ds.DsPixi;
 }));

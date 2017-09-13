@@ -53,6 +53,12 @@
                 return _container;
             },
         });
+        //拖拽缩放使用的容器别名
+        Object.defineProperty(this, "box", {
+            get: function () {
+                return _container;
+            },
+        });
 
         var _element;
         //拖拽 缩放的元素
@@ -177,7 +183,7 @@
 
         //对象旋转事件
         function rotate(e) {
-
+            if (_look) return;
             if (!_rotation) return;
 
             _objRotation = _objRotationStart + e.rotation;
@@ -194,25 +200,26 @@
 
         //开始缩放手势
         function pinchstart(e) {
+            if (_look) return;
             if (_rotation) _objRotationStart = _objRotation;
             if (_zoom) _scaleStart = _scale;
         }
 
         //缩放中
         function pinch(e) {
+            if (_look) return;
             if (!_zoom) return;
             var _temp = e.scale - 1;
             _temp = _scaleStart + _temp;
             if (_temp >= _scaleMax) _temp = _scaleMax;
             if (_temp <= _scaleMin) _temp = _scaleMin;
             _scale = _temp;
-
             if (_element) _element.scale.set(_scale);
-
         }
 
         //缩放完成
         function pinchend(e) {
+            if (_look) return;
             if (!_zoom) return;
             _scaleStart = _scale;
         }
@@ -224,27 +231,47 @@
          */
         this.add = function (value, opts) {
             var _temp = getElement(value, opts);
-
             if (!_temp) return;
-
-            if (_element) {
-                removeDragEvent(_element);
-            }
+            if (_element)removeDragEvent(_element);
 
             _element = _temp;
             _scale = 1;
             _objRotation = 0;
 
             if (_clear) _container.removeChildren();
-            _container.addChild(_element);
 
             addDragEvent(_element);
+
+            _container.addChild(_element);
+
             _self.ds({
                 type: 'add',
                 element: _element,
-            })
+            });
+            return _element;
+        };
+        /**
+         * 清空拖拽对象
+         */
+        this.clear=function () {
+            var _temp;
+            if(_element){
+                _temp=_element;
+                removeDragEvent(_element);
+            }
+            _element=undefined;
+            _self.ds({
+                type: 'clear',
+                element: _temp,
+            });
         };
 
+        /**
+         * 获取转换后的元素
+         * @param value
+         * @param opts
+         * @returns {*}
+         */
         function getElement(value, opts) {
             var _obj, _box, _baseTexture;
             if (typeof(value) === 'string') {
@@ -269,10 +296,10 @@
             _box = new PIXI.Container();
             //属于输入图片路径与图片纹理
             if (_baseTexture) {
-                console.log('_baseTexture.isLoading:', _baseTexture.isLoading);
+                // console.log('_baseTexture.isLoading:', _baseTexture.isLoading);
                 if (_baseTexture.isLoading) {
                     _baseTexture.on('loaded', function () {
-                        console.log('_baseTexture loaded:', _baseTexture.isLoading);
+                        // console.log('_baseTexture loaded:', _baseTexture.isLoading);
                         buildSpriteBox(_obj, _box);
                         _self.ds('loaded');
                     });
@@ -448,16 +475,17 @@
          * 保存出一个Sprite
          */
         this.saveToSprite = function () {
-            var _base64 = _self.saveToBase64();
+            var _base64=_self.saveToBase64();
             var _img = new Image();
             var _sprite = new PIXI.Sprite(PIXI.Texture.fromLoader(_img));
-            _img.onload = loadEnd;
-
-            function loadEnd() {
-                _sprite.width = _img.width;
-                _sprite.height = _img.height;
+            var _baseTexture = _sprite.texture.baseTexture;
+            if (_baseTexture.isLoading){
+                _baseTexture.on('loaded', function () {
+                    _sprite.width=_baseTexture.width;
+                    _sprite.height=_baseTexture.height;
+                    _sprite.emit('loaded');
+                });
             }
-
             _img.src = _base64;
             return _sprite;
         };
