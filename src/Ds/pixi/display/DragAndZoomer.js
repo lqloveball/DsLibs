@@ -259,6 +259,7 @@
                 _temp=_element;
                 removeDragEvent(_element);
             }
+            if(_container&&_container.contains(_element))_container.removeChild(_element);
             _element=undefined;
             _self.ds({
                 type: 'clear',
