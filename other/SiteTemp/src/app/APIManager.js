@@ -20,7 +20,7 @@ function APIManager(){
   if (_IsLocal)_SaveWorkInfoURL='testApi/SaveWorkInfo.txt';
   var _SaveWorkInfoing=false;
   Object.defineProperty(this, "SaveWorkInfoing", {get: function() {return _SaveWorkInfoing;},});
-  //阅读科普后提交
+
   this.SaveWorkInfo=function(postData,callBack, errorBack) {
     if(_SaveWorkInfoing)return;
     _SaveWorkInfoing=true;
