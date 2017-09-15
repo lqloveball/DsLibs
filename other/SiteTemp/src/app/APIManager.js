@@ -11,6 +11,30 @@ function APIManager(){
   var _IsLocal=false;
   if (location.href.indexOf(':800') != -1)_IsLocal=true;
   //接口对接==有接口相关从这里开始编写===============================
+  //记录网站实际地址，给到获取绝对图片路径时候使用
+  var _WebUrl=location.origin;//'http://nongfurunningchina.ne.cagoe.com';
+  Object.defineProperty(this, "WebUrl", {get: function() {return _WebUrl;},});
+  /*
+  //API接口调用
+  var _SaveWorkInfoURL=location.origin+'/ajax/Ajax.aspx?method=SaveWorkInfo';
+  if (_IsLocal)_SaveWorkInfoURL='testApi/SaveWorkInfo.txt';
+  var _SaveWorkInfoing=false;
+  Object.defineProperty(this, "SaveWorkInfoing", {get: function() {return _SaveWorkInfoing;},});
+  //阅读科普后提交
+  this.SaveWorkInfo=function(postData,callBack, errorBack) {
+    if(_SaveWorkInfoing)return;
+    _SaveWorkInfoing=true;
+    postData=postData||{};
+    Ds.net.QuickAjax.Post(_SaveWorkInfoURL,postData,function(data){
+      if(callBack)callBack(data);
+      _SaveWorkInfoing=false;
+    },function(error,data){
+      if(errorBack)errorBack(error,data);
+      _SaveWorkInfoing=false;
+    });
+  };
+  */
+
 
   //==================通用的分享接口使用代码==============================
   //设置默认分享 标题  内容  链接
