@@ -28,10 +28,11 @@
     var DsPixi = root.Ds.DsPixi;
     root.Ds.DsPixi.Version = root.Ds.DsPixi.Version || 'v0.5';
 
+
     /**
      * 让容器支持判断是否包含一个子对象
-     * @param  {[type]} child [description]
-     * @return {[type]}       [description]
+     * @param  {[PIXI. DisplayObject]} child [显示对象]
+     * @return {[Boolean]}       [是否被包含]
      */
     PIXI.Container.prototype.contains = function (child) {
         while (child) {
@@ -42,6 +43,7 @@
         }
         return false;
     };
+
     /**
      * 设置按钮交互
      * @param  {[PIXI.DisplayObject]} displayObject [PIXI.DisplayObject对象]
@@ -57,16 +59,16 @@
         opts = opts || {};
         displayObject.interactive = true;
         displayObject.cursor = 'pointer';
-        if(opts.child)displayObject.interactiveChildren=opts.child;
+        if (opts.child) displayObject.interactiveChildren = opts.child;
         var _event = opts.event || 'pointerdown';
         if (opts.hitArea && (opts.hitArea instanceof PIXI.Rectangle)) displayObject.hitArea = opts.hitArea;
-        if(eventFun){
+        if (eventFun) {
             if (opts.context) displayObject.on(_event, eventFun, opts.context);
             else displayObject.on(_event, eventFun);
         }
 
     };
-    DsPixi.setButton=DsPixi.SetButton;
+    DsPixi.setButton = DsPixi.SetButton;
     /**
      * 为一个显示对象添加 dom 触发区域
      * @param {[Object]} opts [参数]
@@ -100,7 +102,7 @@
         }
 
     };
-    DsPixi.addHitDom=DsPixi.AddHitDom;
+    DsPixi.addHitDom = DsPixi.AddHitDom;
     /**
      * 创建一个关联pixi容器的dom对象
      * @param       {[HTMLElement]} dom  [dom对象]
@@ -152,7 +154,7 @@
 
         return _domElement;
     };
-    DsPixi.addDOM=DsPixi.AddDOM;
+    DsPixi.addDOM = DsPixi.AddDOM;
     /**
      * 设置一个对象可以被拖动
      * @param  {[PIXI.DisplayObject]} displayObject [一个显示对象]
@@ -248,7 +250,7 @@
             }
         }
     };
-    DsPixi.setDragObject=DsPixi.SetDragObject;
+    DsPixi.setDragObject = DsPixi.SetDragObject;
 
     var _SaveImageRenderer;
     /**
@@ -285,39 +287,37 @@
         // else _SaveImageRenderer.clear();
 
         //记录原来在父级内transform信息
-        var _x=displayObject.x;
-        var _y=displayObject.y;
-        var _scalex=displayObject.scale.x;
-        var _scaley=displayObject.scale.x;
-        var _rotation=displayObject.rotation;
-        var _skewx=displayObject.skew.x;
-        var _skewy=displayObject.skew.x;
-        var _pivotx=displayObject.pivot.x;
-        var _pivoty=displayObject.pivot.x;
+        var _x = displayObject.x;
+        var _y = displayObject.y;
+        var _scalex = displayObject.scale.x;
+        var _scaley = displayObject.scale.x;
+        var _rotation = displayObject.rotation;
+        var _skewx = displayObject.skew.x;
+        var _skewy = displayObject.skew.x;
+        var _pivotx = displayObject.pivot.x;
+        var _pivoty = displayObject.pivot.x;
         //transform信息 置换不缩放
-        displayObject.setTransform(0,0,1/displayObject.scale.x,1/displayObject.scale.y,0,0,0,0,0);
+        displayObject.setTransform(0, 0, 1 / displayObject.scale.x, 1 / displayObject.scale.y, 0, 0, 0, 0, 0);
         _SaveImageRenderer.render(displayObject, null, true);
         //设置回原来在父级内transform信息
         displayObject.setTransform(
-            _x,_y,
-            _scalex,_scaley,
+            _x, _y,
+            _scalex, _scaley,
             _rotation,
-            _skewx,_skewy,
-            _pivotx,_pivoty);
+            _skewx, _skewy,
+            _pivotx, _pivoty);
         //还是直接通过rander对应的 canvas对象来进行截图保存base64靠谱
-        if (opts.type == 'jpg') _base64 = _SaveImageRenderer.view.toDataURL("image/jpeg", opts.encoder !== undefined ? opts.encoder : 0.8);
+        if (opts.type === 'jpg') _base64 = _SaveImageRenderer.view.toDataURL("image/jpeg", opts.encoder !== undefined ? opts.encoder : 0.8);
         else _base64 = _SaveImageRenderer.view.toDataURL("image/png");
-
-
 
 
         if (opts.debug) {
             var _w = window.open('about:blank', 'image from canvas');
-            if(_w)_w.document.write("<img src='" + _base64 + "' alt='from canvas'/>");
+            if (_w) _w.document.write("<img src='" + _base64 + "' alt='from canvas'/>");
         }
         return _base64;
     };
-    DsPixi.getBase64=DsPixi.GetSaveImageBase64;
+    DsPixi.getBase64 = DsPixi.GetSaveImageBase64;
     /**
      * 缓存一个显示对象成Sprite
      * @param displayObject
@@ -325,24 +325,24 @@
      * @return {[PIXI.Sprite]}   PIXI.Sprite显示对象
      * @alias DsPixi.getCacheSprite
      */
-    DsPixi.GetCacheSprite=function (displayObject,opts) {
-        opts=opts||{};
-        var _base64=DsPixi.GetSaveImageBase64(displayObject,opts);
+    DsPixi.GetCacheSprite = function (displayObject, opts) {
+        opts = opts || {};
+        var _base64 = DsPixi.GetSaveImageBase64(displayObject, opts);
         var _img = new Image();
         var _sprite = new PIXI.Sprite(PIXI.Texture.fromLoader(_img));
         var _baseTexture = _sprite.texture.baseTexture;
-        if (_baseTexture.isLoading){
+        if (_baseTexture.isLoading) {
             _baseTexture.on('loaded', function () {
                 // console.log('_baseTexture loaded:', _baseTexture.width);
-                _sprite.width=_baseTexture.width;
-                _sprite.height=_baseTexture.height;
+                _sprite.width = _baseTexture.width;
+                _sprite.height = _baseTexture.height;
                 _sprite.emit('loaded');
             });
         }
         _img.src = _base64;
         return _sprite;
     };
-    DsPixi.getCacheSprite=DsPixi.GetCacheSprite;
+    DsPixi.getCacheSprite = DsPixi.GetCacheSprite;
 
     /**
      * 获取js 并插入到html内
@@ -370,8 +370,7 @@
         if (opts.hash) src = src + '?hs=' + opts.hash;
         _script.src = src;
     };
-    DsPixi.getScript=DsPixi.GetScript;
-
+    DsPixi.getScript = DsPixi.GetScript;
 
 
     /**
@@ -402,7 +401,7 @@
             window[_jsNS + '_loader'] = DsPixi.LoadAnimateAssets(lib, opts);
         }, opts);
     };
-    DsPixi.loadJSAnimateAssets=DsPixi.LoadJSAnimateAssets;
+    DsPixi.loadJSAnimateAssets = DsPixi.LoadJSAnimateAssets;
 
 
     /**
@@ -430,7 +429,7 @@
         else if (type === 'texture') return _temp.texture;
         else return _temp;
     };
-    DsPixi.getJSAnimateAssets=DsPixi.GetJSAnimateAssets;
+    DsPixi.getJSAnimateAssets = DsPixi.GetJSAnimateAssets;
     /**
      * 加载flash导出的动画资源
      * @param  {[Object]} assetsData [加载的资源库文件]
@@ -498,7 +497,7 @@
         _loader.load();
         return _loader;
     };
-    DsPixi.loadAnimateAssets=DsPixi.LoadAnimateAssets;
+    DsPixi.loadAnimateAssets = DsPixi.LoadAnimateAssets;
 
 
     /**
@@ -548,7 +547,7 @@
         _loader.load();
         return _loader;
     };
-    DsPixi.loadAssets=DsPixi.LoadAssets;
+    DsPixi.loadAssets = DsPixi.LoadAssets;
 
     //DragonBones 工厂方法
     //if (window['dragonBones'] !== undefined) DsPixi.DBFactory = dragonBones.PixiFactory.factory;
@@ -610,7 +609,7 @@
         _loader.load();
         return _loader;
     };
-    DsPixi.loadDragonBones=DsPixi.LoadDragonBones;
+    DsPixi.loadDragonBones = DsPixi.LoadDragonBones;
 
     /**
      * 获取tDragonBones动画
@@ -624,8 +623,50 @@
         var _movie = DsPixi.DBFactory.buildArmatureDisplay(id);
         return _movie;
     };
-    DsPixi.getDragonBonesMovie=DsPixi.GetDragonBonesMovie;
+    DsPixi.getDragonBonesMovie = DsPixi.GetDragonBonesMovie;
 
+
+    /**
+     * 设置颜色值叠加
+     * @param displayObject
+     * @param tint
+     */
+    DsPixi.SetTint = function (displayObject, tint) {
+        if (displayObject.setTint) displayObject.setTint(tint);
+        else {
+            var r = tint >> 16 & 0xFF;
+            var g = tint >> 8 & 0xFF;
+            var b = tint & 0xFF;
+
+            DsPixi.setColorTransform(displayObject, r, 0, g, 0, b, 0);
+        }
+    };
+    DsPixi.setTint = DsPixi.SetTint;
+    /**
+     * 设置色彩叠加
+     * @param displayObject
+     * @param r
+     * @param rA
+     * @param g
+     * @param gA
+     * @param b
+     * @param bA
+     * @constructor
+     */
+    DsPixi.SetColorTransform = function (displayObject, r, rA, g, gA, b, bA) {
+        if (displayObject.setColorTransform) displayObject.setColorTransform(r, rA, g, gA, b, bA);
+        else {
+            var _filter = this.colorTransformFilter;
+            _filter.matrix[0] = r / 255;
+            _filter.matrix[4] = rA;
+            _filter.matrix[6] = g / 255;
+            _filter.matrix[9] = gA;
+            _filter.matrix[12] = b / 255;
+            _filter.matrix[14] = bA;
+            displayObject.filters = [_filter];
+        }
+    };
+    DsPixi.setColorTransform = DsPixi.SetColorTransform;
     /**
      * Pixi模块
      * @param  {[Object]} opts [构造参数]
@@ -724,7 +765,7 @@
     DsPixi.Create = function (opts) {
         return new DsPixi.PixiModel(opts);
     };
-    DsPixi.create=DsPixi.Create;
+    DsPixi.create = DsPixi.Create;
 
     return root.Ds.DsPixi;
 }));
