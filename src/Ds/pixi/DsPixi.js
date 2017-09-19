@@ -279,8 +279,14 @@
         }
 
         if (opts.width && opts.height) _SaveImageRenderer.resize(opts.width, opts.height);
+        else {
+            var _rect=displayObject.getBounds(true);
+            opts.width=_rect.width;
+            opts.height=_rect.height;
+            _SaveImageRenderer.resize(opts.width, opts.height);
+        }
 
-        //TODO 目前还未解决背景问题
+        // TODO 目前还未解决背景问题
         // if(opts.background){
         //   _SaveImageRenderer.backgroundColor=opts.background;_SaveImageRenderer.clear(opts.background);
         // }
@@ -321,11 +327,12 @@
     /**
      * 缓存一个显示对象成Sprite
      * @param displayObject
-     * @param opts
+     * @param opts      DsPixi.GetSaveImageBase64传入参数
+     * @param callBack  显示对象成Sprite能完整渲染时候回调
      * @return {[PIXI.Sprite]}   PIXI.Sprite显示对象
      * @alias DsPixi.getCacheSprite
      */
-    DsPixi.GetCacheSprite = function (displayObject, opts) {
+    DsPixi.GetCacheSprite = function (displayObject, opts,callBack) {
         opts = opts || {};
         var _base64 = DsPixi.GetSaveImageBase64(displayObject, opts);
         var _img = new Image();
@@ -337,6 +344,7 @@
                 _sprite.width = _baseTexture.width;
                 _sprite.height = _baseTexture.height;
                 _sprite.emit('loaded');
+                if(callBack)callBack(_sprite);
             });
         }
         _img.src = _base64;
