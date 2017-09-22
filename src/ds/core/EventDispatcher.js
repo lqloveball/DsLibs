@@ -1,5 +1,5 @@
 /**
- * 事件机制类
+ * 事件机制类 
  * @class ds.core.EventDispatcher
  */
 function EventDispatcher() {
