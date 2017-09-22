@@ -9,8 +9,8 @@
   },
   "scripts": {
     "example": "",
-    "gulpDocs":"gulp --gulpfile build/jsdoc-gulp.js",
-    "docServer": "gulp --gulpfile build/docServer.js",
+    "docs_dev":"gulp --gulpfile build/jsdoc-gulp.js",
+    "doc_server": "gulp --gulpfile build/docServer.js",
     "docs": "jsdoc -c build/jsdoc.conf.json"
   },
   "author": "maksim.lin@foxmail.com",
