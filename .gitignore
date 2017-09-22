@@ -1,5 +1,4 @@
 /node_modules/
-/docsBuild/tutorials/
 /.idea/
 package-lock.json
 *.DS_Store
