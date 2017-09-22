@@ -2,5 +2,6 @@
 /.idea/
 /docs/dsDocs/
 /oldSource/
+/src/dsx/
 package-lock.json
 *.DS_Store
