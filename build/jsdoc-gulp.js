@@ -55,10 +55,9 @@ var JSDOC_CONFIG = {
 
 //观察需要jsdoc编译生产的资源
 var WATCH_PATH = [
-    "../src/**/*.js",
+    "../src/ds/**/*.js",
     "../docsBuild/README.md",
     "../docsBuild/tutorials",
-    "!../src/libs/**/*.js"
 ];
 
 /*
