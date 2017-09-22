@@ -2,4 +2,5 @@
 .idea/
 /docs/
 /docs/dsDocs/
+/docsBuild/
 /node_modules/
