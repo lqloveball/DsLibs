@@ -25,7 +25,7 @@
     /**
      * 事件机制类
      * @class ds.core.EventDispatcher
-     *
+     * @classdesc 实现js下的事件派发机制，为复杂的互动交互提供事件派发功能。
      */
     function EventDispatcher() {
 
@@ -289,11 +289,12 @@
 
     };
 
-    /** @namespace ds */
+
     var ds = root.ds || {};
-    /** @namespace ds.core */
     ds.core = ds.core || {};
     ds.core.EventDispatcher = EventDispatcher;
+
+    ds.EventDispatcher = EventDispatcher;
 
     return ds.core.EventDispatcher;
 }));

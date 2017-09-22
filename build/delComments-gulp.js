@@ -12,7 +12,6 @@ var WATCH_PATH = [
 ]
 gulp.task('delComments', function () {
 
-
     /* watch(WATCH_PATH, {verbose: true}, function (e) {
 
          gulp.src(WATCH_PATH)
