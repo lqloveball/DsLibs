@@ -16,10 +16,10 @@ var JSDOC_CONFIG = {
     },
     "source": {
         "include": [
-            "../src/"
+            // "../src/"
         ],
         "exclude": [
-            "../src/libs/"
+            // "../src/libs/"
         ],
         "includePattern": ".+\\.js(doc)?$",
         "excludePattern": "(^|\\/|\\\\)_"
@@ -52,16 +52,7 @@ var JSDOC_CONFIG = {
         "readme": "../docsBuild/README.md"
     }
 };
-/*
-删除api docs
-*/
-gulp.task('del', function () {
-    return del([
-        '../docs/dsDocs/'
-    ], {
-        force: true
-    });
-});
+
 //观察需要jsdoc编译生产的资源
 var WATCH_PATH = [
     "../src/**/*.js",
@@ -69,12 +60,32 @@ var WATCH_PATH = [
     "../docsBuild/tutorials",
     "!../src/libs/**/*.js"
 ];
+
+/*
+删除api docs
+*/
+gulp.task('del', function () {
+    console.log('del api docs');
+    return del([
+        '../docs/dsDocs/'
+    ], {
+        force: true
+    });
+});
 /*
 创建api docs
  */
-gulp.task('docs', function (cb) {
+gulp.task('docs',function (cb) {
+    console.log('start jsdoc export docs');
     gulp.src(WATCH_PATH)
         .pipe(jsdoc(JSDOC_CONFIG,cb));
+});
+/*
+刷新任务
+ */
+gulp.task('refresh',function (cb) {
+    console.log('refresh api docs');
+    browserSync.reload();
 });
 /*
  * 监听刷新更新
@@ -83,13 +94,15 @@ gulp.task('watch',['docs'],function () {
     // gulp.src(WATCH_PATH)
     //     .pipe(jsdoc(JSDOC_CONFIG));
     //监听文件变化进行打包更新
+
     // watch(WATCH_PATH, {
     //     verbose: true
     // }, function (e) {
     //     gulp.src(WATCH_PATH)
     //         .pipe(jsdoc(JSDOC_CONFIG));
     // });
-    gulp.watch(WATCH_PATH, ['docs']);
+
+    gulp.watch(WATCH_PATH, ['del','docs']);
 
 });
 /*
@@ -103,9 +116,10 @@ gulp.task('docsServer',function() {
         open: "external"
     });
     // 文档更新
-    watch(['../docs/**/*.*','!../docs/dsDocs/'],{verbose: true},function(e){
+    // watch(['../docs/**/*.*','!../docs/dsDocs/'],{verbose: true},function(e){
+    watch(['../docs/**/*.*'],{verbose: true},function(e){
         browserSync.reload();
     });
 });
 
-gulp.task('default', ['del','docsServer','watch']);
+gulp.task('default', ['docsServer','watch']);
