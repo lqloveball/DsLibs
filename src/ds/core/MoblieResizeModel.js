@@ -1,3 +1,4 @@
+//这个类使用老js方法，有可能直接插入html标签内使用
 !(function (factory) {
 
     var root = (typeof window !== 'undefined' ? window : (typeof process === 'object' && typeof require === 'function' && typeof global === 'object') ? global : this);

@@ -177,4 +177,4 @@ gulp.task('docsServer',function() {
     });
 });
 
-gulp.task('default', ['docsServer','delComments','watchDocSource']);
+gulp.task('default', ['docsServer','watchDocSource']);
