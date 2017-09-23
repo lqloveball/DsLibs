@@ -62,6 +62,7 @@
         /**
          * 添加监听事件
          * @method ds.core.EventDispatcher.prototype.on
+         * @function
          * @see {@link ds.core.EventDispatcher#addEventListener}
          */
         this.on = this.addEventListener;
@@ -248,7 +249,7 @@
     }
 
     /**
-     * 一个对象通过copy一个EventDispatcher对象方法来进行继承事件派发机制
+     * 一个对象通过copy一个EventDispatcher对象方法成员来进行继承事件派发机制
      * @method  ds.core.EventDispatcher.extend
      * @function
      * @static
@@ -293,7 +294,12 @@
     var ds = root.ds || {};
     ds.core = ds.core || {};
     ds.core.EventDispatcher = EventDispatcher;
-
+    /**
+     * 事件机制类
+     * @class ds.EventDispatcher
+     * @classdesc 实现js下的事件派发机制，为复杂的互动交互提供事件派发功能。
+     * @see ds.EventDispatcher 实际等同于 {@link ds.core.EventDispatcher}
+     */
     ds.EventDispatcher = EventDispatcher;
 
     return ds.core.EventDispatcher;

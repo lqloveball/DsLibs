@@ -26,14 +26,16 @@
      * @class ds.core.MoblieResizeModel
      * @classdesc:一个适合制作自适应、横屏、竖屏、横竖屏混合互动H5的屏幕尺寸算法模块。
      * @param {object} [opts] - 设置自适应模块初始化参数
-     * @param {HTMLElement} [options.screen='#screen'] - 屏幕自适应进行缩放的 html元素
-     * @param {string} [options.screenType='v'] - 屏幕自适应方式,默认竖屏幕 'v' 'h' 'auto'
-     * @param {array} [options.widths=[640,1138]] - 屏幕设定固定宽自适应计算设置，默认值 [640,1138]。 自适应框架是以屏幕设定固定宽进行等比换算高
+     * @param {HTMLElement} [opts.screen='#screen'] - 屏幕自适应进行缩放的 html元素
+     * @param {string} [opts.type='v'] - 屏幕自适应方式,默认竖屏幕 'v' 'h' 'auto'
+     * @param {array} [opts.widths=[640,1138]] - 屏幕设定固定宽自适应计算设置，默认值 [640,1138]。 自适应框架是以屏幕设定固定宽进行等比换算高
      * @extends ds.core.EventDispatcher
      */
     function MoblieResizeModel(opts) {
 
-        var _self=this;
+        opts = opts || {};
+
+        var _self = this;
 
         ds.EventDispatcher.extend(this);
 

@@ -23,6 +23,10 @@
   "templates": {
     "name": "Dslibs Doc",
     "footerText": "Maksim Frontend Development Lab",
+    "tabNames": {
+      "api": "API",
+      "tutorials": "Tutorials"
+    },
     "logo": {
       "url": "../images/logo.svg",
       "width": "58px",
