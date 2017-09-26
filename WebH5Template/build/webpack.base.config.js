@@ -15,8 +15,8 @@ module.exports = {
             images: resolveBowerPath('./images'),
             libs: resolveBowerPath('./src/libs'),
             app: resolveBowerPath('./src/app'),
-            ds: resolveBowerPath('./src/Ds'),
-            pixipath: 'libs/pixi',
+            ds: resolveBowerPath('./src/ds'),
+            pixi: 'libs/pixi',
             //vue需要用到
             'vue$': 'vue/dist/vue.esm.js',
             'vuex$': 'vuex/dist/vuex.esm.js',
@@ -51,9 +51,9 @@ module.exports = {
             soundjs: 'libs/createjs/soundjs-0.6.2.min.js',
             //pixi
 
-            pixi: 'libs/pixi/pixi.min.js',
-            pixianimate: 'libs/pixi/pixi-animate.min.js',
-            pixidragonBones: 'libs/pixi/dragonBones.min.js',
+            pixijs: 'libs/pixi/pixi.min.js',
+            pixijsanimate: 'libs/pixi/pixi-animate.min.js',
+            pixijsdragonBones: 'libs/pixi/dragonBones.min.js',
             //DsLibs
             eventdispatcher: 'ds/core/EventDispatcher.js',
             moblieresizemodel: 'ds/core/MoblieResizeModel.js',

@@ -9,8 +9,6 @@
   },
   "scripts": {
     "example": "",
-    "tempdev": "gulp --gulpfile build/WebH5TemplateDebug.js",
-    "temp": "gulp --gulpfile build/tempServer.js & webpack --config build/webpack.dev.config.js",
     "delComments": "gulp --gulpfile build/delComments-gulp.js",
     "docs_dev": "gulp --gulpfile build/jsdoc-gulp.js",
     "doc_server": "gulp --gulpfile build/docServer.js",

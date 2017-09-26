@@ -28,6 +28,23 @@
      * 事件机制类
      * @class ds.core.EventDispatcher
      * @classdesc 实现js下的事件派发机制，为复杂的互动交互提供事件派发功能。
+     * @example
+     *
+     * //一只猫的类，拥有事件机制
+     * //ES6继承写法
+     * import EventDispatcher from  'ds/core/EventDispatcher';
+     * export default class CatClass extends EventDispatcher
+     * {
+     *
+     * }
+     *
+     * //老版本js继承写法
+     * function CatClass(){
+     *
+     *     ds.core.EventDispatcher.extend(this);
+     *
+     * };
+     *
      */
     function EventDispatcher() {
 

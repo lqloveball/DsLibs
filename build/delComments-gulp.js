@@ -86,7 +86,6 @@ gulp.task('delComments', function () {
             del([_file], {
                 force: true
             });
-
         }
         if (event.type === 'added' || event.type === 'changed') {
 

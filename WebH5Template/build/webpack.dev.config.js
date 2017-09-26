@@ -30,16 +30,16 @@ webpackEntry.base=[
   'moblieresizemodel',
 ];
 //有需要用到createjs时候打开
-// webpackEntry.createjsFrameWork=[
-//   'createjs',
-//   'dscreatejs',
-// ];
+webpackEntry.createjsFrameWork=[
+  'createjs',
+  'dscreatejs',
+];
 //有需要用到pixijs 时候打开
 // webpackEntry.pixiFrameWork=[
-//   'pixi',
-//   'pixianimate',
-//   'pixipath/pixi-projection.min.js',
-//   'ds/pixi/DsPixi',
+//   'pixijs',
+//   'pixijsanimate',
+//   'pixi/pixi-projection.min.js',
+//   'ds/pixijs/index.js',
 // ];
 
 module.exports = merge(webpackBaseConfig, {

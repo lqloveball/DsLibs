@@ -218,7 +218,7 @@ function initAutoAudioer() {
     if(!ds.media||!new ds.media.AutoAudioManager)return;
 
     SiteModel.autoAudioer = new ds.media.AutoAudioManager();
-    if (SiteModel.autoAudioerData)SiteModel.autoAudioer.initLoadAndSetBGM(SiteModel.autoAudioerData);
+    if (SiteModel.autoAudioerData)SiteModel.autoAudioer.initConfigData(SiteModel.autoAudioerData);
 
 }
 
