@@ -112,8 +112,11 @@
 
                     console.log('error:', xhr, type);
                     if (errorBack) errorBack('网络异常');
+
                 }
+
             });
+
         },
 
         /**
@@ -302,6 +305,6 @@
      * @see 详细请见： {@link module:ds/net/QuickAjax.getUrlParameterDictionary}
      */
     ds.net.getUrlParameterDictionary=ds.net.QuickAjax.getUrlParameterDictionary;
-    
+
     return ds.net.QuickAjax;
 }));
