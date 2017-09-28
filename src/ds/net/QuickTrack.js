@@ -31,7 +31,7 @@
      * @module ds/net/QuickAjax
      *
      */
-    QuickAjax
+    QuickAjax;
 
     /**
      * 快速Ajax交互请求

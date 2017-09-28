@@ -60,7 +60,9 @@ class CreatejsModel extends EventDispatcher
      * @param {number} value 一般会设置30帧每秒
      */
     setFPS(value){
+
         createjs.Ticker.setFPS(value);
+        
     }
 
 
@@ -71,6 +73,7 @@ class CreatejsModel extends EventDispatcher
 
         if (this.pause) return;
         this.stage.update();
+
 
     }
 
@@ -85,6 +88,7 @@ class CreatejsModel extends EventDispatcher
         this.canvas.setAttribute('height', height);
 
     }
+
 }
 
 export default CreatejsModel;
