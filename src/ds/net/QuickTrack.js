@@ -17,7 +17,7 @@
 
     } else {
 
-        factory(root, QuickAjax);
+        factory(root, {});
 
     }
 

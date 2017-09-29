@@ -55,6 +55,10 @@
          * @method ds.media.AutoAudioManager.prototype.initConfigData
          * @param {object} opts 初始化参数
          * @param {array} [opts.list=[]] 声音列表参数如:opts.list=[{src:'./media/BGM.mp3',id:'BGM',loop:true}]
+         * opts.list[i].src 声音文件路径
+         * opts.list[i].id 声音标识id
+         * opts.list[i].loop 声音播放是否循环
+         * opts.list[i].volume 声音默认音量
          * @param {string} [opts.id='BGM']  声音列表内那个id的声音作为背景声音
          * @param {string} [opts.button='#BGMBtn']  控制背景声音播放的dom元素 会转换成 $(opts.button)
          * @param {boolean} [opts.autoPlay='true']  设置是否已进来就自动播放
@@ -259,16 +263,23 @@
          *       }
          *       .off{
          *           background: url(../images/BGMICON.png) no-repeat center ;
-         *       }
-         *       @keyframes bgmove{
+         *       }  @keyframes bgmove{
+         *
          *           0%{transform:rotate(0deg);}
          *           100%{transform: rotate(360deg);}
-         *       }
-         *       @-webkit-keyframes bgmove{
+         *       }  @-webkit-keyframes
+         *        bgmove{
          *           0%{transform:rotate(0deg);}
          *           100%{transform: rotate(360deg);}
          *       }
          *   }
+         *
+         *   //如果需要换一个背景声音
+         *   var _autoAudioer=SiteModel.autoAudioer;
+         *
+         *   var _audio=_autoAudioer.getAudioByID('BMG');
+         *
+         *   _autoAudioer.setAudioButton(_audio,'#BGMBtn');
          *
          */
         this.setAudioButton = function (audio, button) {
@@ -388,6 +399,7 @@
         /**
          * 临时暂停声音播放，通过这个方法可以根据关闭前是播放还是暂定来决定是否要重新播放。
          * @method ds.media.AutoAudioManager.prototype.getAudioByID
+         * @param {string} value 传入一个在声音加载列表里面的声音id，获取这个 audio 声音对象
          * @return  {Audio} audio 声音对象
          */
         this.getAudioByID = function (value) {

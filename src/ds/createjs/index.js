@@ -1,4 +1,5 @@
 import CreatejsModel from './CreatejsModel.js';
+import InputText from './InputText.js';
 
 let root = (typeof window !== 'undefined' ? window : (typeof process === 'object' && typeof require === 'function' && typeof global === 'object') ? global : this);
 
@@ -27,7 +28,7 @@ ds.createjs.getDisplayObjectBitmapData = function (display, rect) {
 
     rect = rect || display.getBounds();
 
-    var _bitmapData = new createjs.BitmapData(null, rect.width, rect.height, "rgba(0,0,0,0)");
+    let _bitmapData = new createjs.BitmapData(null, rect.width, rect.height, "rgba(0,0,0,0)");
     _bitmapData.draw(display);
     display.uncache();
 
@@ -51,13 +52,13 @@ ds.createjs.hitTestByDisplayObject = function (source, target) {
 
     }
 
-    var _bitmapData = ds.createjs.getDisplayObjectBitmapData(source);
+    let _bitmapData = ds.createjs.getDisplayObjectBitmapData(source);
 
     if (_bitmapData) {
 
         target.cache(0, 0, _bitmapData.width, _bitmapData.height);
 
-        var _hitTest = _bitmapData.hitTest({
+        let _hitTest = _bitmapData.hitTest({
             x: 0,
             y: 0
         }, 0xFF, target, {
@@ -91,16 +92,16 @@ ds.createjs.wrapMetrics = function (label, info, width, crop) {
 
     }
 
-    var _info = '',
+    let _info = '',
         _oinfo;
 
-    for (var i = 0; i < info.length; i++) {
+    for (let i = 0; i < info.length; i++) {
 
         _oinfo = _info;
         _info = _oinfo + info[i];
         label.text = _info;
 
-        var _w = label.getMetrics().width;
+        let _w = label.getMetrics().width;
 
         if (crop && _w > width) {
 
@@ -131,25 +132,25 @@ ds.createjs.formatNumberShow = function (value, mcList, hitZero) {
 
     hitZero = hitZero !== undefined ? hitZero : false;
 
-    var _info = value + '';
+    let _info = value + '';
 
-    var i;
+    let i;
 
     if (_info.length < mcList.length) {
 
-        var _l = mcList.length - _info.length;
+        let _l = mcList.length - _info.length;
 
         for (i = 0; i < _l; i++) _info = '0' + _info;
 
     }
 
-    var _arr = _info.split('');
-    var _starNoZero = false;
+    let _arr = _info.split('');
+    let _starNoZero = false;
 
     for (i = 0; i < _arr.length; i++) {
 
-        var _mc = mcList[i];
-        var _num = Number(_arr[i]);
+        let _mc = mcList[i];
+        let _num = Number(_arr[i]);
         _mc.gotoAndStop(_num);
         _mc.visible = true;
 
@@ -174,13 +175,13 @@ ds.createjs.formatNumberShow = function (value, mcList, hitZero) {
 ds.createjs.movieTo = function (mc, value, endFun) {
 
     //如果是标签的话 转换成帧
-    if (typeof(value) === 'string')  value = mc.timeline._labels[value];
+    if (typeof(value) === 'string') value = mc.timeline._labels[value];
 
     if (value < 0) value = mc.totalFrames;
 
     mc.__mcMovieToData = undefined;
 
-    var mcObj = {};
+    let mcObj = {};
     mcObj.mc = mc;
     mcObj.time = 1000 / createjs.Ticker.getFPS();
     mcObj.timer = 0;
@@ -219,8 +220,8 @@ ds.createjs.movieTo = function (mc, value, endFun) {
 //ds.createjs.movieTo 控制动画剪辑播放帧触发
 function _movieToUpFrame() {
 
-    var mc = this;
-    var mcObj = mc.__mcMovieToData;
+    let mc = this;
+    let mcObj = mc.__mcMovieToData;
     if (mcObj === undefined) return;
 
     if (mc.currentFrame === mcObj.end) {
@@ -234,7 +235,7 @@ function _movieToUpFrame() {
 
     }
 
-    var num = 0;
+    let num = 0;
     if (mcObj.bool) {
 
         num = mc.currentFrame + 1;
@@ -274,13 +275,13 @@ function _movieToUpFrame() {
  * @param  {createjs.MovieClip} mc 需要删除的MovieClip
  * @return {createjs.MovieClip}    需要删除的MovieClip
  */
-ds.createjs.RemoveMovie = function(mc) {
-    
+ds.createjs.removeMovie = function (mc) {
+
     createjs.Tween.removeTweens(mc);
     mc.__mcMovieToData = undefined;
-    
+
     return mc;
-    
+
 };
 
 /**
@@ -289,50 +290,50 @@ ds.createjs.RemoveMovie = function(mc) {
  * @param {createjs.MovieClip} mc    要转成按钮的影片剪辑
  * @param {createjs.DisplayObject} hitMc 作为这按钮响应区域的显示对象
  */
-ds.createjs.setButton = function(mc, hitMc) {
-    
+ds.createjs.setButton = function (mc, hitMc) {
+
     if (hitMc) {
         setButtonByHitMc(mc, hitMc);
         return;
     }
-    
-    if (mc instanceof createjs.MovieClip) ds.createjs.movieTo(mc,0);
-    
+
+    if (mc instanceof createjs.MovieClip) ds.createjs.movieTo(mc, 0);
+
     mc.cursor = 'pointer';
     mc.mouseChildren = false;
-    
-    mc.addEventListener('mouseover', function(e) {
-        
-        var mc = e.target;
-        var stage = mc.getStage();
+
+    mc.addEventListener('mouseover', function (e) {
+
+        let mc = e.target;
+        let stage = mc.getStage();
         if (stage) stage.canvas.style.cursor = 'pointer';
-        if (mc instanceof createjs.MovieClip)  ds.createjs.movieTo(mc, mc.totalFrames - 1);
-        
-    });
-    
-    mc.addEventListener('mouseout', function(e) {
-        
-        var mc = e.target;
-        var stage = mc.getStage();
-        if (stage) stage.canvas.style.cursor = 'default';
-        if (mc instanceof createjs.MovieClip)  ds.createjs.movieTo(mc, 0);
-        
-    });
-    
-    //手机版本按钮方式判断 通过点击下后判断
-    mc.addEventListener('mousedown', function(event) {
-        
-        //log('setPhoneButton mousedown',event);
-        var mc = event.target;
-        var stage = mc.getStage();
-        //进行精准判断是否移动出去后再移动进来的点击，当mc.MCSetButtonMouseOut=true 其实click事件可以不执行
-        mc.MCSetButtonMouseOut = false;
-        
         if (mc instanceof createjs.MovieClip) ds.createjs.movieTo(mc, mc.totalFrames - 1);
 
-        var stagemousemove = function(e) {
+    });
 
-            var pt = mc.getStage().localToLocal(e.stageX, e.stageY, mc);
+    mc.addEventListener('mouseout', function (e) {
+
+        let mc = e.target;
+        let stage = mc.getStage();
+        if (stage) stage.canvas.style.cursor = 'default';
+        if (mc instanceof createjs.MovieClip) ds.createjs.movieTo(mc, 0);
+
+    });
+
+    //手机版本按钮方式判断 通过点击下后判断
+    mc.addEventListener('mousedown', function (event) {
+
+        //log('setPhoneButton mousedown',event);
+        let mc = event.target;
+        let stage = mc.getStage();
+        //进行精准判断是否移动出去后再移动进来的点击，当mc.MCSetButtonMouseOut=true 其实click事件可以不执行
+        mc.MCSetButtonMouseOut = false;
+
+        if (mc instanceof createjs.MovieClip) ds.createjs.movieTo(mc, mc.totalFrames - 1);
+
+        function stagemousemove(e) {
+
+            let pt = mc.getStage().localToLocal(e.stageX, e.stageY, mc);
 
             if (!mc.hitTest(pt.x, pt.y)) {
 
@@ -344,7 +345,8 @@ ds.createjs.setButton = function(mc, hitMc) {
             }
 
         };
-        var stagemouseup = function(e) {
+
+        function stagemouseup(e) {
 
             if (mc instanceof createjs.MovieClip) ds.createjs.movieTo(mc, 0);
 
@@ -370,39 +372,39 @@ function setButtonByHitMc(mc, hitMc) {
 
     if (hitMc.mouseChildren !== null) hitMc.mouseChildren = false;
 
-    hitMc.addEventListener('mouseover', function(e) {
+    hitMc.addEventListener('mouseover', function (e) {
 
-        var hitMc = e.target;
-        var mc = hitMc.mc;
-        var stage = hitMc.getStage();
+        let hitMc = e.target;
+        let mc = hitMc.mc;
+        let stage = hitMc.getStage();
         if (stage) stage.canvas.style.cursor = 'pointer';
         if (mc instanceof createjs.MovieClip) ds.createjs.movieTo(mc, mc.totalFrames - 1);
 
     });
 
-    hitMc.addEventListener('mouseout', function(e) {
+    hitMc.addEventListener('mouseout', function (e) {
 
-        var hitMc = e.target;
-        var mc = hitMc.mc;
-        var stage = hitMc.getStage();
+        let hitMc = e.target;
+        let mc = hitMc.mc;
+        let stage = hitMc.getStage();
         if (stage) stage.canvas.style.cursor = 'default';
         if (mc instanceof createjs.MovieClip) ds.createjs.movieTo(mc, 0);
 
     });
 
     //手机版本按钮方式判断 通过点击下后判断
-    hitMc.addEventListener('mousedown', function(event) {
+    hitMc.addEventListener('mousedown', function (event) {
 
-        var hitMc = event.target;
-        var mc = hitMc.mc;
-        var stage = hitMc.getStage();
+        let hitMc = event.target;
+        let mc = hitMc.mc;
+        let stage = hitMc.getStage();
         //进行精准判断是否移动出去后再移动进来的点击，当mc.MCSetButtonMouseOut=true 其实click事件可以不执行
         hitMc.MCSetButtonMouseOut = false;
         if (mc instanceof createjs.MovieClip) ds.createjs.movieTo(mc, mc.totalFrames - 1);
 
-        var stagemousemove = function(e) {
+        function stagemousemove(e) {
 
-            var pt = hitMc.getStage().localToLocal(e.stageX, e.stageY, hitMc);
+            let pt = hitMc.getStage().localToLocal(e.stageX, e.stageY, hitMc);
 
             if (!hitMc.hitTest(pt.x, pt.y)) {
 
@@ -413,7 +415,8 @@ function setButtonByHitMc(mc, hitMc) {
 
             }
         };
-        var stagemouseup = function(e) {
+
+        function stagemouseup(e) {
 
             if (mc instanceof createjs.MovieClip) ds.createjs.movieTo(mc, 0);
             stage.removeEventListener('stagemousemove', stagemousemove);
@@ -434,9 +437,9 @@ function setButtonByHitMc(mc, hitMc) {
  * @param {function} complete [js加载完成后回调函数]
  * @param {function} error    [js加载失败后回调函数]
  */
-ds.createjs.loadJS = function(jsUrl, complete, error) {
+ds.createjs.loadJS = function (jsUrl, complete, error) {
 
-    var _jsloader = new createjs.JavaScriptLoader({
+    let _jsloader = new createjs.JavaScriptLoader({
         src: jsUrl,
         id: jsUrl,
         type: "javascript"
@@ -475,7 +478,7 @@ ds.createjs.loadJS = function(jsUrl, complete, error) {
  * @param {boolean} [opts.loadType=false]  资源加载方式，是否使用预加载文件头来获取精准的加载进度
  * @return {createjs.LoadQueue} 加载对象
  */
-ds.createjs.loadAssets = function(opts) {
+ds.createjs.loadAssets = function (opts) {
 
     if (!opts.jsUrl) {
 
@@ -484,52 +487,54 @@ ds.createjs.loadAssets = function(opts) {
 
     }
 
-    var basePath = opts.basePath ? opts.basePath : null;
+    let basePath = opts.basePath ? opts.basePath : null;
     //是否需要进行判断是否是最新的AnimateCC2017导出的资源
-    var _judgeAnimateCC2017=opts.judge!==undefined?opts.judge:true;
+    let _judgeAnimateCC2017 = opts.judge !== undefined ? opts.judge : true;
     //命名空间的id
-    var _isCompositionID=opts.id;
+    let _isCompositionID = opts.id;
     //是否最新AdobeAnimateCC2017以后的版本 如果不进行判断，但有填写id那还默认为是最新的AnimateCC2017导出的资源
-    var _isAdobeAnimateCC2017=(!_judgeAnimateCC2017&&_isCompositionID)?true:false;
+    let _isAdobeAnimateCC2017 = (!_judgeAnimateCC2017 && _isCompositionID) ? true : false;
 
     //获取导出库对象
-    var _comp;
+    let _comp;
     //加载js对象
-    var jsUrl = opts.jsUrl;
+    let jsUrl = opts.jsUrl;
 
     //加载spritesheet资源数组，这是比较早起的flash导出资源时候需要传入的参数数据，现在已经没什么用了，留做纪念吧。
-    var ssList = opts.ssList ? opts.ssList : null;
+    let ssList = opts.ssList ? opts.ssList : null;
 
     //顺带加载一些其他资源
-    var otherList = opts.otherList ? opts.otherList : null;
+    let otherList = opts.otherList ? opts.otherList : null;
     //js命名空间
-    var jsNS = opts.jsNS ? opts.jsNS : 'lib';
+    let jsNS = opts.jsNS ? opts.jsNS : 'lib';
     //图片命名空间
-    var imgNS = opts.imgNS ? opts.imgNS : 'images';
+    let imgNS = opts.imgNS ? opts.imgNS : 'images';
     //加载完成回调s
-    var complete = opts.complete ? opts.complete : null;
+    let complete = opts.complete ? opts.complete : null;
     //加载过程回调
-    var progress = opts.progress ? opts.progress : null;
+    let progress = opts.progress ? opts.progress : null;
     //加载类型，默认不需要http服务的false
-    var loadType = opts.loadType ? opts.loadType : false;
+    let loadType = opts.loadType ? opts.loadType : false;
 
     //创建队列对象
-    var queue = new createjs.LoadQueue(loadType);
+    let queue = new createjs.LoadQueue(loadType);
+
     if (createjs.Sound) queue.installPlugin(createjs.Sound);
+
     queue.addEventListener("fileload", queueFileLoad);
     queue.addEventListener("progress", queueProgress);
     queue.addEventListener("error", queueError);
     queue.addEventListener("complete", queueComplete);
 
     //先开始加载导出的JS
-    var _jsUrl = basePath ? basePath + jsUrl : jsUrl;
+    let _jsUrl = basePath ? basePath + jsUrl : jsUrl;
 
-    var textloader = new createjs.TextLoader({
+    let textloader = new createjs.TextLoader({
         src: _jsUrl,
         id: _jsUrl,
     });
 
-    var jsloader = new createjs.JavaScriptLoader({
+    let jsloader = new createjs.JavaScriptLoader({
         src: _jsUrl,
         id: _jsUrl,
         type: "javascript"
@@ -539,68 +544,72 @@ ds.createjs.loadAssets = function(opts) {
     jsloader.addEventListener('complete', jsComplete);
 
     //需要判断并且没指定库对象id的 必须进行判断加载
-    if(_judgeAnimateCC2017)textloader.load();
+    if (_judgeAnimateCC2017) textloader.load();
     //不需要判断，有库的id号，说明是AdobeAnimateCC2017以后的版本
-    else if(!_judgeAnimateCC2017&&_isCompositionID){
+    else if (!_judgeAnimateCC2017 && _isCompositionID) {
 
         console.log('no Judge is AnimateCC 2017');
         jsloader.load();
 
     }
     //老版本导出
-    else{
+    else {
 
         jsloader.load();
 
     }
+
     //进行判断后执行重新加载js
     function textComplete(e) {
 
-        var jsText=textloader.getResult();
+        let jsText = textloader.getResult();
         //判断是否最新AdobeAnimateCC2017以后的版本
-        if(jsText.indexOf("an.compositions['")>=0)_isAdobeAnimateCC2017=true;
+        if (jsText.indexOf("an.compositions['") >= 0) _isAdobeAnimateCC2017 = true;
 
-        if(_isAdobeAnimateCC2017){
+        if (_isAdobeAnimateCC2017) {
 
-            var reg = /an\.compositions\['(\w*)'\]/;
-            jsText.replace(reg, function() {_isCompositionID=arguments[1];});
+            let reg = /an\.compositions\['(\w*)'\]/;
+            jsText.replace(reg, function () {
+                _isCompositionID = arguments[1];
+            });
 
         }
 
         jsloader.load();
 
     }
+
     function jsComplete(e) {
 
         queueStartLoad();
 
     }
 
-    var queueArr,ssMetadata;
+    let queueArr, ssMetadata;
 
     function queueStartLoad() {
 
         //老版本
-        if(!_isAdobeAnimateCC2017){
+        if (!_isAdobeAnimateCC2017) {
 
             queueArr = window[jsNS].properties.manifest;
             ssMetadata = window[jsNS].ssMetadata;
 
         }
         //新版本
-        else{
+        else {
 
-            _comp=AdobeAn.getComposition(_isCompositionID);
-            var lib=_comp.getLibrary();
-            window[jsNS]=lib;
-            window[imgNS]=_comp.getImages();
+            _comp = AdobeAn.getComposition(_isCompositionID);
+            var lib = _comp.getLibrary();
+            window[jsNS] = lib;
+            window[imgNS] = _comp.getImages();
             queueArr = lib.properties.manifest;
             ssMetadata = lib.ssMetadata;
 
         }
 
 
-        var i;
+        let i;
         //如果存在basePath设置选择对window[jsNS].properties.manifest进行设置
         if (basePath) {
 
@@ -610,7 +619,7 @@ ds.createjs.loadAssets = function(opts) {
         //其他资源的加载
         if (otherList !== null) {
 
-            for (i = 0; i < otherList.length; i++)  queueArr.push(otherList[i]);
+            for (i = 0; i < otherList.length; i++) queueArr.push(otherList[i]);
 
         }
         if (queueArr.length <= 0) {
@@ -623,8 +632,10 @@ ds.createjs.loadAssets = function(opts) {
         queue.loadManifest(queueArr);
 
     }
+
     //文件加载错误
-    function queueError(e) {}
+    function queueError(e) {
+    }
 
     //队列加载进度
     function queueProgress(e) {
@@ -637,25 +648,28 @@ ds.createjs.loadAssets = function(opts) {
     function queueFileLoad(e) {
 
         //获取图片命名空间 图片索引字典
-        var images = window[imgNS];
+        let images = window[imgNS];
         if (images === undefined) window[imgNS] = {};
         images = window[imgNS];
         //加载的图片对象放进图片字典中
         if (e.item.type === createjs.LoadQueue.IMAGE) images[e.item.id] = e.result;
 
     }
+
     //队列加载完成
     function queueComplete(e) {
 
-        var ss;
-        if(!_isAdobeAnimateCC2017) ss= window.ss = window.ss || {};
-        else ss=_comp.getSpriteSheet();
-
+        let ss;
+        if (!_isAdobeAnimateCC2017) ss = window.ss = window.ss || {};
+        else ss = _comp.getSpriteSheet();
 
 
         if (ssMetadata) {
 
-            for (var i = 0; i < ssMetadata.length; i++) ss[ssMetadata[i].name] = new createjs.SpriteSheet({"images": [queue.getResult(ssMetadata[i].name)],"frames": ssMetadata[i].frames});
+            for (let i = 0; i < ssMetadata.length; i++) ss[ssMetadata[i].name] = new createjs.SpriteSheet({
+                "images": [queue.getResult(ssMetadata[i].name)],
+                "frames": ssMetadata[i].frames
+            });
 
         }
 
@@ -667,7 +681,6 @@ ds.createjs.loadAssets = function(opts) {
     return queue;
 
 };
-
 
 
 /**
@@ -682,12 +695,12 @@ ds.createjs.loadAssets = function(opts) {
  */
 ds.createjs.create = function (opts) {
 
-    var _width = opts.width ? opts.width : 640;
-    var _height = opts.height ? opts.height : 1140;
-    var _fps = opts.fps ? opts.fps : 30;
-    var _appendTo = opts.appendTo ? opts.appendTo : '';
+    let _width = opts.width ? opts.width : 640;
+    let _height = opts.height ? opts.height : 1140;
+    let _fps = opts.fps ? opts.fps : 30;
+    let _appendTo = opts.appendTo ? opts.appendTo : '';
 
-    var _canvas = opts.canvas ? opts.canvas : document.createElement("canvas");
+    let _canvas = opts.canvas ? opts.canvas : document.createElement("canvas");
 
     if (typeof _canvas === 'string') _canvas = document.getElementById(_canvas);
 
@@ -695,18 +708,17 @@ ds.createjs.create = function (opts) {
     else if (_canvas[0] instanceof HTMLElement) _canvas = _canvas[0];
     else _canvas = document.createElement("canvas");
 
-    var _cjsModel = new ds.createjs.CreatejsModel(_canvas);
+    // var _cjsModel = new ds.createjs.CreatejsModel(_canvas);
+    let _cjsModel = new CreatejsModel(_canvas);
 
     _cjsModel.setFPS(_fps);
 
-    var _stage = _cjsModel.Stage;
-    var _root = _cjsModel.Root;
+
 
     //如果有css参数，按参数进行设置
     if (opts.css !== undefined) {
         $(_canvas).css(opts.css);
     }
-
 
     if (opts.appendTo !== undefined) {
 
@@ -722,3 +734,5 @@ ds.createjs.create = function (opts) {
     return _cjsModel;
 
 };
+
+export default ds.createjs;
