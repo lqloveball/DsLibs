@@ -280,9 +280,9 @@
 
         if (opts.width && opts.height) _SaveImageRenderer.resize(opts.width, opts.height);
         else {
-            var _rect=displayObject.getBounds(true);
-            opts.width=_rect.width;
-            opts.height=_rect.height;
+            var _rect = displayObject.getBounds(true);
+            opts.width = _rect.width;
+            opts.height = _rect.height;
             _SaveImageRenderer.resize(opts.width, opts.height);
         }
 
@@ -332,7 +332,7 @@
      * @return {[PIXI.Sprite]}   PIXI.Sprite显示对象
      * @alias DsPixi.getCacheSprite
      */
-    DsPixi.GetCacheSprite = function (displayObject, opts,callBack) {
+    DsPixi.GetCacheSprite = function (displayObject, opts, callBack) {
         opts = opts || {};
         var _base64 = DsPixi.GetSaveImageBase64(displayObject, opts);
         var _img = new Image();
@@ -344,7 +344,7 @@
                 _sprite.width = _baseTexture.width;
                 _sprite.height = _baseTexture.height;
                 _sprite.emit('loaded');
-                if(callBack)callBack(_sprite);
+                if (callBack) callBack(_sprite);
             });
         }
         _img.src = _base64;
@@ -389,9 +389,10 @@
      *  opts.src 'xxxx.js' 或者使用opts.jsUrl做为参数
      *  opts.mainClass 'main'  不传会使用js的名字来作为类名
      *  opts.hash 避免缓存传入hash值
+     *  @param  {Object} crossOriginDc       [跨域资源映射表]
      *  @alias DsPixi.loadJSAnimateAssets
      */
-    DsPixi.LoadJSAnimateAssets = function (opts) {
+    DsPixi.LoadJSAnimateAssets = function (opts, crossOriginDc) {
         opts = opts || {};
         var _basePath = opts.basePath || "/";
         if (!opts.jsUrl && !opts.src) {
@@ -406,7 +407,7 @@
 
         DsPixi.GetScript(_basePath + _src, function () {
             var lib = window[_jsNS];
-            window[_jsNS + '_loader'] = DsPixi.LoadAnimateAssets(lib, opts);
+            window[_jsNS + '_loader'] = DsPixi.LoadAnimateAssets(lib, opts, crossOriginDc);
         }, opts);
     };
     DsPixi.loadJSAnimateAssets = DsPixi.LoadJSAnimateAssets;
@@ -450,10 +451,12 @@
      *  opts.complete  加载完成回调 loader, resources
      *  opts.loader  可以不新创建 loader对象使用 已有loader对象
      *  opts.list   加载其他资源对象
+     *  opts.crossOrigin   加载其他资源对象
+     * @param  {Object} crossOriginDc       [跨域资源映射表]
      * @return {[PIXI.loaders.Loader]}            [加载对象]
      * @alias DsPixi.loadAnimateAssets
      */
-    DsPixi.LoadAnimateAssets = function (assetsData, opts) {
+    DsPixi.LoadAnimateAssets = function (assetsData, opts, crossOriginDc) {
         opts = opts || {};
         var basePath = opts.basePath || "/";
         var _complete;
@@ -475,7 +478,16 @@
 
         if (assets && Object.keys(assets).length) {
             for (var key in assets) {
-                if (assets.hasOwnProperty(key)) _loader.add(key, basePath + assets[key]);
+                if (assets.hasOwnProperty(key)) {
+                    var _obj = {
+                        name: key,
+                        url: basePath + assets[key],
+                    };
+                    if(opts.crossOrigin!==undefined)_obj.crossOrigin=opts.crossOrigin;
+                    // console.log('url:', _obj.url);
+                    if (!crossOriginDc) _loader.add(_obj);
+                    else addCrossOriginMappingLoad(_obj);
+                }
             }
         }
 
@@ -486,8 +498,27 @@
                 if (typeof _temp === 'string') _temp = {id: _temp, src: _temp};
                 else if (_temp.id === undefined && _temp.src) _temp.id = _temp.src;
                 //添加到显示列表
-                if (_temp.id !== undefined && _temp.src !== undefined) _loader.add(_temp.id, _temp.src);
+                if (_temp.id !== undefined && _temp.src !== undefined) {
+                    var _obj = {
+                        name: _temp.id,
+                        url: _temp.src,
+                    };
+                    if(opts.crossOrigin!==undefined)_obj.crossOrigin=opts.crossOrigin;
+                    if (!crossOriginDc) _loader.add(_obj);
+                    else addCrossOriginMappingLoad(_obj);
+                }
             }
+        }
+
+        function addCrossOriginMappingLoad(obj) {
+
+            if(crossOriginDc[obj.url]){
+                obj.url=crossOriginDc[obj.url];
+                obj.crossOrigin=true;
+            }
+
+            _loader.add(_obj);
+
         }
 
         function complete(loader, resources) {
