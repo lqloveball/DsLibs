@@ -10,12 +10,11 @@ import EventDispatcher from '../core/EventDispatcher';
 class SitePageManager extends EventDispatcher {
 
 
-
-
     /**
      *
      */
     constructor() {
+
         super();
 
         this._pageDc = {};
@@ -24,15 +23,17 @@ class SitePageManager extends EventDispatcher {
         this._pageModel = null;
         this._oldPageLabel = '';
         this._oldPageModel = null;
-        this._history=[];
+        this._history = [];
+        this._historyIndex = 0;
 
     }
 
     /**
      * 调整页面模块
      * @param {string} value 跳转的页面标识
+     * @param {boolean} [history=true] 是否添加进历史记录
      */
-    gotoPage(value) {
+    gotoPage(value, history) {
 
         if (this._pageLabel === value) return;
 
@@ -45,15 +46,22 @@ class SitePageManager extends EventDispatcher {
         this._pageLabel = value;
         this._oldPageModel = this._pageModel;
 
+        //是否添加进历史记录
+        history = history !== undefined ? history : true;
         //记录页面标识的历史记录
-        if( this._oldPageLabel!=='')this._history.push(this._oldPageLabel);
+        if (this._oldPageLabel !== '' && history) {
+
+            this._history.push(this._oldPageLabel);
+            this._historyIndex = this._history.length - 1;
+
+        }
 
 
-        this._pageModel=_temp;
-        if (this._pageModel){
+        this._pageModel = _temp;
+        if (this._pageModel) {
 
-            if (this._pageModel.MovieIn)this._pageModel.MovieIn();
-            else if (this._pageModel.movieIn)this._pageModel.movieIn();
+            if (this._pageModel.MovieIn) this._pageModel.MovieIn();
+            else if (this._pageModel.movieIn) this._pageModel.movieIn();
 
         }
 
@@ -77,10 +85,38 @@ class SitePageManager extends EventDispatcher {
     }
 
     /**
+     * 上一个历史记录页面
+     */
+    previousHistory() {
+
+        if (this._history.length <= 0) return;
+        var _num = this._historyIndex - 1;
+        if (_num <= 0) _num = 0;
+
+        var _label = this._history[_num];
+        this.gotoPage(_label,false);
+
+    }
+
+    /**
+     * 下一个历史记录页面
+     */
+    nextHistory() {
+
+        if (this._history.length <= 0) return;
+        var _num = this._historyIndex + 1;
+        if (_num >= this._history.length) _num = this._history.length - 1;
+
+        var _label = this._history[_num];
+        this.gotoPage(_label,false);
+
+    }
+
+    /**
      * 添加页面模块
      * @param {*} page 一个页面对象，最好需要拥有name属性，这个会作为页面的标识名
      */
-    add(page){
+    add(page) {
 
         if (this._pageList.indexOf(page) !== -1) return;
 
@@ -98,6 +134,7 @@ class SitePageManager extends EventDispatcher {
             this._pageList.push(page);
 
         }
+
     }
 
     /**
@@ -144,7 +181,7 @@ class SitePageManager extends EventDispatcher {
      * 旧的页面标识
      * @return {string}
      */
-    get oldPageLabel(){
+    get oldPageLabel() {
 
         return this._oldPageLabel;
 
@@ -154,7 +191,7 @@ class SitePageManager extends EventDispatcher {
      * 旧的页面模块
      * @return {null}
      */
-    get oldPageModel(){
+    get oldPageModel() {
 
         return this._oldPageModel;
 
@@ -164,12 +201,11 @@ class SitePageManager extends EventDispatcher {
      * 历史记录
      * @return {Array}
      */
-    get history(){
+    get history() {
 
         return this._history;
 
     }
-
 
 }
 

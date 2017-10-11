@@ -51,6 +51,7 @@ var JSDOC_CONFIG = {
         "recurse": true,
         "private": false,
         "lenient": true,
+        "debug":true,
         "destination": "../docs/dsDocs",
         "template": "../docsBuild/tui-jsdoc-template",
         "tutorials": "../docsBuild/tutorials",
