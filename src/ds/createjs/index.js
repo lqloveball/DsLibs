@@ -463,6 +463,31 @@ ds.createjs.loadJS = function (jsUrl, complete, error) {
 
 };
 
+var tempAnchor;
+
+function determineCrossOrigin(url, loc) {
+
+    loc = loc || window.location;
+
+    if (url.indexOf('data:') === 0) return '';
+
+    // default is window.location
+    loc = loc || window.location;
+
+    if (!tempAnchor) tempAnchor = document.createElement('a');
+
+    tempAnchor.href = url;
+    url = _url.parse(tempAnchor.href);
+
+    var samePort = (!url.port && loc.port === '') || (url.port === loc.port);
+
+    if (url.hostname !== loc.hostname || !samePort || url.protocol !== loc.protocol) return 'anonymous';
+
+    return '';
+
+}
+
+
 /**
  * 加载动资源资源队列
  * @param {object} opts 加载参数
@@ -476,6 +501,7 @@ ds.createjs.loadJS = function (jsUrl, complete, error) {
  * @param {function} [opts.complete=undefined]  加载完成回调
  * @param {string} [opts.basePath='']  添加相对路径 默认不输入basePath为'',直接使用默认路径，有设置会basePath+其他路径url
  * @param {boolean} [opts.loadType=false]  资源加载方式，是否使用预加载文件头来获取精准的加载进度
+ * @param {boolean} [opts.crossOrigin=false]  跨域传入值  ''或者'anonymous' 传入true 等同'anonymous'
  * @return {createjs.LoadQueue} 加载对象
  */
 ds.createjs.loadAssets = function (opts) {
@@ -493,7 +519,7 @@ ds.createjs.loadAssets = function (opts) {
     //命名空间的id
     let _isCompositionID = opts.id;
     //是否最新AdobeAnimateCC2017以后的版本 如果不进行判断，但有填写id那还默认为是最新的AnimateCC2017导出的资源
-    let _isAdobeAnimateCC2017 = (!_judgeAnimateCC2017 && _isCompositionID) ? true : false;
+    let _isAdobeAnimateCC2017 = (!_judgeAnimateCC2017 && _isCompositionID );
 
     //获取导出库对象
     let _comp;
@@ -517,7 +543,14 @@ ds.createjs.loadAssets = function (opts) {
     let loadType = opts.loadType ? opts.loadType : false;
 
     //创建队列对象
-    let queue = new createjs.LoadQueue(loadType);
+    let queue;
+    if (!opts.crossOrigin) queue = new createjs.LoadQueue(loadType);
+    else {
+
+        var _crossOrigin = typeof opts.crossOrigin === 'string' ? opts.crossOrigin : 'anonymous';
+        queue = new createjs.LoadQueue(loadType, '', _crossOrigin);
+
+    }
 
     if (createjs.Sound) queue.installPlugin(createjs.Sound);
 
@@ -712,7 +745,6 @@ ds.createjs.create = function (opts) {
     let _cjsModel = new CreatejsModel(_canvas);
 
     _cjsModel.setFPS(_fps);
-
 
 
     //如果有css参数，按参数进行设置

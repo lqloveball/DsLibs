@@ -70,7 +70,7 @@ module.exports = merge(webpackBaseConfig, {
   // 生产
   // devtool: '#cheap-module-source-map',
   // 生产
-  devtool: '#eval',
+  // devtool: '#eval',
   //是否观察者模式
   watch: true,
   //插件，比loader更强大，能使用更多webpack的api

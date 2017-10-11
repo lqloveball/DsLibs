@@ -6,11 +6,14 @@ var newer = require('gulp-newer'); //快速创建copy
 var copy = require('gulp-copy'); //拷贝
 var watch = require('gulp-watch'); //观察者
 var uglify = require('gulp-uglify');//代码压缩工具
-
+var babel = require('gulp-babel');
 var WATCH_PATH = [
     "../src/ds/**/*.js",
-]
+];
+
 gulp.task('delComments', function () {
+    del(['../src/dsx/'], {force: true});
+
 
     /* watch(WATCH_PATH, {verbose: true}, function (e) {
 
@@ -90,6 +93,7 @@ gulp.task('delComments', function () {
         if (event.type === 'added' || event.type === 'changed') {
 
             gulp.src([_path])
+                .pipe(babel({presets: ['env']}))
                 .pipe(uglify(
                     {
                         warnings: false,//去警告

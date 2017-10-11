@@ -17,9 +17,11 @@
   "author": "maksim.lin@foxmail.com",
   "license": "MIT",
   "devDependencies": {
+    "babel-preset-env": "^1.6.0",
     "browser-sync": "^2.18.5",
     "del": "^3.0.0",
     "gulp": "^3.9.1",
+    "gulp-babel": "^7.0.0",
     "gulp-connect": "^5.0.0",
     "gulp-copy": "^1.0.0",
     "gulp-jsdoc3": "^1.0.1",
