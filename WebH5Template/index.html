@@ -8,7 +8,7 @@
     <meta name="format-detection" content="telephone=no">
     <meta content="telephone=no" name="format-detection" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <title>H5模板</title>
+    <title>H5 Dslibs 项目模板</title>
     <link rel="stylesheet" href="./css/main.css" />
     <script>
         var ua = navigator.userAgent;
@@ -26,6 +26,7 @@
             overflow: hidden;
             background-color: #ccc;
         }
+
     </style>
 </head>
 <body>
@@ -40,11 +41,14 @@
           <div class="off"></div>
         </div> -->
         <!-- dom的loading方式  如果不使用可以删除-->
-        <div id="siteLoadPanel"></div>
+        <div id="siteLoadPanel">
+            <div class="progressPanel">
+                <div class="progress"></div>
+            </div>
+            <div class="label">loading...</div>
+        </div>
     </div>
     <!-- 主入口文件 -->
     <script src="js/app/main.js"></script>
-    <!-- 分享js接口 如果不使用可以删除-->
-    <script src='./js/libs/cagoe/WechatShare.js'></script>
 </body>
 </html>

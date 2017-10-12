@@ -29,22 +29,30 @@ function AppMain() {
     SiteModel.apier = this.apier = _apier;
 
     //页面跳转控制
-    var _pager = new Ds.gemo.SitePageManager();
+    var _pager = new ds.gemo.SitePageManager();
     SiteModel.pager = this.pager = _pager;
 
     this.init = function () {
 
         console.log('AppMain init()');
 
+        _apier.defaultWeiShare();
+
+        loadMainAssets();
+
     };
 
     function loadMainAssets() {
+
+        initModels();
 
     }
 
     function initModels() {
 
         SiteModel.resize();
+
+        SiteModel.showProgress(100);
 
         // _pager.add(require('./pages/HomePage'));
 

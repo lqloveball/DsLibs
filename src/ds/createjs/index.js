@@ -503,6 +503,28 @@ function determineCrossOrigin(url, loc) {
  * @param {boolean} [opts.loadType=false]  资源加载方式，是否使用预加载文件头来获取精准的加载进度
  * @param {boolean} [opts.crossOrigin=false]  跨域传入值  ''或者'anonymous' 传入true 等同'anonymous'
  * @return {createjs.LoadQueue} 加载对象
+ *
+ * @example
+ * //加载配置对象
+ * var _loadData={
+ *      basePath: './assets/',
+ *      jsUrl: 'main.js',
+ *      jsNS: 'lib',
+ *      imgNS: 'images',
+ *      imgNS: 'images',
+ *      loadType: true,
+ *      crossOrigin: false,//是否使用跨域
+ *      id: null,//cc 2017 发布资源的id
+ *      complete:function(e){
+ *
+ *      },
+ *      progress:function(e){
+ *          var _progress = e.target.progress;
+ *          //SiteModel.showProgress(_progress * 100 >> 0);
+ *      }
+ * }
+ * ds.createjs.loadAssets(_loadData);
+ *
  */
 ds.createjs.loadAssets = function (opts) {
 

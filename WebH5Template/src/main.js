@@ -40,9 +40,9 @@ var SiteModel = {
     //createjs模块
     createJsModel: null,
     //是否需要用到createjs框架
-    hasCreateJs: false,
+    hasCreateJs: true,
     //是否createjs为主的网站开发方式
-    isCreateJsSiteModel: false,
+    isCreateJsSiteModel: true,
     //是否createjs来做网站的loading
     isCreateJsLoadPanel: false,
 
@@ -67,6 +67,8 @@ var SiteModel = {
     loadCreateJsFrameWorkJS: loadCreateJsFrameWorkJS,
     //加载pixijs框架
     loadPixiJsFrameWorkJS: loadPixiJsFrameWorkJS,
+    //插入js脚本
+    getScript: getScript,
 };
 
 //设置成全局对象
@@ -117,12 +119,15 @@ function loadCreateJsFrameWorkJS() {
     _loadCreateJsFrameWorkJSBool = true;
 
     SiteModel.getScript('./js/app/createjsFrameWork.js', function () {
+
         console.log('loadCreateJsFrameWorkJS End');
+
         //是否CJS类型网站
         if (SiteModel.isCreateJsSiteModel) initCreateModel();
-        //使用什么模式的加载loading
-        if (SiteModel.isCreateJsLoadPanel) SiteModel.LoadModel.InitCreateJsLoadPanel();
-        else SiteModel.LoadModel.initDomLoadPanel();
+
+        //使用createjs动画资源实现loading界面
+        if (SiteModel.isCreateJsLoadPanel) SiteModel.loadModel.initCreateJsLoadPanel();
+        else SiteModel.loadModel.initDomLoadPanel();
 
     });
 

@@ -17,7 +17,7 @@ function LoadModel() {
     /**
      *  初始化CreateJs loading界面
      */
-    this.InitCreateJsLoadPanel = function () {
+    this.initCreateJsLoadPanel = function () {
 
         //loading加载配置
         var _loadObj = {
@@ -32,6 +32,8 @@ function LoadModel() {
             // progress: onProgress,
             //加载方式 初始化LoadQueue的crossOrigin参数
             loadType: true,
+            crossOrigin: false,
+            // id: 'EB14BC82AE2547EFB941F3FEED0893CC',
         };
 
         //loading加载完成后的方法处理
@@ -42,19 +44,20 @@ function LoadModel() {
             SiteModel.loadPanel = new loadlib.LoadPanel();
 
             //添加到场景
-            SiteModel.CJSModel.Root.addChild(SiteModel.loadPanel);
-            SiteModel.LoadPanel.gotoAndStop(0);
+            SiteModel.createJsModel.root.addChild(SiteModel.loadPanel);
+            SiteModel.loadPanel.gotoAndStop(0);
 
-            SiteResizeModel.resize();
+            SiteModel.resize();
 
             showProgress(SiteModel.baseProgress);
+
             //loading UI构建完成
             SiteModel.loadingModelEnd();
 
         }
 
         //开始加载loading的资源
-        ds.createjs.loadCJSAssets(_loadObj);
+        ds.createjs.loadAssets(_loadObj);
 
     };
 
@@ -62,7 +65,7 @@ function LoadModel() {
 
     /**
      * 设置加载进度方法
-     * @param {[Number]} progress [loading的百分比 0-100]
+     * @param {number} progress [loading的百分比 0-100]
      */
     function showProgress(progress) {
 

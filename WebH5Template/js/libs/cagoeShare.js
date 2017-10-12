@@ -1,11 +1,12 @@
 /**
   $(function(){
-             CallJsApiWXConfigItf("http://wechat.cagoe.com/JsApiWXConfig.aspx");
 
-            SetWechatShare("天然之声", "天然之声！！", location.href,"images/ShareImg.jpg", function () {
-                _hmt.push(['_trackEvent', "ShareBackShare", "click"]);//百度监测
-            });
+        CallJsApiWXConfigItf("http://wechat.cagoe.com/JsApiWXConfig.aspx");
+
+        SetWechatShare("天然之声", "天然之声！！", location.href,"images/ShareImg.jpg", function () {
+            _hmt.push(['_trackEvent', "ShareBackShare", "click"]);//百度监测
         });
+  });
  */
 
 var JsApiWXConfigItf = "";
@@ -36,6 +37,7 @@ var WechatShareTimelineCancelCallBack = undefined;
 var WechatShareTimelineFailCallBack = undefined;
 
 var HasBindWeixinShareEventSuccess = false; //是否已经绑定微信分享事件
+
 function GetAbsoluteUrl(url) {
     /// <summary>获取绝对路径</summary>
     /// <param name="url" type="String">相对路径</param>

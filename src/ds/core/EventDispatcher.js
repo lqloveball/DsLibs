@@ -275,11 +275,12 @@
      * @param {class} source 需要继承事件派发机制的对象
      * @example
      *
+     * require('ds/core/EventDispatcher');
      * //创建一个猫的类，继承事件派发机制。
      * function CatClass(){
      *
      *    //这个猫继承了事件派发机制
-     *    EventDispatcher.extend(this);
+     *    ds.EventDispatcher.extend(this);
      *
      *    //猫有一个行走的方法
      *    this.startRun=function(){
