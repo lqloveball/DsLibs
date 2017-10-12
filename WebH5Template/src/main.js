@@ -6,6 +6,8 @@ var SiteModel = {
     devicer: require('ds/gemo/Devicer'),
     //这个单页面程序主逻辑模块 loadSinglePageApplicationJS执行后创建
     appMain: null,
+    //api接口模块
+    apier:null,
     //加载页面模块
     loadModel: require('./app/LoadModel.js'),
     //是否开发模式下，会根据端口号进行判断
@@ -100,9 +102,7 @@ function loadSinglePageApplicationJS() {
         ['app/AppMain.js'],
         function() {
             SiteModel.loadModel.showProgress(SiteModel.frameWorkProgress);
-            var _appMain = require('app/AppMain.js');
-            SiteModel.appMain = _appMain;
-            SiteModel.appMain.Init();
+            require('app/AppMain.js');
         },
         'AppMain'//单页面应用打包的js名称
     );
