@@ -34,12 +34,13 @@ webpackEntry.createjsFrameWork=[
   'createjs',
   'dscreatejs',
 ];
+
 //有需要用到pixijs 时候打开
 // webpackEntry.pixiFrameWork=[
 //   'pixijs',
 //   'pixijsanimate',
 //   'pixi/pixi-projection.min.js',
-//   'ds/pixijs/index.js',
+//   'dspixijs',
 // ];
 
 module.exports = merge(webpackBaseConfig, {

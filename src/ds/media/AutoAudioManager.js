@@ -224,7 +224,14 @@
                 document.body.removeEventListener('touchstart', audioInBrowserHandler);
 
             }
-        };
+        }
+
+        /**
+         * 全局判断声音是否暂停
+         * @member ds.media.AutoAudioManager.prototype.paused
+         * @type {boolean}
+         */
+        this.paused=true;
 
         /**
          * 设置一个音乐的按钮开关
@@ -322,6 +329,8 @@
                 if (_audio.paused) _audio.play();
                 else _audio.pause();
 
+                _self.paused=_audio.__opaused!==undefined?(!_audio.__opaused):_audio.paused;
+
             };
 
             _button[0]._bgmAudio = _audio;
@@ -350,6 +359,8 @@
 
             //重置UI状态
             upUIState();
+
+            _self.paused=_audio.__opaused!==undefined?(!_audio.__opaused):_audio.paused;
         };
 
         /**

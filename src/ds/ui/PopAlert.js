@@ -196,6 +196,8 @@
 
         });
 
+        // console.log(_info,config);
+
         //初始化配置
         initConfig(config);
 
@@ -219,6 +221,8 @@
             //按钮
             var _btns = _config.btns !== undefined ? _config.btns : '确定';
 
+
+
             if (typeof(_btns) === 'string') {
 
                 if (_btns === '') _btnArr = [];
@@ -235,8 +239,9 @@
 
             }
 
-            if (_btnArr.length <= 0) {
 
+            if (_btnArr.length <= 0) {
+        
                 _okDom.hide();
                 _noDom.hide();
 
@@ -344,6 +349,39 @@
      * @see ds.ui.PopAlert 等于创建一个ds.ui.PopAlert对象，并显示 {@link ds.ui.PopAlert}
      * @method  ds.ui.PopAlert.alert
      * @return {ds.ui.PopAlert}
+     * @example
+     *
+     *  //快速实现
+     *  ds.alert('快速alert,默认一个确定按钮',function () {
+     *      alert('点击确认');
+     *  });
+     *
+     *  //选择性提示框
+     *  ds.alert('alert提示 2个按钮，请选择确定或者取消', {
+     *       btns:'确定,取消',
+     *       ok:function () {
+     *           console.log('点击确认');
+     *       },
+     *       no:function () {
+     *           console.log('点击取消');
+     *       }
+     *   });
+     *
+     *   //更多自定义提示框
+     *   ds.alert('alert提示 关闭按钮', {
+     *       title:'警告页面',
+     *       btns:'确定,取消',
+     *       color:'#b3f7fd',
+     *       panelColor:"#451c5f",
+     *       hasClose:true,
+     *       ok:function () {
+     *           console.log('点击确认');
+     *       },
+     *       no:function () {
+     *           console.log('点击取消');
+     *       }
+     *   });
+     *
      */
     ds.ui.PopAlert.alert = function(info, config) {
 

@@ -10,9 +10,6 @@ function APIManager() {
     //是否本地
     var _isLocal = false;
     if (location.href.indexOf(':800') !== -1) _isLocal = true;
-
-    //接口对接==有接口相关从这里开始编写===============================
-
     //记录网站实际地址，给到获取绝对图片路径时候使用
     var _webUrl = location.origin;//'http://nongfurunningchina.ne.cagoe.com';
     Object.defineProperty(this, "WebUrl", {
@@ -21,16 +18,50 @@ function APIManager() {
         },
     });
 
+    //接口对接==有接口相关从这里开始编写===============================
+
+    //=================接口方式参考Start==================
+    var _dataUrl=location.origin+'/ajax/Ajax.aspx?method=data';
+    if (_isLocal)_ViewUserInfoURL='testApi/data.txt';
+    var _testAPIing=false;
+    this.testApi = function(postData, callBack, errorBack) {
+
+        if(_testAPIing)return;
+        _testAPIing=true;
+
+
+        ds.net.post(_dataUrl, postData, function(data) {
+
+            if(callBack)callBack(data);
+            _testAPIing=false;
+
+        }, function() {
+
+            if(errorBack)errorBack(error,data);
+            _testAPIing=false;
+
+        },{dataType:'jsonp'});
+
+    };
+    //=================接口方式参考End====================
+
 
     //==================通用的分享接口使用代码==============================
-    //设置默认分享 标题  内容  链接
+    //设置默认分享
+    //设置默认标题
     var _shareTitle = '分享标题';
+    //设置默认内容
     var _shareInfo = '分享内容';
-    var _shareUrl = location.origin + "/index.html";
+    //设置默认链接
+    var _shareUrl = getAbsoluteUrl('/index.html');
     //作品回流页面地址
-    var _workPageUrl = '/index.html?WorkID=';
+    var _workPageUrl = getAbsoluteUrl('/index.html?WorkID=');
 
-    Object.defineProperty(this, "WorkPageUrl", {
+    /**
+     * 作品回流页面地址
+     * @type {string}
+     */
+    Object.defineProperty(this, "workPageUrl", {
         get: function () {
             return _workPageUrl;
         },
@@ -39,8 +70,11 @@ function APIManager() {
         }
     });
 
-    //是否作品回流页面
-    this.isWorkBackSharePage=false;
+    /**
+     * 是否作品回流页面
+     * @type {boolean}
+     */
+    this.isWorkBackSharePage = false;
 
     /**
      * 默认微信分享接口
@@ -50,10 +84,10 @@ function APIManager() {
      * @param  {string} domain  [设定需要使用指定的域分享接口地址  如："zedigital.com.cn" ，那接口地址会按"http://wechat."+domain+".cn/JsApiWXConfig.aspx" 进行拼接 ]
      */
     this.defaultWeiShare = function (title, info, url, domain) {
-        
+
         //插入分享接口js文件
-        SiteModel.getScript('./js/libs/cagoeShare.js',function () {
-            
+        SiteModel.getScript('./js/libs/cagoeShare.js', function () {
+
             try {
 
                 if (!CallJsApiWXConfigItf) {
@@ -70,6 +104,7 @@ function APIManager() {
             }
 
             var _apiUrl = "http://wechat.cagoe.com/JsApiWXConfig.aspx";
+
             if (location.href.indexOf(domain) !== -1) _apiUrl = "http://wechat." + domain + "/JsApiWXConfig.aspx";
 
             CallJsApiWXConfigItf(_apiUrl);
@@ -77,7 +112,7 @@ function APIManager() {
             //回流页面走的流程
             if (location.href.indexOf(_workPageUrl) !== -1) {
 
-                _self.isWorkBackSharePage=true;
+                _self.isWorkBackSharePage = true;
                 _self.defaultWorkPageWeiShare(title, info);
 
 
@@ -88,9 +123,9 @@ function APIManager() {
                 _self.setWeiShare(title, info, url);
 
             }
-            
+
         });
-        
+
     };
     /**
      * 设置微信分享
@@ -103,12 +138,7 @@ function APIManager() {
         _shareTitle = title || _shareTitle;
         _shareInfo = info || _shareInfo;
 
-        if (url && url.indexOf('http') === -1) {
-
-            if (url.indexOf('/') === 0) url = location.origin + url;
-            else url = location.origin + '/' + url;
-
-        }
+        if (url && url.indexOf('http:') <0&& url.indexOf('https:') <0) url=getAbsoluteUrl(url);
 
         _shareUrl = url || _shareUrl;
 
@@ -123,6 +153,7 @@ function APIManager() {
         SetWechatShareToTimeline(_shareInfo, _shareInfo);
 
     };
+
     /**
      * 做回流页面分享
      * @param  {string} workid [作品回流页面地址  如：100' 等于 location.origin+'/index.html?WorkID='+'100']
@@ -134,7 +165,7 @@ function APIManager() {
         title = title || _shareTitle;
         info = info || _shareInfo;
 
-        var _url = location.origin + _workPageUrl + workid;
+        var _url = _workPageUrl + workid;
 
         SetWechatShare(title, info, _url, "images/ShareImg.jpg", function () {
 
@@ -146,6 +177,7 @@ function APIManager() {
         SetWechatShareToTimeline(info, info);
 
     };
+
     /**
      * 默认作品回流分享
      * @param  {string} title  [分享标题]
@@ -158,21 +190,21 @@ function APIManager() {
 
         if (!_urlParamDc.WorkID) {
 
-            this.isWorkBackSharePage=false;
+            this.isWorkBackSharePage = false;
 
             console.warn('地址内作品id参数不存在!');
             return;
 
         }
 
-        this.isWorkBackSharePage=true;
+        this.isWorkBackSharePage = true;
 
         var _workid = _urlParamDc.WorkID;
 
         title = title || _shareTitle;
         info = info || _shareInfo;
 
-        var _url = location.origin + _workPageUrl + _workid;
+        var _url = _workPageUrl + _workid;
 
         SetWechatShare(title, info, _url, "images/ShareImg.jpg", function () {
 
@@ -184,6 +216,44 @@ function APIManager() {
         SetWechatShareToTimeline(info, info);
 
     };
+    /**
+     * 隐藏微信按钮
+     * @param  {array} menuList [https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421141115]
+     */
+    this.hideMenuItems=function (menuList) {
+        menuList=menuList||[];
+        wx.hideMenuItems({
+            menuList: menuList // 要隐藏的菜单项，只能隐藏“传播类”和“保护类”按钮，所有menu项见附录3
+        });
+    };
+    /**
+     * 显示微信按钮
+     * @param  {array} menuList [https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421141115]
+     */
+    this.showMenuItems=function() {
+        menuList=menuList||[];
+        wx.showMenuItems({
+            menuList: menuList // 要显示的菜单项，所有menu项见附录3
+        });
+    };
+
+    var _tempAnchor;
+    /**
+     * 获取绝对路径
+     * @param {string} url 相对路径
+     * @return {*}
+     */
+    function getAbsoluteUrl(url) {
+
+        if (url.indexOf("http:") >= 0 || url.indexOf("https:") >= 0) return url;
+
+        if (!_tempAnchor) _tempAnchor = document.createElement('a');
+        _tempAnchor.href = url;
+        url = _tempAnchor.href;
+
+        return url;
+
+    }
 
 }
 

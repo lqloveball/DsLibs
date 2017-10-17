@@ -29,7 +29,7 @@ var SiteModel = {
     //自动声音控制对象初始化设置参数
     autoAudioerData: {
         list: [
-            //{src:'./media/BGM.mp3',id:'BGM',loop:true},//项格式
+            {src:'./media/BGM.mp3',id:'BGM',loop:true,},//项格式
         ],
         //默认播放声音背景
         id: 'BGM',

@@ -109,7 +109,9 @@ gulp.task('dssource', function () {
 
 
 
-    gulp.src(['../../src/ds/**/*.*']).pipe(
+    gulp.src([
+        '../../src/ds/**/*.*',
+    ]).pipe(
         copy("../src/ds/", {prefix: 0})
     );
 

@@ -18,6 +18,7 @@ function AppMain() {
     require('touchjs');
     //一般会需要jstween,当然还能使用tweenlite或 tweenmax
     require('jstween');//15k
+
     // require('jstimeline');//11 KB
     // require('tweenlite');//28k
     // require('timelinelite');//13 KB
@@ -32,6 +33,7 @@ function AppMain() {
     var _pager = new ds.gemo.SitePageManager();
     SiteModel.pager = this.pager = _pager;
 
+    //初始化
     this.init = function () {
 
         console.log('AppMain init()');
@@ -42,24 +44,46 @@ function AppMain() {
 
     };
 
+    //开始加载资源
     function loadMainAssets() {
 
-        initModels();
+        //加载配置对象
+        var _loadData={
+            basePath: './assets/test/',
+            jsUrl: 'main.js',
+            jsNS: 'lib',
+            imgNS: 'images',
+            imgNS: 'images',
+            loadType: true,
+            crossOrigin: false,//是否使用跨域
+            id: '5071EEE873294290BE1B32546711C71F',//cc 2017 发布资源的id
+            complete:function(e){
+                SiteModel.showProgress(100);
+                initModels();
+            },
+            progress:function(e){
+                var _progress = e.target.progress;
+                SiteModel.showProgress(20+(_progress * 80 >> 0));
+            }
+        };
+        //开始加载动画资源
+        ds.createjs.loadAssets(_loadData);
 
     }
 
+    //开始初始化模块
     function initModels() {
 
-        SiteModel.resize();
 
-        SiteModel.showProgress(100);
+        SiteModel.hitLoadPanel();
 
-        // _pager.add(require('./pages/HomePage'));
+        _pager.add(require('./pages/HomePage'));
 
         //debug模式页面控制
         if(SiteModel.debug){
 
             // gotoPage('HomePage');
+            gotoPage('HtmlPage');
 
         }
         //非debug模式页面控制
@@ -69,13 +93,18 @@ function AppMain() {
 
         }
 
+        SiteModel.resize();
+
     }
 
     /**
      * 页面跳转
-     * @param {string} value
+     * @param {string} value  页面标识
      */
-    this.gotoPage=function (value) {
+    this.gotoPage=gotoPage;
+
+    //页面跳转方法
+    function gotoPage(value) {
 
         if (_pager.pageLabel === value) return;
 
@@ -83,7 +112,7 @@ function AppMain() {
 
         ds.net.pv(value);
 
-    };
+    }
 
 }
 

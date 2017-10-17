@@ -8,7 +8,9 @@
 /WebH5Template/js/app/pages/
 /WebH5Template/assets/test/
 /WebH5Template/src/libs/
-/WebH5Template/src/ds/
+/WebH5Template/src/libs/
+/WebH5Template/src/app/pages/
 /WebH5Template/src/dsx/
+/WebH5Template/src/ds/
 package-lock.json
 *.DS_Store

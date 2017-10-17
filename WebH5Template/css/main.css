@@ -452,8 +452,8 @@ li {
 
 #BGMBtn {
   position: absolute;
-  right: 50px;
-  top: 90px;
+  right: 30px;
+  top: 30px;
   width: 50px;
   height: 50px;
   outline: none;
@@ -463,8 +463,8 @@ li {
 #BGMBtn .on,
 #BGMBtn .off {
   position: absolute;
-  left: 20px;
-  top: 20px;
+  left: 0px;
+  top: 0px;
   width: 44px;
   height: 42px;
 }
@@ -517,6 +517,34 @@ li {
   overflow: hidden;
   display: none;
 }
+
+#domBox {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+#cjsBox {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+#cjsBox cavans {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+/*
+//loading demo
+<div id="siteLoadPanel">
+    <div class="progressPanel">
+        <div class="progress"></div>
+    </div>
+    <div class="label">loading...</div>
+</div>
+ */
 
 #siteLoadPanel {
   position: absolute;

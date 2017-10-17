@@ -54,6 +54,7 @@ module.exports = {
             pixijs: 'libs/pixi/pixi.min.js',
             pixijsanimate: 'libs/pixi/pixi-animate.min.js',
             pixijsdragonBones: 'libs/pixi/dragonBones.min.js',
+            dspixijs: 'ds/pixijs/index.js',
             //DsLibs
             eventdispatcher: 'ds/core/EventDispatcher.js',
             moblieresizemodel: 'ds/core/MoblieResizeModel.js',
