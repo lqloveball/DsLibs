@@ -1,4 +1,5 @@
 import CreatejsModel from './CreatejsModel.js';
+import CreatejsGLModel from './CreatejsGLModel.js';
 import InputText from './InputText.js';
 
 let root = (typeof window !== 'undefined' ? window : (typeof process === 'object' && typeof require === 'function' && typeof global === 'object') ? global : this);
@@ -13,9 +14,9 @@ ds.createjs = ds.createjs || {};
 /**
  * 获取一个显示对象的BitmapData
  * @requires module:libs/createjs/BitmapData.js
- * @param {createjs.DisplayObject} display
- * @param {createjs.Rectangle} rect
- * @return {createjs.BitmapData}
+ * @param {createjs.DisplayObject} display  一个需要截图的显示对象
+ * @param {createjs.Rectangle} rect  截图区域
+ * @return {createjs.BitmapData}  返回可以操作的像素数据
  */
 ds.createjs.getDisplayObjectBitmapData = function (display, rect) {
 
@@ -33,6 +34,184 @@ ds.createjs.getDisplayObjectBitmapData = function (display, rect) {
     display.uncache();
 
     return _bitmapData;
+
+};
+
+
+/**
+ * 添加一个输入框对象
+ * @param {createjs.DisplayObject} display 显示输入框对应的显示对象
+ * @param {object} opts 输入框配置参数 {@link ds.createjs.InputText}
+ * @param {string} defaultText 输入框默认文本
+ * @return {ds.createjs.InputText}  输入框对象
+ */
+ds.createjs.addInput = function (display, opts, defaultText) {
+
+    var _input = new InputText(display, opts, defaultText);
+    return _input;
+
+};
+
+//dom元素列表
+let _CreatejsDOMList = [];
+/**
+ * 是否自动刷新判断 dom元素在场景内
+ * @type {boolean}
+ */
+ds.createjs.CreatejsDOMAuto = true;
+createjs.Ticker.addEventListener("tick", function () {
+
+    if (!ds.createjs.CreatejsDOMAuto) return;
+
+
+    for (var i = 0; i < _CreatejsDOMList.length; i++) {
+
+        var _domElement = _CreatejsDOMList[i];
+        if (_domElement) _domElement.upInStage();
+
+    }
+
+});
+
+/**
+ * 添加一个createjs 绑定的dom元素
+ * @param {createjs.Container} display 显示容器
+ * @param {HTMlElement} dom  dom对象
+ * @param {HTMlElement} domBox 添加到dom容器
+ * @return {createjs.DOMElement}
+ * @example
+ * var _img=new Image();
+ * _img.src='./images/ShareImg.jpg';
+ * ds.createjs.addDOM(_View.movie.box,_img);
+ */
+ds.createjs.addDOM = function (display, dom, domBox) {
+
+    let _el = $(dom);
+    let _domElement = new createjs.DOMElement(_el[0]);
+    let _domBox;
+
+    _el.css({
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        'transform': 'translate(-1000px,-1000px)',
+        '-webkit-transform': 'translate(-1000px,-1000px)',
+    });
+
+    if (domBox) _domBox = $(_domBox);
+    else _domBox = $('#cjsBox');
+
+    _domBox.append(_el);
+    display.addChild(_domElement);
+
+    _domElement.upInStage = function () {
+
+        if (display && display.stage) _el.show();
+        else _el.hide();
+
+    };
+
+    _el[0]._domElement = _domElement;
+
+    _CreatejsDOMList.push(_domElement);
+
+    return _domElement;
+
+};
+/**
+ * 删除一个createjs 绑定的 dom元素
+ * @param {HTMlElement|createjs.DOMElement} domElement
+ */
+ds.createjs.removeDOM = function (domElement) {
+
+    let _domElement;
+    if (domElement instanceof createjs.DOMElement) _domElement = domElement;
+    else if (domElement[0] && domElement[0]._domElement) _domElement = domElement[0]._domElement;
+
+    if (_domElement && _CreatejsDOMList.indexOf(_domElement) >= 0) {
+
+        for (var i = 0; i < _CreatejsDOMList.length; i++) {
+
+            if (_CreatejsDOMList[i] == _domElement) _CreatejsDOMList.splice(i, 1);
+
+        }
+
+        $(_domElement.htmlElement).remove();
+
+    }
+
+};
+
+/**
+ * 添加一个createjs绑定的dom元素来做click触发
+ * @param {createjs.Container} display 显示容器
+ * @param {HTMlElement} dom  dom对象
+ * @param {HTMlElement} domBox 添加到dom容器
+ * @param {function} fun
+ * * @example
+ * var _img=new Image();
+ * _img.src='./images/ShareImg.jpg';
+ * ds.createjs.addHitDom(_View.movie.box,_img,null,function(){
+ *      console.log('点击测试');
+ * });
+ */
+ds.createjs.addHitDom = function (display, dom, domBox, fun) {
+
+    ds.createjs.addDOM(display, dom, domBox);
+
+    if (fun) $(dom).on('click', fun);
+
+};
+
+/**
+ * 缓存获取一个现实对象的base64数据截图
+ * @param {createjs.DisplayObject} display 需要进行缓存获取的显示对象
+ * @param {object} opts 截图设置参数
+ * @param {string} [opts.typ='png'] 截图保存图片格式类型
+ * ##### 类型：
+ * - png --> 设置png导出
+ * - jpg --> 设置jpg时候可以设置质量 opts.encoder
+ * @param {number} [opts.encoder=0.8] 保存jpg类型时候base64的图片质量
+ * @param {number} opts.width 截图宽
+ * @param {number} opts.height 截图高
+ * @return {string}  base64数据
+ */
+ds.createjs.getBase64 = function (display, opts) {
+
+    opts = opts || {};
+    var _base64;
+
+    var _rect = new createjs.Rectangle();
+
+    if (opts.width) {
+
+        _rect.width = opts.width;
+        _rect.height = opts.height || opts.width;
+
+    }
+    else {
+
+        var _temp = display.getBounds();
+        _rect.width = _temp.width + _temp.x;
+        _rect.height = _temp.height + _temp.y;
+
+    }
+
+    display.cache(_rect.x, _rect.y, _rect.width, _rect.height);
+
+    if (opts.type === 'jpg') _base64 = display.cacheCanvas.toDataURL("image/jpeg", opts.encoder !== undefined ? opts.encoder : 0.8);
+    else _base64 = display.cacheCanvas.toDataURL("image/png");
+
+    display.uncache();
+
+    if (opts.debug) {
+
+        var _w = window.open('about:blank', 'image from canvas');
+        if (_w) _w.document.write("<img src='" + _base64 + "' alt='from canvas'/>");
+
+    }
+
+    return _base64;
 
 };
 
@@ -288,13 +467,22 @@ ds.createjs.removeMovie = function (mc) {
  * 设置按钮普遍做法是把一个MovieClip转换成一个按钮(pc常用)
  * 鼠标移动上去从0祯播放到最后一个祯,点击会会播放
  * @param {createjs.MovieClip} mc    要转成按钮的影片剪辑
+ * @param {function} eventFun    执行函数
  * @param {createjs.DisplayObject} hitMc 作为这按钮响应区域的显示对象
  */
-ds.createjs.setButton = function (mc, hitMc) {
+ds.createjs.setButton = function (mc, eventFun, hitMc) {
 
     if (hitMc) {
-        setButtonByHitMc(mc, hitMc);
+        setButtonByHitMc(mc, eventFun, hitMc);
         return;
+    }
+
+    if (eventFun) {
+
+        mc.on('click', function (e) {
+            if (eventFun) eventFun(e);
+        })
+
     }
 
     if (mc instanceof createjs.MovieClip) ds.createjs.movieTo(mc, 0);
@@ -362,7 +550,7 @@ ds.createjs.setButton = function (mc, hitMc) {
 };
 
 //需要设置其他响应区域的按钮算法
-function setButtonByHitMc(mc, hitMc) {
+function setButtonByHitMc(mc, eventFun, hitMc) {
 
     if (mc instanceof createjs.MovieClip) mc.gotoAndStop(0);
 
@@ -371,6 +559,14 @@ function setButtonByHitMc(mc, hitMc) {
     hitMc.cursor = 'pointer';
 
     if (hitMc.mouseChildren !== null) hitMc.mouseChildren = false;
+
+    if (eventFun) {
+
+        hitMc.on('click', function (e) {
+            if (eventFun) eventFun(e);
+        })
+
+    }
 
     hitMc.addEventListener('mouseover', function (e) {
 
@@ -488,12 +684,11 @@ function determineCrossOrigin(url, loc) {
 }
 
 
+let AdobeAnCompositionsList = [];
 /**
  * 加载动资源资源队列
  * @param {object} opts 加载参数
  * @param {string} opts.jsUrl 加载参数
- * @param {boolean} [opts.judge=true] 是否指定2017以后版本。如果不指定，会进行createjs.TextLoader加载后进行字符判断。但这样会等于加载两次js文件不推荐这么做，开发过程中为了方便可以先不设置
- * @param {string} [opts.id='']  Adobe Animate CC 2017以后版本导出的js有指定id，可以指定id。如果设置等于忽略opts.judge
  * @param {array} [opts.otherList='']  其他资源，如果其他图片
  * @param {string} [opts.jsNS='libs']  加载后动画类资源附加到什么命名空间下
  * @param {string} [opts.imgNS='images']  加载后图片资源附加到什么命名空间下
@@ -511,10 +706,8 @@ function determineCrossOrigin(url, loc) {
  *      jsUrl: 'main.js',
  *      jsNS: 'lib',
  *      imgNS: 'images',
- *      imgNS: 'images',
  *      loadType: true,
  *      crossOrigin: false,//是否使用跨域
- *      id: null,//cc 2017 发布资源的id
  *      complete:function(e){
  *
  *      },
@@ -536,14 +729,8 @@ ds.createjs.loadAssets = function (opts) {
     }
 
     let basePath = opts.basePath ? opts.basePath : null;
-    //是否需要进行判断是否是最新的AnimateCC2017导出的资源
-    let _judgeAnimateCC2017 = opts.judge !== undefined ? opts.judge : true;
-    //命名空间的id
-    let _isCompositionID = opts.id;
-    //是否最新AdobeAnimateCC2017以后的版本 如果不进行判断，但有填写id那还默认为是最新的AnimateCC2017导出的资源
-    let _isAdobeAnimateCC2017 = (!_judgeAnimateCC2017 && _isCompositionID );
 
-    //获取导出库对象
+    //获取导出库对象  新版发布才需要
     let _comp;
     //加载js对象
     let jsUrl = opts.jsUrl;
@@ -584,10 +771,6 @@ ds.createjs.loadAssets = function (opts) {
     //先开始加载导出的JS
     let _jsUrl = basePath ? basePath + jsUrl : jsUrl;
 
-    let textloader = new createjs.TextLoader({
-        src: _jsUrl,
-        id: _jsUrl,
-    });
 
     let jsloader = new createjs.JavaScriptLoader({
         src: _jsUrl,
@@ -595,44 +778,11 @@ ds.createjs.loadAssets = function (opts) {
         type: "javascript"
     });
 
-    textloader.addEventListener('complete', textComplete);
+
     jsloader.addEventListener('complete', jsComplete);
 
-    //需要判断并且没指定库对象id的 必须进行判断加载
-    if (_judgeAnimateCC2017) textloader.load();
-    //不需要判断，有库的id号，说明是AdobeAnimateCC2017以后的版本
-    else if (!_judgeAnimateCC2017 && _isCompositionID) {
+    jsloader.load();
 
-        console.log('no Judge is AnimateCC 2017');
-        jsloader.load();
-
-    }
-    //老版本导出
-    else {
-
-        jsloader.load();
-
-    }
-
-    //进行判断后执行重新加载js
-    function textComplete(e) {
-
-        let jsText = textloader.getResult();
-        //判断是否最新AdobeAnimateCC2017以后的版本
-        if (jsText.indexOf("an.compositions['") >= 0) _isAdobeAnimateCC2017 = true;
-
-        if (_isAdobeAnimateCC2017) {
-
-            let reg = /an\.compositions\['(\w*)'\]/;
-            jsText.replace(reg, function () {
-                _isCompositionID = arguments[1];
-            });
-
-        }
-
-        jsloader.load();
-
-    }
 
     function jsComplete(e) {
 
@@ -645,16 +795,36 @@ ds.createjs.loadAssets = function (opts) {
     function queueStartLoad() {
 
         //老版本
-        if (!_isAdobeAnimateCC2017) {
-
+        if (!AdobeAn) {
             queueArr = window[jsNS].properties.manifest;
             ssMetadata = window[jsNS].ssMetadata;
-
         }
         //新版本
         else {
 
-            _comp = AdobeAn.getComposition(_isCompositionID);
+            // console.log('queueStartLoad:',AdobeAn.compositions);
+            var _currentID;
+
+            for (var key in AdobeAn.compositions) {
+
+                // console.log(key);
+                if (AdobeAnCompositionsList.indexOf(key) < 0) {
+
+                    _currentID = key;
+                    AdobeAnCompositionsList.push(key);
+
+                }
+
+            }
+
+            if (!_currentID) {
+
+                console.error('ds.createjs.loadAssets No has AdobeAn compositions ID Error');
+                return;
+
+            }
+
+            _comp = AdobeAn.getComposition(_currentID);
             var lib = _comp.getLibrary();
             window[jsNS] = lib;
             window[imgNS] = _comp.getImages();
@@ -707,7 +877,7 @@ ds.createjs.loadAssets = function (opts) {
         if (images === undefined) window[imgNS] = {};
         images = window[imgNS];
         //加载的图片对象放进图片字典中
-        if (e.item.type === createjs.LoadQueue.IMAGE) images[e.item.id] = e.result;
+        if (e.item.type === "image") images[e.item.id] = e.result;
 
     }
 
@@ -715,7 +885,7 @@ ds.createjs.loadAssets = function (opts) {
     function queueComplete(e) {
 
         let ss;
-        if (!_isAdobeAnimateCC2017) ss = window.ss = window.ss || {};
+        if (!AdobeAn) ss = window.ss = window.ss || {};
         else ss = _comp.getSpriteSheet();
 
 
@@ -741,12 +911,21 @@ ds.createjs.loadAssets = function (opts) {
 /**
  * 快速创建一个CreatejsModel基础结构
  * @param {object} opts 创建参数
+ * @param {boolean} [opts.hasGL=false] 是否需要创建WebGl的stage
+ * @param {CanvasElement} [opts.canvas=undefined] canvas对象 只有非WebGl模式可以传，建议不需要
  * @param {number} [opts.width=640] canvas宽
  * @param {number} [opts.height=1140] canvas宽
  * @param {number} [opts.fps=30] 渲染帧率
  * @param {string} [opts.appendTo=''] 需要添加到什么dom列表内，可以为空不添加
  * @param {object} [opts.css=undefined] 需要对canvas设置什么css,一个object对象。需要jquery或者zepto支持
- * @return {ds.createjs.CreatejsModel}   Createjs的cavnas基础结构
+ * @return {ds.createjs.CreatejsModel|ds.createjs.CreatejsGLModel}   Createjs的cavnas基础结构
+ * @example
+ * var createJsModel = ds.createjs.create({
+ *       appendTo: $('#cjsBox')[0],
+ *       width: 640,
+ *       height: 1140,
+ *       fps: 30
+ *   });
  */
 ds.createjs.create = function (opts) {
 
@@ -764,24 +943,43 @@ ds.createjs.create = function (opts) {
     else _canvas = document.createElement("canvas");
 
     // var _cjsModel = new ds.createjs.CreatejsModel(_canvas);
-    let _cjsModel = new CreatejsModel(_canvas);
+    let _cjsModel;
+
+    if (opts.hasGL) _cjsModel = new CreatejsGLModel();
+    else _cjsModel = new CreatejsModel(_canvas);
+
 
     _cjsModel.setFPS(_fps);
 
 
     //如果有css参数，按参数进行设置
     if (opts.css !== undefined) {
-        $(_canvas).css(opts.css);
+
+        if (opts.hasGL) {
+
+            $(_cjsModel.canvas).css(opts.css);
+
+        } else {
+
+            $(_cjsModel.canvas2d).css(opts.css);
+            $(_cjsModel.canvas3d).css(opts.css);
+
+        }
+    }
+    else {
+
+
+        var _css = {
+            position: 'absolute',
+            left: 0,
+            top: 0,
+        };
+        $(_cjsModel.canvas2d).css(_css);
+        $(_cjsModel.canvas3d).css(_css);
     }
 
-    if (opts.appendTo !== undefined) {
+    if (opts.appendTo !== undefined) _cjsModel.appendTo(opts.appendTo);
 
-        if (typeof _appendTo === 'string') document.getElementById(_appendTo).appendChild(_canvas);
-        else if (_appendTo instanceof HTMLElement) _appendTo.appendChild(_canvas);
-        else if (_appendTo[0] instanceof HTMLElement) _appendTo[0].appendChild(_canvas);
-        else console.warn('未获取到opts.appendTo相关DOM对象，无法添加到DOM列表内:', opts.appendTo);
-
-    }
 
     _cjsModel.size(_width, _height);
 

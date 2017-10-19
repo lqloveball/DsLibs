@@ -56,7 +56,7 @@ function AppMain() {
             imgNS: 'images',
             loadType: true,
             crossOrigin: false,//是否使用跨域
-            id: '5071EEE873294290BE1B32546711C71F',//cc 2017 发布资源的id
+            // id: '5071EEE873294290BE1B32546711C71F',//cc 2017 发布资源的id
             complete:function(e){
                 SiteModel.showProgress(100);
                 initModels();
@@ -83,13 +83,17 @@ function AppMain() {
         if(SiteModel.debug){
 
             // gotoPage('HomePage');
-            gotoPage('HtmlPage');
+            // gotoPage('HtmlPage');
+            // gotoPage('SelectImages');
+            // gotoPage('CreatejsInput');
+            // gotoPage('CreatejsDomMovie');
+            gotoPage('WebGL2Stage');
 
         }
         //非debug模式页面控制
         else{
 
-            // gotoPage('HomePage');
+            gotoPage('HomePage');
 
         }
 

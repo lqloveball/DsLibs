@@ -115,6 +115,36 @@
             return _orientationTip;
         };
 
+        /**
+         * 显示提示
+         * @method ds.core.MoblieResizeModel.prototype.showOrientationTip
+         * @param {boolean} [bool=true]  竖屏提示
+         * @function
+         */
+        this.showOrientationTip=function (bool) {
+
+            if(!_orientationTip)return;
+
+            bool=bool!==undefined?bool:true;
+
+            $('body').append(_orientationTip);
+
+            if (bool) _orientationTip.find('.mod-orient-layer__desc').text('为了更好的体验，请使用竖屏浏览');
+            else _orientationTip.find('.mod-orient-layer__desc').text('为了更好的体验，请使用横屏浏览');
+
+        };
+        /**
+         * 隐藏提示
+         * @method ds.core.MoblieResizeModel.prototype.hideOrientationTip
+         * @function
+         */
+        this.hideOrientationTip=function () {
+
+            if(!_orientationTip)return;
+            _orientationTip.remove();
+
+        };
+
         var _width,
             _height,
             _screenWidth,

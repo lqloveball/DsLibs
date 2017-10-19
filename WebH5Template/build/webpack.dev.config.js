@@ -28,6 +28,7 @@ webpackEntry.base=[
   'jquery',
   'eventdispatcher',
   'moblieresizemodel',
+  'ds/media/AutoAudioManager',
 ];
 //有需要用到createjs时候打开
 webpackEntry.createjsFrameWork=[

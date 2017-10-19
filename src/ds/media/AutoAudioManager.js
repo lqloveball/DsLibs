@@ -23,17 +23,27 @@
 
 }(function (root, model) {
 
+
+    var ds = root.ds = root.ds || {};
+    ds.media = ds.media || {};
+
     /**
      * 自动背景声音播放管理对象
      * @class ds.media.AutoAudioManager
      * @classdesc 一般用在网站 加载声音队列、自动播放背景声音BGM、控制声音临时暂停、开启临时暂停声音使用
      *
      */
+    ds.media.AutoAudioManager = AutoAudioManager;
+
     function AutoAudioManager() {
 
         var _self = this;
 
-        //声音索引字典
+        /**
+         * 声音索引字典
+         * @member ds.media.AutoAudioManager.prototype.audioDc
+         * @type {object}
+         */
         var _audioDc = {};
         Object.defineProperty(this, "audioDc", {
             get: function () {
@@ -41,7 +51,11 @@
             },
         });
 
-        //声音列表
+        /**
+         * 声音列表
+         * @member ds.media.AutoAudioManager.prototype.audioList
+         * @type {Array}
+         */
         var _audioList;
         Object.defineProperty(this, "audioList", {
             get: function () {
@@ -95,7 +109,7 @@
             //判断微信兼容
             var _isWeixin = false;
             var ua = navigator.userAgent.toLowerCase();
-            if (ua.match(/MicroMessenger/i) === "micromessenger") _isWeixin = true;
+            if (ua.match(/MicroMessenger/i) == "micromessenger") _isWeixin = true;
 
             //需要初始化声音播放的列表
             _audioList = [];
@@ -123,6 +137,7 @@
 
                 if (window['WeixinJSBridge'] === undefined) {
 
+                    // alert('has WeixinJSBridge');
 
                     document.addEventListener("WeixinJSBridgeReady", function func() {
 
@@ -155,6 +170,7 @@
 
                 } else {
 
+                    // alert('No WeixinJSBridge');
                     //如果这个视频在是后创建交互视频对象，那就不能通过WeixinJSBridgeReady来触发视频播放 就不会有canplay，需要通过第一次touchstar；
                     document.body.addEventListener('touchstart', audioInBrowserHandler);
 
@@ -162,6 +178,7 @@
 
             } else {
 
+                // alert('no isWeixin');
                 initAudioPlay();
 
             }
@@ -423,9 +440,7 @@
 
     }
 
-    var ds = root.ds = root.ds || {};
-    ds.media = ds.media || {};
-    ds.media.AutoAudioManager = AutoAudioManager;
+
 
 
     return ds.media.AutoAudioManager;

@@ -35,6 +35,7 @@ function HomePage() {
     _pager.add(require('./DynamicFont'));
     _pager.add(require('./HtmlPage'));
     _pager.add(require('./SelectImages'));
+    _pager.add(require('./WebGL2Stage'));
 
     var _View=new lib.HomePage();
 
@@ -75,6 +76,10 @@ function HomePage() {
     });
 
     _View.btn0.on('click',function () {
+
+        ds.alert('努力编码测试中..');
+        return;
+
         _AppMain.gotoPage('DomAutoScreen');
     });
     _View.btn1.on('click',function () {
@@ -86,9 +91,17 @@ function HomePage() {
     });
 
     _View.btn3.on('click',function () {
+
+        ds.alert('努力编码测试中..');
+        return;
+
         _AppMain.gotoPage('CreatejsGalley');
     });
     _View.btn4.on('click',function () {
+
+        ds.alert('努力编码测试中..');
+        return;
+
         _AppMain.gotoPage('DynamicFont');
     });
 
@@ -97,14 +110,26 @@ function HomePage() {
     });
 
     _View.btn6.on('click',function () {
+
+        ds.alert('努力编码测试中..');
+        return;
+
         _AppMain.gotoPage('CreatejsCataract');
     });
     _View.btn7.on('click',function () {
+
+        ds.alert('努力编码测试中..');
+        return;
+
         _AppMain.gotoPage('CreatejsAutoScreen');
     });
 
     _View.btn8.on('click',function () {
         _AppMain.gotoPage('CreatejsDomMovie');
+    });
+
+    _View.btn9.on('click',function () {
+        _AppMain.gotoPage('WebGL2Stage');
     });
 
     //动画进场
@@ -113,7 +138,29 @@ function HomePage() {
         _Root.removeAllChildren();
         _Root.addChild(_View);
 
+        ReSize();
     };
+
+    SiteModel.moblieResizeModel.on('resize',ReSize);
+
+    function ReSize(){
+        var _moblieResizeModel=SiteModel.moblieResizeModel;
+        var _width=_moblieResizeModel.width;
+        var _height=_moblieResizeModel.height ;
+        var _actualH=_moblieResizeModel.actualH;
+        var _pageScale=_moblieResizeModel.pageScale;
+        var _isInputState=_moblieResizeModel.isInputState;
+        var _horizontal=_moblieResizeModel.horizontal;
+        var _screenWidth=_moblieResizeModel.screenWidth;
+        var _densityDpi=_moblieResizeModel.densityDpi ;
+
+        if(_Self.name!==_AppMain.pager.pageLabel)return;
+        if(_horizontal){
+            SiteModel.moblieResizeModel.showOrientationTip(true);
+        }else{
+            SiteModel.moblieResizeModel.hideOrientationTip();
+        }
+    }
 
 
 }

@@ -480,6 +480,7 @@ li {
 
 #BGMBtn .off {
   background: url(../images/BGMICON.png) no-repeat center;
+  display: none;
   width: 44px;
   height: 42px;
 }
@@ -530,7 +531,7 @@ li {
   top: 0;
 }
 
-#cjsBox cavans {
+#cjsBox canvas {
   position: absolute;
   left: 0;
   top: 0;

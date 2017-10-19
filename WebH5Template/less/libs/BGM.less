@@ -1,34 +1,43 @@
-#BGMBtn{
+#BGMBtn {
+  position: absolute;
+  right: 30px;
+  top: 30px;
+  width: 50px;
+  height: 50px;
+  //z-index: 10000;
+  outline: none;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  .on, .off {
     position: absolute;
-    right: 30px;
-    top: 30px;
-    width: 50px;
-    height: 50px;
-    //z-index: 10000;
-    outline:none;
-    -webkit-tap-highlight-color:rgba(0,0,0,0);
-    .on,.off{
-        position: absolute;
-        left:0px;
-        top: 0px;
-        width: 44px;
-        height: 42px;
+    left: 0px;
+    top: 0px;
+    width: 44px;
+    height: 42px;
+  }
+  .on {
+    background: url(../images/BGMICON.png) no-repeat center;
+    animation: bgmove 1.1s linear infinite;
+    -webkit-animation: bgmove 1.1s linear infinite;
+    display: none;
+  }
+  .off {
+    background: url(../images/BGMICON.png) no-repeat center;
+    display: none;
+  }
+  @keyframes bgmove {
+    0% {
+      transform: rotate(0deg);
     }
-    .on{
-        background: url(../images/BGMICON.png) no-repeat center;
-        animation: bgmove 1.1s linear infinite;
-        -webkit-animation: bgmove 1.1s linear infinite;
-        display: none;
+    100% {
+      transform: rotate(360deg);
     }
-    .off{
-        background: url(../images/BGMICON.png) no-repeat center ;
+  }
+  @-webkit-keyframes bgmove {
+    0% {
+      transform: rotate(0deg);
     }
-    @keyframes bgmove{
-        0%{transform:rotate(0deg);}
-        100%{transform: rotate(360deg);}
+    100% {
+      transform: rotate(360deg);
     }
-    @-webkit-keyframes bgmove{
-        0%{transform:rotate(0deg);}
-        100%{transform: rotate(360deg);}
-    }
+  }
 }

@@ -17,7 +17,7 @@ var SiteModel = {
     //加载界面
     loadPanel: null,
     //网站自适应方式
-    type: 'v',
+    type: 'auto',
     //网站自适应进行缩放的dom元素
     screen: '#screen',
     //基础框架加载完成进度显示值
@@ -29,7 +29,7 @@ var SiteModel = {
     //自动声音控制对象初始化设置参数
     autoAudioerData: {
         list: [
-            {src:'./media/BGM.mp3',id:'BGM',loop:true,},//项格式
+            {src:'./media/BGM.mp3',id:'BGM',loop:true,volume:1},//项格式
         ],
         //默认播放声音背景
         id: 'BGM',
@@ -45,6 +45,8 @@ var SiteModel = {
     isCreateJsSiteModel: true,
     //是否createjs来做网站的loading
     isCreateJsLoadPanel: false,
+    //是否使用最新版本的createjs 带Webgl
+    isCreateJsGL:true,
 
     //pixijs模块
     pixiJsModel: null,
@@ -136,6 +138,7 @@ function loadCreateJsFrameWorkJS() {
 function initCreateModel() {
 
     SiteModel.createJsModel = ds.createjs.create({
+        hasGL:SiteModel.isCreateJsGL,
         appendTo: $('#cjsBox')[0],
         width: 640,
         height: 1140,
@@ -235,7 +238,7 @@ function initMoblieResizeModel() {
     });
 
     //进行提示浮动层显示
-    if (SiteModel.moblieResizeModel.type !== 'auto') SiteModel.moblieResizeModel.createOrientationTip();
+    SiteModel.moblieResizeModel.createOrientationTip();
 
     //监听场景自适应
     SiteModel.moblieResizeModel.on('resize', _resize);

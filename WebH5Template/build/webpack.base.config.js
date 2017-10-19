@@ -44,7 +44,8 @@ module.exports = {
             iphoneinlinevideo: 'libs/media/iphone-inline-video.browser.js',
             jsmpg: 'libs/media/jsmpg.js',
             //createjs库
-            createjs: 'libs/createjs/createjs0.8.2.min.js',
+            // createjs: 'libs/createjs/createjs0.8.2.min.js',
+            createjs: 'libs/createjs/createjs1.0.0.min.js',
             easeljs: 'libs/createjs/easeljs-0.8.2.min.js',
             tweenjs: 'libs/createjs/tweenjs-0.6.2.min.js',
             preloadjs: 'libs/createjs/preloadjs-0.6.2.min.js',

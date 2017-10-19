@@ -78,8 +78,14 @@ class CreatejsModel extends EventDispatcher
      */
     setFPS(value){
 
-        createjs.Ticker.setFPS(value);
-        
+        //console.log(createjs.EaselJS.version.indexOf('1')===0 );
+
+        if(createjs.EaselJS.version.indexOf('1')===0){
+            createjs.Ticker.getMeasuredFPS(value);
+        }else{
+            createjs.Ticker.setFPS(value);
+        }
+
     }
 
 
@@ -106,9 +112,25 @@ class CreatejsModel extends EventDispatcher
 
     }
 
+    /**
+     * 添加到dom列表内
+     * @param domBox
+     */
+    appendTo(domBox){
+
+        if (typeof domBox === 'string') document.getElementById(domBox).appendChild(this.canvas);
+        else if (domBox instanceof HTMLElement) domBox.appendChild(this.canvas);
+        else if (domBox[0] instanceof HTMLElement) domBox[0].appendChild(this.canvas);
+        else console.warn('未获取到domBox相关DOM对象，无法添加到DOM列表内:', domBox);
+
+    }
+
+
+
 }
 
 let root = (typeof window !== 'undefined' ? window : (typeof process === 'object' && typeof require === 'function' && typeof global === 'object') ? global : this);
+
 let ds = root.ds = root.ds || {};
 ds.createjs = ds.createjs || {};
 ds.createjs.CreatejsModel=CreatejsModel;

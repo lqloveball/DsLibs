@@ -19,6 +19,8 @@ function LoadModel() {
      */
     this.initCreateJsLoadPanel = function () {
 
+        $('#siteLoadPanel').hide();
+
         //loading加载配置
         var _loadObj = {
             basePath: './assets/',
@@ -33,7 +35,7 @@ function LoadModel() {
             //加载方式 初始化LoadQueue的crossOrigin参数
             loadType: true,
             crossOrigin: false,
-            // id: 'EB14BC82AE2547EFB941F3FEED0893CC',
+
         };
 
         //loading加载完成后的方法处理
