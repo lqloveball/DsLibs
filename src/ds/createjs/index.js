@@ -942,11 +942,23 @@ ds.createjs.create = function (opts) {
     else if (_canvas[0] instanceof HTMLElement) _canvas = _canvas[0];
     else _canvas = document.createElement("canvas");
 
-    // var _cjsModel = new ds.createjs.CreatejsModel(_canvas);
+
     let _cjsModel;
 
-    if (opts.hasGL) _cjsModel = new CreatejsGLModel();
-    else _cjsModel = new CreatejsModel(_canvas);
+    let _hasGL=(opts.hasGL && ds.createjs.isWebGLSupported());
+    // let _hasGL=false;
+
+    if (_hasGL) {
+
+        _cjsModel = new CreatejsGLModel();
+
+    }
+    else {
+
+
+        _cjsModel = new CreatejsModel(_canvas);
+
+    }
 
 
     _cjsModel.setFPS(_fps);
@@ -955,14 +967,14 @@ ds.createjs.create = function (opts) {
     //如果有css参数，按参数进行设置
     if (opts.css !== undefined) {
 
-        if (opts.hasGL) {
-
-            $(_cjsModel.canvas).css(opts.css);
-
-        } else {
+        if (_hasGL) {
 
             $(_cjsModel.canvas2d).css(opts.css);
             $(_cjsModel.canvas3d).css(opts.css);
+
+        } else {
+
+            $(_cjsModel.canvas).css(opts.css);
 
         }
     }
@@ -974,16 +986,57 @@ ds.createjs.create = function (opts) {
             left: 0,
             top: 0,
         };
-        $(_cjsModel.canvas2d).css(_css);
-        $(_cjsModel.canvas3d).css(_css);
+
+        if (_hasGL) {
+
+            $(_cjsModel.canvas2d).css(_css);
+            $(_cjsModel.canvas3d).css(_css);
+
+        } else {
+
+            $(_cjsModel.canvas).css(_css);
+
+        }
     }
 
     if (opts.appendTo !== undefined) _cjsModel.appendTo(opts.appendTo);
 
+    _cjsModel.isWebGL=_hasGL
 
     _cjsModel.size(_width, _height);
 
     return _cjsModel;
+
+};
+
+/**
+ * 判断是否支持webgl
+ */
+ds.createjs.isWebGLSupported = function () {
+
+    const contextOptions = {stencil: true, failIfMajorPerformanceCaveat: true};
+    try {
+        if (!window.WebGLRenderingContext) {
+            return false;
+        }
+        const canvas = document.createElement('canvas');
+        let gl = canvas.getContext('webgl', contextOptions) || canvas.getContext('experimental-webgl', contextOptions);
+        const success = !!(gl && gl.getContextAttributes().stencil);
+        if (gl) {
+            const loseContext = gl.getExtension('WEBGL_lose_context');
+            if (loseContext) {
+                loseContext.loseContext();
+            }
+        }
+        gl = null;
+        return success;
+    }
+    catch (e) {
+
+        alert('----------')
+        return false;
+
+    }
 
 };
 

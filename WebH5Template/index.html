@@ -10,6 +10,8 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <title>H5 Dslibs 项目模板</title>
     <link rel="stylesheet" href="./css/main.css" />
+    <!-- 根据不同规范 也许需要 polyfillA.js -->
+    <script src="js/libs/polyfillB.js"></script>
     <script>
         var ua = navigator.userAgent;
         if (/Android (\d+\.\d+)/.test(ua)) {
@@ -33,6 +35,8 @@
     <div id="screen">
         <!-- pixi容器 如果不使用可以删除-->
         <!-- <div id="pixiBox"></div> -->
+        <!-- threejs容器 如果不使用可以删除-->
+        <!-- <div id="threejsBox"></div> -->
         <!-- cjs容器 如果不使用可以删除-->
         <div id="cjsBox"></div>
         <!-- dom层容器 如果不使用可以删除-->

@@ -203,7 +203,7 @@
             //初始化播放声音
             function initAudioPlay() {
 
-                console.log('非微信', _audioList.length);
+                // console.log('非微信', _audioList.length);
 
                 if (_InitBool) return;
 

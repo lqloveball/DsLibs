@@ -82,7 +82,15 @@ module.exports = {
             //html处理
             {test: /\.html$/, loader: 'html-loader'},
             //处理ES6
-            {test: /\.(js|jsx)$/, loader: 'babel-loader', exclude: /node_modules/,},
+            {
+                test: /\.(js|jsx)$/,
+                loader: 'babel-loader',
+                exclude:  /(node_modules|bower_components|libs)/,
+                query: {
+                    plugins: ['transform-runtime'],
+                    presets: ['es2015','stage-0']
+                }
+            },
             //处理样式，转成css，如：less-loader, sass-loader
             {
                 test: /\.css$/,

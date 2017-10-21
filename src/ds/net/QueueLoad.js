@@ -21,7 +21,7 @@
 
     }
 
-}(function (root, QueueLoad) {
+}(function (root, model) {
 
     var ds = root.ds = root.ds || {};
     ds.net = ds.net || {};
@@ -31,7 +31,7 @@
      * @module ds/net/QueueLoad
      *
      */
-    QueueLoad;
+    var QueueLoad={};
 
     /**
      * 快速Ajax交互请求
@@ -39,6 +39,7 @@
      * @type module:ds/net/QueueLoad
      */
     ds.net.QueueLoad = QueueLoad;
+
 
 
     Object.assign(QueueLoad, /** @lends module:ds/net/QueueLoad */ {
@@ -137,6 +138,7 @@
         },
 
     });
+
     /**
      * @member ds.net.post
      * @function

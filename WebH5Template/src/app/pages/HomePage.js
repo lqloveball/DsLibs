@@ -25,7 +25,7 @@ function HomePage() {
     }
 
     //添加页面模块
-    var _pager=_AppMain.pager;
+    var _pager=SiteModel.pager;
     _pager.add(require('./CreatejsAutoScreen'));
     _pager.add(require('./CreatejsCataract'));
     _pager.add(require('./CreatejsDomMovie'));
@@ -141,24 +141,24 @@ function HomePage() {
         ReSize();
     };
 
-    SiteModel.moblieResizeModel.on('resize',ReSize);
+    SiteModel.resizeModel.on('resize',ReSize);
 
     function ReSize(){
-        var _moblieResizeModel=SiteModel.moblieResizeModel;
-        var _width=_moblieResizeModel.width;
-        var _height=_moblieResizeModel.height ;
-        var _actualH=_moblieResizeModel.actualH;
-        var _pageScale=_moblieResizeModel.pageScale;
-        var _isInputState=_moblieResizeModel.isInputState;
-        var _horizontal=_moblieResizeModel.horizontal;
-        var _screenWidth=_moblieResizeModel.screenWidth;
-        var _densityDpi=_moblieResizeModel.densityDpi ;
+        var _resizeModel=SiteModel.resizeModel;
+        var _width=_resizeModel.width;
+        var _height=_resizeModel.height ;
+        var _actualH=_resizeModel.actualH;
+        var _pageScale=_resizeModel.pageScale;
+        var _isInputState=_resizeModel.isInputState;
+        var _horizontal=_resizeModel.horizontal;
+        var _screenWidth=_resizeModel.screenWidth;
+        var _densityDpi=_resizeModel.densityDpi ;
 
         if(_Self.name!==_AppMain.pager.pageLabel)return;
         if(_horizontal){
-            SiteModel.moblieResizeModel.showOrientationTip(true);
+            SiteModel.resizeModel.showOrientationTip(true);
         }else{
-            SiteModel.moblieResizeModel.hideOrientationTip();
+            SiteModel.resizeModel.hideOrientationTip();
         }
     }
 

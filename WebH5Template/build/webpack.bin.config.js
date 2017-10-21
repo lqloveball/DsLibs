@@ -26,22 +26,17 @@ var webpackEntry=getEntries('./src','js');
 console.log(webpackEntry);
 //一些公共库
 webpackEntry.base=[
-  'jquery',
-  'eventdispatcher',
-  'ds/gemo/QuickTrack',
-  'ds/media/MobileAudioAutoPlayLister',
-  'sitemoblieresizemodel',
+    'jquery',
+    'eventdispatcher',
+    'moblieresizemodel',
+    'ds/media/AutoAudioManager',
 ];
+//有需要用到createjs时候打开
 webpackEntry.createjsFrameWork=[
-  'createjs',
-  'dscreatejs',
+    'createjs',
+    'dscreatejs',
 ];
-webpackEntry.pixiFrameWork=[
-  'pixi',
-  'pixianimate',
-  'pixipath/pixi-projection.min.js',
-  'ds/pixi/DsPixi',
-];
+
 
 module.exports = merge(webpackBaseConfig, {
   //入口文件

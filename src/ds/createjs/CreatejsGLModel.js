@@ -148,13 +148,22 @@ class CreatejsGLModel extends EventDispatcher
      */
     size(width, height) {
 
-        this.canvas2d.setAttribute('width', width);
-        this.canvas2d.setAttribute('height', height);
+        try{
 
-        this.canvas3d.setAttribute('width', width);
-        this.canvas3d.setAttribute('height', height);
+            this.canvas2d.setAttribute('width', width);
+            this.canvas2d.setAttribute('height', height);
 
-        this.stage3d.updateViewport(width, height);
+            this.canvas3d.setAttribute('width', width);
+            this.canvas3d.setAttribute('height', height);
+
+            this.stage3d.updateViewport(width, height);
+
+        }
+        catch (e){
+
+            alert(e);
+
+        }
 
     }
 
@@ -164,25 +173,35 @@ class CreatejsGLModel extends EventDispatcher
      */
     appendTo(domBox){
 
-        if (typeof domBox === 'string'){
+        try{
 
-            document.getElementById(domBox).appendChild(this.canvas3d);
-            document.getElementById(domBox).appendChild(this.canvas2d);
+            if (typeof domBox === 'string'){
+
+                document.getElementById(domBox).appendChild(this.canvas3d);
+                document.getElementById(domBox).appendChild(this.canvas2d);
+
+            }
+            else if (domBox instanceof HTMLElement){
+
+                domBox.appendChild(this.canvas3d);
+                domBox.appendChild(this.canvas2d);
+
+            }
+            else if (domBox[0] instanceof HTMLElement){
+
+                domBox[0].appendChild(this.canvas3d);
+                domBox[0].appendChild(this.canvas2d);
+
+            }
+            else console.warn('未获取到domBox相关DOM对象，无法添加到DOM列表内:', domBox);
 
         }
-        else if (domBox instanceof HTMLElement){
+        catch (e){
 
-            domBox.appendChild(this.canvas3d);
-            domBox.appendChild(this.canvas2d);
-
-        }
-        else if (domBox[0] instanceof HTMLElement){
-
-            domBox[0].appendChild(this.canvas3d);
-            domBox[0].appendChild(this.canvas2d);
+            alert(e);
 
         }
-        else console.warn('未获取到domBox相关DOM对象，无法添加到DOM列表内:', domBox);
+
 
     }
 
