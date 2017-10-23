@@ -1,3 +1,5 @@
+// import DeviceOrientationer from  'ds/gemo/DeviceOrientationer';
+
 /**
  * HomePage 使用CreateJs做页面dom
  * @type {module}
@@ -140,6 +142,11 @@ function HomePage() {
 
         ReSize();
     };
+
+    require('ds/gemo/DeviceOrientationer');
+
+    var _do=new ds.gemo.DeviceOrientationer();
+
 
     SiteModel.resizeModel.on('resize',ReSize);
 

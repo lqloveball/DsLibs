@@ -242,6 +242,27 @@
 
         },
 
+
+        /**
+         * 替换地址内的参数的值然后返回替换后的链接
+         * @alias module:ds/net/QuickAjax.replaceUrlParam
+         * @param {string} url [地址]
+         * @param {string} name  [参数名]
+         * @param {string} val  [值]
+         * @example 获取地址上面的GameID参数
+         * @example
+         *
+         * ds.net.replaceUrlParam(location.href, "GameID",2);
+         *
+         */
+        replaceUrlParam: function (url, name, val) {
+
+            var pattern = name + '=([^&]*)';
+            var replaceText = name + '=' + val;
+            return url.match(pattern) ? url.replace(eval('/(' + name + '=)([^&]*)/gi'), replaceText) : (url.match('[\?]') ? url + '&' + replaceText : url + '?' + replaceText);
+
+        },
+
         /**
          * 获取地址栏参数索引对象
          * @alias module:ds/net/QuickAjax.getUrlParameterDictionary
@@ -286,25 +307,32 @@
      * @function
      * @see 详细请见： {@link module:ds/net/QuickAjax.post}
      */
-    ds.net.post=ds.net.QuickAjax.post;
+    ds.net.post = ds.net.QuickAjax.post;
     /**
      * @member ds.net.get
      * @function
      * @see 详细请见： {@link module:ds/net/QuickAjax.get}
      */
-    ds.net.get=ds.net.QuickAjax.get;
+    ds.net.get = ds.net.QuickAjax.get;
     /**
      * @member ds.net.getUrlParameter
      * @function
      * @see 详细请见： {@link module:ds/net/QuickAjax.getUrlParameter}
      */
-    ds.net.getUrlParameter=ds.net.QuickAjax.getUrlParameter;
+    ds.net.getUrlParameter = ds.net.QuickAjax.getUrlParameter;
     /**
      * @member ds.net.getUrlParameterDictionary
      * @function
      * @see 详细请见： {@link module:ds/net/QuickAjax.getUrlParameterDictionary}
      */
-    ds.net.getUrlParameterDictionary=ds.net.QuickAjax.getUrlParameterDictionary;
+    ds.net.getUrlParameterDictionary = ds.net.QuickAjax.getUrlParameterDictionary;
+
+    /**
+     * @member ds.net.replaceUrlParam
+     * @function
+     * @see 详细请见： {@link module:ds/net/QuickAjax.replaceUrlParam}
+     */
+    ds.net.replaceUrlParam = ds.net.QuickAjax.replaceUrlParam;
 
     return ds.net.QuickAjax;
 

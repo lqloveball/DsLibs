@@ -61,6 +61,8 @@ class CreatejsModel extends EventDispatcher
         this.stage.mouseMoveOutside = true;
         this.stage.mouseInBounds = true;
 
+
+
         createjs.MotionGuidePlugin.install();
 
         let _self=this;

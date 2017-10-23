@@ -1,6 +1,5 @@
-var root = (typeof window !== 'undefined' ? window : (typeof process === 'object' && typeof require === 'function' && typeof global === 'object') ? global : this);
+let root = (typeof window !== 'undefined' ? window : (typeof process === 'object' && typeof require === 'function' && typeof global === 'object') ? global : this);
 
-
-var ds = root.ds = root.ds || {};
+let ds = root.ds = root.ds || {};
 /** @namespace ds.utils */
-ds.core = ds.utils || {};
+ds.createjs = ds.createjs || {};

@@ -152,6 +152,73 @@
 
         };
 
+        /**
+         * 网站站点快速加载cjs的资源方法，
+         * @method ds.net.SiteLoadModel.prototype.loadCJS
+         * @param {string} url 加载js地址
+         * @param {function} complete 加载完成执行方法
+         * @param {array|string} progress  加载进度开始与结束点设置
+         * - 数组格式 [20,100]
+         * - 字符串格式 '20,100'
+         * @param {object} opts 加载配置参数，具体参考 {@link ds.createjs.loadAssets}
+         * @example
+         * SiteModel.loadModel.loadCJS(
+         *       'main.js',
+         *       function () {
+         *           SiteModel.showProgress(100);
+         *           initModels();
+         *       },
+         *        [20, 100],
+         *        {basePath: './assets/test/'}
+         *   );
+         *
+         */
+        this.loadCJS=function (url,complete,progress,opts) {
+
+            var _progressArr;
+            if(typeof progress ==='string')_progressArr=progress.split(',');
+            else if(progress instanceof Array)_progressArr=progress;
+
+            var _start=0,_end=100,_speed;
+
+            if(_progressArr){
+
+                _start=Number(_progressArr[0]);
+                _end=Number(_progressArr[1]);
+
+            }
+
+            _speed=_end-_start;
+
+            //加载配置对象
+            var _loadData = {
+                basePath: opts.basePath||'./assets/',
+                jsUrl: url,
+                jsNS: opts.jsNS||'lib',
+                imgNS:  opts.imgNS||'images',
+                loadType:opts.loadType|| true,
+                crossOrigin: opts.crossOrigin!==undefined?opts.crossOrigin:false,
+                otherList: opts.otherList!==undefined?opts.otherList:[],
+                complete: function (e) {
+
+                    if(complete)complete();
+
+                },
+                progress: function (e) {
+
+                    if(opts.progress)opts.progress(e);
+
+                    SiteModel.showProgress(_start + (_speed * e.target.progress >> 0));
+
+                }
+
+            };
+
+            //开始加载动画资源
+            if(ds.createjs)ds.createjs.loadAssets(_loadData);
+
+        };
+
     }
 
     var ds = root.ds = root.ds || {};

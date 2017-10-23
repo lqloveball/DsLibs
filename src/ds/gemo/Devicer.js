@@ -25,6 +25,7 @@
 
     var ds = root.ds = root.ds || {};
     ds.gemo = ds.gemo || {};
+
     /**
      * 设备判断模块
      * @module ds/gemo/Devicer

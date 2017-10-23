@@ -11,16 +11,16 @@ window.SiteModel=new ds.core.SiteModelByMobile(loadSPA,'v',{
     //webgl 双canvas版本 createjs 模块
     hasCJSWebGL:true,
     //配置声音管理器
-    audioConfig:{
-        list: [
-            //背景声音配置
-            {src:'./media/BGM.mp3',id:'BGM',loop:true,volume:1},
-        ],
-        //默认播放声音背景
-        id: 'BGM',
-        //这个BMG 绑定的控制的按钮
-        button: '#BGMBtn'
-    }
+    // audioConfig:{
+    //     list: [
+    //         //背景声音配置
+    //         {src:'./media/BGM.mp3',id:'BGM',loop:true,volume:1},
+    //     ],
+    //     //默认播放声音背景
+    //     id: 'BGM',
+    //     //这个BMG 绑定的控制的按钮
+    //     button: '#BGMBtn'
+    // }
 });
 
 //开启网站

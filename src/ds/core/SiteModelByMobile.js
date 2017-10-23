@@ -31,7 +31,7 @@
      * @classdesc  同配合项目模板快速实现手机H5互动网站搭建
 
      *
-     * @param {functin} loadSPA 传入单页面应用的加载方法 **必传**
+     * @param {function} loadSPA 传入单页面应用的加载方法 **必传**
      * @param {string} [type='v'] 网站显示类型 只有竖屏 'v' 只有横屏 'h' 横竖屏自动切换 'auto'
      * @param {object} opts  SiteModel模块初始化构建参数
      * @param {string} [opts.screen='#screen'] 进行场景自适应的dom对象

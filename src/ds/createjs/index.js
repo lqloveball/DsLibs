@@ -689,7 +689,7 @@ let AdobeAnCompositionsList = [];
  * 加载动资源资源队列
  * @param {object} opts 加载参数
  * @param {string} opts.jsUrl 加载参数
- * @param {array} [opts.otherList='']  其他资源，如果其他图片
+ * @param {array} [opts.otherList=[]]  其他资源，如果其他图片
  * @param {string} [opts.jsNS='libs']  加载后动画类资源附加到什么命名空间下
  * @param {string} [opts.imgNS='images']  加载后图片资源附加到什么命名空间下
  * @param {function} [opts.progress=undefined]  加载过程回调
@@ -1033,7 +1033,6 @@ ds.createjs.isWebGLSupported = function () {
     }
     catch (e) {
 
-        alert('----------')
         return false;
 
     }

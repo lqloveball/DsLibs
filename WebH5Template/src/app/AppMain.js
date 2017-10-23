@@ -26,9 +26,9 @@ function AppMain() {
     var _self = this;
 
     //构建完成 SiteModel 所需要剩余模块
-    SiteModel.apier =  require('app/APIManager');
-    SiteModel.pager =new ds.gemo.SitePageManager();
-    SiteModel.shareModel=new ds.net.ShareModel(
+    SiteModel.apier = require('app/APIManager');
+    SiteModel.pager = new ds.gemo.SitePageManager();
+    SiteModel.shareModel = new ds.net.ShareModel(
         '分享标题',
         '分享内容',
         '/index.html',
@@ -37,16 +37,16 @@ function AppMain() {
 
     //================为了兼容老模板写法 start ===========
     //接口模块
-    var _apier =SiteModel.apier;
-    this.apier=_apier;
+    var _apier = SiteModel.apier;
+    this.apier = _apier;
 
-     //页面跳转控制
-    var _pager =SiteModel.pager;
-    this.pager=_pager;
+    //页面跳转控制
+    var _pager = SiteModel.pager;
+    this.pager = _pager;
 
     //页面跳转方法
-    this.gotoPage =  SiteModel.gotoPage;
-    var gotoPage= SiteModel.gotoPage;
+    this.gotoPage = SiteModel.gotoPage;
+    var gotoPage = SiteModel.gotoPage;
     //================为了兼容老模板写法 end ===========
 
     /**
@@ -60,7 +60,6 @@ function AppMain() {
         //在加载模块需要的资源前需要siteModel创建需要的模块吗？
         SiteModel.beforeSinglePageApplicationLoadAssets(loadMainAssets);
 
-
     };
 
     /**
@@ -70,26 +69,12 @@ function AppMain() {
 
         console.log('loadMainAssets');
 
-        //加载配置对象
-        var _loadData = {
-            basePath: './assets/test/',
-            jsUrl: 'main.js',
-            jsNS: 'lib',
-            imgNS: 'images',
-            imgNS: 'images',
-            loadType: true,
-            crossOrigin: false,
-            complete: function (e) {
-                SiteModel.showProgress(100);
-                initModels();
-            },
-            progress: function (e) {
-                var _progress = e.target.progress;
-                SiteModel.showProgress(20 + (_progress * 80 >> 0));
-            }
-        };
-        //开始加载动画资源
-        ds.createjs.loadAssets(_loadData);
+        SiteModel.loadModel.loadCJS(
+            'main.js',
+            initModels,
+            [20, 100],
+            {basePath: './assets/test/'}
+        );
 
     }
 
