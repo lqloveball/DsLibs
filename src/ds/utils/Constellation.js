@@ -32,6 +32,7 @@
      * @param {numbe} month 月份
      * @param {numbe} date 日期
      * @return {string} 星座名
+     * @requires ds/utils/Constellation.js
      */
     ds.utils.getConstellation = function (month, date) {
         var value = '';

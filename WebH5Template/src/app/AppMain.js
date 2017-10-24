@@ -6,6 +6,8 @@ require('jstween');//15k
 // require('tweenlite');//28k
 // require('timelinelite');//13 KB
 // require('tweenmax');//113 KB
+//需要threejs相关扩展模块
+require('ds/threejs/index.js');
 //=================项目需要支持模块=======
 //通用的提示浮动层，alert代替解决方案模块
 require('ds/ui/PopAlert');
@@ -17,6 +19,8 @@ require('ds/net/ADTrack');
 require('ds/net/ShareModel');
 //页面跳转管理器类
 require('ds/gemo/SitePageManager');
+
+
 
 /**
  * 网站单页面应用
@@ -92,12 +96,13 @@ function AppMain() {
         //debug模式页面控制
         if (SiteModel.debug) {
 
-            gotoPage('HomePage');
+            // gotoPage('HomePage');
             // gotoPage('HtmlPage');
             // gotoPage('SelectImages');
             // gotoPage('CreatejsInput');
             // gotoPage('CreatejsDomMovie');
             // gotoPage('WebGL2Stage');
+            gotoPage('ThreejsPage');
 
         }
         //非debug模式页面控制

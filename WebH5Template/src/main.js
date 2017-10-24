@@ -10,6 +10,8 @@ window.SiteModel=new ds.core.SiteModelByMobile(loadSPA,'v',{
     hasCJSLoad:false,
     //webgl 双canvas版本 createjs 模块
     hasCJSWebGL:true,
+    hasThreeJs:true,
+    hasThreeJsModel:true,
     //配置声音管理器
     // audioConfig:{
     //     list: [

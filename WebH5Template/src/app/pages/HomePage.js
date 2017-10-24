@@ -38,6 +38,7 @@ function HomePage() {
     _pager.add(require('./HtmlPage'));
     _pager.add(require('./SelectImages'));
     _pager.add(require('./WebGL2Stage'));
+    _pager.add(require('./ThreejsPage'));
 
     var _View=new lib.HomePage();
 

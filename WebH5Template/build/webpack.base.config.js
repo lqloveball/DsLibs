@@ -16,6 +16,7 @@ module.exports = {
             libs: resolveBowerPath('./src/libs'),
             app: resolveBowerPath('./src/app'),
             ds: resolveBowerPath('./src/ds'),
+            threejs: resolveBowerPath('./src/threejs'),
             pixi: 'libs/pixi',
             //vue需要用到
             'vue$': 'vue/dist/vue.esm.js',

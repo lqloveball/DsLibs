@@ -430,7 +430,5 @@
      */
     ds.alert=ds.ui.PopAlert.alert;
 
-
-
     return ds.ui.PopAlert;
 }));

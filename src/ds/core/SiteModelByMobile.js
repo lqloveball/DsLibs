@@ -63,10 +63,10 @@
      *
      * @example
      *
-require('ds/core/SiteModelByMobile');
+     require('ds/core/SiteModelByMobile');
 
-//网站模块
-window.SiteModel=new ds.core.SiteModelByMobile(loadSPA,'v',{
+     //网站模块
+     window.SiteModel=new ds.core.SiteModelByMobile(loadSPA,'v',{
     //需要createjs框架
     hasCJS:true,
     //需要创建createjs模块
@@ -88,11 +88,11 @@ window.SiteModel=new ds.core.SiteModelByMobile(loadSPA,'v',{
     }
 });
 
-//开启网站
-window.SiteModel.start();
+     //开启网站
+     window.SiteModel.start();
 
-//需要加载单页面应用的js 使用require.ensure载入。
-function loadSPA(){
+     //需要加载单页面应用的js 使用require.ensure载入。
+     function loadSPA(){
 
     require.ensure(
         ['app/AppMain.js'],
@@ -129,8 +129,8 @@ function loadSPA(){
          * @member ds.core.SiteModelByMobile.prototype.isCJSLoad
          * @type {boolean}
          */
-        this.isCJSLoad= false;
-        if(opts.hasCJSLoad)this.isCJSLoad= true;
+        this.isCJSLoad = false;
+        if (opts.hasCJSLoad) this.isCJSLoad = true;
 
         /**
          * loading加载界面
@@ -207,7 +207,7 @@ function loadSPA(){
          * 在SiteModel.loadBaseFrameWork()加载完成后 在SiteModel.iniResizeModel()内创建
          * @type { $(HTMLElement) }
          */
-        this.screen=null;
+        this.screen = null;
 
         /**
          * createJs 模块
@@ -248,7 +248,7 @@ function loadSPA(){
          * @member ds.core.SiteModelByMobile.prototype.pager
          * @type {ds.gemo.SitePageManager}
          */
-        this.pager=null;
+        this.pager = null;
 
         /**
          * 页面跳转方法
@@ -257,16 +257,16 @@ function loadSPA(){
          * @param {string} value  需要调整到页面标识
          * @function
          */
-        this.gotoPage=function gotoPage(value) {
+        this.gotoPage = function gotoPage(value) {
 
 
-            if(!_self.pager)return;
+            if (!_self.pager) return;
 
             if (_self.pager.pageLabel === value) return;
 
             _self.pager.gotoPage(value);
 
-            if(ds.net&&ds.net.pv)ds.net.pv(value);
+            if (ds.net && ds.net.pv) ds.net.pv(value);
 
         };
 
@@ -316,12 +316,12 @@ function loadSPA(){
          * @access protected
          * @method ds.core.SiteModelByMobile.prototype.initLoadPanel
          */
-        function initLoadPanel(){
+        function initLoadPanel() {
 
             var _initLoadPanel;
-            if(opts.initLoadPanel)_initLoadPanel=opts.initLoadPanel;
-            else if(_self.isCJSLoad)_initLoadPanel=_self.loadModel.initCreateJsLoadPanel;
-            else _initLoadPanel=_self.loadModel.initDOMLoadPanel;
+            if (opts.initLoadPanel) _initLoadPanel = opts.initLoadPanel;
+            else if (_self.isCJSLoad) _initLoadPanel = _self.loadModel.initCreateJsLoadPanel;
+            else _initLoadPanel = _self.loadModel.initDOMLoadPanel;
 
 
             _initLoadPanel(initLoadPanelEnd);
@@ -335,14 +335,14 @@ function loadSPA(){
         function initLoadPanelEnd() {
 
             //不需要createjs实现loading界面，但需要createjs框架那就需要在loading界面构建完成后开始加载createjs
-            if(!_self.isCJSLoad&&opts.hasCJS){
+            if (!_self.isCJSLoad && opts.hasCJS) {
 
                 _self.showProgress(5);
                 loadCreateJsFrameWork();
 
             }
             //一切准备就绪开始载入单页面应用
-            else{
+            else {
 
                 loadSinglePageApplication();
 
@@ -410,7 +410,7 @@ function loadSPA(){
                 iniResizeModel();
 
                 //判断是否需要cteatejs的loading，如果需要createjs来实现loading，那就执行加载createjs框架
-                if (opts.hasCJS&&_self.isCJSLoad) loadCreateJsFrameWork();
+                if (opts.hasCJS && _self.isCJSLoad) loadCreateJsFrameWork();
                 else initLoadPanel();
 
             });
@@ -433,7 +433,7 @@ function loadSPA(){
                 if (opts.hasCJSModel) initCreateJsModel();
 
                 //开始创建loading
-                if(_self.isCJSLoad)initLoadPanel();
+                if (_self.isCJSLoad) initLoadPanel();
                 //在加载loadCreateJsFrameWork() 已经创建过 loadPanel了，开始加载单页面应用
                 else {
 
@@ -452,7 +452,15 @@ function loadSPA(){
          * @method ds.core.SiteModelByMobile.prototype.loadPixiJsFrameWork
          * @TODO 待实现
          */
-        function loadPixiJsFrameWork() {
+        function loadPixiJsFrameWork(callback) {
+
+            _self.getScript('./js/libs/pixijs.min.js', function () {
+
+                console.log('loadPixiJsFrameWork');
+
+                if (callback) callback();
+
+            });
 
         }
 
@@ -461,10 +469,17 @@ function loadSPA(){
          * 加载的js文件内含threejs框架
          * @access protected
          * @method ds.core.SiteModelByMobile.prototype.loadThreeJsFrameWork
-         * @TODO 待实现
+         *
          */
-        function loadThreeJsFrameWork() {
+        function loadThreeJsFrameWork(callback) {
 
+            _self.getScript('./js/libs/three.min.js', function () {
+
+                console.log('loadThreeJsFrameWork');
+
+                if (callback) callback();
+
+            });
         }
 
         /**
@@ -475,8 +490,8 @@ function loadSPA(){
         function initCreateJsModel() {
 
             _self.createJsModel = ds.createjs.create({
-                hasGL:opts.hasCJSWebGL,
-                appendTo:opts.cjsBox!==undefined?$(opts.cjsBox): $('#cjsBox')[0],
+                hasGL: opts.hasCJSWebGL,
+                appendTo: opts.cjsBox !== undefined ? $(opts.cjsBox) : $('#cjsBox')[0],
                 width: 640,
                 height: 1140,
                 fps: 30
@@ -492,10 +507,10 @@ function loadSPA(){
          */
         function initAudioer() {
 
-            if(!ds.media||!new ds.media.AutoAudioManager)return;
+            if (!ds.media || !new ds.media.AutoAudioManager) return;
 
             _self.audioer = new ds.media.AutoAudioManager();
-            if (opts.audioConfig)_self.audioer.initConfigData(opts.audioConfig);
+            if (opts.audioConfig) _self.audioer.initConfigData(opts.audioConfig);
 
         }
 
@@ -509,7 +524,7 @@ function loadSPA(){
 
             var _screen = opts.screen || '#screen';
 
-            _self.screen=$(_screen);
+            _self.screen = $(_screen);
 
             _self.resizeModel = new ds.core.MoblieResizeModel({
                 screen: _self.screen[0],
@@ -539,19 +554,18 @@ function loadSPA(){
                 if (_self.createJsModel) {
 
                     if (_self.resizeModel.screenWidth === 640) _self.createJsModel.size(_self.resizeModel.screenWidth, 1140);
-                    else  _self.createJsModel.size(_self.resizeModel.screenWidth, 640);
+                    else _self.createJsModel.size(_self.resizeModel.screenWidth, 640);
 
                 }
 
             }
 
             //避免进入输入框状态后，整体页面上移动
-            if (!_self.resizeModel.isInputState) setTimeout(function () {_self.screen.scrollTop(0);}, 30);
+            if (!_self.resizeModel.isInputState) setTimeout(function () {
+                _self.screen.scrollTop(0);
+            }, 30);
 
         }
-
-
-
 
 
         /**
@@ -560,7 +574,7 @@ function loadSPA(){
          * @method ds.core.SiteModelByMobile.prototype.initPixiJsModel、
          * @TODO 待实现
          */
-        function initPixiJsModel() {
+        function initPixiJsModel(callBack) {
 
             // _self.pixiJsModel = ds.pixijs.create({
             //     appendTo: $('#pixiBox')[0],
@@ -579,23 +593,69 @@ function loadSPA(){
          * 初始化threejs模块创建 **【受保护内部执行】**
          * @access protected
          * @method ds.core.SiteModelByMobile.prototype.initThreeJsModel
-         * @TODO 待实现
+         *
          */
-        function initThreeJsModel() {
+        function initThreeJsModel(callBack) {
 
+            if (ds.threejs && ds.threejs.create) {
+
+                SiteModel.threeJsModel = ds.threejs.create({
+                    appendTo:'#threejsBox',
+                    width:640,
+                    height:1140,
+                    resizeType:'fixed2',
+                    hasModelAnimate:false,
+                });
+
+            }
+
+            if (callBack) callBack();
         }
 
 
         /**
          * 在AppMain.js 开始执行loadAssets之前执行。
          * 这里会根据项目配置情况，按需是否创建pixijs或者threejs的模块。或者其他事情
-         * @param {function} callBack 传入是AppMain.js的loadAssets方法，
+         * @param {function} callback 传入是AppMain.js的loadAssets方法，
          * @method ds.core.SiteModelByMobile.prototype.beforeSinglePageApplicationLoadAssets
-         * @TODO pixijs 与 threejs模块在单页面应用加载前创建
          */
-        this.beforeSinglePageApplicationLoadAssets = function (callBack) {
+        this.beforeSinglePageApplicationLoadAssets = function (callback) {
 
-            if(callBack)callBack();
+            console.log('before SAP LoadAssets Start');
+
+            if (opts.hasThreeJs || opts.hasThreeJsModel) {
+
+                loadThreeJsFrameWork(function () {
+
+                    if (opts.hasThreeJsModel) initThreeJsModel(callback);
+                    else {
+
+                        if (callback) callback();
+
+                    }
+
+                });
+
+            }
+            else if (opts.hasPixiJs || opts.hasPixiJsModel) {
+
+                loadPixiJsFrameWork(function () {
+
+                    if (opts.hasPixiJsModel) initPixiJsModel(callback);
+                    else {
+
+                        if (callback) callback();
+
+                    }
+
+                });
+
+            }
+            else {
+
+                if (callBack) callBack();
+
+            }
 
         };
 
@@ -651,9 +711,7 @@ function loadSPA(){
         };
 
         //锁定滑动页面
-        document.addEventListener('touchmove', function (e) {
-            e.preventDefault();
-        }, false);
+        document.addEventListener('touchmove', function (e) {e.preventDefault();}, false);
 
     }
 

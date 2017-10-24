@@ -13,5 +13,6 @@
 /WebH5Template/src/app/pages/
 /WebH5Template/src/dsx/
 /WebH5Template/src/ds/
+/WebH5Template/src/threejs/
 package-lock.json
 *.DS_Store
