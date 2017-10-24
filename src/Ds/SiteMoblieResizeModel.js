@@ -101,10 +101,10 @@
        this.InitResize = function() {
            $(window).resize(function() {
               _Self.ReSize();
-              setTimeout(function() {_Self.ReSize();}, 100);
+              setTimeout(function() {_Self.ReSize();}, 300);
            });
            //部分手机自适应会有问题
-           setTimeout(function() {_Self.ReSize();}, 100);
+           setTimeout(function() {_Self.ReSize();}, 300);
            _Self.ReSize();
        };
        //自使用需相关参数
@@ -277,19 +277,19 @@
        _densityDpi = (_densityDpi > 1 ? 300 * 640 * _densityDpi / 640 : _densityDpi) >> 0;
        if (_isWeixin) {
            // _viewport.setAttribute('content', 'width=640, target-densityDpi='+_densityDpi+',user-scalable=no');
-           if (_OS == 'ios') {
+           if (_OS === 'ios') {
              console.log(_densityDpi);
               // _viewport.setAttribute('content', 'target-densitydpi=device-dpi,maximum-scale=1.0, user-scalable=no');
-               _viewport.setAttribute('content', 'target-densityDpi=' + _densityDpi + ',initial-scale=1.0, maximum-scale=1.0,user-scalable=no');
+               _viewport.setAttribute('content', 'target-densityDpi=' + _densityDpi + ',initial-scale=1.0, maximum-scale=1.0,user-scalable=0');
               //  _viewport.setAttribute('content', 'width='+_winWidth+',target-densityDpi='+_densityDpi+',initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
               //  _viewport.setAttribute('content', 'width=device-width,target-densityDpi='+_densityDpi+',initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
            } else {
                // _viewport.setAttribute('content', 'target-densityDpi=' + _densityDpi + ',initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
                // _viewport.setAttribute('content', 'width=device-width,target-densityDpi=' + _densityDpi + ',initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
-               _viewport.setAttribute('content', 'width=640,target-densityDpi=' + _densityDpi + ',user-scalable=no');
+               _viewport.setAttribute('content', 'width=640,target-densityDpi=' + _densityDpi + ',maximum-scale=1.0,user-scalable=0');
            }
        } else {
-           _viewport.setAttribute('content', 'width=640, user-scalable=no');
+           _viewport.setAttribute('content', 'width=640,maximum-scale=1.0, user-scalable=0');
            //window.setTimeout(function(){_viewport.setAttribute('content', 'width=640, user-scalable=yes');},1000);
        }
        return _densityDpi;

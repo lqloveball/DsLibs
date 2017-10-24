@@ -323,6 +323,8 @@
         }
         return _base64;
     };
+
+
     DsPixi.getBase64 = DsPixi.GetSaveImageBase64;
     /**
      * 缓存一个显示对象成Sprite
@@ -469,7 +471,7 @@
         if (opts.loader && (opts.loader instanceof PIXI.loaders.Loader)) _loader = opts.loader;
         else _loader = new PIXI.loaders.Loader();
         var assets;
-        //直接通过 require方法 进来的 传入是module.exports
+        //直接通过 require方法 进来的 传入是module.exports  ccc
         if (assetsData.stage && assetsData.stage.assets) assets = assetsData.stage.assets;
         //直接通过 js插入方法 进来的 传入是lib,需要通过lib中找出首文件class ，找出下列加载对象后进行加载处理
         else if (assetsData && opts.mainClass && assetsData[opts.mainClass] && assetsData[opts.mainClass].assets) assets = assetsData[opts.mainClass].assets;
@@ -600,7 +602,7 @@
      * opts.basePath  素材根目录设置 如：'./assets/'
      * opts.list  素材列表
      *   {id:'Dragon',path:''},
-     * opts.progress  加载进度
+     * opts.progress  加载进度cccccc111
      * opts.complete  加载完成
      * @return {[PIXI.loaders.Loader]}            [加载对象]
      * @alias DsPixi.loadDragonBones
@@ -783,6 +785,7 @@
         } else {
             // console.log('添加到body');
             document.body.appendChild(_canvas);
+
         }
         app.ticker.add(function (delta) {
             _Self.emit('update', delta);
@@ -804,6 +807,7 @@
     DsPixi.Create = function (opts) {
         return new DsPixi.PixiModel(opts);
     };
+
     DsPixi.create = DsPixi.Create;
 
     return root.Ds.DsPixi;

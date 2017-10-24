@@ -41,22 +41,22 @@
                 return _Direction;
             },
         });
-        InitEvent();
+
         /**
          * 初始化事件
          */
         this.InitEvent = InitEvent;
 
         function InitEvent() {
-            window.addEventListener('deviceorientation', OrientationUpDate, false);
-            window.addEventListener('orientationchange', DirectionUpDate, false);
+            window.addEventListener('deviceorientation', OrientationUpDate);
+            window.addEventListener('orientationchange', DirectionUpDate);
         }
         /**
          * 摧毁
          */
         this.Destroy = function() {
-            window.removeEventListener('deviceorientation', OrientationUpDate, false);
-            window.removeEventListener('orientationchange', DirectionUpDate, false);
+            window.removeEventListener('deviceorientation', OrientationUpDate);
+            window.removeEventListener('orientationchange', DirectionUpDate);
         };
         /**
          * 陀螺仪判断

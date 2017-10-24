@@ -194,6 +194,8 @@
                 document.body.removeEventListener('touchstart', audioInBrowserHandler);
             }
         };
+
+        this.BMGPlaying=false;
         /**
          * 对一个按钮设置音乐开关
          * @param {[Audio]} audio  [音乐对象]
@@ -206,42 +208,71 @@
               console.warn('SetBMGButton Error no Has Button DOM');
               return;
             }
-            //旧音乐控制事件删除
-            if (_button[0]._BMGclickFun) {
-                _button.off('click', _button[0]._BMGclickFun);
+            try {
+
+                //旧音乐控制事件删除
+                if (_button[0]._BMGclickFun) {
+                    _button.off('click', _button[0]._BMGclickFun);
+                }
+                if (_button[0]._BGMAudio && _button[0]._BGMAudio._upUIState&&_button[0]._BGMAudio.removeEventListener) {
+                    _button[0]._BGMAudio.removeEventListener("play", _button[0]._BGMAudio._upUIState);
+                    _button[0]._BGMAudio.removeEventListener("pause", _button[0]._BGMAudio._upUIState);
+                }
+
+                //声音对象
+                var _audio = audio;
+                _audio._upUIState = upUIState;
+
+                if(_audio.addEventListener){
+                    //监听声音对象事件
+                    _audio.addEventListener("play", upUIState);
+                    _audio.addEventListener("pause", upUIState);
+                }else{
+                    alert('声音 try error3');
+                }
+
+                //按钮点击事件
+                _button[0]._BMGclickFun = function() {
+
+                    setTimeout(function () {
+                        upUIState();
+                    },300);
+
+                    if (_audio.paused) _audio.play();
+                    else _audio.pause();
+
+                };
+                _button[0]._BGMAudio = _audio;
+                _button.on('click', _button[0]._BMGclickFun);
+
+
+            }catch (e){
+                alert('声音 try error1');
             }
-            if (_button[0]._BGMAudio && _button[0]._BGMAudio._upUIState) {
-                _button[0]._BGMAudio.removeEventListener("play", _button[0]._BGMAudio._upUIState);
-                _button[0]._BGMAudio.removeEventListener("pause", _button[0]._BGMAudio._upUIState);
-            }
-            //声音对象
-            var _audio = audio;
-            _audio._upUIState = upUIState;
-            //监听声音对象事件
-            _audio.addEventListener("play", upUIState);
-            _audio.addEventListener("pause", upUIState);
-            //按钮点击事件
-            _button[0]._BMGclickFun = function() {
-                // console.log(_button);
-                if (_audio.paused) _audio.play();
-                else _audio.pause();
-            };
-            _button[0]._BGMAudio = _audio;
-            _button.on('click', _button[0]._BMGclickFun);
-            //声音按钮状态update
+
+
+            //声音按钮状态update11112
             function upUIState() {
                 if (_button) {
                     if (_audio.paused) {
                         _button.find('.on').hide();
                         _button.find('.off').show();
+                        _Self.BMGPlaying=false;
                     } else {
                         _button.find('.on').show();
                         _button.find('.off').hide();
+                        _Self.BMGPlaying=true;
                     }
                 }
             }
-            //重置UI状态
-            upUIState();
+            try {
+                //重置UI状态
+                upUIState();
+            }catch (e){
+                alert('声音 try error2');
+            }
+
+
         };
         /**
          * 临时暂停

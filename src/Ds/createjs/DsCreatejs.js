@@ -615,7 +615,7 @@
     //加载类型，默认不需要http服务的false
     var loadType = param.loadType ? true : false;
     //创建队列对象
-    var queue = new createjs.LoadQueue(loadType);
+    var queue = new createjs.LoadQueue(loadType,'',);
     if (createjs.Sound) queue.installPlugin(createjs.Sound);
     queue.addEventListener("fileload", queueFileLoad);
     queue.addEventListener("progress", queueProgress);
