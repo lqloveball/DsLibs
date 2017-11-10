@@ -14,7 +14,8 @@ class ScrollPanel extends EventDispatcher {
 
     /**
      * 构造函数
-     * @param {createjs.Container} display
+     * @param {createjs.Container} display 需要滚动的容器
+     * 注意容器内部必须有一个子对象实例名 `content` 或者 `box` 这个是被滚动的元素
      * @param {number} contentHeight 设置内容高度
      * @param {number} width  容器宽 自动创建反馈触摸的dom时候需要
      * @param {number} height 容器高 计算容器
