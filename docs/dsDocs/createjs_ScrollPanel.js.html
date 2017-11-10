@@ -4,7 +4,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Source: core/EventDispatcher.js | Dslibs Doc</title>
+    <title>Source: createjs/ScrollPanel.js | Dslibs Doc</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -57,336 +57,209 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>//这个类使用老js方法，有可能直接插入html标签内使用
-!(function (factory) {
+            <pre class="prettyprint source linenums"><code>import EventDispatcher from '../core/EventDispatcher';
+import AlloyTouch from 'libs/alloyTeam/alloy_touch.js';
 
-    var root = (typeof window !== 'undefined' ? window : (typeof process === 'object' &amp;&amp; typeof require === 'function' &amp;&amp; typeof global === 'object') ? global : this);
-
-
-    if (typeof define === 'function' &amp;&amp; define.amd) {
-
-        define(['exports'], function (exports) {
-
-            module.exports = factory(root, exports);
-
-        });
-    } else if (typeof exports !== 'undefined') {
-
-        module.exports = factory(root, exports);
-
-    } else {
-
-        factory(root);
-
-    }
-
-}(function (root, model) {
+/**
+ * 实现一个createjs内一个滚动面板
+ * @class
+ * @memberof ds.createjs
+ * @requires module:libs/createjs/createjs0.8.2.min.js
+ * @requires module:ds/core/EventDispatcher.js
+ * @requires module:libs/alloyTeam/AlloyTouch.js
+ */
+class ScrollPanel extends EventDispatcher {
 
 
     /**
-     * 事件机制类
-     * @class ds.core.EventDispatcher
-     * @classdesc 实现js下的事件派发机制，为复杂的互动交互提供事件派发功能。
-     * @example
-     *
-     * //一只猫的类，拥有事件机制
-     * //ES6继承写法
-     * import EventDispatcher from  'ds/core/EventDispatcher';
-     * export default class CatClass extends EventDispatcher
-     * {
-     *
-     * }
-     *
-     * //老版本js继承写法
-     * function CatClass(){
-     *
-     *     ds.core.EventDispatcher.extend(this);
-     *
-     * };
-     *
+     * 构造函数
+     * @param {createjs.Container} display 需要滚动的容器
+     * 注意容器内部必须有一个子对象实例名 `content` 或者 `box` 这个是被滚动的元素
+     * @param {number} contentHeight 设置内容高度
+     * @param {number} width  容器宽 自动创建反馈触摸的dom时候需要
+     * @param {number} height 容器高 计算容器
+     * @param {object} opts  设置配置
+     * @param {boolean} opts.autoDom=true 是否自动创建反馈触摸的dom，如果自动创建dom会覆盖在canvas元素上，内容无法点击
+     * @param {number} opts.maxSpeed=5 触摸反馈的最大速度限制
      */
-    function EventDispatcher() {
+    constructor(display, contentHeight, width, height, opts) {
+        super();
+        opts = opts || {};
 
-        /**
-         * 添加监听事件
-         * @method ds.core.EventDispatcher.prototype.addEventListener
-         * @function
-         * @param {string} type 事件标识
-         * @param {function} listener 事件执行函数
-         * @param {*} [context=this]  监听方法内的this上下文关系
-         */
-        this.addEventListener = function (type, listener, context) {
+        var _self=this;
 
-            if (this._listeners === undefined) this._listeners = {};
-
-            var _listeners = this._listeners;
-
-            if (_listeners[type] === undefined) {
-
-                _listeners[type] = [];
-
-            }
-
-            if (_listeners[type].indexOf(listener) === -1) {
-
-                if (context !== undefined) listener._ds_context = context;
-
-                _listeners[type].push(listener);
-
-            }
-
-        };
-
-        /**
-         * 添加监听事件
-         * @method ds.core.EventDispatcher.prototype.on
-         * @function
-         * @see {@link ds.core.EventDispatcher#addEventListener}
-         */
-        this.on = this.addEventListener;
-
-        /**
-         * 添加监听事件,执行一次就销毁
-         * @method ds.core.EventDispatcher.prototype.once
-         * @param {string} type 事件标识
-         * @param {function} listener 事件执行函数
-         * @param {*} [context=this]  监听方法内的this上下文关系
-         */
-        this.once = function (type, listener, context) {
-
-            listener.once = true;
-            this.addEventListener(type, listener, context);
-
-        };
-
-        /**
-         * 判断是否监听指定事件
-         * @function
-         * @method ds.core.EventDispatcher.prototype.hasEventListener
-         * @param {string } type  事件标识
-         * @param {function} listener 事件执行函数
-         * @returns {boolean}
-         */
-        this.hasEventListener = function (type, listener) {
-
-            if (this._listeners === undefined) return false;
-
-            var _listeners = this._listeners;
-
-            return _listeners[type] !== undefined &amp;&amp; _listeners[type].indexOf(listener) !== -1;
-
-        };
-        /**
-         * 判断是否监听指定事件
-         * @method ds.core.EventDispatcher.prototype.hs
-         * @see {@link ds.core.EventDispatcher#addEventListener}
-         */
-        this.hs = this.hasEventListener;
+        this._width = width;
+        this._height = height;
 
 
-        /**
-         * 删除监听事件
-         * @method ds.core.EventDispatcher.prototype.removeEventListener
-         * @param type 事件标识
-         * @param listener  时间执行函数
-         */
-        this.removeEventListener = function (type, listener) {
+        let _panel = display;
+        this._panel = _panel;
 
-            if (this._listeners === undefined) return;
+        this._contentHeight=contentHeight;
+        this._scroll = -(this._contentHeight - this._height);
 
-            var _listeners = this._listeners;
-            var _listenerArray = _listeners[type];
+        let _target;
+        if (_panel.content) _target = _panel.content;
+        else if (_panel.box) _target = _panel.box;
+        else {
 
-            if (_listenerArray !== undefined) {
-
-                var _index = _listenerArray.indexOf(listener);
-
-                if (_index !== -1) {
-
-                    _listenerArray.splice(_index, 1);
-
-                }
-
-            }
-
-        };
-
-
-        /**
-         * 删除监听事件
-         * @method ds.core.EventDispatcher.prototype.off
-         * @see {@link ds.core.EventDispatcher#removeEventListener}
-         */
-        this.off = this.removeEventListener;
-
-        /**
-         * 派发事件
-         * @method ds.core.EventDispatcher.prototype.dispatchEvent
-         * @param {string | object} event 可以是事件标识名的字符串、或者带事件标识名的对象。
-         * @param {string } event.type 事件标识名
-         * @param {*} [event.*] 派发事件对象可带任意对象参数
-         */
-        this.dispatchEvent = function (event) {
-
-            if (this._listeners === undefined) return;
-
-            if (typeof(event) === 'string') event = {type: event};
-
-            var _listeners = this._listeners;
-            var _listenerArray = _listeners[event.type];
-
-            if (_listenerArray !== undefined) {
-
-                event.target = this;
-
-                var _array = _listenerArray.slice(0);
-
-                for (var i = 0, l = _array.length; i &lt; l; i++) {
-
-                    // console.log('--->_array[i]:',_array[i],i,_array[i].call);
-                    // console.log(_array[i]._ds_context,this);
-
-                    if (_array[i]._ds_context) _array[i].call(_array[i]._ds_context, event);
-                    else _array[i].call(this, event);
-
-
-                    if (_array[i].once) {
-                        this.removeEventListener(event.type, _array[i]);
-                    }
-
-                }
-
-            }
-        };
-
-
-        /**
-         * 派发事件
-         * @method ds.core.EventDispatcher.prototype.emit
-         * @see {@link ds.core.EventDispatcher#dispatchEvent}
-         */
-        this.emit = this.dispatchEvent;
-
-        /**
-         * 派发事件
-         * @method ds.core.EventDispatcher.prototype.trigger
-         * @see {@link ds.core.EventDispatcher#dispatchEvent}
-         */
-        this.trigger = this.dispatchEvent;
-
-        /**
-         * 派发事件
-         * @method ds.core.EventDispatcher.prototype.ds
-         * @see {@link ds.core.EventDispatcher#dispatchEvent}
-         */
-        this.ds = this.dispatchEvent;
-
-        /**
-         * 删除所有的事件监听
-         * @method ds.core.EventDispatcher.prototype.removeAllEventListeners
-         */
-        this.removeAllEventListeners = function () {
-
-            this._listeners = {};
-
-        };
-
-    }
-
-    function keys(obj) {
-
-        var keys = [];
-        for (var key in obj) {
-
-            keys.push(key);
+            console.warn('ScrollPanel no Has Child Name: "content" "box" ');
+            return;
 
         }
 
-        return keys;
+        this._target = _target;
 
-    }
 
-    function extend(obj) {
+        let _autoDom = opts.autoDom != undefined ? opts.autoDom : true;
+        this._autoDom=_autoDom;
+        /**
+         * 是否自动创建反馈触摸的dom
+         * @type {boolean}
+         * @private
+         */
+        this._isAutoDom=false;
 
-        var length = arguments.length;
+        //反馈触摸的dom
+        let _touchDom;
+        if (opts.dom !== undefined) {
 
-        if (length &lt; 2 || obj === null) return obj;
+            _touchDom = $(opts.dom)[0];
 
-        for (var index = 1; index &lt; length; index++) {
+        }
+        else if (_autoDom &amp;&amp; width &amp;&amp; height) {
 
-            var source = arguments[index],
-                ks = keys(source),
-                l = ks.length;
+            this._isAutoDom=true;
+            _touchDom = document.createElement("div");
+            $(_touchDom).css({width: width, height: height});
+            ds.createjs.addDOM(display, _touchDom);
+        }
+        else {
 
-            for (var i = 0; i &lt; l; i++) {
-
-                var key = ks[i];
-                obj[key] = source[key];
-
-            }
+            _touchDom = $('#cjsBox')[0];
 
         }
 
-        return obj;
+        this._touchDom = _touchDom;
+
+        this._alloyTouch = new AlloyTouch({
+            //反馈触摸的dom
+            touch: _touchDom,
+            //不必需，默认是true代表监听竖直方向touch
+            vertical: true,
+            target: _target, //运动的对象
+            property: "y",  //被运动的属性
+            min: this._scroll, //不必需,运动属性的最小值
+            max: 0, //不必需,滚动属性的最大值
+            sensitivity: 1,//不必需,触摸区域的灵敏度，默认值为1，可以为负数
+            factor: 1,//不必需,表示触摸位移与被运动属性映射关系，默认值是1
+            step: 45,//用于校正到step的整数倍
+            bindSelf: false,
+            //不必需，触摸反馈的最大速度限制
+            maxSpeed: opts.maxSpeed||5,
+            initialValue: 0,
+            //
+            change: function (value) {
+                if(!_self._target.stage)return;
+            },
+            touchStart: function (evt, value) {
+                if(!_self._target.stage)return;
+            },
+            touchMove: function (evt, value) {
+                if(!_self._target.stage)return;
+            },
+            touchEnd: function (evt, value) {
+                if(!_self._target.stage)return;
+            },
+            tap: function (evt, value) {
+                if(!_self._target.stage)return;
+            },
+            pressMove: function (evt, value) {
+                if(!_self._target.stage)return;
+            },
+            //运动结束
+            animationEnd: function (value) {
+                if(!_self._target.stage)return;
+            }
+        })
+
     }
 
     /**
-     * 一个对象通过copy一个EventDispatcher对象方法成员来进行继承事件派发机制
-     * @method  ds.core.EventDispatcher.extend
-     * @function
-     * @static
-     * @param {class} source 需要继承事件派发机制的对象
-     * @example
-     *
-     * require('ds/core/EventDispatcher');
-     * //创建一个猫的类，继承事件派发机制。
-     * function CatClass(){
-     *
-     *    //这个猫继承了事件派发机制
-     *    ds.EventDispatcher.extend(this);
-     *
-     *    //猫有一个行走的方法
-     *    this.startRun=function(){
-     *
-     *        //发出行走事件 `run`
-     *        this.ds('run');
-     *
-     *    }
-     *
-     * }
-     *
-     * //创建一个类的实例
-     * var cat = new CatClass();
-     *
-     * //开始监听猫的 run 行为
-     * cat.on('run',function(){
-     *      console.log('cat run');
-     * });
-     *
-     * //执行猫开始行走，之前监听就会接受到相关事件
-     * cat.startRun();
-     *
+     * 设置滚动容器的宽高
+     * @param width
+     * @param height
      */
-    EventDispatcher.extend = function (source) {
+    resizeBox(width,height){
 
-        extend(source, new EventDispatcher());
+        this._width = width;
+        this._height = height;
+        this._scroll = -(this._contentHeight - this._height);
+        this._alloyTouch.min=this._scroll;
 
-    };
+        if(this._isAutoDom)$(this._touchDom).css({width: width, height: height});
 
+    }
 
-    var ds = root.ds = root.ds || {};
-    ds.core = ds.core || {};
-    ds.core.EventDispatcher = EventDispatcher;
     /**
-     * 事件机制类
-     * @class ds.EventDispatcher
-     * @classdesc 实现js下的事件派发机制，为复杂的互动交互提供事件派发功能。
-     * @see ds.EventDispatcher 实际等同于 {@link ds.core.EventDispatcher}
+     * 容器宽
+     * @return {*}
      */
-    ds.EventDispatcher = EventDispatcher;
+    get height(){
+        return this._height;
+    }
 
-    return ds.core.EventDispatcher;
-}));</code></pre>
+    /**
+     * 容器高
+     * @return {*}
+     */
+    get width(){
+        return this._width;
+    }
+
+
+    /**
+     * 设置或获取容器内容高度
+     * @return {number|*}
+     */
+    get contentHeight(){
+        return this._contentHeight;
+    }
+
+    set contentHeight(value){
+
+        this._contentHeight=value;
+        this._scroll = -(this._contentHeight - this._height);
+        this._alloyTouch.min=this._scroll;
+
+    }
+
+    /**
+     * 滚动到指定位置
+     * @param value
+     * @param time
+     */
+    to(value, time,){
+        time=time||600;
+        this._alloyTouch.to(value,time);
+    }
+
+    /**
+     * 停止滚动
+     */
+    stop(){
+        this._alloyTouch.stop();
+    }
+
+}
+
+let root = (typeof window !== 'undefined' ? window : (typeof process === 'object' &amp;&amp; typeof require === 'function' &amp;&amp; typeof global === 'object') ? global : this);
+
+let ds = root.ds = root.ds || {};
+ds.createjs = ds.createjs || {};
+ds.createjs.ScrollPanel = ScrollPanel;
+
+export default ScrollPanel;</code></pre>
         </article>
     </section>
 

@@ -27,6 +27,10 @@
     /**
      * 站点通用加载方法模块，一般配合ds.core.SiteModelByMobile实例使用
      * @class ds.net.CagoeWechatShareModel
+     * @param {string} title='分享标题' 分享标题
+     * @param {string} info='分享内容' 分享内容
+     * @param {string} shareUrl='/index.html' 分享链接
+     * @param {string} workUrl='/index.html?WorkID=' 作品回流分享链接
      */
     function CagoeWechatShareModel(title,info,shareUrl,workUrl) {
 
@@ -43,6 +47,7 @@
 
         /**
          * 作品回流页面地址
+         * @member ds.net.CagoeWechatShareModel.prototype.workPageUrl
          * @type {string}
          */
         Object.defineProperty(this, "workPageUrl", {
@@ -56,12 +61,14 @@
 
         /**
          * 是否作品回流页面
+         * @member ds.net.CagoeWechatShareModel.prototype.isWorkBackSharePage
          * @type {boolean}
          */
         this.isWorkBackSharePage = false;
 
         /**
          * 默认微信分享接口
+         * @method ds.net.CagoeWechatShareModel.prototype.defaultWeiShare
          * @param  {string} title [分享标题 默认 _shareTitle]
          * @param  {string} info  [分享内容 默认 _shareInfo]
          * @param  {string} url   [分享链接地址 默认 _shareUrl 传参参考：'/index.html','index.html','http://xxx.xx.com/index.html' ]
@@ -115,6 +122,7 @@
         };
         /**
          * 设置微信分享
+         * @method ds.net.CagoeWechatShareModel.prototype.setWeiShare
          * @param  {string} title [分享标题 默认 _shareTitle]
          * @param  {string} info  [分享内容 默认 _shareInfo]
          * @param  {string} url   [分享链接地址 默认 _shareUrl 传参参考：'/index.html','index.html','http://xxx.xx.com/index.html' ]
@@ -141,7 +149,8 @@
         };
 
         /**
-         * 做回流页面分享
+         * 设置回流页面分享
+         * @method ds.net.CagoeWechatShareModel.prototype.setWorkIDWeiShare
          * @param  {string} workid [作品回流页面地址  如：100' 等于 location.origin+'/index.html?WorkID='+'100']
          * @param  {string} title  [分享标题]
          * @param  {string} info   [分享内容]
@@ -166,6 +175,7 @@
 
         /**
          * 默认作品回流分享
+         * @method ds.net.CagoeWechatShareModel.prototype.defaultWorkPageWeiShare
          * @param  {string} title  [分享标题]
          * @param  {string} info   [分享内容]
          */
@@ -206,6 +216,7 @@
 
         /**
          * 隐藏微信按钮
+         * @method ds.net.CagoeWechatShareModel.prototype.hideMenuItems
          * @param  {array} menuList [https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421141115]
          */
         this.hideMenuItems=function (menuList) {
@@ -216,6 +227,7 @@
         };
         /**
          * 显示微信按钮
+         * @method ds.net.CagoeWechatShareModel.prototype.showMenuItems
          * @param  {array} menuList [https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421141115]
          */
         this.showMenuItems=function() {
