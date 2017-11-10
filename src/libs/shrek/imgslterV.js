@@ -1,4 +1,3 @@
-
 /*!
  * VERSION: 0.1.0
  * DATE: 2015-09-24
@@ -37,26 +36,29 @@
         initialize: function (config) {
             var _config = config || {};
             this.el = _config.el || function () {
-                    var input = document.createElement("INPUT");
 
-                    input.id='SelectImage_'+new Date().getTime();
-                    input.type = 'file';
-                    // input.accept = 'image/png,image/jpeg,image/gif';
-                    input.accept = 'image/*';
-                    //是否多选择
-                    var _multiple=config.multiple!==undefined?true:false;
-                    input.multiple=_multiple;
-                    // var _capture=config.capture!==undefined?config.capture:null;
-                    if(config.capture){
-                      input.capture = config.capture;
-                    }
-                    return input;
-                }();
+                var input = document.createElement("INPUT");
+
+                input.id = 'SelectImage_' + new Date().getTime();
+                input.type = 'file';
+                // input.accept = 'image/png,image/jpeg,image/gif';
+                input.accept = 'image/*';
+                //是否多选择
+                var _multiple = config.multiple !== undefined ? true : false;
+                input.multiple = _multiple;
+                // var _capture=config.capture!==undefined?config.capture:null;
+                if (config.capture) input.capture = config.capture;
+
+                return input;
+
+            }();
+
             this.size = _config.size || 500;
             this.type = _config.type || 'jpeg';
             this.quality = _config.quality || 0.7;
             this.handler = _config.handler || function () {
-                };
+            };
+
             this.color = _config.color;
 
             this.ua = uaParser();
@@ -68,13 +70,14 @@
 
         },
         _changeHandler: function (evt) {
+
             var _self = this;
 
             var _file = evt.target.files[0];
 
-            if (_file == undefined){
-              console.log('没有选择');
-               return;
+            if (_file == undefined) {
+                console.log('没有选择');
+                return;
             }
 
             var imgW, imgW2, tmpImgW;
@@ -165,14 +168,18 @@
             };
         },
         select: function () {
+
             if (this.el) this.el.click();
+
         },
         destroy: function () {
+
             this.el.removeEventListener('change', this._changeHandler, false);
             delete this.ua;
             delete this.ctx;
             delete this.cvs;
             delete this.el;
+
         }
     };
 

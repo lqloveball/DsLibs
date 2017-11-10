@@ -1,155 +1,217 @@
+import EventDispatcher from '../core/EventDispatcher';
+
 /**
+ * 网站页面跳转管理模块
  * @class
- * @classdesc:网站页面跳转管理器
- * @extends
- * @example:
- //使用项目页面模块例子
- function PageModel(){
-   var _Self=this;
-   this.name='HomePage';
-   //事件继承
-   // Ds.Extend(this, new Ds.EventDispatcher());
-   //主模块
-   var _AppMain=SiteModel.AppMain;
-   //如果有用到 createjs 部分代码
-   var _Root, _Stage, _CJSModel;
-   if(SiteModel.CJSModel){
-     //createjs
-     _CJSModel=SiteModel.CJSModel;
-     _Root = _CJSModel.Root;
-     _Stage = _CJSModel.Stage;
-   }
+ * @memberof ds.gemo
+ * @requires module:libs/createjs/createjs0.8.2.min.js
+ * @requires module:ds/core/EventDispatcher.js
+ */
+class SitePageManager extends EventDispatcher {
 
-   // var _View=new lib.HomePage();
-   //动画进场
-   this.MovieIn=function(){
-     // _Root.removeAllChildren();
-     // _Root.addChild(_View);
-   };
- }
- module.exports=new PageModel();
- //在Atom里面 代码片段配置 添加入下配置
- 'webpack 模块':
-     'prefix': 'wpjs'
-     'body': """
-             function $1(){
-               var _Self=this;
-               this.name='$1';
-               //事件继承
-               // Ds.Extend(this, new Ds.EventDispatcher());
-               //主模块
-               var _AppMain=SiteModel.AppMain;
-               //如果有用到 createjs 部分代码
-               var _Root, _Stage, _CJSModel;
-               if(SiteModel.CJSModel){
-                 //createjs
-                 _CJSModel=SiteModel.CJSModel;
-                 _Root = _CJSModel.Root;
-                 _Stage = _CJSModel.Stage;
-               }
 
-               //动画进场
-               this.MovieIn=function(){
-                 $2
-               };
-             }
-             module.exports=new $1();
-             """
- *
- * @author: maksim email:maksim.lin@foxmail.com
- * @copyright: Ds是累积平时项目工作的经验代码库，不属于职位任务与项目的内容。里面代码大部分理念来至曾经flash 前端时代，尽力减小类之间耦合，通过webpack按需request使用。Ds库里内容多来至网络与参考其他开源代码库。Ds库也开源开放，随意使用在所属的职位任务与项目中。
- * @constructor
- **/
-(function (factory) {
-    var root = (typeof self == 'object' && self.self == self && self) ||
-        (typeof global == 'object' && global.global == global && global);
+    /**
+     *
+     */
+    constructor() {
 
-    if (typeof define === 'function' && define.amd) {
-        define(['exports'], function (exports) {
-            module.exports= factory(root, exports);
-        });
-    } else if (typeof exports !== 'undefined') {
-        module.exports=factory(root, exports);
-    } else {
-         factory(root, {});
+        super();
+
+        this._pageDc = {};
+        this._pageList = [];
+        this._pageLabel = '';
+        this._pageModel = null;
+        this._oldPageLabel = '';
+        this._oldPageModel = null;
+        this._history = [];
+        this._historyIndex = 0;
+
     }
 
-}(function (root, modelObj) {
-  root.Ds = root.Ds || {};
-  root.Ds.gemo = root.Ds.gemo || {};
-  root.Ds.gemo.SitePageManager=SitePageManager;
-  function SitePageManager(){
-    var _Self=this;
-    //事件继承
-    Ds.Extend(this, new Ds.EventDispatcher());
-    //页面索引字典
-    var _PageDc = {};
-    Object.defineProperty(this, "PageDc", {get: function() {return _PageDc;},});
-    //页面列表
-    var _PageList=[];
-    //当前页面标签
-    var _PageLabel = '';
-    Object.defineProperty(this, "PageLabel", {
-      get: function() {
-        return _PageLabel;
-      },
-    });
-    //当前页面模块
-    var  _PageModel;
-    Object.defineProperty(this, "PageModel", {
-      get: function() {
-        return _PageModel;
-      },
-    });
-    var _OldPageLabel,_OldPage;
-    Object.defineProperty(this, "OldPageLabel", {get: function() {return _OldPageLabel;},});
-    Object.defineProperty(this, "OldPage", {get: function() {return _OldPage;},});
     /**
-     * 页面跳转控制
-     * @param  {[String or Number ]} value [description]
-     * @return {[type]}       [description]
+     * 调整页面模块
+     * @param {string} value 跳转的页面标识
+     * @param {boolean} [history=true] 是否添加进历史记录
      */
-    this.GotoPage=function(value) {
-      if (_PageLabel == value) return;
-      //取项目页面字典表内是否有这个页面对象
-      var _temp = _PageDc[value];
-      //如果没有这个对象，不做页面跳转
-      if (!_temp) return;
-      _OldPageLabel=_PageLabel;
-      //记录当前页面名称
-      _PageLabel = value;
-      _OldPage=_PageModel;
-      //记录当前页面对象
-      _PageModel = _temp;
-      if (_PageModel && _PageModel.MovieIn) _PageModel.MovieIn();
-      this.ds({
-        type:'update',
-        label:_PageLabel,
-        page:_PageModel,
-        oldPage:_OldPage,
-        oldLabel:_OldPageLabel,
-      });
-    };
+    gotoPage(value, history) {
+
+        if (this._pageLabel === value) return;
+
+        var _temp = this._pageDc[value];
+
+        if (!_temp) return;
+
+        this._oldPageLabel = this._pageLabel;
+
+        this._pageLabel = value;
+        this._oldPageModel = this._pageModel;
+
+        //是否添加进历史记录
+        history = history !== undefined ? history : true;
+        //记录页面标识的历史记录
+        if (this._oldPageLabel !== '' && history) {
+
+            this._history.push(this._oldPageLabel);
+            this._historyIndex = this._history.length - 1;
+
+        }
+
+
+        this._pageModel = _temp;
+        if (this._pageModel) {
+
+            if (this._pageModel.MovieIn) this._pageModel.MovieIn();
+            else if (this._pageModel.movieIn) this._pageModel.movieIn();
+
+        }
+
+        /**
+         * @event ds.gemo.SitePageManager#update
+         * @type {object}
+         * @property {string} type='update' 事件类型
+         * @property {string} label 当前页面标识
+         * @property {string} oldLabel 之前页面标识
+         * @property {*} page 当前页面对象
+         * @property {*} oldPage 之前页面对象
+         */
+        this.ds({
+            type: 'update',
+            label: this.pageLabel,
+            page: this.pageModel,
+            oldPage: this.oldPageModel,
+            oldLabel: this.oldPageLabel,
+        });
+
+    }
+
+    /**
+     * 上一个历史记录页面
+     */
+    previousHistory() {
+
+        if (this._history.length <= 0) return;
+        var _num = this._historyIndex - 1;
+        if (_num <= 0) _num = 0;
+
+        var _label = this._history[_num];
+        this.gotoPage(_label,false);
+
+    }
+
+    /**
+     * 下一个历史记录页面
+     */
+    nextHistory() {
+
+        if (this._history.length <= 0) return;
+        var _num = this._historyIndex + 1;
+        if (_num >= this._history.length) _num = this._history.length - 1;
+
+        var _label = this._history[_num];
+        this.gotoPage(_label,false);
+
+    }
+
     /**
      * 添加页面模块
-     * @param  {[type]} page [description]
-     * @return {[type]}      [description]
+     * @param {*} page 一个页面对象，最好需要拥有name属性，这个会作为页面的标识名
      */
-    this.Add=function(page){
-      //如果已经添加过这个页面 不进行再次添加
-      if(_PageList.indexOf(page)!=-1)return;
-      if(page.name){
-        _PageDc[page.name]=page;
-        _PageList.push(page);
-      }else{
-        //如果没有页面名称，使用自动默认创建的页面名
-        var _name='DsPage'+_PageList.length;
-        page.name=_name;
-        _PageDc[page.name]=page;
-        _PageList.push(page);
-      }
-    };
-  }
+    add(page) {
 
-  return root.Ds.gemo.SitePageManager;
-}));
+        if (this._pageList.indexOf(page) !== -1) return;
+
+        if (page.name) {
+
+            this._pageDc[page.name] = page;
+            this._pageList.push(page);
+
+        } else {
+
+
+            var _name = 'DsPage' + this._pageList.length;
+            page.name = _name;
+            this._pageDc[page.name] = page;
+            this._pageList.push(page);
+
+        }
+
+    }
+
+    /**
+     * 页面索引字典
+     * @return {object}
+     */
+    get pageDc() {
+
+        return this._pageDc;
+
+    }
+
+    /**
+     * 页面列表
+     * @return {Array}
+     */
+    get pageList() {
+
+        return this._pageList;
+
+    }
+
+    /**
+     * 当前页面标识
+     * @return {string}
+     */
+    get pageLabel() {
+
+        return this._pageLabel;
+
+    }
+
+    /**
+     * 当前页面模块
+     * @return {*}
+     */
+    get pageModel() {
+
+        return this._pageModel;
+
+    }
+
+    /**
+     * 旧的页面标识
+     * @return {string}
+     */
+    get oldPageLabel() {
+
+        return this._oldPageLabel;
+
+    }
+
+    /**
+     * 旧的页面模块
+     * @return {null}
+     */
+    get oldPageModel() {
+
+        return this._oldPageModel;
+
+    }
+
+    /**
+     * 历史记录
+     * @return {Array}
+     */
+    get history() {
+
+        return this._history;
+
+    }
+
+}
+
+let root = (typeof window !== 'undefined' ? window : (typeof process === 'object' && typeof require === 'function' && typeof global === 'object') ? global : this);
+let ds = root.ds = root.ds || {};
+ds.gemo = ds.gemo || {};
+ds.gemo.SitePageManager = SitePageManager;
+
+export default SitePageManager;

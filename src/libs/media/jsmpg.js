@@ -1,6 +1,5 @@
 /**
  * 老版mepg  基本可以废弃
- * https://github.com/phoboslab/jsmpeg
  */
 (function (window) {
     'use strict';
@@ -51,7 +50,6 @@
             this.renderFrame = this.renderFrame2D;
             this.updateLoader = this.updateLoader2D;
         }
-
         this.startLoadBool = false;
         if (url instanceof WebSocket) {
             this.client = url;
@@ -1948,7 +1946,13 @@
         }
     };
 
-
+    if (typeof define === 'function' && define.amd) {
+        define(['exports'], function (exports) {
+            module.exports = jsmpeg
+        });
+    } else if (typeof exports !== 'undefined') {
+        module.exports = jsmpeg
+    }
 // ----------------------------------------------------------------------------
 // VLC Tables and Constants
 

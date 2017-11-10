@@ -1,80 +1,9 @@
-/**
- * @class Ds.net.SocketModel
- * @classdesc:
- *  常用于双屏互动项目
- *  Socket连接服务器基础类
- *  服务器端代码如下：配套对应的Node socket.io服务器使用.
- *  https://github.com/lqloveball/DsLibs/blob/master/other/SocektServer.zip
- *  基于socket.io.js：
- *  请确保socket.io.js已经加载(webpack开发模式下已经做了处理,src/libs/socket.io/socket.io.js)。
- *  介绍一些常用参数与方法:
- *  var _Socketer=new Ds.net.SocketModel();//创建一个socket连接对象
- *  方法:
- *  InitSocket 	// 开始连接服务器，具体参数看方法注释
- *  AddRoom		// 加入到什么房间
- *  Call		// 给房间内人发消息
- * 	CallAll		// 给房间内所有人发消息（包括自己也能接收到）
- * 	Destroy		// 主动断开与服务器之间连接
- * 	属性:
- *  ID 			// 连接成后会获取到一个socket 在服务器端的唯一值
- *  事件:
- *  initSocketEvent 	// 初始化或者重新绑定所有事件
- * 	connect				// 连接成功
- * 	connecting			// 连接中？一般没看到这个事件
- * 	connect_failed		// 连接完成？一般没看到这个事件
- * 	error				// 错误信息
- * 	disconnect			// 断开连接
- * 	reconnect			// 断线重连接
- * 	clearWaste			// 被当垃圾用户清理退出
- * 	serverFull			// 服务器满了
- * 	roomFull			// 房间满了 e.data 数字  当前房间人数
- * 	addRoomOK			// 房间满了 e.data 房间的变号
- * 	upUserRoomData		// 进入房间后个人信息 e.data.length 房间人数 e.data.num 自己编号  e.data.roomid 房间号
- * 	call				// 收到消息  e.data  服务器传递来数据  可能是object 也可能是 String
- * 【 自动定义消息  】通过call事件接收到的消息，以下情况会转换成自动定义消息
- *  String类型消息，如果带“:”的话 前部分会作为事件名，后面部分作为数据传输
- *  Object类型消息，如果type值不为空，那就会把整个object作为事件对象发送
- * 【 ***如果不符合以上两种，会默认作为call事件内容发送*** 】
- *
- * @extends
- * @example:
- *
-   	//创建一个socket连接对象
-    var _Socketer=new Ds.net.SocketModel();
-	 //不去更改SocketModel类 根据服务器额外定制一些消息事件监听
-    var _Socket=_Socketer.Socket;
-    //成功连接
-    _Socketer.on('connect',function(){
-        console.log('连接成功');
-    });
-    //断开连接
-    _Socketer.on('disconnect',function(){
-         console.log('断开连接');
-    });
-    //被服务器当垃圾请下线
-    _Socketer.on('clearWaste',function(){
-        console.log('被服务器当垃圾请下线');
-    });
-    //初始化socekt连接事件绑定
-    _Socketer.on('initSocketEvent',function(){
-        console.log('初始化连接服务器，事件重置');
-    });
- * //开始连接
- * _Socketer.InitSocket({
- *          url:'192.168.1.131',
- *          port:8000,
- * });
- *
- * @author: maksim email:maksim.lin@foxmail.com
- * @copyright:  Ds是累积平时项目工作的经验代码库，不属于职位任务与项目的内容。里面代码大部分理念来至曾经flash 前端时代，尽力减小类之间耦合，通过webpack按需request使用。Ds库里内容多来至网络与参考其他开源代码库。Ds库也开源开放，随意使用在所属的职位任务与项目中。
- * @constructor
- **/
-(function(factory) {
+(function (factory) {
     var root = (typeof self == 'object' && self.self == self && self) ||
         (typeof global == 'object' && global.global == global && global);
 
     if (typeof define === 'function' && define.amd) {
-        define(['exports'], function(exports) {
+        define(['exports'], function (exports) {
             require('ds/EventDispatcher');
             var _io = require('libs/socket.io/socket.io.js');
             module.exports = factory(root, exports, _io);
@@ -84,232 +13,443 @@
     } else {
         factory(root, {});
     }
-}(function(root, modelOb, io) {
+}(function (root, modelOb, io) {
 
-    root.Ds = root.Ds || {};
-    root.Ds.net = root.Ds.net || {};
-    root.Ds.net.SocketModel = SocketModel;
+    root.ds = root.ds || {};
+    root.ds.net = root.ds.net || {};
+    root.ds.net.SocketModel = SocketModel;
+
+
     /**
-     * SocketModel Socket连接服务器基础类
+     * socket 交互模块。
+     * ##### 常用于双屏互动项目
+     * 服务器端代码如下：配套对应的Node socket.io服务器使用. socket服务器端代码 other/SocektServer.zip
+     * 基于socket.io.js，请确保socket.io.js已经加载 (webpack开发模式下已经做了处理,src/libs/socket.io/socket.io.js)。 -
+     * @class ds.net.SocketModel
+     * @TODO 需要完善这个文档例子DEMO
+     *
      */
     function SocketModel() {
-        Ds.Extend(this, new Ds.EventDispatcher());
-        var _Self = this;
-        //socket对象
-        var _Socket;
-        //连接的地址
-        var _SocketUrl;
-        //连接的端口号
-        var _Port = '';
-        //是否断线重连接
-        var _Reconnect;
-        //唯一ID
-        _Self.ID = '';
-        /**
-         * 初始化Socket连接
-         * @param {[Obejct]} param [连接对象]
-         * param.url  		可选  填写 '192.168.1.188'  或者 '192.168.1.188:5001' 不带端口号会使用param.url+param.port;
-         * param.port 		可选  配合param.url 不带端口号时候会使用param.port 参数
-         * param.reconnect 	可选  是否断线重新连接
-         */
-        this.InitSocket = function(param) {
 
-            _Self.ID = '';
-            //有传递参数按传递参数进行连接
-            if (param) {
-                _SocketUrl = param.url;
-                if (param.port !== undefined) _Port = param.port;
-                _Reconnect = param.reconnect;
+        var _self = this;
+
+        ds.EventDispatcher.extend(this);
+
+        var _id;
+
+        /**
+         * socket 的 id
+         * @member {string} ds.net.SocketModel.prototype.el
+         */
+        Object.defineProperty(this, "id", {
+            get: function () {
+                return _id;
+            },
+        });
+
+        //socket对象
+        var _socket;
+        //连接的地址
+        var _socketUrl;
+        //连接的端口号
+        var _port = '';
+        //是否断线重连接
+        var _reconnect;
+        //房间
+        var _roomID = '';
+
+        /**
+         * 双屏互动的房间号
+         * @member {string} ds.net.SocketModel.prototype.roomID
+         */
+        Object.defineProperty(this, "roomID", {
+            get: function () {
+                return _roomID;
+            },
+        });
+
+        /**
+         * 初始化socket连接
+         * @method ds.net.SocketModel.prototype.initSocket
+         * @param {object} opts 配置参数
+         * @param {string} [opts.url=window.location.hostname] 可选  填写 '192.168.1.188'  或者 '192.168.1.188:5001'
+         * @param {string} opts.port 默认可以不传。如果传端口号 那链接规则是：opts.url+opts.port;
+         * @param {boolean} [opts.reconnect=true] 是否断线重连
+         */
+        this.initSocket = function (opts) {
+
+            _id = '';
+
+
+            if (opts) {
+
+                _socketUrl = opts.url;
+                if (opts.port !== undefined) _port = opts.port;
+                _reconnect = opts.reconnect;
+
             } else {
+
                 //必须有传递参数
                 console.log('InitSocket Error  No param Data');
                 return;
-            }
-            //如果没设置连接socket服务器端ip，使用当前域名进行连接
-            if (!_SocketUrl) _SocketUrl = window.location.hostname;
-            _Reconnect = _Reconnect === undefined || _Reconnect === true ? true : false;
 
-            _Self.SocketUrl = _SocketUrl;
-            _Self.Port = _Port;
-            _Self.Reconnect = _Reconnect;
-            _Self.RoomID = '';
-            //有原来的Socket对象需要清除掉
-            if (_Socket) {
-                _Socket.destroy();
-                _Socket = null;
-                _Self.Socket = null;
             }
+
+            //如果没设置连接socket服务器端ip，使用当前域名进行连接
+            if (!_socketUrl) _socketUrl = window.location.hostname;
+            _reconnect = _reconnect === undefined || _reconnect === true ? true : false;
+
+
+            //对之前socket清空
+            if (_socket) {
+
+                _socket.destroy();
+                _socket = null;
+
+            }
+
             //开始判断连接的服务器url判断，按传递参数拼合理的服务器连接
-            _serverUrlArr = _SocketUrl.split(':');
+            var _serverUrlArr = _socketUrl.split(':');
             var _serverUrl = '';
-            if (_serverUrlArr.length >= 2) {
-                _serverUrl = _SocketUrl;
-            } else if (_serverUrlArr.length === 1 && _Port !== '') {
-                _serverUrl = _serverUrlArr[0] + ':' + _Port;
-            } else {
-                console.log('socket ServerUrl Error  SocketUrl:' + _SocketUrl + '  Port:' + _Port);
+
+            if (_serverUrlArr.length >= 2) _serverUrl = _socketUrl;
+            else if (_serverUrlArr.length === 1 && _port !== '') _serverUrl = _serverUrlArr[0] + ':' + _port;
+            else {
+                
+                console.log('socket ServerUrl Error  SocketUrl:' + _socketUrl + '  Port:' + _port);
                 return;
+                
             }
-            console.log('InitSocket:', _serverUrl);
+
+
+            console.log('initSocket:', _serverUrl);
+
             //按传递参数拼合理的服务器连接进行连接
-            _Socket = io.connect(_serverUrl, {
-                // ,port: _Port
-                'force new connection': true, // 是否允许建立新的连接
-                reconnect: _Reconnect, // 是否允许重连
-                'reconnection delay': 200, // 重连时间间隔 毫秒
-                'max reconnection attempts': 10 // 重连次数上限
+            _socket = io.connect(_serverUrl, {
+                // 是否允许建立新的连接
+                'force new connection': true,
+                // 是否允许重连
+                reconnect: _reconnect,
+                // 重连时间间隔 毫秒
+                'reconnection delay': 200,
+                // 重连次数上限
+                'max reconnection attempts': 10
             });
-            //指向最新当前Socket对象
-            _Self.Socket = _Socket;
+
             //socket连接的事件绑定
-            InitSocketEvent();
+            initSocketEvent();
+
 
         };
+
         /**
          * 主动断开连接
          * 是不会触发disconnect
+         * @method ds.net.SocketModel.prototype.initSocket
          */
-        this.Destroy = function() {
-            //主动断开是不会触发disconnect
-            if (_Socket) _Socket.destroy();
+        this.destroy=function () {
 
-            // _Socket=null;
-            //  _Self.Socket=null;
-            _Self.ds('destroy');
+            if (_socket) {
+                
+                _socket.destroy();
+                _socket = null;
+                
+            }
+
+            _self.ds('destroy');
+            
         };
+
         /**
          * 加入到指定房间
-         * @param {[String]} roomid [加入的房间号]
+         * @method ds.net.SocketModel.prototype.addRoom
+         * @param {string} roomid [加入的房间号]
+         *
          */
-        this.AddRoom = function(roomid) {
-            _Socket.emit('addRoom', roomid);
+        this.addRoom = function(roomid) {
+
+            _socket.emit('addRoom', roomid);
 
         };
-        this.CallEndTime = new Date().getTime();
+
+        /**
+         * 最后一次发消息时间点
+         *
+         * @type {number}
+         */
+        this.callEndTime = new Date().getTime();
+
         /**
          * 对房间内人进行发送消息
-         * @param {[任意]} data [发送消息]
+         * @method ds.net.SocketModel.prototype.call
+         * @param {object|string} data [发送消息]
          */
-        this.Call = function(data) {
-            _Socket.emit('call', data);
-            _Self.CallEndTime = new Date().getTime();
+        this.call = function(data) {
+
+            _socket.emit('call', data);
+            _self.CallEndTime = new Date().getTime();
+
         };
+
         /**
          * 对房间内人进行发送消息 包括自己
-         * @param {[任意]} data [发送消息]
+         * @method ds.net.SocketModel.prototype.callAll
+         * @param {object|string} data [发送消息]
          */
-        this.CallAll = function(data) {
-            _Socket.emit('callAll', data);
-            _Self.CallEndTime = new Date().getTime();
+        this.callAll = function(data) {
+
+            _socket.emit('callAll', data);
+            _self.CallEndTime = new Date().getTime();
+
         };
-        /**
-         * 初始化socket事件
-         */
-        function InitSocketEvent() {
-            _Self.ds('initSocketEvent');
+
+
+        
+        function initSocketEvent() {
+
+            /**
+             * 开始进行socket连接
+             * @event ds.net.SocketModel#initSocketEvent
+             */
+            _self.ds('initSocketEvent');
+
             /*连接完成*/
-            _Socket.on('connect', function(obj) {
+            _socket.on('connect', function(obj) {
+
                 // console.log("connect",_Socket.connected,_Socket.io.engine);
-                _Self.ID = '/#' + _Socket.io.engine.id;
-                console.log("connect:", _Self.ID);
-                _Self.ds('connect');
+                _self.id = '/#' + _socket.io.engine.id;
+                console.log("connect:", _self.id);
+
+                /**
+                 * 连接成功
+                 * @event ds.net.SocketModel#connect
+                 */
+                _self.ds('connect');
+                
             });
+            
+            
             /*连接中？一般没看到这个事件*/
-            _Socket.on('connecting', function(e) {
+            _socket.on('connecting', function(e) {
+
                 console.log("connecting");
-                _Self.ds('connecting');
+
+                /**
+                 * 连接中，一般不会发出这个事件
+                 * @event ds.net.SocketModel#connecting
+                 */
+                _self.ds('connecting');
+
             });
+
+
             /*连接完成？一般没看到这个事件*/
-            _Socket.on('connect_failed', function(e) {
+            _socket.on('connect_failed', function(e) {
                 console.log("connect_failed");
-                _Self.ds('connect_failed');
+
+                /**
+                 * 连接完成，一般不会发出这个事件
+                 * @event ds.net.SocketModel#connect_failed
+                 */
+                _self.ds('connect_failed');
+
             });
+
             /*错误信息*/
-            _Socket.on('error', function(e) {
+            _socket.on('error', function(e) {
+
                 console.log("error");
-                _Self.ds('error');
+
+                /**
+                 * 错误信息
+                 * @event ds.net.SocketModel#error
+                 */
+                _self.ds('error');
+
             });
+
             /*断开连接*/
-            _Socket.on('disconnect', function(e) {
+            _socket.on('disconnect', function(e) {
                 console.log("disconnect");
-                _Self.ds('disconnect');
+
+
+
+                /**
+                 * 断开连接
+                 * @event ds.net.SocketModel#disconnect
+                 */
+                _self.ds('disconnect');
+
             });
+
             /*断线重连接*/
-            _Socket.on('reconnect', function(transport_type, reconnectionAttempts) {
-                // console.log('reconnect*********',_Self.ID,' ',transport_type,reconnectionAttempts);
-                _Self.ds('reconnect');
+            _socket.on('reconnect', function(transport_type, reconnectionAttempts) {
+
+                // console.log('reconnect*********',_self.ID,' ',transport_type,reconnectionAttempts);
+
+                /**
+                 * 断线重连接
+                 * @event ds.net.SocketModel#reconnect
+                 */
+                _self.ds('reconnect');
+
             });
-            _Socket.on("message", function(obj) {
+
+            _socket.on("message", function(obj) {
+
                 //获取到接受到消息
                 console.log('获取到接受到消息', obj);
+
             });
+
             /*被当垃圾用户清理退出*/
-            _Socket.on('clearWaste', function() {
+            _socket.on('clearWaste', function() {
+
                 console.log('clearWaste');
-                _Self.ds('clearWaste');
+
+                /**
+                 * 被服务器当垃圾用户清理退出
+                 * @event ds.net.SocketModel#clearWaste
+                 */
+                _self.ds('clearWaste');
+
             });
-            _Socket.on("call", function(obj) {
+
+            _socket.on("call", function(obj) {
+
                 console.log('call:', obj);
-                // _Self.ds({type:'call',data:obj});
+
+                // _self.ds({type:'call',data:obj});
                 if (typeof obj == 'string') {
+
                     if (obj.indexOf(':') != -1) {
+
                         var type2 = obj.slice(0, obj.indexOf(':'));
                         var data = obj.slice(obj.indexOf(':') + 1);
-                        _Self.ds({
+
+
+                        /**
+                         * 房间发送来的 自定义call消息
+                         * @event ds.net.SocketModel#xxx
+                         * @property {number} type - 自定义事件类型
+                         * @property {*} data - 数据
+                         */
+                        _self.ds({
                             type: type2,
-                            data: data
+                            data: obj
                         });
+
                     } else {
-                        _Self.ds({
+
+                        /**
+                         * 房间发送来的 call消息
+                         * @event ds.net.SocketModel#call
+                         * @property {number} type - 事件类型
+                         * @property {*} data - 数据
+                         */
+                        _self.ds({
                             type: 'call',
                             data: obj
                         });
+
                     }
 
                 } else if (typeof obj == 'object' && obj.type !== undefined) {
-                    _Self.ds(obj);
+
+                    _self.ds(obj);
+
                 } else {
-                    _Self.ds({
+
+                    _self.ds({
                         type: 'call',
                         data: obj
                     });
+
                 }
+
             });
-            _Socket.on('serverFull', function(e) {
+
+
+            _socket.on('serverFull', function(e) {
+
                 console.log('serverFull', e); //服务器最大人数
-                _Self.ds('serverFull');
+
+
+                /**
+                 * 服务器最大人数已满
+                 * @event ds.net.SocketModel#serverFull
+                 */
+                _self.ds('serverFull');
+
             });
-            _Socket.on('roomFull', function(data) {
+
+            _socket.on('roomFull', function(data) {
+
+
                 console.log('roomFull', data); //data房间最大人数
-                _Self.ds({
+
+
+                /**
+                 * 房间已经满
+                 * @event ds.net.SocketModel#roomFull
+                 */
+                _self.ds({
                     type: 'roomFull',
                     data: data
                 });
+
+
             });
-            _Socket.on('addRoomOK', function(_roomid) {
+
+
+            _socket.on('addRoomOK', function(roomid) {
+
                 // console.log('addRoomOK');
-                _Self.RoomID = _roomid;
-                _Self.ds({
+                _roomID = roomid;
+
+                /**
+                 * 成功加入房间
+                 * @event ds.net.SocketModel#addRoomOK
+                 * @property {string} roomid - 房间id
+                 */
+                _self.ds({
                     type: 'addRoomOK',
-                    data: _roomid
+                    data: roomid
                 });
+
             });
-            _Socket.on('upUserRoomData', function(_roomData) {
+
+
+            _socket.on('upUserRoomData', function(roomData) {
+
                 console.log('upUserRoomData');
-                /*
-	            	_roomData:
-		            	{
-			                length:_clinetList.length
-			                ,num:_clinetList.length
-			                ,roomid:_clinet.RoomID
-			            }
-		            */
-                _Self.ds({
+
+                /**
+                 * 更新房间信息
+                 * @event ds.net.SocketModel#upUserRoomData
+                 * @property {object} data - 房间数据
+                 * ```js
+                 *  {
+                 *      //房间的人数
+                 *       length:2,
+                 *       //自己在房间内编号
+                 *       num:1,
+                 *       //房间id
+                 *       roomid:_clinet.RoomID
+                 *   }
+                 * ```
+                 */
+                _self.ds({
                     type: 'upUserRoomData',
-                    data: _roomData
+                    data: roomData
                 });
+
             });
+            
         }
+
     }
-    return root.Ds.net.SocketModel;
+
+
+    return root.ds.net.SocketModel;
 }));

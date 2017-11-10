@@ -1,133 +1,137 @@
+import EventDispatcher from '../core/EventDispatcher';
+
+
+const _orientationUpDate = Symbol("_orientationUpDate");
+const _directionUpDate = Symbol("_directionUpDate");
+
+
 /**
- * @class Ds.gemo.DeviceOrientationer
- * @classdesc:陀螺仪简易使用方式
- *  AddShake 添加一个摇一摇
- * @extends
- * @example: 举例
- * @author: maksim email:maksim.lin@foxmail.com
- * @copyright:  Ds是累积平时项目工作的经验代码库，不属于职位任务与项目的内容。里面代码大部分理念来至曾经flash 前端时代，尽力减小类之间耦合，通过webpack按需request使用。Ds库里内容多来至网络与参考其他开源代码库。Ds库也开源开放，随意使用在所属的职位任务与项目中。
- * @constructor
- **/
-(function(factory) {
-    var root = (typeof self == 'object' && self.self == self && self) ||
-        (typeof global == 'object' && global.global == global && global);
+ * 设备角度事件与摇一摇功能添加
+ * @class
+ * @memberof ds.gemo
+ */
+class DeviceOrientationer extends EventDispatcher {
 
-    if (typeof define === 'function' && define.amd) {
-        define(['exports'], function(exports) {
-            module.exports = factory(root, exports);
-        });
-    } else if (typeof exports !== 'undefined') {
-        module.exports = factory(root, exports);
-    } else {
-        factory(root, {});
-    }
-}(function(root, modelObj) {
-    root.Ds = root.Ds || {};
-    root.Ds.gemo = root.Ds.gemo || {};
-    root.Ds.gemo.DeviceOrientationer = DeviceOrientationer;
+    constructor()
+    {
 
-    function DeviceOrientationer() {
+        super();
+
         if (!window.DeviceMotionEvent) {
             console.warn('no window.DeviceMotionEvent');
             return;
         }
-        var _Self = this;
-        Ds.Extend(this, new Ds.EventDispatcher());
 
-        //手机的方向 0竖屏 正负90表示横屏
-        var _Direction = root.orientation || 0;
-        Object.defineProperty(this, "Direction", {
-            get: function() {
-                return _Direction;
-            },
-        });
+        this[_orientationUpDate]=orientationUpDate.bind(this);
+        this[_directionUpDate]=directionUpDate.bind(this);
 
-        /**
-         * 初始化事件
-         */
-        this.InitEvent = InitEvent;
 
-        function InitEvent() {
-            window.addEventListener('deviceorientation', OrientationUpDate);
-            window.addEventListener('orientationchange', DirectionUpDate);
-        }
-        /**
-         * 摧毁
-         */
-        this.Destroy = function() {
-            window.removeEventListener('deviceorientation', OrientationUpDate);
-            window.removeEventListener('orientationchange', DirectionUpDate);
-        };
-        /**
-         * 陀螺仪判断
-         * @param {[type]} e [description]
-         * event.alpha
-         * event.beta
-         * event.gamma
-         *  |     /z轴 e.alpha   值范围(0 to 360)
-         *  |    /
-         *  |  /
-         *  | /
-         *  /------------- x轴 e.beta  值范围(-180 to 180)
-         *  |
-         *  |
-         *  |
-         *  |y轴  e.gamma  值范围(-90 to 90)
-         */
-        function OrientationUpDate(e) {
-            // console.log(e.alpha + ' : ' + e.beta + ' : ' + e.gamma);
-            _Self.ds({
-                type: 'orient',
-                x: e.beta,
-                y: e.gamma,
-                z: e.alpha,
-            });
-        }
-        /**
-         * 手机方向判断
-         * @param {[type]} e [description]
-         */
-        function DirectionUpDate(e) {
-            _Direction = window.orientation;
-        }
-        /**
-         * 添加摇一摇
-         * @param {[type]} callBack [description]
-         */
-        this.AddShake = function(callBack,speed) {
-            callBack.__deviceMotionHandler = deviceMotionHandler;
-
-            window.addEventListener('devicemotion', deviceMotionHandler, false);
-            var _speed = speed||30; //speed
-            var _x, _y, _z, _lastX, _lastY, _lastZ;
-            _x = _y = _z = _lastX = _lastY = _lastZ = 0;
-
-            function deviceMotionHandler(eventData) {
-                var _acceleration = eventData.accelerationIncludingGravity;
-                _x = _acceleration.x;
-                _y = _acceleration.y;
-                _z = _acceleration.z;
-                if (Math.abs(_x - _lastX) > _speed || Math.abs(_y - _lastY) > _speed || Math.abs(_z - _lastZ) > _speed) {
-                    //简单的摇一摇触发代码
-                    if (callBack) callBack();
-                }
-                _lastX = _x;
-                _lastY = _y;
-                _lastZ = _z;
-            }
-        };
-        /**
-         * 删除摇一摇
-         * @param {[type]} callBack [description]
-         */
-        this.RemoveShake = function(callBack) {
-            var _deviceMotionHandler = callBack.__deviceMotionHandler;
-            if (_deviceMotionHandler) {
-                window.removeEventListener('devicemotion', _deviceMotionHandler, false);
-            }
-        };
+        window.addEventListener('deviceorientation', this[_orientationUpDate], false);
+        window.addEventListener('orientationchange', this[_directionUpDate], false);
 
     }
 
-    return Ds.gemo.DeviceOrientationer;
-}));
+    /**
+     * 摧毁这个对象
+     */
+    destroy() {
+
+        window.removeEventListener('deviceorientation', this[_orientationUpDate], false);
+        window.removeEventListener('orientationchange', this[_directionUpDate], false);
+
+    }
+
+    /**
+     * 手机方向判断
+     * @return {number}
+     */
+    get orientation() {
+        return window.orientation;
+    }
+
+    /**
+     *
+     * @param {function} callBack
+     * @param {number} speed
+     */
+    addShake(callBack, speed){
+
+        var _speed = speed || 10; //speed
+
+        let _x, _y, _z, _lastX, _lastY, _lastZ;
+        _x = _y = _z = _lastX = _lastY = _lastZ = 0;
+
+        function deviceMotionHandler(e) {
+
+            let _acceleration = e.accelerationIncludingGravity;
+            _x = _acceleration.x;
+            _y = _acceleration.y;
+            _z = _acceleration.z;
+
+            if (Math.abs(_x - _lastX) > _speed || Math.abs(_y - _lastY) > _speed || Math.abs(_z - _lastZ) > _speed) {
+
+                //简单的摇一摇触发代码
+                if (callBack) callBack();
+
+            }
+
+            _lastX = _x;
+            _lastY = _y;
+            _lastZ = _z;
+
+        }
+
+        callBack.__deviceMotionHandler = deviceMotionHandler;
+        window.addEventListener('devicemotion', deviceMotionHandler, false);
+
+    }
+
+    /**
+     * 删除摇一摇
+     * @param {function} callBack
+     */
+    removeShake(callBack){
+
+        let _deviceMotionHandler = callBack.__deviceMotionHandler;
+
+        if (_deviceMotionHandler) window.removeEventListener('devicemotion', _deviceMotionHandler);
+
+    }
+
+}
+
+function orientationUpDate(e) {
+
+    /**
+     * 陀螺仪
+     * @event ds.gemo.DeviceOrientationer#orient
+     * @property {number} x - x轴
+     * @property {number} y - y轴
+     * @property {number} z - z轴
+     */
+    this.ds({
+        type: 'orient',
+        x: e.beta,
+        y: e.gamma,
+        z: e.alpha,
+    });
+
+}
+
+function directionUpDate() {
+
+    /**
+     * 屏幕方向改变
+     * @event ds.gemo.DeviceOrientationer#direction
+     */
+    this.ds({type: 'direction'});
+
+}
+
+let root = (typeof window !== 'undefined' ? window : (typeof process === 'object' && typeof require === 'function' && typeof global === 'object') ? global : this);
+
+let ds = root.ds = root.ds || {};
+ds.gemo = ds.gemo || {};
+ds.gemo.DeviceOrientationer = DeviceOrientationer;
+
+export default DeviceOrientationer;

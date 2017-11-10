@@ -1,18 +1,30 @@
-# DsLibs
+### Dslibs
 
-[DsLibs Doc]( https://lqloveball.github.io/DsLibsDocs/)
-> Ds是累积平时项目工作的经验代码库,不属于工作职位任务与项目的内容。代码库大部分理念来至曾经as开发时候积累。
+为快速开发H5互动项目而生代
 
----
+#### 目录说明
 
-> Ds库里代码参考网络与其他开源代码库,在自己理解上进行整合。所以Ds库也是开源开放，可以使用在所属的职位任务与项目中,希望这样能有更多交流与指出Ds代码不足.
+- `src` DsLibs 源代码
+- `build`   webpack gulp jsdocs 命令配置
+- `docs`   文档目录
+- `H5EasyTemplate`  简单快速开发网站，可以不需要webpack与gulp(方便)
+- `H5Template`  使用Dslibs进行项目开发模板
+- `othre`   其他相关文件，
+    - 工作环境配置文件 package.json
+    - socket通用server
 
----
+- 源码开发环境
+    - `npm run docs_dev` 编写文档开发环境
+    - `npm run doc_server` 运行本地文档浏览
+    - `npm run docs jsdocs` 进行api文档打包
 
-> Ds库是代码工具类的集合，每个工具类尽量做属于自己负责的工作内容，实际执行项目希望如搭积木一样去使用这些类。尽力减小类之间依赖关系。
-
----
-
-> Ds库结合Ds的项目开发模板，越过每次繁琐的项目结构代建。直接进入到项目逻辑程序的编写开发
-
----
+- `H5Template` 使用Dslibs进行项目开发模板
+    - `npm run dev` 项目代码不压缩 开发时候使用
+    - `npm run bin`  项目代码压缩 项目部署使用
+    - `npm run gulpDev`  等同 dev  因为window下npm run并行命令执行支持不好,所以提供结合gulp方式来启动
+    - `npm run gulpBin`  等同 bin  因为window下npm run并行命令执行支持不好,所以提供结合gulp方式来启动
+    - `其他测试使用命令`
+        - `npm run server` 只启动http服务
+        - `npm run webpack-dev` webpack开发编译模式不带 http服务
+        - `npm run webpack-bin` webpack部署编译模式不带 http服务
+        - `npm run debug` 开发模板测试使用。

@@ -1,226 +1,304 @@
+import EventDispatcher from '../core/EventDispatcher';
+
+const _scenesTouchstart = Symbol("_scenesTouchstart");
+const _scenesTouchmove = Symbol("_scenesTouchmove");
+const _scenesTouchend = Symbol("_scenesTouchend");
+
 /**
- * @class Ds.gemo.PageSlider
- * @classdesc:页面平滑滚动
- *  事件 start move end
-    start
-    {type:'start',startX:startX,startY:startY,mouseX:startX,mouseY:startY}
-    move
-    {type:'move',level:level,upright:upright,diffX:diffX,diffY:diffY,endX:endX,endY:endY}
-    end
-    {type:'end',level:level,upright:upright,state:state}
-    state: up back  down
-    //补充支持原生的touchmove 事件时候数据获取,在做平滑滚动页面情况下 如果还需要原生一些mouse坐标时候使用
-    {type:'touchmove',oe:event,mouseX:touch.pageX,mouseY:touch.pageY}
- * @extends
- * @example:
+ * 平滑touch滑动
+ *
+ * @class
+ * @classdesc 平滑touch基础实现:可以用在很多地方，页面滑动翻页，360画廊浏览等等。
+ * - 惯性滑动与滑动后自运动，根据实际需求自行实现
+ * - 快速便捷触摸运动方案 还可使用 [AlloyTouch](https://github.com/AlloyTeam/AlloyTouch)
+ * @memberof ds.gemo
  * @author: maksim email:maksim.lin@foxmail.com
- * @copyright:  Ds是累积平时项目工作的经验代码库，不属于职位任务与项目的内容。里面代码大部分理念来至曾经flash 前端时代，尽力减小类之间耦合，通过webpack按需request使用。Ds库里内容多来至网络与参考其他开源代码库。Ds库也开源开放，随意使用在所属的职位任务与项目中。
- * @constructor
- **/
+ *
+ */
+class PageSlider extends EventDispatcher {
 
-(function(factory) {
-    var root = (typeof self == 'object' && self.self == self && self) ||
-        (typeof global == 'object' && global.global == global && global);
 
-    if (typeof define === 'function' && define.amd) {
-        define(['exports'], function(exports) {
-            require('ds/EventDispatcher');
-            module.exports = factory(root, exports);
-        });
-    } else if (typeof exports !== 'undefined') {
-        module.exports = factory(root, exports);
-    } else {
-        factory(root, {});
+    /**
+     *
+     * @param {HTMLElement|string} touchDom touch触发的dom对象
+     * @param {object} opts  配置
+     * @param {number} [opts.limit=10]  touch滑动灵敏度判断
+     * @param {boolean} [opts.lock=false]  是否锁定
+     */
+    constructor(touchDom, opts) {
+
+        super();
+
+        this.scenes = $(touchDom);
+
+        //开始Y
+        this._startY = 0;
+        //结束Y
+        this._endY = 0;
+        //开始X
+        this._startX = 0;
+        //结束X
+        this._endX = 0;
+        //改变X
+        this._diffX = 0;
+        //改变Y
+        this._diffY = 0;
+        //判断方向的最小滑动距离
+        this._limit = 10;
+
+        //是否上下滑动
+        this._upright = false;
+        //是否左右滑动
+        this._level = false;
+        //是否正在滑动
+        this._sliding = false;
+        //是否扑捉到touch
+        this._capture = false;
+        //记录touch的id
+        this._touchid = null;
+
+        //开始touch时间
+        this._startTime = null;
+
+        /**
+         * 是否锁定
+         * @type {boolean}
+         */
+        this.lock = false;
+
+
+        opts = opts || {};
+
+        if (opts.limit) this._limit = opts.limit;
+        if (opts.lock !== undefined) this.lock = opts.lock;
+
+        this[_scenesTouchstart] = scenesTouchstart.bind(this);
+        this.scenes.on('touchstart', this[_scenesTouchstart]);
+
+        this[_scenesTouchmove] = scenesTouchmove.bind(this);
+        this.scenes.on('touchmove', this[_scenesTouchmove]);
+
+
+
+        this[_scenesTouchend] = scenesTouchend.bind(this);
+        this.scenes.on('touchend', this[_scenesTouchend]);
+        this.scenes.on('touchcancel', this[_scenesTouchend]);
+
+
     }
 
-}(function(root, modelObj) {
-    root.Ds = root.Ds || {};
-    root.Ds.gemo = root.Ds.gemo || {};
-    root.Ds.gemo.PageSlider = PageSlider;
+    /**
+     * 开启惯性滑动，具体惯性逻辑需要自行实现。这个方法会阻止之后touch，在惯性逻辑完成后需要执行 closeInertialSlider();
+     */
+    openInertialSlider() {
+        this._sliding = true;
+        this._capture = false;
+    }
 
-    function PageSlider(_scenes, _opt) {
-        Ds.Extend(this, new Ds.EventDispatcher());
-        var $scenes = $(_scenes),
-            _self = this;
-        // log($scenes)
-        //初始化一些参数
-        var startY = 0, //开始Y
-            endY = 0, //结束Y
-            currentY = 0, //实际Y
-            startX = 0, //开始X
-            endX = 0, //结束X
-            diffX = 0, //改变X
-            diffY = 0, //改变Y
-            limitY = 150, //改变超过该值时执行翻页
-            limitX = 40, //改变超过该值时执行翻页
-            limit = 10, //判断方向的最小滑动距离
-            upright = false, //是否上下滑动
-            level = false; //是否左右滑动
-        _self.sliding = false; //是否正在滑动
-        _self.capture = false; //是否扑捉到Touch
-        _self.lock = false;
-        if (_opt) {
-            if (_opt.limitY) limitY = _opt.limitY;
-            if (_opt.limitX) limitX = _opt.limitX;
-            if (_opt.limit) limit = _opt.limit;
-            if (_opt.lock !== undefined) _self.lock = _opt.lock;
+    /**
+     * 关闭惯性滑动
+     */
+    closeInertialSlider() {
+        this._sliding = true;
+        this._capture = false;
+    }
+
+
+}
+
+function scenesTouchstart(e) {
+
+
+
+    // console.log('scenesTouchstart');
+    if (this.lock) return;
+
+    let _targetTouches = e.targetTouches || e.originalEvent.targetTouches;
+    let _touch = _targetTouches[0];
+    // console.log(touch.identifier,_touchid);
+
+    if (this._touchid === null) this._touchid = _touch.identifier;
+    if (this._touchid !== _touch.identifier) return;
+
+    // let target = $(e.target);
+
+    if (this._capture) return;
+
+    if (!this._sliding) {
+
+        this._capture = true;
+
+        this._startTime = new Date().getTime();
+
+        this._startY = _touch.pageY;
+        this._startX = _touch.pageX;
+        this._endY = 0;
+        this._endX = 0;
+        this._diffY = 0;
+        this._diffX = 0;
+        this._level = false;
+        this._upright = false;
+
+
+        /**
+         * 开始touch
+         * @event ds.gemo.PageSlider#start
+         * @property {number} startX - 开始的touch x点
+         * @property {number} startY - 开始的touch y点
+         * @property {number} mouseX - 开始的touch x点
+         * @property {number} mouseY - 开始的touch y点
+         * @property {number} startTime - 开始拖动时间
+         */
+        this.ds({
+            type: 'start',
+            startX: this._startX,
+            startY: this._startY,
+            mouseX: this._startX,
+            mouseY: this._startY,
+            startTime: this._startTime
+        });
+
+    }
+
+}
+
+function scenesTouchmove(e) {
+
+    // console.log('scenesTouchmove:',e);
+
+
+    if (this.lock) return;
+
+
+    //console.log(sliding)
+    let _targetTouches = e.targetTouches || e.originalEvent.targetTouches;
+    let _touch = _targetTouches[0];
+
+    if (this._touchid === null) this._touchid = _touch.identifier;
+    if (this._touchid !== _touch.identifier) return;
+
+    if (!this._sliding && this._capture) {
+
+        e.preventDefault();
+
+        this._endX = _touch.pageX;
+        this._endY = _touch.pageY;
+
+        this._diffX = this._endX - this._startX;
+        this._diffY = this._endY - this._startY;
+
+        if (!this._level && !this._upright) {
+
+            if (Math.abs(this._diffX) >= this._limit && Math.abs(this._diffX) > Math.abs(this._diffY)) {
+
+                this._level = true;
+                this._upright = false;
+
+            }
+            else if (Math.abs(this._diffY) >= this._limit && Math.abs(this._diffX) < Math.abs(this._diffY)) {
+
+                this._level = false;
+                this._upright = true;
+
+            }
+            else {
+
+                this._level = false;
+                this._upright = false;
+
+            }
         }
-        var _touchid=null;
-        // log('init',scenes)
-        $scenes.bind('touchstart', function(event) {
-            if (_self.lock) return;
-            // console.log('touchstart:',event);
-            var _targetTouches = event.targetTouches || event.originalEvent.targetTouches;
-            var touch = _targetTouches[0];
-            // console.log(touch.identifier,_touchid);
-            if(_touchid===null)_touchid=touch.identifier;
-            if(_touchid!==touch.identifier)return;
 
-            var target = $(event.target);
-            if (_self.capture) return;
+        /**
+         * 运动中
+         * @event ds.gemo.PageSlider#move
+         * @property {boolean} level - 横向
+         * @property {boolean} upright - 纵向
+         * @property {number} diff - 运动偏移值
+         */
+        //如果是纵向滑动
+        if (this._upright) {
 
-            if (!_self.sliding) {
-                _self.capture = true;
-                startY = touch.pageY;
-                startX = touch.pageX;
-                endY = 0;
-                endX = 0;
-                diffY = 0;
-                diffX = 0;
-                level = false;
-                upright = false;
-                _self.ds({
-                    type: 'start',
-                    startX: startX,
-                    startY: startY,
-                    mouseX: startX,
-                    mouseY: startY
-                });
-            }
-        });
-        $scenes.bind('touchmove', function(event) {
-            if (_self.lock) return;
+            this._diffY = this._diffY > 0 ? (this._diffY - this._limit) : (this._diffY + this._limit);
 
-
-            //console.log(sliding)
-            var _targetTouches = event.targetTouches || event.originalEvent.targetTouches;
-            var touch = _targetTouches[0];
-
-            if(_touchid===null)return;
-            if(_touchid!==touch.identifier)return;
-
-            if (!_self.sliding && _self.capture) {
-                event.preventDefault();
-
-                endX = touch.pageX;
-                endY = touch.pageY;
-
-                diffX = endX - startX;
-                diffY = endY - startY;
-                if (!level && !upright) {
-                    if (Math.abs(diffX) >= limit && Math.abs(diffX) > Math.abs(diffY)) {
-                        level = true;
-                        upright = false;
-                    } else if (Math.abs(diffY) >= limit && Math.abs(diffX) < Math.abs(diffY)) {
-                        level = false;
-                        upright = true;
-                    } else {
-                        level = false;
-                        upright = false;
-                    }
-                }
-                //如果是纵向滑动
-                if (upright) {
-                    diffY = diffY > 0 ? (diffY - limit) : (diffY + limit);
-                }
-                //如果是横向滑动
-                if (level) {
-                    diffX = diffX > 0 ? (diffX - limit) : (diffX + limit);
-                }
-                _self.ds({
-                    type: 'move',
-                    level: level,
-                    upright: upright,
-                    diffX: diffX,
-                    diffY: diffY,
-                    endX: endX,
-                    endY: endY
-                });
-            }
-            _self.ds({
-                type: 'touchmove',
-                oe: event,
-                mouseX: touch.pageX,
-                mouseY: touch.pageY
+            this.ds({
+                type: 'move',
+                level: false,
+                upright: true,
+                diff: this._diffY,
             });
-        });
-        $scenes.bind('touchend touchcancel', function(event) {
 
-            var _targetTouches = event.targetTouches || event.originalEvent.targetTouches;
-            var touch = _targetTouches[0];
-            if(touch&&touch.identifier&&_touchid!==touch.identifier){
-              return;
-            }
-            _touchid=null;
-            // event.preventDefault();
-            if (!_self.sliding && _self.capture) {
-                //如果是纵向滑动
-                var state = '';
-                if (upright) {
-                    if (diffY < -limitY) {
-                        //上一个
-                        state = 'up';
-                    } else if (diffY < 0 && diffY > -limitY) {
-                        //小于最小距离回到原位置
-                        event.preventDefault();
-                        state = 'back';
-                    } else if (diffY > limitY) {
-                        //下一个
-                        state = 'down';
-                    } else if (diffY > 0 && diffY < limitY) {
-                        //小于最小距离回到原位置
-                        state = 'back';
-                    }
-                    //如果是横向滑动
-                } else if (level) {
+        }
+        //如果是横向滑动
+        if (this._level) {
 
-                    if (diffX < -limitX) {
-                        //上一个
-                        state = 'up';
-                    } else if (diffX < 0 && diffX > -limitX) {
-                        event.preventDefault();
-                        state = 'back';
-                        //小于最小距离回到原位置
-                    } else if (diffX > limitX) {
-                        state = 'down';
-                        //下一个
+            this._diffX = this._diffX > 0 ? (this._diffX - this._limit) : (this._diffX + this._limit);
 
-                    } else if (diffX > 0 && diffY < limitX) {
-                        //小于最小距离回到原位置
-                        state = 'back';
-                    }
-                } else {
-                    //点击
-                    _self.closeSliding();
-                }
-                _self.ds({
-                    type: 'end',
-                    level: level,
-                    upright: upright,
-                    state: state
-                });
-            } else {
-                _self.closeSliding();
-            }
-        });
-        this.openSliding = function() {
-            _self.sliding = true;
-            _self.capture = false;
-        };
-        this.closeSliding = function() {
-            _self.sliding = false;
-            _self.capture = false;
-        };
+            this.ds({
+                type: 'move',
+                level: true,
+                upright: false,
+                diff: this._diffX,
+            });
+
+        }
+
     }
-    return Ds.gemo.PageSlider;
-}));
+
+    /**
+     * touchmove 事件
+     * @event ds.gemo.PageSlider#touchmove
+     * @property {object} oe - 原时间event对象
+     * @property {number} mouseX - touch对象pageX
+     * @property {number} mouseY - touch对象pageY
+     */
+    this.ds({
+        type: 'touchmove',
+        oe: e,
+        mouseX: _touch.pageX,
+        mouseY: _touch.pageY
+    });
+
+}
+
+function scenesTouchend(e) {
+
+    let _targetTouches = e.targetTouches || e.originalEvent.targetTouches;
+    let _touch = _targetTouches[0];
+
+    if (_touch && _touch.identifier && this._touchid !== _touch.identifier) return;
+
+    this._touchid = null;
+
+
+    let _endTime = new Date().getTime();
+
+    this._capture = false;
+
+
+    /**
+     * 拖动完成
+     * @event ds.gemo.PageSlider#end
+     * @property {boolean} level - 结束时候拖动方向是否横向
+     * @property {boolean} upright - 结束时候拖动方向是否纵向
+     * @property {number} endTime - 结束拖动时间
+     * @property {number} startTime - 开始拖动时间
+     */
+    this.ds({
+        type: 'end',
+        level: this._level,
+        upright: this._upright,
+        endTime: _endTime,
+        startTime: this._startTime,
+    });
+
+}
+
+
+let root = (typeof window !== 'undefined' ? window : (typeof process === 'object' && typeof require === 'function' && typeof global === 'object') ? global : this);
+
+let ds = root.ds = root.ds || {};
+ds.gemo = ds.gemo || {};
+ds.gemo.PageSlider = PageSlider;
+
+export default PageSlider;

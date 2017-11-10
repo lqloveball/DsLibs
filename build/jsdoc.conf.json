@@ -1,0 +1,47 @@
+{
+  "tags": {
+    "allowUnknownTags": true,
+    "dictionaries": ["jsdoc","closure"]
+  },
+  "source": {
+    "include": [
+      "./src/ds/"
+    ],
+    "exclude": [
+      "./src/libs/"
+    ],
+    "includePattern": ".+\\.js(doc)?$",
+    "excludePattern": "(^|\\/|\\\\)_"
+  },
+  "plugins": [
+    "plugins/markdown"
+  ],
+  "markdown": {
+    "parser": "gfm",
+    "hardwrap": true
+  },
+  "templates": {
+    "name": "Dslibs Doc",
+    "footerText": "Maksim Frontend Development Lab",
+    "tabNames": {
+      "api": "API",
+      "tutorials": "Tutorials"
+    },
+    "logo": {
+      "url": "../images/logo.svg",
+      "width": "58px",
+      "height": "20px",
+      "link": "https://github.com/lqloveball/DsLibs"
+    }
+  },
+  "opts": {
+    "encoding": "utf8",
+    "recurse": true,
+    "private": false,
+    "lenient": true,
+    "destination": "./docs/dsDocs",
+    "template": "./docsBuild/tui-jsdoc-template",
+    "tutorials": "./docsBuild/tutorials",
+    "readme":"./docsBuild/README.md"
+  }
+}

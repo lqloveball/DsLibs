@@ -1,0 +1,3410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Class: ThreeJsModel | Dslibs Doc</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/bootstrap.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-jsdoc.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/tui-doc.css">
+
+    
+</head>
+<body>
+<nav class="lnb" id="lnb">
+    <div class="logo" style="width: 116px; height: 40px">
+        
+            <a href="https://github.com/lqloveball/DsLibs" rel="noopener noreferrer" target="_blank">
+                <img src="../images/logo.svg" width="100%" height="100%">
+            </a>
+        
+    </div>
+    <div class="title">
+        <h1><a href="index.html" class="link">Dslibs Doc</a></h1>
+        
+    </div>
+    <div class="search-container" id="search-container">
+        <input type="text" placeholder="Search">
+        <ul></ul>
+    </div>
+    
+        <ol class="lnb-tab">
+            <li id="api-tab">
+                <a href="#"><h4>API</h4></a>
+            </li>
+            <li id="examples-tab">
+                <a href="#"><h4>Tutorials</h4></a>
+            </li>
+        </ol>
+    
+    <div class="lnb-examples hidden"><h3>Tutorials</h3><ul><li><a href="tutorial-CodeStyle.html">库 CodeStyle 代码编写风格</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="CodeStyle_sub"></div></li><li><a href="tutorial-CodeStyleByProjects.html">项目 CodeStyle 代码编写风格</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="CodeStyleByProjects_sub"></div></li><li><a href="tutorial-README.html">tutorials 编写规则</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="README_sub"></div></li><li><a href="tutorial-htmlExample.html">html tutorials 例子</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="htmlExample_sub"></div></li></ul></div><div class="lnb-api hidden"><h3>Modules</h3><ul><li><a href="module-ds_gemo_Devicer.html">ds/gemo/Devicer</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="module:ds/gemo/Devicer_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="module-ds_gemo_Devicer.html#~isAndroid">isAndroid</a></li><li><a href="module-ds_gemo_Devicer.html#~isCE">isCE</a></li><li><a href="module-ds_gemo_Devicer.html#~isIOS">isIOS</a></li><li><a href="module-ds_gemo_Devicer.html#~isIpad">isIpad</a></li><li><a href="module-ds_gemo_Devicer.html#~isMidp">isMidp</a></li><li><a href="module-ds_gemo_Devicer.html#~isMobile">isMobile</a></li><li><a href="module-ds_gemo_Devicer.html#~isPc">isPc</a></li><li><a href="module-ds_gemo_Devicer.html#~isUc">isUc</a></li><li><a href="module-ds_gemo_Devicer.html#~isUc7">isUc7</a></li><li><a href="module-ds_gemo_Devicer.html#~isWeixin">isWeixin</a></li><li><a href="module-ds_gemo_Devicer.html#~isWM">isWM</a></li></ul></div></li><li><a href="module-ds_net_ADTrack.html">ds/net/ADTrack</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="module:ds/net/ADTrack_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="module-ds_net_ADTrack.html#.baiduEvent">baiduEvent</a></li><li><a href="module-ds_net_ADTrack.html#.baiduPV">baiduPV</a></li><li><a href="module-ds_net_ADTrack.html#.event">event</a></li><li><a href="module-ds_net_ADTrack.html#.gaEvent">gaEvent</a></li><li><a href="module-ds_net_ADTrack.html#.gaPV">gaPV</a></li><li><a href="module-ds_net_ADTrack.html#.pv">pv</a></li></ul></div></li><li><a href="module-ds_net_QueueLoad.html">ds/net/QueueLoad</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="module:ds/net/QueueLoad_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="module-ds_net_QueueLoad.html#.load">load</a></li></ul></div></li><li><a href="module-ds_net_QuickAjax.html">ds/net/QuickAjax</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="module:ds/net/QuickAjax_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="module-ds_net_QuickAjax.html#.get">get</a></li><li><a href="module-ds_net_QuickAjax.html#.getUrlParameter">getUrlParameter</a></li><li><a href="module-ds_net_QuickAjax.html#.getUrlParameterDictionary">getUrlParameterDictionary</a></li><li><a href="module-ds_net_QuickAjax.html#.post">post</a></li><li><a href="module-ds_net_QuickAjax.html#.replaceUrlParam">replaceUrlParam</a></li></ul></div></li><li><a href="module-ds_threejs_LoadManager.html">ds/threejs/LoadManager</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="module:ds/threejs/LoadManager_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="module-ds_threejs_LoadManager.html#~loadObjectModels">loadObjectModels</a></li><li><a href="module-ds_threejs_LoadManager.html#~loadSceneJSON">loadSceneJSON</a></li><li><a href="module-ds_threejs_LoadManager.html#~loadSEA3DModel">loadSEA3DModel</a></li><li><a href="module-ds_threejs_LoadManager.html#~loadTextures">loadTextures</a></li></ul></div></li><li><a href="module-ds_utils_Bezier.html">ds/utils/Bezier</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="module:ds/utils/Bezier_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="module-ds_utils_Bezier.html#.ds.utils.Bezier.getBetweenPointArray">ds.utils.Bezier.getBetweenPointArray</a></li><li><a href="module-ds_utils_Bezier.html#.ds.utils.Bezier.getBeweenLinePoint">ds.utils.Bezier.getBeweenLinePoint</a></li><li><a href="module-ds_utils_Bezier.html#.ds.utils.Bezier.getBeweenPoint">ds.utils.Bezier.getBeweenPoint</a></li><li><a href="module-ds_utils_Bezier.html#.ds.utils.Bezier.getMovePoint">ds.utils.Bezier.getMovePoint</a></li></ul></div></li><li><a href="module-ds_utils_Triangle.html">ds/utils/Triangle</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="module:ds/utils/Triangle_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="module-ds_utils_Triangle.html#.ds.utils.Triangle.acosD">ds.utils.Triangle.acosD</a></li><li><a href="module-ds_utils_Triangle.html#.ds.utils.Triangle.angleToDeg">ds.utils.Triangle.angleToDeg</a></li><li><a href="module-ds_utils_Triangle.html#.ds.utils.Triangle.angleToQuadrant">ds.utils.Triangle.angleToQuadrant</a></li><li><a href="module-ds_utils_Triangle.html#.ds.utils.Triangle.asinD">ds.utils.Triangle.asinD</a></li><li><a href="module-ds_utils_Triangle.html#.ds.utils.Triangle.atan2D">ds.utils.Triangle.atan2D</a></li><li><a href="module-ds_utils_Triangle.html#.ds.utils.Triangle.atanD">ds.utils.Triangle.atanD</a></li><li><a href="module-ds_utils_Triangle.html#.ds.utils.Triangle.cartesianToPolar">ds.utils.Triangle.cartesianToPolar</a></li><li><a href="module-ds_utils_Triangle.html#.ds.utils.Triangle.cosD">ds.utils.Triangle.cosD</a></li><li><a href="module-ds_utils_Triangle.html#.ds.utils.Triangle.degToAngle">ds.utils.Triangle.degToAngle</a></li><li><a href="module-ds_utils_Triangle.html#.ds.utils.Triangle.distance">ds.utils.Triangle.distance</a></li><li><a href="module-ds_utils_Triangle.html#.ds.utils.Triangle.fixAngle">ds.utils.Triangle.fixAngle</a></li><li><a href="module-ds_utils_Triangle.html#.ds.utils.Triangle.getOppositeSide">ds.utils.Triangle.getOppositeSide</a></li><li><a href="module-ds_utils_Triangle.html#.ds.utils.Triangle.getPoint">ds.utils.Triangle.getPoint</a></li><li><a href="module-ds_utils_Triangle.html#.ds.utils.Triangle.getVicinageSide">ds.utils.Triangle.getVicinageSide</a></li><li><a href="module-ds_utils_Triangle.html#.ds.utils.Triangle.pointToAngle">ds.utils.Triangle.pointToAngle</a></li><li><a href="module-ds_utils_Triangle.html#.ds.utils.Triangle.sinD">ds.utils.Triangle.sinD</a></li><li><a href="module-ds_utils_Triangle.html#.ds.utils.Triangle.tanD">ds.utils.Triangle.tanD</a></li></ul></div></li><li><a href="module-ds_utils_Utils.html">ds/utils/Utils</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="module:ds/utils/Utils_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="module-ds_utils_Utils.html#~arraySort">arraySort</a></li><li><a href="module-ds_utils_Utils.html#~isDOM">isDOM</a></li><li><a href="module-ds_utils_Utils.html#~isEmail">isEmail</a></li><li><a href="module-ds_utils_Utils.html#~isEmptyString">isEmptyString</a></li><li><a href="module-ds_utils_Utils.html#~isPhone">isPhone</a></li><li><a href="module-ds_utils_Utils.html#~IsUserCard">IsUserCard</a></li><li><a href="module-ds_utils_Utils.html#~isUserCardAll">isUserCardAll</a></li></ul></div></li></ul></div><div class="lnb-api hidden"><h3>Classes</h3><ul><li><a href="ds.core.EventDispatcher.html">EventDispatcher</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="ds.core.EventDispatcher_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="ds.core.EventDispatcher.html#.extend">extend</a></li><li><a href="ds.core.EventDispatcher.html#addEventListener">addEventListener</a></li><li><a href="ds.core.EventDispatcher.html#dispatchEvent">dispatchEvent</a></li><li><a href="ds.core.EventDispatcher.html#ds">ds</a></li><li><a href="ds.core.EventDispatcher.html#emit">emit</a></li><li><a href="ds.core.EventDispatcher.html#hasEventListener">hasEventListener</a></li><li><a href="ds.core.EventDispatcher.html#hs">hs</a></li><li><a href="ds.core.EventDispatcher.html#off">off</a></li><li><a href="ds.core.EventDispatcher.html#on">on</a></li><li><a href="ds.core.EventDispatcher.html#once">once</a></li><li><a href="ds.core.EventDispatcher.html#removeAllEventListeners">removeAllEventListeners</a></li><li><a href="ds.core.EventDispatcher.html#removeEventListener">removeEventListener</a></li><li><a href="ds.core.EventDispatcher.html#trigger">trigger</a></li></ul></div></li><li><a href="ds.core.MoblieResizeModel.html">MoblieResizeModel</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="ds.core.MoblieResizeModel_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="ds.core.MoblieResizeModel.html#actualH">actualH</a></li><li><a href="ds.core.MoblieResizeModel.html#densityDpi">densityDpi</a></li><li><a href="ds.core.MoblieResizeModel.html#height">height</a></li><li><a href="ds.core.MoblieResizeModel.html#horizontal">horizontal</a></li><li><a href="ds.core.MoblieResizeModel.html#isInputState">isInputState</a></li><li><a href="ds.core.MoblieResizeModel.html#oldActualH">oldActualH</a></li><li><a href="ds.core.MoblieResizeModel.html#oldInputState">oldInputState</a></li><li><a href="ds.core.MoblieResizeModel.html#orientationTip">orientationTip</a></li><li><a href="ds.core.MoblieResizeModel.html#pageScale">pageScale</a></li><li><a href="ds.core.MoblieResizeModel.html#screen">screen</a></li><li><a href="ds.core.MoblieResizeModel.html#screenWidth">screenWidth</a></li><li><a href="ds.core.MoblieResizeModel.html#type">type</a></li><li><a href="ds.core.MoblieResizeModel.html#width">width</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="ds.core.MoblieResizeModel.html#.getResizeData">getResizeData</a></li><li><a href="ds.core.MoblieResizeModel.html#.resetViewporte">resetViewporte</a></li><li><a href="ds.core.MoblieResizeModel.html#addEventListener">addEventListener</a></li><li><a href="ds.core.MoblieResizeModel.html#createOrientationTip">createOrientationTip</a></li><li><a href="ds.core.MoblieResizeModel.html#dispatchEvent">dispatchEvent</a></li><li><a href="ds.core.MoblieResizeModel.html#ds">ds</a></li><li><a href="ds.core.MoblieResizeModel.html#emit">emit</a></li><li><a href="ds.core.MoblieResizeModel.html#hasEventListener">hasEventListener</a></li><li><a href="ds.core.MoblieResizeModel.html#hideOrientationTip">hideOrientationTip</a></li><li><a href="ds.core.MoblieResizeModel.html#hs">hs</a></li><li><a href="ds.core.MoblieResizeModel.html#initResize">initResize</a></li><li><a href="ds.core.MoblieResizeModel.html#off">off</a></li><li><a href="ds.core.MoblieResizeModel.html#on">on</a></li><li><a href="ds.core.MoblieResizeModel.html#once">once</a></li><li><a href="ds.core.MoblieResizeModel.html#removeAllEventListeners">removeAllEventListeners</a></li><li><a href="ds.core.MoblieResizeModel.html#removeEventListener">removeEventListener</a></li><li><a href="ds.core.MoblieResizeModel.html#resize">resize</a></li><li><a href="ds.core.MoblieResizeModel.html#showOrientationTip">showOrientationTip</a></li><li><a href="ds.core.MoblieResizeModel.html#trigger">trigger</a></li></ul></div></li><li><a href="ds.core.SiteModelByMobile.html">SiteModelByMobile</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="ds.core.SiteModelByMobile_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="ds.core.SiteModelByMobile.html#apier">apier</a></li><li><a href="ds.core.SiteModelByMobile.html#appMain">appMain</a></li><li><a href="ds.core.SiteModelByMobile.html#audioer">audioer</a></li><li><a href="ds.core.SiteModelByMobile.html#createJsModel">createJsModel</a></li><li><a href="ds.core.SiteModelByMobile.html#debug">debug</a></li><li><a href="ds.core.SiteModelByMobile.html#devicer">devicer</a></li><li><a href="ds.core.SiteModelByMobile.html#isCJSLoad">isCJSLoad</a></li><li><a href="ds.core.SiteModelByMobile.html#isIOS">isIOS</a></li><li><a href="ds.core.SiteModelByMobile.html#isMobile">isMobile</a></li><li><a href="ds.core.SiteModelByMobile.html#isWeixin">isWeixin</a></li><li><a href="ds.core.SiteModelByMobile.html#loadModel">loadModel</a></li><li><a href="ds.core.SiteModelByMobile.html#loadPanel">loadPanel</a></li><li><a href="ds.core.SiteModelByMobile.html#pager">pager</a></li><li><a href="ds.core.SiteModelByMobile.html#pixiJsModel">pixiJsModel</a></li><li><a href="ds.core.SiteModelByMobile.html#resizeModel">resizeModel</a></li><li><a href="ds.core.SiteModelByMobile.html#shareModel">shareModel</a></li><li><a href="ds.core.SiteModelByMobile.html#threeJs">threeJs</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="ds.core.SiteModelByMobile.html#beforeSinglePageApplicationLoadAssets">beforeSinglePageApplicationLoadAssets</a></li><li><a href="ds.core.SiteModelByMobile.html#getScript">getScript</a></li><li><a href="ds.core.SiteModelByMobile.html#gotoPage">gotoPage</a></li><li><a href="ds.core.SiteModelByMobile.html#hitLoadPanel">hitLoadPanel</a></li><li><a href="ds.core.SiteModelByMobile.html#iniResizeModel">iniResizeModel</a></li><li><a href="ds.core.SiteModelByMobile.html#initAudioer">initAudioer</a></li><li><a href="ds.core.SiteModelByMobile.html#initCreateJsModel">initCreateJsModel</a></li><li><a href="ds.core.SiteModelByMobile.html#initLoadPanel">initLoadPanel</a></li><li><a href="ds.core.SiteModelByMobile.html#initPixiJsModel%25E3%2580%2581">initPixiJsModel、</a></li><li><a href="ds.core.SiteModelByMobile.html#initThreeJsModel">initThreeJsModel</a></li><li><a href="ds.core.SiteModelByMobile.html#loadBaseFrameWork">loadBaseFrameWork</a></li><li><a href="ds.core.SiteModelByMobile.html#loadCreateJsFrameWork">loadCreateJsFrameWork</a></li><li><a href="ds.core.SiteModelByMobile.html#loadSinglePageApplication">loadSinglePageApplication</a></li><li><a href="ds.core.SiteModelByMobile.html#resize">resize</a></li><li><a href="ds.core.SiteModelByMobile.html#showProgress">showProgress</a></li><li><a href="ds.core.SiteModelByMobile.html#start">start</a></li></ul></div></li><li><a href="ds.createjs.AutoHorizontalScreenContainer.html">AutoHorizontalScreenContainer</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="ds.createjs.AutoHorizontalScreenContainer_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="ds.createjs.AutoHorizontalScreenContainer.html#resize">resize</a></li></ul><div class="member-type">Events</div><ul class="inner"><li><a href="ds.createjs.AutoHorizontalScreenContainer.html#event:resize">resize</a></li></ul></div></li><li><a href="ds.createjs.CreatejsGLModel.html">CreatejsGLModel</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="ds.createjs.CreatejsGLModel_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="ds.createjs.CreatejsGLModel.html#canvas">canvas</a></li><li><a href="ds.createjs.CreatejsGLModel.html#canvas2d">canvas2d</a></li><li><a href="ds.createjs.CreatejsGLModel.html#canvas3d">canvas3d</a></li><li><a href="ds.createjs.CreatejsGLModel.html#root">root</a></li><li><a href="ds.createjs.CreatejsGLModel.html#root2d">root2d</a></li><li><a href="ds.createjs.CreatejsGLModel.html#root3d">root3d</a></li><li><a href="ds.createjs.CreatejsGLModel.html#stage">stage</a></li><li><a href="ds.createjs.CreatejsGLModel.html#stage2d">stage2d</a></li><li><a href="ds.createjs.CreatejsGLModel.html#stage3d">stage3d</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="ds.createjs.CreatejsGLModel.html#appendTo">appendTo</a></li><li><a href="ds.createjs.CreatejsGLModel.html#setFPS">setFPS</a></li><li><a href="ds.createjs.CreatejsGLModel.html#size">size</a></li><li><a href="ds.createjs.CreatejsGLModel.html#update">update</a></li></ul></div></li><li><a href="ds.createjs.CreatejsModel.html">CreatejsModel</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="ds.createjs.CreatejsModel_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="ds.createjs.CreatejsModel.html#canvas">canvas</a></li><li><a href="ds.createjs.CreatejsModel.html#pause">pause</a></li><li><a href="ds.createjs.CreatejsModel.html#root">root</a></li><li><a href="ds.createjs.CreatejsModel.html#stage">stage</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="ds.createjs.CreatejsModel.html#appendTo">appendTo</a></li><li><a href="ds.createjs.CreatejsModel.html#setFPS">setFPS</a></li><li><a href="ds.createjs.CreatejsModel.html#size">size</a></li><li><a href="ds.createjs.CreatejsModel.html#update">update</a></li></ul></div></li><li><a href="ds.createjs.InputText.html">InputText</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="ds.createjs.InputText_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="ds.createjs.InputText.html#.upDateBool">upDateBool</a></li><li><a href="ds.createjs.InputText.html#domElement">domElement</a></li><li><a href="ds.createjs.InputText.html#el">el</a></li><li><a href="ds.createjs.InputText.html#value">value</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="ds.createjs.InputText.html#destroy">destroy</a></li><li><a href="ds.createjs.InputText.html#isInput">isInput</a></li><li><a href="ds.createjs.InputText.html#upInStage">upInStage</a></li></ul></div></li><li><a href="ds.createjs.SelectUpImager.html">SelectUpImager</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="ds.createjs.SelectUpImager_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="ds.createjs.SelectUpImager.html#container">container</a></li><li><a href="ds.createjs.SelectUpImager.html#drag">drag</a></li><li><a href="ds.createjs.SelectUpImager.html#dragRect">dragRect</a></li><li><a href="ds.createjs.SelectUpImager.html#element">element</a></li><li><a href="ds.createjs.SelectUpImager.html#layout">layout</a></li><li><a href="ds.createjs.SelectUpImager.html#look">look</a></li><li><a href="ds.createjs.SelectUpImager.html#rotation">rotation</a></li><li><a href="ds.createjs.SelectUpImager.html#selecter">selecter</a></li><li><a href="ds.createjs.SelectUpImager.html#touchDom">touchDom</a></li><li><a href="ds.createjs.SelectUpImager.html#zoom">zoom</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="ds.createjs.SelectUpImager.html#cacheBase64">cacheBase64</a></li><li><a href="ds.createjs.SelectUpImager.html#cacheBitmap">cacheBitmap</a></li><li><a href="ds.createjs.SelectUpImager.html#clear">clear</a></li><li><a href="ds.createjs.SelectUpImager.html#select">select</a></li></ul><div class="member-type">Events</div><ul class="inner"><li><a href="ds.createjs.SelectUpImager.html#event:clear">clear</a></li><li><a href="ds.createjs.SelectUpImager.html#event:create">create</a></li><li><a href="ds.createjs.SelectUpImager.html#event:update">update</a></li></ul></div></li><li><a href="ds.EventDispatcher.html">EventDispatcher</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="ds.EventDispatcher_sub"></div></li><li><a href="ds.gemo.DeviceOrientationer.html">DeviceOrientationer</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="ds.gemo.DeviceOrientationer_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="ds.gemo.DeviceOrientationer.html#orientation">orientation</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="ds.gemo.DeviceOrientationer.html#addShake">addShake</a></li><li><a href="ds.gemo.DeviceOrientationer.html#destroy">destroy</a></li><li><a href="ds.gemo.DeviceOrientationer.html#removeShake">removeShake</a></li></ul><div class="member-type">Events</div><ul class="inner"><li><a href="ds.gemo.DeviceOrientationer.html#event:direction">direction</a></li><li><a href="ds.gemo.DeviceOrientationer.html#event:orient">orient</a></li></ul></div></li><li><a href="ds.gemo.PageSlider.html">PageSlider</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="ds.gemo.PageSlider_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="ds.gemo.PageSlider.html#lock">lock</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="ds.gemo.PageSlider.html#closeInertialSlider">closeInertialSlider</a></li><li><a href="ds.gemo.PageSlider.html#openInertialSlider">openInertialSlider</a></li></ul><div class="member-type">Events</div><ul class="inner"><li><a href="ds.gemo.PageSlider.html#event:end">end</a></li><li><a href="ds.gemo.PageSlider.html#event:move">move</a></li><li><a href="ds.gemo.PageSlider.html#event:start">start</a></li><li><a href="ds.gemo.PageSlider.html#event:touchmove">touchmove</a></li></ul></div></li><li><a href="ds.gemo.SitePageManager.html">SitePageManager</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="ds.gemo.SitePageManager_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="ds.gemo.SitePageManager.html#history">history</a></li><li><a href="ds.gemo.SitePageManager.html#oldPageLabel">oldPageLabel</a></li><li><a href="ds.gemo.SitePageManager.html#oldPageModel">oldPageModel</a></li><li><a href="ds.gemo.SitePageManager.html#pageDc">pageDc</a></li><li><a href="ds.gemo.SitePageManager.html#pageLabel">pageLabel</a></li><li><a href="ds.gemo.SitePageManager.html#pageList">pageList</a></li><li><a href="ds.gemo.SitePageManager.html#pageModel">pageModel</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="ds.gemo.SitePageManager.html#add">add</a></li><li><a href="ds.gemo.SitePageManager.html#gotoPage">gotoPage</a></li><li><a href="ds.gemo.SitePageManager.html#nextHistory">nextHistory</a></li><li><a href="ds.gemo.SitePageManager.html#previousHistory">previousHistory</a></li></ul><div class="member-type">Events</div><ul class="inner"><li><a href="ds.gemo.SitePageManager.html#event:update">update</a></li></ul></div></li><li><a href="ds.gemo.SliderDistance.html">SliderDistance</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="ds.gemo.SliderDistance_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="ds.gemo.SliderDistance.html#failure">failure</a></li><li><a href="ds.gemo.SliderDistance.html#hasAutoMovie">hasAutoMovie</a></li><li><a href="ds.gemo.SliderDistance.html#interval">interval</a></li><li><a href="ds.gemo.SliderDistance.html#key">key</a></li><li><a href="ds.gemo.SliderDistance.html#loop">loop</a></li><li><a href="ds.gemo.SliderDistance.html#max">max</a></li><li><a href="ds.gemo.SliderDistance.html#maxSpeed">maxSpeed</a></li><li><a href="ds.gemo.SliderDistance.html#min">min</a></li><li><a href="ds.gemo.SliderDistance.html#minSpeed">minSpeed</a></li><li><a href="ds.gemo.SliderDistance.html#reverse">reverse</a></li><li><a href="ds.gemo.SliderDistance.html#slider">slider</a></li><li><a href="ds.gemo.SliderDistance.html#speed">speed</a></li><li><a href="ds.gemo.SliderDistance.html#target">target</a></li><li><a href="ds.gemo.SliderDistance.html#touchDirection">touchDirection</a></li><li><a href="ds.gemo.SliderDistance.html#type">type</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="ds.gemo.SliderDistance.html#tweenMovie">tweenMovie</a></li></ul><div class="member-type">Events</div><ul class="inner"><li><a href="ds.gemo.SliderDistance.html#event:autoMovie">autoMovie</a></li><li><a href="ds.gemo.SliderDistance.html#event:end">end</a></li><li><a href="ds.gemo.SliderDistance.html#event:move">move</a></li><li><a href="ds.gemo.SliderDistance.html#event:start">start</a></li><li><a href="ds.gemo.SliderDistance.html#event:toMin">toMin</a></li><li><a href="ds.gemo.SliderDistance.html#event:update">update</a></li></ul></div></li><li><a href="ds.media.AutoAudioManager.html">AutoAudioManager</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="ds.media.AutoAudioManager_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="ds.media.AutoAudioManager.html#audioDc">audioDc</a></li><li><a href="ds.media.AutoAudioManager.html#audioList">audioList</a></li><li><a href="ds.media.AutoAudioManager.html#paused">paused</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="ds.media.AutoAudioManager.html#getAudioByID">getAudioByID</a></li><li><a href="ds.media.AutoAudioManager.html#initConfigData">initConfigData</a></li><li><a href="ds.media.AutoAudioManager.html#setAudioButton">setAudioButton</a></li><li><a href="ds.media.AutoAudioManager.html#temporarilyPaused">temporarilyPaused</a></li><li><a href="ds.media.AutoAudioManager.html#temporarilyPlay">temporarilyPlay</a></li></ul></div></li><li><a href="ds.media.FramesPlayer.html">FramesPlayer</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="ds.media.FramesPlayer_sub"></div></li><li><a href="ds.media.MpegPlayer.html">MpegPlayer</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="ds.media.MpegPlayer_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="ds.media.MpegPlayer.html#audio">audio</a></li><li><a href="ds.media.MpegPlayer.html#currentFrame">currentFrame</a></li><li><a href="ds.media.MpegPlayer.html#currentTime">currentTime</a></li><li><a href="ds.media.MpegPlayer.html#duration">duration</a></li><li><a href="ds.media.MpegPlayer.html#el">el</a></li><li><a href="ds.media.MpegPlayer.html#frameCount">frameCount</a></li><li><a href="ds.media.MpegPlayer.html#muted">muted</a></li><li><a href="ds.media.MpegPlayer.html#player">player</a></li><li><a href="ds.media.MpegPlayer.html#playing">playing</a></li><li><a href="ds.media.MpegPlayer.html#volume">volume</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="ds.media.MpegPlayer.html#load">load</a></li><li><a href="ds.media.MpegPlayer.html#pause">pause</a></li><li><a href="ds.media.MpegPlayer.html#play">play</a></li><li><a href="ds.media.MpegPlayer.html#seekToFrame">seekToFrame</a></li><li><a href="ds.media.MpegPlayer.html#seekToTime">seekToTime</a></li></ul><div class="member-type">Events</div><ul class="inner"><li><a href="ds.media.MpegPlayer.html#event:canplay">canplay</a></li><li><a href="ds.media.MpegPlayer.html#event:canPlayprogress">canPlayprogress</a></li><li><a href="ds.media.MpegPlayer.html#event:loadEnd">loadEnd</a></li><li><a href="ds.media.MpegPlayer.html#event:pause">pause</a></li><li><a href="ds.media.MpegPlayer.html#event:play">play</a></li><li><a href="ds.media.MpegPlayer.html#event:playEnd">playEnd</a></li><li><a href="ds.media.MpegPlayer.html#event:progress">progress</a></li><li><a href="ds.media.MpegPlayer.html#event:startLoad">startLoad</a></li><li><a href="ds.media.MpegPlayer.html#event:update">update</a></li></ul></div></li><li><a href="ds.media.TSPlayer.html">TSPlayer</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="ds.media.TSPlayer_sub"></div></li><li><a href="ds.media.VideoInteractivePlayer.html">VideoInteractivePlayer</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="ds.media.VideoInteractivePlayer_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="ds.media.VideoInteractivePlayer.html#currentTime">currentTime</a></li><li><a href="ds.media.VideoInteractivePlayer.html#muted">muted</a></li><li><a href="ds.media.VideoInteractivePlayer.html#playing">playing</a></li><li><a href="ds.media.VideoInteractivePlayer.html#url">url</a></li><li><a href="ds.media.VideoInteractivePlayer.html#videoCuePointList">videoCuePointList</a></li><li><a href="ds.media.VideoInteractivePlayer.html#videoPlayer">videoPlayer</a></li><li><a href="ds.media.VideoInteractivePlayer.html#volume">volume</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="ds.media.VideoInteractivePlayer.html#addCuePoint">addCuePoint</a></li><li><a href="ds.media.VideoInteractivePlayer.html#clearCuePoints">clearCuePoints</a></li><li><a href="ds.media.VideoInteractivePlayer.html#getVideoPlayerTypeByExts">getVideoPlayerTypeByExts</a></li><li><a href="ds.media.VideoInteractivePlayer.html#load">load</a></li><li><a href="ds.media.VideoInteractivePlayer.html#pause">pause</a></li><li><a href="ds.media.VideoInteractivePlayer.html#play">play</a></li><li><a href="ds.media.VideoInteractivePlayer.html#resetCuePointByName">resetCuePointByName</a></li><li><a href="ds.media.VideoInteractivePlayer.html#resetCuePoints">resetCuePoints</a></li><li><a href="ds.media.VideoInteractivePlayer.html#seekToFrame">seekToFrame</a></li><li><a href="ds.media.VideoInteractivePlayer.html#seekToTime">seekToTime</a></li></ul><div class="member-type">Events</div><ul class="inner"><li><a href="ds.media.VideoInteractivePlayer.html#event:canplay">canplay</a></li><li><a href="ds.media.VideoInteractivePlayer.html#event:cuePoint">cuePoint</a></li><li><a href="ds.media.VideoInteractivePlayer.html#event:loadEnd">loadEnd</a></li><li><a href="ds.media.VideoInteractivePlayer.html#event:pause">pause</a></li><li><a href="ds.media.VideoInteractivePlayer.html#event:play">play</a></li><li><a href="ds.media.VideoInteractivePlayer.html#event:playEnd">playEnd</a></li><li><a href="ds.media.VideoInteractivePlayer.html#event:progress">progress</a></li><li><a href="ds.media.VideoInteractivePlayer.html#event:update">update</a></li></ul></div></li><li><a href="ds.media.VideoTagPlayer.html">VideoTagPlayer</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="ds.media.VideoTagPlayer_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="ds.media.VideoTagPlayer.html#currentTime">currentTime</a></li><li><a href="ds.media.VideoTagPlayer.html#duration">duration</a></li><li><a href="ds.media.VideoTagPlayer.html#dynamicID">dynamicID</a></li><li><a href="ds.media.VideoTagPlayer.html#el">el</a></li><li><a href="ds.media.VideoTagPlayer.html#muted">muted</a></li><li><a href="ds.media.VideoTagPlayer.html#playing">playing</a></li><li><a href="ds.media.VideoTagPlayer.html#video">video</a></li><li><a href="ds.media.VideoTagPlayer.html#volume">volume</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="ds.media.VideoTagPlayer.html#pause">pause</a></li><li><a href="ds.media.VideoTagPlayer.html#play">play</a></li><li><a href="ds.media.VideoTagPlayer.html#seekToTime">seekToTime</a></li></ul><div class="member-type">Events</div><ul class="inner"><li><a href="ds.media.VideoTagPlayer.html#event:pause">pause</a></li><li><a href="ds.media.VideoTagPlayer.html#event:play">play</a></li><li><a href="ds.media.VideoTagPlayer.html#event:playEnd">playEnd</a></li><li><a href="ds.media.VideoTagPlayer.html#event:update">update</a></li></ul></div></li><li><a href="ds.net.CagoeWechatShareModel.html">CagoeWechatShareModel</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="ds.net.CagoeWechatShareModel_sub"></div></li><li><a href="ds.net.SiteLoadModel.html">SiteLoadModel</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="ds.net.SiteLoadModel_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="ds.net.SiteLoadModel.html#hitLoadPanel">hitLoadPanel</a></li><li><a href="ds.net.SiteLoadModel.html#initCreateJsLoadPanel">initCreateJsLoadPanel</a></li><li><a href="ds.net.SiteLoadModel.html#initDOMLoadPanel">initDOMLoadPanel</a></li><li><a href="ds.net.SiteLoadModel.html#loadCJS">loadCJS</a></li><li><a href="ds.net.SiteLoadModel.html#showProgress">showProgress</a></li></ul></div></li><li><a href="ds.net.SocketModel.html">SocketModel</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="ds.net.SocketModel_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="ds.net.SocketModel.html#el">el</a></li><li><a href="ds.net.SocketModel.html#roomID">roomID</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="ds.net.SocketModel.html#addRoom">addRoom</a></li><li><a href="ds.net.SocketModel.html#call">call</a></li><li><a href="ds.net.SocketModel.html#callAll">callAll</a></li><li><a href="ds.net.SocketModel.html#initSocket">initSocket</a></li><li><a href="ds.net.SocketModel.html#initSocket">initSocket</a></li></ul><div class="member-type">Events</div><ul class="inner"><li><a href="ds.net.SocketModel.html#event:addRoomOK">addRoomOK</a></li><li><a href="ds.net.SocketModel.html#event:call">call</a></li><li><a href="ds.net.SocketModel.html#event:clearWaste">clearWaste</a></li><li><a href="ds.net.SocketModel.html#event:connect">connect</a></li><li><a href="ds.net.SocketModel.html#event:connect_failed">connect_failed</a></li><li><a href="ds.net.SocketModel.html#event:connecting">connecting</a></li><li><a href="ds.net.SocketModel.html#event:disconnect">disconnect</a></li><li><a href="ds.net.SocketModel.html#event:error">error</a></li><li><a href="ds.net.SocketModel.html#event:initSocketEvent">initSocketEvent</a></li><li><a href="ds.net.SocketModel.html#event:reconnect">reconnect</a></li><li><a href="ds.net.SocketModel.html#event:roomFull">roomFull</a></li><li><a href="ds.net.SocketModel.html#event:serverFull">serverFull</a></li><li><a href="ds.net.SocketModel.html#event:upUserRoomData">upUserRoomData</a></li><li><a href="ds.net.SocketModel.html#event:xxx">xxx</a></li></ul></div></li><li><a href="ds.pixijs.PixiModel.html">PixiModel</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="ds.pixijs.PixiModel_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="ds.pixijs.PixiModel.html#size">size</a></li></ul></div></li><li><a href="ds.threejs.ScrollLamp.html">ScrollLamp</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="ds.threejs.ScrollLamp_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="ds.threejs.ScrollLamp.html#interval">interval</a></li><li><a href="ds.threejs.ScrollLamp.html#lock">lock</a></li><li><a href="ds.threejs.ScrollLamp.html#pageDc">pageDc</a></li><li><a href="ds.threejs.ScrollLamp.html#pages">pages</a></li><li><a href="ds.threejs.ScrollLamp.html#slider">slider</a></li><li><a href="ds.threejs.ScrollLamp.html#textureDc">textureDc</a></li><li><a href="ds.threejs.ScrollLamp.html#view">view</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="ds.threejs.ScrollLamp.html#addTextureList">addTextureList</a></li><li><a href="ds.threejs.ScrollLamp.html#create">create</a></li><li><a href="ds.threejs.ScrollLamp.html#createObject">createObject</a></li><li><a href="ds.threejs.ScrollLamp.html#createScene">createScene</a></li><li><a href="ds.threejs.ScrollLamp.html#startLoad">startLoad</a></li></ul><div class="member-type">Events</div><ul class="inner"><li><a href="ds.threejs.ScrollLamp.html#event:complete">complete</a></li><li><a href="ds.threejs.ScrollLamp.html#event:createScene">createScene</a></li><li><a href="ds.threejs.ScrollLamp.html#event:fileLoad">fileLoad</a></li><li><a href="ds.threejs.ScrollLamp.html#event:progress">progress</a></li></ul></div></li><li><a href="ds.threejs.ThreeJsModel.html">ThreeJsModel</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="ds.threejs.ThreeJsModel_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="ds.threejs.ThreeJsModel.html#adapterCameraFov">adapterCameraFov</a></li><li><a href="ds.threejs.ThreeJsModel.html#camera">camera</a></li><li><a href="ds.threejs.ThreeJsModel.html#controls">controls</a></li><li><a href="ds.threejs.ThreeJsModel.html#hasModelAnimate">hasModelAnimate</a></li><li><a href="ds.threejs.ThreeJsModel.html#hasResize">hasResize</a></li><li><a href="ds.threejs.ThreeJsModel.html#height">height</a></li><li><a href="ds.threejs.ThreeJsModel.html#intersect">intersect</a></li><li><a href="ds.threejs.ThreeJsModel.html#intersectDom">intersectDom</a></li><li><a href="ds.threejs.ThreeJsModel.html#intersectObjects">intersectObjects</a></li><li><a href="ds.threejs.ThreeJsModel.html#pause">pause</a></li><li><a href="ds.threejs.ThreeJsModel.html#raycaster">raycaster</a></li><li><a href="ds.threejs.ThreeJsModel.html#render">render</a></li><li><a href="ds.threejs.ThreeJsModel.html#resizeType">resizeType</a></li><li><a href="ds.threejs.ThreeJsModel.html#screen">screen</a></li><li><a href="ds.threejs.ThreeJsModel.html#width">width</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="ds.threejs.ThreeJsModel.html#adapterFov">adapterFov</a></li><li><a href="ds.threejs.ThreeJsModel.html#createControls">createControls</a></li><li><a href="ds.threejs.ThreeJsModel.html#createTestBox">createTestBox</a></li><li><a href="ds.threejs.ThreeJsModel.html#disposeControls">disposeControls</a></li><li><a href="ds.threejs.ThreeJsModel.html#hideStates">hideStates</a></li><li><a href="ds.threejs.ThreeJsModel.html#initReizeEvent">initReizeEvent</a></li><li><a href="ds.threejs.ThreeJsModel.html#showStats">showStats</a></li></ul><div class="member-type">Events</div><ul class="inner"><li><a href="ds.threejs.ThreeJsModel.html#event:afterUpdate">afterUpdate</a></li><li><a href="ds.threejs.ThreeJsModel.html#event:beforeUpdate">beforeUpdate</a></li><li><a href="ds.threejs.ThreeJsModel.html#event:intersects">intersects</a></li><li><a href="ds.threejs.ThreeJsModel.html#event:update">update</a></li></ul></div></li><li><a href="ds.ui.AutoHorizontalScreenContainer.html">AutoHorizontalScreenContainer</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="ds.ui.AutoHorizontalScreenContainer_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="ds.ui.AutoHorizontalScreenContainer.html#el">el</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="ds.ui.AutoHorizontalScreenContainer.html#resize">resize</a></li></ul><div class="member-type">Events</div><ul class="inner"><li><a href="ds.ui.AutoHorizontalScreenContainer.html#event:resize">resize</a></li></ul></div></li><li><a href="ds.ui.PopAlert.html">PopAlert</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="ds.ui.PopAlert_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="ds.ui.PopAlert.html#.alert">alert</a></li><li><a href="ds.ui.PopAlert.html#.closeAll">closeAll</a></li><li><a href="ds.ui.PopAlert.html#.setConfig">setConfig</a></li><li><a href="ds.ui.PopAlert.html#hide">hide</a></li><li><a href="ds.ui.PopAlert.html#show">show</a></li></ul></div></li><li><a href="ds.ui.PopLoading.html">PopLoading</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="ds.ui.PopLoading_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="ds.ui.PopLoading.html#bgColor">bgColor</a></li><li><a href="ds.ui.PopLoading.html#color">color</a></li><li><a href="ds.ui.PopLoading.html#container">container</a></li><li><a href="ds.ui.PopLoading.html#size">size</a></li><li><a href="ds.ui.PopLoading.html#text">text</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="ds.ui.PopLoading.html#.show">show</a></li><li><a href="ds.ui.PopLoading.html#hide">hide</a></li><li><a href="ds.ui.PopLoading.html#show">show</a></li></ul></div></li></ul></div><div class="lnb-api hidden"><h3>Namespaces</h3><ul><li><a href="ds.html">ds</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="ds_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="ds.html#.alert">alert</a></li></ul></div></li><li><a href="ds.core.html">ds.core</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="ds.core_sub"></div></li><li><a href="ds.createjs.html">ds.createjs</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="ds.createjs_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="ds.createjs.html#.CreatejsDOMAuto">CreatejsDOMAuto</a></li><li><a href="ds.createjs.html#.JSNCS">JSNCS</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="ds.createjs.html#.addAvatar">addAvatar</a></li><li><a href="ds.createjs.html#.addDOM">addDOM</a></li><li><a href="ds.createjs.html#.addHitDom">addHitDom</a></li><li><a href="ds.createjs.html#.addInput">addInput</a></li><li><a href="ds.createjs.html#.create">create</a></li><li><a href="ds.createjs.html#.formatNumberShow">formatNumberShow</a></li><li><a href="ds.createjs.html#.getBase64">getBase64</a></li><li><a href="ds.createjs.html#.getDisplayObjectBitmapData">getDisplayObjectBitmapData</a></li><li><a href="ds.createjs.html#.hitTestByDisplayObject">hitTestByDisplayObject</a></li><li><a href="ds.createjs.html#.isWebGLSupported">isWebGLSupported</a></li><li><a href="ds.createjs.html#.loadAssets">loadAssets</a></li><li><a href="ds.createjs.html#.loadJS">loadJS</a></li><li><a href="ds.createjs.html#.movieTo">movieTo</a></li><li><a href="ds.createjs.html#.removeDOM">removeDOM</a></li><li><a href="ds.createjs.html#.removeMovie">removeMovie</a></li><li><a href="ds.createjs.html#.setButton">setButton</a></li><li><a href="ds.createjs.html#.wrapMetrics">wrapMetrics</a></li></ul></div></li><li><a href="ds.gemo.html">ds.gemo</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="ds.gemo_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="ds.gemo.html#.Devicer">Devicer</a></li></ul></div></li><li><a href="ds.media.html">ds.media</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="ds.media_sub"></div></li><li><a href="ds.net.html">ds.net</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="ds.net_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="ds.net.html#.ADTrack">ADTrack</a></li><li><a href="ds.net.html#.QueueLoad">QueueLoad</a></li><li><a href="ds.net.html#.QuickAjax">QuickAjax</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="ds.net.html#.baiduEvent">baiduEvent</a></li><li><a href="ds.net.html#.baiduPV">baiduPV</a></li><li><a href="ds.net.html#.event">event</a></li><li><a href="ds.net.html#.gaEvent">gaEvent</a></li><li><a href="ds.net.html#.gaPV">gaPV</a></li><li><a href="ds.net.html#.get">get</a></li><li><a href="ds.net.html#.getUrlParameter">getUrlParameter</a></li><li><a href="ds.net.html#.getUrlParameterDictionary">getUrlParameterDictionary</a></li><li><a href="ds.net.html#.post">post</a></li><li><a href="ds.net.html#.post">post</a></li><li><a href="ds.net.html#.pv">pv</a></li><li><a href="ds.net.html#.replaceUrlParam">replaceUrlParam</a></li></ul></div></li><li><a href="ds.pixijs.html">ds.pixijs</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="ds.pixijs_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="ds.pixijs.html#.create">create</a></li></ul></div></li><li><a href="ds.threejs.html">ds.threejs</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="ds.threejs_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="ds.threejs.html#.canvas">canvas</a></li><li><a href="ds.threejs.html#.fileapi">fileapi</a></li><li><a href="ds.threejs.html#.LoadManager">LoadManager</a></li><li><a href="ds.threejs.html#.webgl">webgl</a></li><li><a href="ds.threejs.html#.workers">workers</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="ds.threejs.html#.create">create</a></li></ul></div></li><li><a href="ds.ui.html">ds.ui</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="ds.ui_sub"></div></li><li><a href="ds.utils.html">ds.utils</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="ds.utils_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="ds.utils.html#.Bezier">Bezier</a></li><li><a href="ds.utils.html#.Triangle">Triangle</a></li><li><a href="ds.utils.html#.Utils">Utils</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="ds.utils.html#.getConstellation">getConstellation</a></li></ul></div></li></ul></div>
+</nav>
+<div id="resizer"></div>
+
+<div class="main" id="main">
+    
+
+
+
+
+<section>
+
+<header>
+    
+        <h2><span class="attribs"><span class="type-signature"></span></span>
+            <span class="ancestors"><a href="ds.html">ds</a><a href="ds.threejs.html">.threejs</a>.</span>ThreeJsModel<span class="signature">(opts)</span><span class="type-signature"></span></h2>
+        
+            <div class="class-description"><p>构建threejs 3D模块</p>
+<blockquote>
+<p>需要第三方js模块需要自行<code>require</code>。建议把 <code>https://github.com/mrdoob/three.js/tree/dev/examples/js</code> 下第三方支持模块代码copy到 <code>src/threejs/</code> 目录下</p>
+</blockquote></div>
+        
+    
+</header>
+
+<article>
+    
+        <div class="container-overview">
+        
+            
+
+<dt>
+    
+        <h4 class="name" id="ThreeJsModel">
+            
+                new <span class="type-signature"></span>ThreeJsModel<span class="signature">(opts)</span><span class="type-signature"></span>
+                
+            
+            <div class="container-source members">
+                <code><a href="threejs_ThreeJsModel.js.html">threejs/ThreeJsModel.js</a></code>,
+                <code><a href="threejs_ThreeJsModel.js.html#line40">line 40</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>构建threejs 3D模块</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <h5>Parameters:</h5>
+        
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>opts</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>配置参数</p>
+                <h6>Properties</h6>
+                
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>width</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    window.innerWidth
+                
+                </td>
+            
+
+            <td class="description last"><p>场景宽</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>height</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    window.innerHeight
+                
+                </td>
+            
+
+            <td class="description last"><p>场景高</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>alpha</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    true
+                
+                </td>
+            
+
+            <td class="description last"><p>支持透明度</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>clearColor</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    "#000000"
+                
+                </td>
+            
+
+            <td class="description last"><p>清空画布使用填充色彩</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>sortObjects</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    true
+                
+                </td>
+            
+
+            <td class="description last"><p>透明元素排序</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>autoClear</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    true
+                
+                </td>
+            
+
+            <td class="description last"><p>自动清空画布</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>appendTo</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+|
+
+<span class="param-type">HTMLElement</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>canvas添加到dom容器</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>cameraFov</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    60
+                
+                </td>
+            
+
+            <td class="description last"><p>摄像机视角</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>cameraNear</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    1
+                
+                </td>
+            
+
+            <td class="description last"><p>摄像机近视角</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>cameraFar</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    100000
+                
+                </td>
+            
+
+            <td class="description last"><p>摄像机最远视距</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>cameraPosition</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    {x: 0,y: 0, z: 500}
+                
+                </td>
+            
+
+            <td class="description last"><p>摄像机位置坐标</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>cameraUp</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    {x: 0, y: 1, z: 0}
+                
+                </td>
+            
+
+            <td class="description last"><p>摄像机镜头方向</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>intersect</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    true
+                
+                </td>
+            
+
+            <td class="description last"><p>是否支持交互</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>hasModelAnimate</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    true
+                
+                </td>
+            
+
+            <td class="description last"><p>是否拥有模型动画渲染</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>resizeType</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    'window'
+                
+                </td>
+            
+
+            <td class="description last"><p>自适应类型 'window' 'fixed' 'fixed2'</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>hasResize</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    true
+                
+                </td>
+            
+
+            <td class="description last"><p>是否要自适应计算</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>adapterCameraFov</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    true
+                
+                </td>
+            
+
+            <td class="description last"><p>需要自动计算摄像机视角适合等比显示适配</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>canvas</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">CanvasElement</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>一个canvas对象</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    </div>
+    
+
+    
+    <h5>Requires:</h5>
+    <ul>
+        <li>module:require('ds/threejs/index.js');</li>
+    </ul>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+        <h5>Example</h5>
+        
+    <pre class="prettyprint"><code>require('ds/threejs/index.js');
+
+let _threejsModel = new ThreeJsModel({
+      appendTo:'#threejsBox',
+      width:640,
+      height:1140,
+      resizeType:'fixed2',
+      hasModelAnimate:false,
+});
+
+//内存 cpu信息监测模块
+window.Stats=require('threejs/libs/stats.min.js');
+//控制器模块
+require('threejs/controls/OrbitControls.js');
+
+ _threejsModel.createControls();
+ _threejsModel.createStats();
+
+ //创建测试显示3d元素
+ _threejsModel.createTestBox();</code></pre>
+
+    
+
+</dd>
+
+        
+        </div>
+    
+
+    
+
+    
+        <h3 class="subsection-title">Requires</h3>
+
+        <ul>
+            <li>module:require('ds/threejs/index.js');</li>
+        </ul>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Members</h3>
+
+        <dl>
+            
+
+<dt>
+<h4 class="name" id="adapterCameraFov">
+    <span class="type-signature"></span>adapterCameraFov<span class="type-signature"> :boolean</span>
+    
+    <div class="container-source members">
+        <code><a href="threejs_ThreeJsModel.js.html">threejs/ThreeJsModel.js</a></code>,
+        <code><a href="threejs_ThreeJsModel.js.html#line147">line 147</a></code>
+    </div>
+    
+</h4>
+
+
+</dt>
+<dd>
+    
+    <div class="description">
+        <p>自动计算摄像机视角适合等比显示适配</p>
+    </div>
+    
+
+    <!--
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">boolean</span>
+
+
+            </li>
+        </ul>
+    
+    -->
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+</dd>
+
+        
+            
+
+<dt>
+<h4 class="name" id="camera">
+    <span class="type-signature"></span>camera<span class="type-signature"> :THREE.PerspectiveCamera</span>
+    
+    <div class="container-source members">
+        <code><a href="threejs_ThreeJsModel.js.html">threejs/ThreeJsModel.js</a></code>,
+        <code><a href="threejs_ThreeJsModel.js.html#line153">line 153</a></code>
+    </div>
+    
+</h4>
+
+
+</dt>
+<dd>
+    
+    <div class="description">
+        <p>相机对象</p>
+    </div>
+    
+
+    <!--
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">THREE.PerspectiveCamera</span>
+
+
+            </li>
+        </ul>
+    
+    -->
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+</dd>
+
+        
+            
+
+<dt>
+<h4 class="name" id="controls">
+    <span class="type-signature"></span>controls<span class="type-signature"> :THREE.OrbitControls</span>
+    
+    <div class="container-source members">
+        <code><a href="threejs_ThreeJsModel.js.html">threejs/ThreeJsModel.js</a></code>,
+        <code><a href="threejs_ThreeJsModel.js.html#line314">line 314</a></code>
+    </div>
+    
+</h4>
+
+
+</dt>
+<dd>
+    
+    <div class="description">
+        <p>镜头控制器</p>
+    </div>
+    
+
+    <!--
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">THREE.OrbitControls</span>
+
+
+            </li>
+        </ul>
+    
+    -->
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+</dd>
+
+        
+            
+
+<dt>
+<h4 class="name" id="hasModelAnimate">
+    <span class="type-signature"></span>hasModelAnimate<span class="type-signature"> :boolean</span>
+    
+    <div class="container-source members">
+        <code><a href="threejs_ThreeJsModel.js.html">threejs/ThreeJsModel.js</a></code>,
+        <code><a href="threejs_ThreeJsModel.js.html#line215">line 215</a></code>
+    </div>
+    
+</h4>
+
+
+</dt>
+<dd>
+    
+    <div class="description">
+        <p>是否拥有模型动画渲染</p>
+    </div>
+    
+
+    <!--
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">boolean</span>
+
+
+            </li>
+        </ul>
+    
+    -->
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-default">Default Value:</dt>
+    <dd class="tag-default"><ul class="dummy">
+            <li>true</li>
+        </ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+</dd>
+
+        
+            
+
+<dt>
+<h4 class="name" id="hasResize">
+    <span class="type-signature"></span>hasResize<span class="type-signature"> :boolean</span>
+    
+    <div class="container-source members">
+        <code><a href="threejs_ThreeJsModel.js.html">threejs/ThreeJsModel.js</a></code>,
+        <code><a href="threejs_ThreeJsModel.js.html#line239">line 239</a></code>
+    </div>
+    
+</h4>
+
+
+</dt>
+<dd>
+    
+    <div class="description">
+        <p>是否要自适应,固定不自适应的话可以锁死</p>
+    </div>
+    
+
+    <!--
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">boolean</span>
+
+
+            </li>
+        </ul>
+    
+    -->
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-default">Default Value:</dt>
+    <dd class="tag-default"><ul class="dummy">
+            <li>true</li>
+        </ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+</dd>
+
+        
+            
+
+<dt>
+<h4 class="name" id="height">
+    <span class="type-signature"></span>height<span class="type-signature"> :number</span>
+    
+    <div class="container-source members">
+        <code><a href="threejs_ThreeJsModel.js.html">threejs/ThreeJsModel.js</a></code>,
+        <code><a href="threejs_ThreeJsModel.js.html#line82">line 82</a></code>
+    </div>
+    
+</h4>
+
+
+</dt>
+<dd>
+    
+    <div class="description">
+        <p>3d场景高</p>
+    </div>
+    
+
+    <!--
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">number</span>
+
+
+            </li>
+        </ul>
+    
+    -->
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+</dd>
+
+        
+            
+
+<dt>
+<h4 class="name" id="intersect">
+    <span class="type-signature"></span>intersect<span class="type-signature"> :boolean</span>
+    
+    <div class="container-source members">
+        <code><a href="threejs_ThreeJsModel.js.html">threejs/ThreeJsModel.js</a></code>,
+        <code><a href="threejs_ThreeJsModel.js.html#line183">line 183</a></code>
+    </div>
+    
+</h4>
+
+
+</dt>
+<dd>
+    
+    <div class="description">
+        <p>是否可以交互监测</p>
+    </div>
+    
+
+    <!--
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">boolean</span>
+
+
+            </li>
+        </ul>
+    
+    -->
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-default">Default Value:</dt>
+    <dd class="tag-default"><ul class="dummy">
+            <li>true</li>
+        </ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+</dd>
+
+        
+            
+
+<dt>
+<h4 class="name" id="intersectDom">
+    <span class="type-signature"></span>intersectDom<span class="type-signature"> :jQuery|HTMLElement</span>
+    
+    <div class="container-source members">
+        <code><a href="threejs_ThreeJsModel.js.html">threejs/ThreeJsModel.js</a></code>,
+        <code><a href="threejs_ThreeJsModel.js.html#line270">line 270</a></code>
+    </div>
+    
+</h4>
+
+
+</dt>
+<dd>
+    
+    <div class="description">
+        <p>设置交互方式触发的dom对象，默认会使用renderer.domElement</p>
+    </div>
+    
+
+    <!--
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">jQuery</span>
+|
+
+<span class="param-type">HTMLElement</span>
+
+
+            </li>
+        </ul>
+    
+    -->
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+</dd>
+
+        
+            
+
+<dt>
+<h4 class="name" id="intersectObjects">
+    <span class="type-signature"></span>intersectObjects<span class="type-signature"> :Array</span>
+    
+    <div class="container-source members">
+        <code><a href="threejs_ThreeJsModel.js.html">threejs/ThreeJsModel.js</a></code>,
+        <code><a href="threejs_ThreeJsModel.js.html#line208">line 208</a></code>
+    </div>
+    
+</h4>
+
+
+</dt>
+<dd>
+    
+    <div class="description">
+        <p>交互对象列表</p>
+    </div>
+    
+
+    <!--
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">Array</span>
+
+
+            </li>
+        </ul>
+    
+    -->
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+</dd>
+
+        
+            
+
+<dt>
+<h4 class="name" id="pause">
+    <span class="type-signature"></span>pause<span class="type-signature"> :boolean</span>
+    
+    <div class="container-source members">
+        <code><a href="threejs_ThreeJsModel.js.html">threejs/ThreeJsModel.js</a></code>,
+        <code><a href="threejs_ThreeJsModel.js.html#line252">line 252</a></code>
+    </div>
+    
+</h4>
+
+
+</dt>
+<dd>
+    
+    <div class="description">
+        <p>渲染是否暂停，默认值是不暂停渲染</p>
+    </div>
+    
+
+    <!--
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">boolean</span>
+
+
+            </li>
+        </ul>
+    
+    -->
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-default">Default Value:</dt>
+    <dd class="tag-default"><ul class="dummy">
+            <li>false</li>
+        </ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+</dd>
+
+        
+            
+
+<dt>
+<h4 class="name" id="raycaster">
+    <span class="type-signature"></span>raycaster<span class="type-signature"> :THREE.Raycaster</span>
+    
+    <div class="container-source members">
+        <code><a href="threejs_ThreeJsModel.js.html">threejs/ThreeJsModel.js</a></code>,
+        <code><a href="threejs_ThreeJsModel.js.html#line194">line 194</a></code>
+    </div>
+    
+</h4>
+
+
+</dt>
+<dd>
+    
+    <div class="description">
+        <p>交互触发器</p>
+    </div>
+    
+
+    <!--
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">THREE.Raycaster</span>
+
+
+            </li>
+        </ul>
+    
+    -->
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+</dd>
+
+        
+            
+
+<dt>
+<h4 class="name" id="render">
+    <span class="type-signature"></span>render<span class="type-signature"> :WebGLRenderer</span>
+    
+    <div class="container-source members">
+        <code><a href="threejs_ThreeJsModel.js.html">threejs/ThreeJsModel.js</a></code>,
+        <code><a href="threejs_ThreeJsModel.js.html#line97">line 97</a></code>
+    </div>
+    
+</h4>
+
+
+</dt>
+<dd>
+    
+    <div class="description">
+        <p>渲染对象</p>
+    </div>
+    
+
+    <!--
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">WebGLRenderer</span>
+
+
+            </li>
+        </ul>
+    
+    -->
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+</dd>
+
+        
+            
+
+<dt>
+<h4 class="name" id="resizeType">
+    <span class="type-signature"></span>resizeType<span class="type-signature"> :string</span>
+    
+    <div class="container-source members">
+        <code><a href="threejs_ThreeJsModel.js.html">threejs/ThreeJsModel.js</a></code>,
+        <code><a href="threejs_ThreeJsModel.js.html#line231">line 231</a></code>
+    </div>
+    
+</h4>
+
+
+</dt>
+<dd>
+    
+    <div class="description">
+        <p>自适应类型</p>
+<ul>
+<li>window 默认，按window宽高自适应</li>
+<li>fixed 固定宽640，根据实际高自适应</li>
+<li>fixed2 按缩放框架 实际宽高自适应</li>
+</ul>
+    </div>
+    
+
+    <!--
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">string</span>
+
+
+            </li>
+        </ul>
+    
+    -->
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-default">Default Value:</dt>
+    <dd class="tag-default"><ul class="dummy">
+            <li>'window'</li>
+        </ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+</dd>
+
+        
+            
+
+<dt>
+<h4 class="name" id="screen">
+    <span class="type-signature"></span>screen<span class="type-signature"> :THREE.Scene</span>
+    
+    <div class="container-source members">
+        <code><a href="threejs_ThreeJsModel.js.html">threejs/ThreeJsModel.js</a></code>,
+        <code><a href="threejs_ThreeJsModel.js.html#line131">line 131</a></code>
+    </div>
+    
+</h4>
+
+
+</dt>
+<dd>
+    
+    <div class="description">
+        <p>场景对象</p>
+    </div>
+    
+
+    <!--
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">THREE.Scene</span>
+
+
+            </li>
+        </ul>
+    
+    -->
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+</dd>
+
+        
+            
+
+<dt>
+<h4 class="name" id="width">
+    <span class="type-signature"></span>width<span class="type-signature"> :number</span>
+    
+    <div class="container-source members">
+        <code><a href="threejs_ThreeJsModel.js.html">threejs/ThreeJsModel.js</a></code>,
+        <code><a href="threejs_ThreeJsModel.js.html#line77">line 77</a></code>
+    </div>
+    
+</h4>
+
+
+</dt>
+<dd>
+    
+    <div class="description">
+        <p>3d场景宽</p>
+    </div>
+    
+
+    <!--
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">number</span>
+
+
+            </li>
+        </ul>
+    
+    -->
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+</dd>
+
+        </dl>
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        <dl>
+                
+
+<dt>
+    
+        <h4 class="name" id="adapterFov">
+            
+                <span class="type-signature"></span>adapterFov<span class="signature">(d, w, r)</span><span class="type-signature"></span>
+                
+            
+            <div class="container-source members">
+                <code><a href="threejs_ThreeJsModel.js.html">threejs/ThreeJsModel.js</a></code>,
+                <code><a href="threejs_ThreeJsModel.js.html#line518">line 518</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>计算相机 fov 的值能确保，物件在坐标000点时候 显示像素尺寸与实际尺寸匹配<br>显示对象等比，屏幕适配<br><a href="https://segmentfault.com/a/1190000008796468">https://segmentfault.com/a/1190000008796468</a></p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <h5>Parameters:</h5>
+        
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>d</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>在相机前方 d 距离</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>w</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>想要看到最大正方形区域边长为 w</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>r</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>屏幕宽高比</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+    
+        <h4 class="name" id="createControls">
+            
+                <span class="type-signature"></span>createControls<span class="signature">()</span><span class="type-signature"></span>
+                
+            
+            <div class="container-source members">
+                <code><a href="threejs_ThreeJsModel.js.html">threejs/ThreeJsModel.js</a></code>,
+                <code><a href="threejs_ThreeJsModel.js.html#line298">line 298</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>创建一个控制器，方便调试时候使用</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Requires:</h5>
+    <ul>
+        <li>module:require('threejs/controls/OrbitControls.js')</li>
+    </ul>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+    
+        <h4 class="name" id="createTestBox">
+            
+                <span class="type-signature"></span>createTestBox<span class="signature">()</span><span class="type-signature"></span>
+                
+            
+            <div class="container-source members">
+                <code><a href="threejs_ThreeJsModel.js.html">threejs/ThreeJsModel.js</a></code>,
+                <code><a href="threejs_ThreeJsModel.js.html#line376">line 376</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>创建一个测试盒子</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+    
+        <h4 class="name" id="disposeControls">
+            
+                <span class="type-signature"></span>disposeControls<span class="signature">()</span><span class="type-signature"></span>
+                
+            
+            <div class="container-source members">
+                <code><a href="threejs_ThreeJsModel.js.html">threejs/ThreeJsModel.js</a></code>,
+                <code><a href="threejs_ThreeJsModel.js.html#line322">line 322</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>摧毁控制器</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+    
+        <h4 class="name" id="hideStates">
+            
+                <span class="type-signature"></span>hideStates<span class="signature">()</span><span class="type-signature"></span>
+                
+            
+            <div class="container-source members">
+                <code><a href="threejs_ThreeJsModel.js.html">threejs/ThreeJsModel.js</a></code>,
+                <code><a href="threejs_ThreeJsModel.js.html#line366">line 366</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>隐藏状态监测器</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+    
+        <h4 class="name" id="initReizeEvent">
+            
+                <span class="type-signature"></span>initReizeEvent<span class="signature">()</span><span class="type-signature"></span>
+                
+            
+            <div class="container-source members">
+                <code><a href="threejs_ThreeJsModel.js.html">threejs/ThreeJsModel.js</a></code>,
+                <code><a href="threejs_ThreeJsModel.js.html#line401">line 401</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>初始化自适应</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+    
+        <h4 class="name" id="showStats">
+            
+                <span class="type-signature"></span>showStats<span class="signature">()</span><span class="type-signature"></span>
+                
+            
+            <div class="container-source members">
+                <code><a href="threejs_ThreeJsModel.js.html">threejs/ThreeJsModel.js</a></code>,
+                <code><a href="threejs_ThreeJsModel.js.html#line337">line 337</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>显示状态监测器</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Requires:</h5>
+    <ul>
+        <li>module:window.Stats=require('threejs/libs/stats.min.js');</li>
+    </ul>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            </dl>
+    
+
+    
+
+    
+        <h3 class="subsection-title">Events</h3>
+
+        <dl>
+            
+
+<dt>
+    
+        <h4 class="name" id="event:afterUpdate">
+            
+                afterUpdate
+                
+            
+            <div class="container-source members">
+                <code><a href="threejs_ThreeJsModel.js.html">threejs/ThreeJsModel.js</a></code>,
+                <code><a href="threejs_ThreeJsModel.js.html#line559">line 559</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>渲染后</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+        
+            
+
+<dt>
+    
+        <h4 class="name" id="event:beforeUpdate">
+            
+                beforeUpdate
+                
+            
+            <div class="container-source members">
+                <code><a href="threejs_ThreeJsModel.js.html">threejs/ThreeJsModel.js</a></code>,
+                <code><a href="threejs_ThreeJsModel.js.html#line542">line 542</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>渲染前</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+        
+            
+
+<dt>
+    
+        <h4 class="name" id="event:intersects">
+            
+                intersects
+                
+            
+            <div class="container-source members">
+                <code><a href="threejs_ThreeJsModel.js.html">threejs/ThreeJsModel.js</a></code>,
+                <code><a href="threejs_ThreeJsModel.js.html#line439">line 439</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>鼠标交互相交点</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>intersects</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">array</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>相交的对象列表</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+        <h5>Example</h5>
+        
+    <pre class="prettyprint"><code>var _intersectObject;
+ _ThreeJsModel.on('intersects', function (e) {
+      var _intersects = e.intersects;
+      if (_intersects.length > 0) {
+          _intersectObject = _intersects[0].object;
+      } else {
+          _intersectObject = null;
+      }
+  });</code></pre>
+
+    
+
+</dd>
+
+        
+            
+
+<dt>
+    
+        <h4 class="name" id="event:update">
+            
+                update
+                
+            
+            <div class="container-source members">
+                <code><a href="threejs_ThreeJsModel.js.html">threejs/ThreeJsModel.js</a></code>,
+                <code><a href="threejs_ThreeJsModel.js.html#line501">line 501</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>场景渲染</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+        </dl>
+    
+</article>
+
+</section>
+
+
+
+
+</div>
+
+<footer>
+    <img class="logo" src="../images/logo.svg" style="width: 58px; height: 20px">
+    <div class="footer-text">Maksim Frontend Development Lab</div>
+</footer>
+<script>prettyPrint();</script>
+<script src="scripts/jquery.min.js"></script>
+<script src="scripts/tui-doc.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+    <script>
+        var id = 'ds.threejs.ThreeJsModel_sub'.replace(/"/g, '_');
+        var selectedApi = document.getElementById(id); // do not use jquery selector
+        var $selectedApi = $(selectedApi);
+
+        $selectedApi.removeClass('hidden');
+        $selectedApi.parent().find('.glyphicon').removeClass('glyphicon-plus').addClass('glyphicon-minus');
+        showLnbApi();
+    </script>
+
+</body>
+</html>

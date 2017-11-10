@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="viewport" content=" initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="format-detection" content="telephone=no">
+    <meta content="telephone=no" name="format-detection" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <title>H5 Dslibs 项目模板</title>
+    <link rel="stylesheet" href="./css/main.css" />
+    <!-- 根据不同规范 也许需要 polyfillA.js -->
+    <script src="js/libs/polyfillB.js"></script>
+    <script>
+        var ua = navigator.userAgent;
+        if (/Android (\d+\.\d+)/.test(ua)) {
+            document.write('<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no">');
+        } else {
+            document.write('<meta name="viewport" content="width=640,target-densitydpi=device-dpi,maximum-scale=1.0, user-scalable=no">');
+        }
+    </script>
+    <style>
+        html,body {
+            height: 100%;
+            -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+            overflow: hidden;
+            background-color: #000;
+        }
+
+    </style>
+</head>
+<body>
+    <div id="screen">
+        <!-- threejs容器 如果不使用可以删除-->
+         <div id="threejsBox"></div>
+        <!-- pixi容器 如果不使用可以删除-->
+         <div id="pixiBox"></div>
+        <!-- cjs容器 如果不使用可以删除-->
+        <div id="cjsBox"></div>
+        <!-- dom层容器 如果不使用可以删除-->
+        <div id="domBox"></div>
+        <!-- 背景音乐按钮 如果不使用可以删除 -->
+       <div id="BGMBtn">
+          <div class="on"></div>
+          <div class="off"></div>
+        </div>
+        <!-- dom的loading方式  如果不使用可以删除-->
+        <div id="siteLoadPanel">
+            <div class="progressPanel">
+                <div class="progress"></div>
+            </div>
+            <div class="label">loading...</div>
+        </div>
+    </div>
+    <!-- 主入口文件 -->
+    <script src="js/app/main.js"></script>
+</body>
+</html>
