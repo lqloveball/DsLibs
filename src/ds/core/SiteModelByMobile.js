@@ -403,10 +403,15 @@
             _self.showProgress(10);
             if (loadSPA) {
 
-                if (typeof loadSPA == 'string') {
+                if (typeof loadSPA === 'string') {
 
                     _self.getScript(loadSPA, function () {
                         console.log('loadSPA End');
+                        /**
+                         * 单页面应用加载完成
+                         * @event ds.core.SiteModelByMobile#spaEnd
+                         */
+                        if(_self.ds)_self.ds('spaEnd');
                     });
 
                 } else {
@@ -436,10 +441,18 @@
 
                 console.log('loadBaseFrameWork');
 
+                ds.core.EventDispatcher.extend(_self);
+
                 //初始化背景声音与声音加载对象
                 initAudioer();
 
                 iniResizeModel();
+
+                /**
+                 * 加载基础框架 完成 $选择器 EventDispatcher 自适应 背景声音播放器
+                 * @event ds.core.SiteModelByMobile#baseEnd
+                 */
+                if(_self.ds)_self.ds('baseEnd');
 
                 //判断是否需要cteatejs的loading，如果需要createjs来实现loading，那就执行加载createjs框架
                 if (opts.hasCJS && _self.isCJSLoad) loadCreateJsFrameWork();
@@ -462,6 +475,12 @@
             _self.getScript(_url, function () {
 
                 console.log('loadCreateJsFrameWork');
+
+                /**
+                 * createjs框架加载完成
+                 * @event ds.core.SiteModelByMobile#createjsEnd
+                 */
+                if(_self.ds)_self.ds('createjsEnd');
 
                 //如果是createjs类型网站或者需要createjsloading 都需要在initCreateJsModel创建后调用loading
                 if (opts.hasCJSModel) initCreateJsModel();
@@ -494,6 +513,11 @@
                 height: 1140,
                 fps: 30
             });
+            /**
+             * createJsModel模块 构建完成
+             * @event ds.core.SiteModelByMobile#cjsModelBuild
+             */
+            if(_self.ds)_self.ds('cjsModelBuild');
 
         }
 
@@ -571,8 +595,7 @@
         /**
          * 初始化pixijs模块创建 **【受保护内部执行】**
          * @access protected
-         * @method ds.core.SiteModelByMobile.prototype.initPixiJsModel、
-         * @TODO 待测试
+         * @method ds.core.SiteModelByMobile.prototype.initPixiJsModel
          */
         function initPixiJsModel() {
 
@@ -587,6 +610,12 @@
 
                 //是否实时进行刷新dom与显示对象之间关系
                 ds.pixijs.domAuto = true;
+
+                /**
+                 * pixiJsModelBuild模块 构建完成
+                 * @event ds.core.SiteModelByMobile#pixiJsModelBuild
+                 */
+                if(_self.ds)_self.ds('pixiJsModelBuild');
             }
 
 
@@ -613,6 +642,11 @@
                     appendTo: opts.threejsBox !== undefined ? $(opts.threejsBox) : $('#threejsBox')[0],
                 });
 
+                /**
+                 * threeJsModelBuild模块 构建完成
+                 * @event ds.core.SiteModelByMobile#threeJsModelBuild
+                 */
+                if(_self.ds)_self.ds('threeJsModelBuild');
             }
 
         }
@@ -649,10 +683,23 @@
                 }
             }
 
+            /**
+             * 开始加载其他需要的js文件（spa 在加载资源与initModel前执行）
+             * @event ds.core.SiteModelByMobile#otherJsStart
+             */
+            if(_self.ds)_self.ds('otherJsStart');
+
             _self.getScriptList(_other,function () {
 
                 if(opts.hasPixiJsModel)initPixiJsModel();
                 if(opts.hasThreeJsModel)initThreeJsModel();
+
+                /**
+                 * 加载其他需要的js文件完成
+                 * @event ds.core.SiteModelByMobile#otherJsEnd
+                 */
+                if(_self.ds)_self.ds('otherJsEnd');
+
                 if(callback)callback();
 
             });
