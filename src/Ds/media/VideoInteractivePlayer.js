@@ -42,7 +42,8 @@ class VideoInteractivePlayer extends EventDispatcher {
         this._url = url;
 
         this._type = _type;
-        console.log('_type:', _type);
+        // console.log('_type:', _type);
+
         if (_type === 'mpg') {
 
             this._videoPlayer = new ds.media.MpegPlayer(url, opts);

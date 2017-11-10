@@ -30,7 +30,7 @@ class MpegPlayer extends EventDispatcher {
         else _canvas = document.createElement('canvas');
 
 
-        let _autoplay = opts.autoplay !== undefined ? opts.autoplay : true;
+        let _autoplay = opts.autoplay !== undefined ? opts.autoplay : false;
         let _autoload = opts.autoload !== undefined ? opts.autoload : true;
         this._autoload = _autoload;
 
