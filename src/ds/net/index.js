@@ -2,5 +2,8 @@ var root = (typeof window !== 'undefined' ? window : (typeof process === 'object
 
 
 var ds = root.ds = root.ds || {};
-/** @namespace ds.net */
+/**
+ * 与网络相关的处理类
+ * @namespace ds.net
+ */
 ds.core = ds.net || {};

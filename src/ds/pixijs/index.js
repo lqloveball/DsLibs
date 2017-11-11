@@ -4,7 +4,10 @@ let root = (typeof window !== 'undefined' ? window : (typeof process === 'object
 
 let ds = root.ds = root.ds || {};
 
-/** @namespace ds.pixijs */
+/**
+ * pixijs相关便捷函数，为快速开发pixijs项目存在
+ * @namespace ds.pixijs
+ */
 ds.pixijs = ds.pixijs || {};
 
 ds.pixijs.setButton=function () {

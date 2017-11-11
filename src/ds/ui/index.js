@@ -2,5 +2,8 @@ var root = (typeof window !== 'undefined' ? window : (typeof process === 'object
 
 
 var ds = root.ds = root.ds || {};
-/** @namespace ds.ui */
+/**
+ * html dom元素 相关处理类
+ * @namespace ds.ui
+ */
 ds.core = ds.ui || {};

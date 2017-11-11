@@ -2,5 +2,8 @@ var root = (typeof window !== 'undefined' ? window : (typeof process === 'object
 
 
 var ds = root.ds = root.ds || {};
-/** @namespace ds.gemo */
+/**
+ * 这是一个项目开发常用的逻辑处理类的宝库
+ * @namespace ds.gemo
+ */
 ds.core = ds.gemo || {};
