@@ -1,17 +1,21 @@
 ### Dslibs
 
-一切为快速开发H5互动项目
+为快速开发H5互动项目而生代
+
+(Demo)[https://lqloveball.github.io/DsLibsDemo/]
 
 #### 目录说明
 
 - `src` DsLibs 源代码
 - `build`   webpack gulp jsdocs 命令配置
 - `docs`   文档目录
-- `H5EasyTemplate`  简单快速开发网站，可以不需要webpack与gulp(方便)
+- `docsbuild`   jsdocs文档教程资源目录
+- `examples`  案例编写目录
+- `H5EasyTemplate`  简单快速开发网站，可以不需要webpack与gulp
 - `H5Template`  使用Dslibs进行项目开发模板
-- `othre`   其他相关文件，
-    - 工作环境配置文件 package.json
-    - socket通用server
+- `othre`   其他相关文件，我们的工作环境package.json，socket通用server
+
+
 
 - 源码开发环境
     - `npm run docs_dev` 编写文档开发环境
