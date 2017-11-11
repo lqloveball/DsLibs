@@ -2,7 +2,7 @@
 
 为快速开发H5互动项目而生代
 
-(Demo)[https://lqloveball.github.io/DsLibsDemo/]
+[Demo](https://lqloveball.github.io/DsLibsDemo/)
 
 #### 目录说明
 
