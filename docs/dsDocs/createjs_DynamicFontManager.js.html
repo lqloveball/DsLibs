@@ -67,6 +67,51 @@
  * @memberof ds.createjs
  * @requires module:libs/createjs/createjs0.8.2.min.js
  * @requires module:ds/core/EventDispatcher.js
+ * @example
+ require('ds/createjs/DynamicFontManager');
+ var _dynamicFontManager = new ds.createjs.DynamicFontManager('./assets/AlzheimerFonts/');
+ //createjs 输入框界面
+ var _view = new lib.DynamicFontPage();
+ //字体显示容器
+ var _box = _view.box;
+ //记录当前文字内容
+ var _currentInfo;
+ var _color='#ffffff';
+ var _fontSize=25;
+ //创建输入框
+ var _input = ds.createjs.addInput(_view.textInput, {
+        width: 420,
+        color: '#30004A',
+        size: 22
+    }, '默认输入动态文本');
+
+ //输入框内容改变时候
+ _input.el.on('change', changeDynamicFont);
+ //输入框内容输入时候
+ _input.el.on('input', changeDynamicFont);
+
+ //输入框内容改变事件
+ function changeDynamicFont() {
+        if (_input.el[0].value === _currentInfo) return;
+        _currentInfo = _input.el[0].value;
+        _dynamicFontManager.loadFontsByContent(_currentInfo, dynamicFontLoadEnd);
+    }
+ //输入内容加载完成后
+ function dynamicFontLoadEnd(content) {
+        if (_currentInfo !== content) return;
+        _currentInfo=content;
+        _box.removeAllChildren();
+        for (var i = 0; i &lt; _currentInfo.length; i++) {
+            var _info=_currentInfo[i];
+            var _font=_dynamicFontManager.getShapeFont(_info,_color,_fontSize);
+            _box.addChild(_font);
+
+            _font.x=_fontSize*(i%21);
+            _font.y=(_fontSize+8)*(i/21>>0);
+        }
+    }
+ //默认呈现
+ changeDynamicFont();
  */
 class DynamicFontManager extends EventDispatcher {
 
@@ -105,7 +150,7 @@ class DynamicFontManager extends EventDispatcher {
             // console.log(info);
             if (!_textDc[_info] &amp;&amp; !this._userFontsDc[_info]) {
                 let _url = this._path + _info + '.txt';
-                _textDc[info] = {id: _info, src: _url};
+                _textDc[_info] = {id: _info, src: _url};
                 _textManifest.push(_textDc[_info]);
                 _textCodeList.push(_info);
             }
@@ -134,7 +179,7 @@ class DynamicFontManager extends EventDispatcher {
 
                 let _code = _textCodeList[i];
                 let _drawData = _queue.getResult(_code);
-                this._userFontsDc[_code] = _drawData;
+                _self._userFontsDc[_code] = _drawData;
 
             }
             /**
@@ -215,7 +260,7 @@ class DynamicFontManager extends EventDispatcher {
 
         if (!path || path.length === 0) return _shape;
 
-        var g = shape.graphics;
+        var g = _shape.graphics;
         g.beginFill(color);
 
         for (let i = 0; i &lt; path.length; i++) {
@@ -395,9 +440,9 @@ let root = (typeof window !== 'undefined' ? window : (typeof process === 'object
 
 let ds = root.ds = root.ds || {};
 ds.createjs = ds.createjs || {};
-ds.createjs.ScrollPanel = ScrollPanel;
+ds.createjs.DynamicFontManager = DynamicFontManager;
 
-export default ScrollPanel;</code></pre>
+export default DynamicFontManager;</code></pre>
         </article>
     </section>
 

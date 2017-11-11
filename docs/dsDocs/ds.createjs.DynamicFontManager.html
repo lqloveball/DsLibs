@@ -80,7 +80,7 @@
             
             <div class="container-source members">
                 <code><a href="createjs_DynamicFontManager.js.html">createjs/DynamicFontManager.js</a></code>,
-                <code><a href="createjs_DynamicFontManager.js.html#line12">line 12</a></code>
+                <code><a href="createjs_DynamicFontManager.js.html#line57">line 57</a></code>
             </div>
             
         </h4>
@@ -211,6 +211,54 @@
 
 
     
+        <h5>Example</h5>
+        
+    <pre class="prettyprint"><code>require('ds/createjs/DynamicFontManager');
+ var _dynamicFontManager = new ds.createjs.DynamicFontManager('./assets/AlzheimerFonts/');
+ //createjs 输入框界面
+ var _view = new lib.DynamicFontPage();
+ //字体显示容器
+ var _box = _view.box;
+ //记录当前文字内容
+ var _currentInfo;
+ var _color='#ffffff';
+ var _fontSize=25;
+ //创建输入框
+ var _input = ds.createjs.addInput(_view.textInput, {
+        width: 420,
+        color: '#30004A',
+        size: 22
+    }, '默认输入动态文本');
+
+ //输入框内容改变时候
+ _input.el.on('change', changeDynamicFont);
+ //输入框内容输入时候
+ _input.el.on('input', changeDynamicFont);
+
+ //输入框内容改变事件
+ function changeDynamicFont() {
+        if (_input.el[0].value === _currentInfo) return;
+        _currentInfo = _input.el[0].value;
+        _dynamicFontManager.loadFontsByContent(_currentInfo, dynamicFontLoadEnd);
+    }
+ //输入内容加载完成后
+ function dynamicFontLoadEnd(content) {
+        if (_currentInfo !== content) return;
+        _currentInfo=content;
+        _box.removeAllChildren();
+        for (var i = 0; i &lt; _currentInfo.length; i++) {
+            var _info=_currentInfo[i];
+            var _font=_dynamicFontManager.getShapeFont(_info,_color,_fontSize);
+            _box.addChild(_font);
+
+            _font.x=_fontSize*(i%21);
+            _font.y=(_fontSize+8)*(i/21>>0);
+        }
+    }
+ //默认呈现
+ changeDynamicFont();</code></pre>
+
+    
 
 </dd>
 
@@ -250,7 +298,7 @@
     
     <div class="container-source members">
         <code><a href="createjs_DynamicFontManager.js.html">createjs/DynamicFontManager.js</a></code>,
-        <code><a href="createjs_DynamicFontManager.js.html#line198">line 198</a></code>
+        <code><a href="createjs_DynamicFontManager.js.html#line243">line 243</a></code>
     </div>
     
 </h4>
@@ -319,7 +367,7 @@
     
     <div class="container-source members">
         <code><a href="createjs_DynamicFontManager.js.html">createjs/DynamicFontManager.js</a></code>,
-        <code><a href="createjs_DynamicFontManager.js.html#line190">line 190</a></code>
+        <code><a href="createjs_DynamicFontManager.js.html#line235">line 235</a></code>
     </div>
     
 </h4>
@@ -397,7 +445,7 @@
             
             <div class="container-source members">
                 <code><a href="createjs_DynamicFontManager.js.html">createjs/DynamicFontManager.js</a></code>,
-                <code><a href="createjs_DynamicFontManager.js.html#line207">line 207</a></code>
+                <code><a href="createjs_DynamicFontManager.js.html#line252">line 252</a></code>
             </div>
             
         </h4>
@@ -557,7 +605,7 @@
             
             <div class="container-source members">
                 <code><a href="createjs_DynamicFontManager.js.html">createjs/DynamicFontManager.js</a></code>,
-                <code><a href="createjs_DynamicFontManager.js.html#line153">line 153</a></code>
+                <code><a href="createjs_DynamicFontManager.js.html#line198">line 198</a></code>
             </div>
             
         </h4>
@@ -738,7 +786,7 @@
             
             <div class="container-source members">
                 <code><a href="createjs_DynamicFontManager.js.html">createjs/DynamicFontManager.js</a></code>,
-                <code><a href="createjs_DynamicFontManager.js.html#line98">line 98</a></code>
+                <code><a href="createjs_DynamicFontManager.js.html#line143">line 143</a></code>
             </div>
             
         </h4>
@@ -896,7 +944,7 @@
             
             <div class="container-source members">
                 <code><a href="createjs_DynamicFontManager.js.html">createjs/DynamicFontManager.js</a></code>,
-                <code><a href="createjs_DynamicFontManager.js.html#line109">line 109</a></code>
+                <code><a href="createjs_DynamicFontManager.js.html#line154">line 154</a></code>
             </div>
             
         </h4>
@@ -1049,7 +1097,7 @@
             
             <div class="container-source members">
                 <code><a href="createjs_DynamicFontManager.js.html">createjs/DynamicFontManager.js</a></code>,
-                <code><a href="createjs_DynamicFontManager.js.html#line122">line 122</a></code>
+                <code><a href="createjs_DynamicFontManager.js.html#line167">line 167</a></code>
             </div>
             
         </h4>
@@ -1255,7 +1303,7 @@
             
             <div class="container-source members">
                 <code><a href="createjs_DynamicFontManager.js.html">createjs/DynamicFontManager.js</a></code>,
-                <code><a href="createjs_DynamicFontManager.js.html#line32">line 32</a></code>
+                <code><a href="createjs_DynamicFontManager.js.html#line77">line 77</a></code>
             </div>
             
         </h4>
@@ -1425,7 +1473,7 @@
             
             <div class="container-source members">
                 <code><a href="createjs_DynamicFontManager.js.html">createjs/DynamicFontManager.js</a></code>,
-                <code><a href="createjs_DynamicFontManager.js.html#line81">line 81</a></code>
+                <code><a href="createjs_DynamicFontManager.js.html#line126">line 126</a></code>
             </div>
             
         </h4>
@@ -1566,7 +1614,7 @@
             
             <div class="container-source members">
                 <code><a href="createjs_DynamicFontManager.js.html">createjs/DynamicFontManager.js</a></code>,
-                <code><a href="createjs_DynamicFontManager.js.html#line56">line 56</a></code>
+                <code><a href="createjs_DynamicFontManager.js.html#line101">line 101</a></code>
             </div>
             
         </h4>
