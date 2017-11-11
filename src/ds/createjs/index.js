@@ -148,8 +148,9 @@ ds.createjs.removeDOM = function (domElement) {
  * @param {createjs.Container} display 显示容器
  * @param {HTMlElement} dom  dom对象
  * @param {HTMlElement} domBox 添加到dom容器
- * @param {function} fun
- * * @example
+ * @param {function} fun click执行函数
+ * @return {createjs.DOMElement}
+ * @example
  * var _img=new Image();
  * _img.src='./images/ShareImg.jpg';
  * ds.createjs.addHitDom(_View.movie.box,_img,null,function(){
@@ -158,10 +159,31 @@ ds.createjs.removeDOM = function (domElement) {
  */
 ds.createjs.addHitDom = function (display, dom, domBox, fun) {
 
-    ds.createjs.addDOM(display, dom, domBox);
+    let _domElement = ds.createjs.addDOM(display, dom, domBox);
 
     if (fun) $(dom).on('click', fun);
 
+    return _domElement;
+
+};
+/**
+ * 为createjs绑定的dom元素来做click触发
+ * @param {createjs.Container} display 显示容器
+ * @param width  dom 的宽
+ * @param height dom 的高
+ * @param {function} fun click执行函数
+ * @return {createjs.DOMElement}
+ */
+ds.createjs.addEventDom = function (display, width, height, fun) {
+
+    let _dom = document.createElement("div");
+    $(_dom).css({width: width, height: height});
+
+    let _domElement = ds.createjs.addDOM(display, _dom);
+
+    if (fun) _domElement.on('click', fun);
+
+    return _domElement;
 };
 
 /**
@@ -172,23 +194,23 @@ ds.createjs.addHitDom = function (display, dom, domBox, fun) {
  * @param {function} loadend=undefined 头像加载完成方法
  * @return {createjs.Bitmap} 一个位图显示对象
  */
-ds.createjs.addAvatar=function (url,size,box,loadend) {
+ds.createjs.addAvatar = function (url, size, box, loadend) {
 
-    var _img=new Image();
+    var _img = new Image();
     _img.crossOrigin = "Anonymous";
     var _bmp = new createjs.Bitmap();
-    _bmp.image=_img;
-    _img.onload=function () {
-        if(box)box.addChild(_bmp);
-        var _s=size/_img.width;
-        _bmp.scaleX=_bmp.scaleY=_s;
-        if(loadend)loadend(_bmp);
+    _bmp.image = _img;
+    _img.onload = function () {
+        if (box) box.addChild(_bmp);
+        var _s = size / _img.width;
+        _bmp.scaleX = _bmp.scaleY = _s;
+        if (loadend) loadend(_bmp);
     };
 
-    _img.onerror=function () {
-        if(loadend)loadend(_bmp);
+    _img.onerror = function () {
+        if (loadend) loadend(_bmp);
     };
-    _img.src=url;
+    _img.src = url;
     return _bmp;
 
 };
@@ -718,7 +740,7 @@ let AdobeAnCompositionsList = [];
  * createjs资源加载后命名空间list
  * @type {Array}
  */
-ds.createjs.JSNCS=[];
+ds.createjs.JSNCS = [];
 /**
  * 加载动资源资源队列
  * @param {object} opts 加载参数
@@ -819,11 +841,12 @@ ds.createjs.loadAssets = function (opts) {
 
     jsloader.load();
 
-    var _isCC2018Version=false;
+    var _isCC2018Version = false;
+
     function jsComplete(e) {
 
-        if (!AdobeAn||!AdobeAn.compositions)_isCC2018Version=false;
-        else  _isCC2018Version=true;
+        if (!AdobeAn || !AdobeAn.compositions) _isCC2018Version = false;
+        else _isCC2018Version = true;
 
         queueStartLoad();
 
@@ -871,7 +894,7 @@ ds.createjs.loadAssets = function (opts) {
             queueArr = lib.properties.manifest;
             ssMetadata = lib.ssMetadata;
 
-            ds.createjs.JSNCS.push({name:jsNS, id:_currentID});
+            ds.createjs.JSNCS.push({name: jsNS, id: _currentID});
 
         }
 
@@ -987,7 +1010,7 @@ ds.createjs.create = function (opts) {
 
     let _cjsModel;
 
-    let _hasGL=(opts.hasGL && ds.createjs.isWebGLSupported());
+    let _hasGL = (opts.hasGL && ds.createjs.isWebGLSupported());
     // let _hasGL=false;
 
     if (_hasGL) {
@@ -1043,7 +1066,7 @@ ds.createjs.create = function (opts) {
 
     if (opts.appendTo !== undefined) _cjsModel.appendTo(opts.appendTo);
 
-    _cjsModel.isWebGL=_hasGL
+    _cjsModel.isWebGL = _hasGL
 
     _cjsModel.size(_width, _height);
 
