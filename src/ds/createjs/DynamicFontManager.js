@@ -336,6 +336,6 @@ let root = (typeof window !== 'undefined' ? window : (typeof process === 'object
 
 let ds = root.ds = root.ds || {};
 ds.createjs = ds.createjs || {};
-ds.createjs.ScrollPanel = ScrollPanel;
+ds.createjs.DynamicFontManager = DynamicFontManager;
 
-export default ScrollPanel;
+export default DynamicFontManager;
