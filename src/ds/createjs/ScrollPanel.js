@@ -20,6 +20,7 @@ class ScrollPanel extends EventDispatcher {
      * @param {number} width  容器宽 自动创建反馈触摸的dom时候需要
      * @param {number} height 容器高 计算容器
      * @param {object} opts  设置配置
+     * @param {HTMLElement} opts.dom=undefined   反馈触摸的dom对象。
      * @param {boolean} opts.autoDom=true 是否自动创建反馈触摸的dom，如果自动创建dom会覆盖在canvas元素上，内容无法点击
      * @param {number} opts.maxSpeed=5 触摸反馈的最大速度限制
      */
@@ -27,7 +28,7 @@ class ScrollPanel extends EventDispatcher {
         super();
         opts = opts || {};
 
-        var _self=this;
+        let _self=this;
 
         this._width = width;
         this._height = height;

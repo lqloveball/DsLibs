@@ -247,7 +247,7 @@
         /**
          * threeJs 模块
          * 在SiteModel.beforeSinglePageApplicationLoadAssets()内按配置需求创建
-         * @member ds.core.SiteModelByMobile.prototype.threeJs
+         * @member ds.core.SiteModelByMobile.prototype.threeJsModel
          * @type {ds.threejs.ThreeJsModel}
          */
         this.threeJsModel = null;
