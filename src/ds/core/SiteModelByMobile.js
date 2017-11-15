@@ -136,7 +136,7 @@
 
         opts = opts || {};
 
-        this.cjsLoadData=opts.cjsLoadData;
+        this.cjsLoadData = opts.cjsLoadData;
         /**
          * 默认加载模块
          * @member ds.core.SiteModelByMobile.prototype.loadModel
@@ -412,7 +412,7 @@
                          * 单页面应用加载完成
                          * @event ds.core.SiteModelByMobile#spaEnd
                          */
-                        if(_self.ds)_self.ds('spaEnd');
+                        if (_self.ds) _self.ds('spaEnd');
                     });
 
                 } else {
@@ -436,7 +436,7 @@
          */
         function loadBaseFrameWork() {
 
-            var _url=opts.baseUrl||'./js/app/base.js';
+            var _url = opts.baseUrl || './js/app/base.js';
 
             _self.getScript(_url, function () {
 
@@ -449,13 +449,13 @@
 
                 iniResizeModel();
 
-                if(opts.baseEnd)opts.baseEnd();
+                if (opts.baseEnd) opts.baseEnd();
 
                 /**
                  * 加载基础框架 完成 $选择器 EventDispatcher 自适应 背景声音播放器
                  * @event ds.core.SiteModelByMobile#baseEnd
                  */
-                if(_self.ds)_self.ds('baseEnd');
+                if (_self.ds) _self.ds('baseEnd');
 
                 //判断是否需要cteatejs的loading，如果需要createjs来实现loading，那就执行加载createjs框架
                 if (opts.hasCJS && _self.isCJSLoad) loadCreateJsFrameWork();
@@ -473,7 +473,7 @@
          */
         function loadCreateJsFrameWork() {
 
-            var _url=opts.cjsUrl||'./js/app/createjsFrameWork.js';
+            var _url = opts.cjsUrl || './js/app/createjsFrameWork.js';
 
             _self.getScript(_url, function () {
 
@@ -483,7 +483,7 @@
                  * createjs框架加载完成
                  * @event ds.core.SiteModelByMobile#createjsEnd
                  */
-                if(_self.ds)_self.ds('createjsEnd');
+                if (_self.ds) _self.ds('createjsEnd');
 
                 //如果是createjs类型网站或者需要createjsloading 都需要在initCreateJsModel创建后调用loading
                 if (opts.hasCJSModel) initCreateJsModel();
@@ -520,7 +520,7 @@
              * createJsModel模块 构建完成
              * @event ds.core.SiteModelByMobile#cjsModelBuild
              */
-            if(_self.ds)_self.ds('cjsModelBuild');
+            if (_self.ds) _self.ds('cjsModelBuild');
 
         }
 
@@ -554,11 +554,11 @@
             _self.resizeModel = new ds.core.MoblieResizeModel({
                 screen: _self.screen[0],
                 type: _resizeModelType,
-                delay:opts.resizeDelay||100
+                delay: opts.resizeDelay || 100
             });
 
             //进行提示浮动层显示
-            if(_self.resizeModel.type!=='auto')_self.resizeModel.createOrientationTip();
+            if (_self.resizeModel.type !== 'auto') _self.resizeModel.createOrientationTip();
 
 
             //监听场景自适应
@@ -602,7 +602,7 @@
          */
         function initPixiJsModel() {
 
-            if (ds.pixijs && ds.pixijs.create){
+            if (ds.pixijs && ds.pixijs.create) {
 
                 _self.pixiJsModel = ds.pixijs.create({
                     appendTo: $('#pixiBox')[0],
@@ -618,7 +618,7 @@
                  * pixiJsModelBuild模块 构建完成
                  * @event ds.core.SiteModelByMobile#pixiJsModelBuild
                  */
-                if(_self.ds)_self.ds('pixiJsModelBuild');
+                if (_self.ds) _self.ds('pixiJsModelBuild');
             }
 
 
@@ -649,7 +649,7 @@
                  * threeJsModelBuild模块 构建完成
                  * @event ds.core.SiteModelByMobile#threeJsModelBuild
                  */
-                if(_self.ds)_self.ds('threeJsModelBuild');
+                if (_self.ds) _self.ds('threeJsModelBuild');
             }
 
         }
@@ -665,21 +665,21 @@
 
             console.log('before SAP LoadAssets Start');
 
-            var _other=[];
+            var _other = [];
             var _url;
 
-            if (opts.hasThreeJs || opts.hasThreeJsModel){
-                _url =opts.threeUrl||'./js/libs/three.min.js';
+            if (opts.hasThreeJs || opts.hasThreeJsModel) {
+                _url = opts.threeUrl || './js/libs/three.min.js';
                 _other.push(_url);
             }
 
-            if (opts.hasPixiJs || opts.hasPixiJsModel){
-                _url=opts.pixiUrl||'./js/libs/pixijs.min.js';
+            if (opts.hasPixiJs || opts.hasPixiJsModel) {
+                _url = opts.pixiUrl || './js/libs/pixijs.min.js';
                 _other.push(_url);
             }
 
-            if(opts.otherjs&&opts.otherjs.length>=0){
-                var _arr=opts.otherjs;
+            if (opts.otherjs && opts.otherjs.length >= 0) {
+                var _arr = opts.otherjs;
                 for (var i = 0; i < _arr.length; i++) {
                     _url = _arr[i];
                     _other.push(_url);
@@ -690,20 +690,20 @@
              * 开始加载其他需要的js文件（spa 在加载资源与initModel前执行）
              * @event ds.core.SiteModelByMobile#otherJsStart
              */
-            if(_self.ds)_self.ds('otherJsStart');
+            if (_self.ds) _self.ds('otherJsStart');
 
-            _self.getScriptList(_other,function () {
+            _self.getScriptList(_other, function () {
 
-                if(opts.hasPixiJsModel)initPixiJsModel();
-                if(opts.hasThreeJsModel)initThreeJsModel();
+                if (opts.hasPixiJsModel) initPixiJsModel();
+                if (opts.hasThreeJsModel) initThreeJsModel();
 
                 /**
                  * 加载其他需要的js文件完成
                  * @event ds.core.SiteModelByMobile#otherJsEnd
                  */
-                if(_self.ds)_self.ds('otherJsEnd');
+                if (_self.ds) _self.ds('otherJsEnd');
 
-                if(callback)callback();
+                if (callback) callback();
 
             });
 
@@ -721,75 +721,6 @@
 
         };
 
-        /**
-         * 网站加载其他需要的js，把加载的js嵌入到HTML页面'head'标签内
-         * @param {string} src js代码路径
-         * @param {function} complete js加载完成后执行方法
-         * @method ds.core.SiteModelByMobile.prototype.getScript
-         */
-        this.getScript = function (src, complete) {
-
-            var _script = document.createElement("script");
-
-            _script.setAttribute("type", "text/javascript");
-
-            //ie下
-            if (_script.onreadystatechange) {
-
-                _script.onreadystatechange = function () {
-
-                    if (this.readyState == "loaded" || this.readyState == "complete") {
-
-                        if (complete) complete();
-
-                    }
-
-                };
-
-            } else {
-
-                //其他浏览器
-                _script.onload = function () {
-
-                    if (complete) complete();
-
-                };
-
-            }
-
-            document.getElementsByTagName("head")[0].appendChild(_script);
-            _script.src = src;
-
-        };
-        /**
-         * 加载插入js列表
-         * @param {array} list 加载js列表数组
-         * @param {funtion} complete 加载完成后执行的方法回调
-         */
-        this.getScriptList=function (list,complete) {
-
-            if(!list||list.length<=0){
-                if(complete)complete();
-                return;
-            }
-
-            var _index=-1;
-            function load() {
-
-                _index++;
-                if(_index>=list.length){
-                    if(complete)complete();
-                    return;
-                }
-
-                var _url=list[_index];
-                _self.getScript(_url,load);
-
-            }
-
-            load();
-
-        };
 
         //锁定滑动页面
         document.addEventListener('touchmove', function (e) {
@@ -802,7 +733,84 @@
 
         }, false);
 
+        this.getScript=getScript;
+        this.getScriptList=getScriptList;
     }
+
+    /**
+     * 网站加载其他需要的js，把加载的js嵌入到HTML页面'head'标签内
+     * @param {string} src js代码路径
+     * @param {function} complete js加载完成后执行方法
+     * @method ds.core.SiteModelByMobile.getScript
+     */
+    SiteModelByMobile.getScript = getScript
+
+    function getScript(src, complete) {
+        var _script = document.createElement("script");
+
+        _script.setAttribute("type", "text/javascript");
+
+        //ie下
+        if (_script.onreadystatechange) {
+
+            _script.onreadystatechange = function () {
+
+                if (this.readyState == "loaded" || this.readyState == "complete") {
+
+                    if (complete) complete();
+
+                }
+
+            };
+
+        } else {
+
+            //其他浏览器
+            _script.onload = function () {
+
+                if (complete) complete();
+
+            };
+
+        }
+
+        document.getElementsByTagName("head")[0].appendChild(_script);
+        _script.src = src;
+    }
+
+    /**
+     * 加载插入js列表
+     * @param {array} list 加载js列表数组
+     * @param {funtion} complete 加载完成后执行的方法回调
+     * @method ds.core.SiteModelByMobile.getScriptList
+     */
+    SiteModelByMobile.getScriptList = getScriptList
+
+    function getScriptList(list, complete) {
+
+        if (!list || list.length <= 0) {
+            if (complete) complete();
+            return;
+        }
+
+        var _index = -1;
+
+        function load() {
+
+            _index++;
+            if (_index >= list.length) {
+                if (complete) complete();
+                return;
+            }
+
+            var _url = list[_index];
+            _self.getScript(_url, load);
+
+        }
+
+        load();
+    };
+
 
     var ds = root.ds = root.ds || {};
     ds.core = ds.core || {};
