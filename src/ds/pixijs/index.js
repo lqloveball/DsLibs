@@ -1,4 +1,4 @@
-import PixiModel from  'PixiModel'
+import PixiModel from  './PixiModel';
 
 let root = (typeof window !== 'undefined' ? window : (typeof process === 'object' && typeof require === 'function' && typeof global === 'object') ? global : this);
 
@@ -26,7 +26,7 @@ ds.pixijs.loadAssets=function () {
  */
 ds.pixijs.create=function (opts) {
 
-    return new ds.pixijs.PixiModel(opts);
+    return new PixiModel(opts);
 
 };
 

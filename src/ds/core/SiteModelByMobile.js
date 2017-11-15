@@ -605,6 +605,7 @@
          * 初始化pixijs模块创建 **【受保护内部执行】**
          * @access protected
          * @method ds.core.SiteModelByMobile.prototype.initPixiJsModel
+         * @requires  require('ds/pixijs');
          */
         function initPixiJsModel() {
 
@@ -635,7 +636,7 @@
          * 初始化threejs模块创建 **【受保护内部执行】**
          * @access protected
          * @method ds.core.SiteModelByMobile.prototype.initThreeJsModel
-         *
+         * @requires  require('ds/threejs');
          */
         function initThreeJsModel() {
 
@@ -697,6 +698,7 @@
              * @event ds.core.SiteModelByMobile#otherJsStart
              */
             if (_self.ds) _self.ds('otherJsStart');
+            console.log('load other:',_other);
 
             _self.getScriptList(_other, function () {
 
