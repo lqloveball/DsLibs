@@ -1,0 +1,79 @@
+.Ds_PopLayer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+.Ds_PopLayer .bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #000;
+  opacity: 0.8;
+}
+.Ds_PopLayer .panel {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: -webkit-flex;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  width: 500px;
+  height: 250px;
+  margin-left: -250px;
+  margin-top: -125px;
+  background: #fff;
+  border-radius: 30px;
+  text-align: center;
+}
+.Ds_PopLayer .panel .close {
+  position: absolute;
+  top: -15px;
+  right: -15px;
+  width: 50px;
+  height: 50px;
+  background: #fff;
+  border-radius: 25px;
+  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.7);
+}
+.Ds_PopLayer .panel .close .closeSvg {
+  fill: #000;
+}
+.Ds_PopLayer .panel .title {
+  width: 100%;
+  color: #000;
+  font-size: 30px;
+  line-height: 60px;
+}
+.Ds_PopLayer .panel .info {
+  display: -webkit-flex;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 80%;
+  text-align: center;
+  color: #000;
+  font-size: 25px;
+}
+
+.Ds_PopLayer .panel .btnPanel {
+  display: -webkit-flex;
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 60px;
+  line-height: 60px;
+  font-size: 25px;
+  border-top: 1px solid #ccc;
+  overflow: hidden;
+}
+.Ds_PopLayer .panel .btnPanel .btn {
+  color: #000;
+  width: 100%;
+  height: 100%;
+}

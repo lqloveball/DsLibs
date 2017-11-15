@@ -11,6 +11,5 @@
 /examples/src/
 /examples/build/
 /examples/less/
-/src/Ds/
 package-lock.json
 *.DS_Store
