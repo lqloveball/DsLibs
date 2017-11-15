@@ -8,17 +8,13 @@
     <meta name="format-detection" content="telephone=no">
     <meta content="telephone=no" name="format-detection" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <title>H5 Dslibs 项目模板</title>
-    <link rel="stylesheet" href="./css/main.css" />
-    <!-- 根据不同规范 也许需要 polyfillA.js -->
+    <title>简易项目模板 By Webpack打包</title>
+    <link rel="stylesheet" href="./css/index.css" />
     <script src="js/libs/polyfillB.js"></script>
     <script>
         var ua = navigator.userAgent;
-        if (/Android (\d+\.\d+)/.test(ua)) {
-            document.write('<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no">');
-        } else {
-            document.write('<meta name="viewport" content="width=640,target-densitydpi=device-dpi,maximum-scale=1.0, user-scalable=no">');
-        }
+        if (/Android (\d+\.\d+)/.test(ua)) document.write('<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no">');
+        else document.write('<meta name="viewport" content="width=640,target-densitydpi=device-dpi,maximum-scale=1.0, user-scalable=no">');
     </script>
     <style>
         html,body {
@@ -28,11 +24,12 @@
             overflow: hidden;
             background-color: #ccc;
         }
-
     </style>
+    <script>
+    </script>
 </head>
 <body>
-    <div id="screen">
+    <div id="screen" data-example="js/app/index.js">
         <!-- threejs容器 如果不使用可以删除-->
          <div id="threejsBox"></div>
         <!-- pixi容器 如果不使用可以删除-->
@@ -54,7 +51,6 @@
             <div class="label">loading...</div>
         </div>
     </div>
-    <!-- 主入口文件 -->
-    <script src="js/app/main.js"></script>
+    <script src="js/edslibs/ESiteModel.js"></script>
 </body>
 </html>

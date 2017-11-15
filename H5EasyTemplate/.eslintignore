@@ -1,0 +1,7 @@
+#井号是注释  根据自己的项目需要进行忽略
+# 如果 .eslintrc 开启了 env  nodejs 那么 默认 node_modules是自动忽略的
+node_modules
+/node_modules/**
+*.sh
+js
+build/**

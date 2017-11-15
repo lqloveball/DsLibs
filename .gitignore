@@ -5,11 +5,8 @@
 /H5Template/src/libs/
 /H5Template/src/app/pages/
 /H5TemplateTest/
-/H5TemplateTest/src/ds/
-/H5TemplateTest/src/libs/
-/examples/
-/examples/src/
-/examples/build/
-/examples/less/
+/H5EasyTemplate/source/ds/
+/H5EasyTemplate/source/libs/
+/H5EasyTemplate/source/threejs/
 package-lock.json
 *.DS_Store
