@@ -5,9 +5,9 @@ require('jstween');//15k
 // require('jstimeline');//11 KB
 // require('tweenlite');//28k
 // require('timelinelite');//13 KB
-require('tweenmax');//113 KB
+// require('tweenmax');//113 KB
 //需要threejs相关扩展模块
-require('ds/threejs/index.js');
+// require('ds/threejs/index.js');
 //=================项目需要支持模块=======
 //通用的提示浮动层，alert代替解决方案模块
 require('ds/ui/PopAlert');
@@ -67,7 +67,6 @@ function AppMain() {
         //     'main.js',
         //     initModels,
         //     [20, 100],
-        //     {basePath: './assets/'}
         // );
 
     }

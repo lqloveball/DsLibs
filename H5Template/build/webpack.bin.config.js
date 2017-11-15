@@ -9,30 +9,32 @@ var FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin');
 function resolveBowerPath(dir) {
   return path.join(__dirname, '..',  dir);
 }
+var webpackEntry={};
 //获取指定路径下的入口文件
 function getEntries(dir,ext) {
-    var files = glob.sync(dir + '/*.' + ext),
-        res = {};
-        console.log(files);
+    var files = glob.sync(dir + '/*.' + ext);
+    // console.log('getEntries------>');
     files.forEach(function(file) {
-      var relativePath = path.relative(dir, file),
-           relativeName = relativePath.slice(0, relativePath.lastIndexOf('.'));
-       res[relativeName] = dir+'/' + relativePath;
+        var relativePath = path.relative(dir, file),
+            relativeName = relativePath.slice(0, relativePath.lastIndexOf('.'));
+
+        console.log('relativePath:',relativePath,"relativeName:",relativeName);
+        webpackEntry[relativeName] = dir+'/' + relativePath;
     });
-    return res;
+    return webpackEntry;
 }
 //根据src目录下js文件，来动态判断入口文件
-var webpackEntry=getEntries('./src','js');
+getEntries(resolveBowerPath('./src'),'js');
 console.log(webpackEntry);
 //一些公共库
-webpackEntry.base=[
+webpackEntry['../edslibs/base']=[
     'jquery',
     'eventdispatcher',
     'moblieresizemodel',
     'ds/media/AutoAudioManager',
 ];
 //有需要用到createjs时候打开
-webpackEntry.createjsFrameWork=[
+webpackEntry['../edslibs/createjsFrameWork']=[
     'createjs',
     'dscreatejs',
 ];
