@@ -59,24 +59,28 @@ else {
         _cf.hasThreeJsModel = _getDefault(_screen.getAttribute('data-hasThreeJsModel'), false);
         _cf.hasPixiJs = _getDefault(_screen.getAttribute('data-hasPixiJs'), false);
         _cf.hasPixiJsModel = _getDefault(_screen.getAttribute('data-hasPixiJsModel'), false);
-        if(_cf.hasThreeJs||_cf.hasThreeJsModel){
+
+        if(_cf.hasThreeJs||_cf.hasThreeJsModel||_cf.hasPixiJs||_cf.hasPixiJsModel){
             if(!_cf.otherjs)_cf.otherjs=[];
-            _cf.otherjs.push('./js/edslibs/extend_threejs.js');
+            if(_cf.hasThreeJs||_cf.hasThreeJsModel)_cf.otherjs.push('./js/edslibs/extend_threejs.js');
+            if(_cf.hasPixiJs||_cf.hasPixiJsModel)_cf.otherjs.push('./js/edslibs/extend_pixijs.js');
         }
-        if(_cf.hasPixiJs||_cf.hasPixiJsModel){
-            if(!_cf.otherjs)_cf.otherjs=[];
-            _cf.otherjs.push('./js/edslibs/extend_pixijs.js');
-        }
-        window.SiteModelStart(_cf);
+
+        SiteModelStart(_cf);
+
     }
     else if (_screen && _screen.getAttribute('data-config')) {
+
         var _mode = _getDefault(_screen.getAttribute('data-mode'), 'default');
         var _url = _getAbsoluteUrl(_screen.getAttribute('data-config'));
+
         ds.core.SiteModelByMobile.getScript(_url, function () {
+
             if (!window['SiteConfig']) {
                 console.warn('请配置简易单页');
                 return;
             }
+
             _mode = _getDefault(SiteConfig.mode, _mode);
             SiteConfig.mode = _mode;
 
@@ -84,6 +88,7 @@ else {
             else SiteConfig.url = 'js/edslibs/DefaultMain.js';
 
             SiteModelStart(SiteConfig);
+
         });
     }
     else {

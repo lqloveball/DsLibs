@@ -127,12 +127,12 @@
 
             var _config=SiteModel.cjsLoadData;
             if(_config){
-               _loadObj.basePath=_config.basePath||_loadObj.basePath;
-               _loadObj.jsUrl=_config.jsUrl||_loadObj.jsUrl;
-               _loadObj.jsNS=_config.jsNS||_loadObj.jsNS;
-               _loadObj.imgNS=_config.imgNS||_loadObj.imgNS;
-               _loadObj.loadType=_config.loadType!==undefined?_config.loadType:_loadObj.imgNS;
-               _loadObj.crossOrigin=_config.crossOrigin!==undefined?_config.crossOrigin:_loadObj.imgNS;
+               _loadObj.basePath=_getDefault(_config.basePath,_loadObj.basePath);
+               _loadObj.jsUrl=_getDefault(_config.jsUrl,_loadObj.jsUrl);
+               _loadObj.jsNS=_getDefault(_config.jsNS,_loadObj.jsNS);
+               _loadObj.imgNS=_getDefault(_config.imgNS,_loadObj.imgNS);
+               _loadObj.loadType=_getDefault(_config.loadType,_loadObj.imgNS);
+               _loadObj.crossOrigin=_getDefault(_config.crossOrigin,_loadObj.imgNS);
             }
 
             //loading加载完成后的方法处理
@@ -190,6 +190,7 @@
          */
         this.loadCJS=function (url,complete,progress,opts) {
 
+            opts=opts||{};
             var _progressArr;
             if(typeof progress ==='string')_progressArr=progress.split(',');
             else if(progress instanceof Array)_progressArr=progress;
@@ -207,13 +208,13 @@
 
             //加载配置对象
             var _loadData = {
-                basePath: opts.basePath||'./assets/',
+                basePath: _getDefault(opts.basePath,'./assets/'),
                 jsUrl: url,
-                jsNS: opts.jsNS||'lib',
-                imgNS:  opts.imgNS||'images',
-                loadType:opts.loadType|| true,
-                crossOrigin: opts.crossOrigin!==undefined?opts.crossOrigin:false,
-                otherList: opts.otherList!==undefined?opts.otherList:[],
+                jsNS: _getDefault(opts.jsNS,'lib'),
+                imgNS:  _getDefault(opts.imgNS,'images'),
+                loadType:_getDefault(opts.loadType, true),
+                crossOrigin: _getDefault(opts.crossOrigin,false),
+                otherList: _getDefault(opts.otherList,[]),
                 complete: function (e) {
 
                     if(complete)complete();
@@ -234,6 +235,13 @@
 
         };
 
+    }
+
+    function _getDefault(obj, defaultValue) {
+        if(obj === undefined|| obj === null)return defaultValue;
+        if(obj==='true')return true;
+        else if(obj==='false')return false;
+        return obj;
     }
 
     var ds = root.ds = root.ds || {};

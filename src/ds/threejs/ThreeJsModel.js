@@ -74,12 +74,12 @@ class ThreeJsModel extends EventDispatcher {
          * 3d场景宽
          * @type {number}
          */
-        this.width=_width;
+        this.width = _width;
         /**
          * 3d场景高
          * @type {number}
          */
-        this.height=_height;
+        this.height = _height;
 
         let _render = new THREE.WebGLRenderer({
             canvas: opts.canvas ? opts.canvas : document.createElement("canvas"),
@@ -201,11 +201,7 @@ class ThreeJsModel extends EventDispatcher {
         this._mouse = new THREE.Vector2();
 
 
-        /**
-         * 交互对象列表
-         * @type {Array}
-         */
-        this.intersectObjects = [];
+        this._intersectObjects = [];
 
         /**
          * 是否拥有模型动画渲染
@@ -216,8 +212,6 @@ class ThreeJsModel extends EventDispatcher {
 
         //three 时钟对象
         this._clock = new THREE.Clock();
-
-
 
 
         /**
@@ -254,13 +248,49 @@ class ThreeJsModel extends EventDispatcher {
 
     }
 
-    get pause(){
+    /**
+     * 添加一个交互对象
+     * @param obj
+     */
+    addIntersectObject(obj) {
+        if (this._intersectObjects.indexOf(obj) === -1) this._intersectObjects.push(obj);
+    }
+
+    /**
+     * 删除一个交互对象
+     * @param obj
+     */
+    removeIntersectObject(obj) {
+        if (this._intersectObjects.indexOf(obj) !== -1) {
+            for (let i = 0; i < this._intersectObjects.length; i++) {
+                if (this._intersectObjects[i] === obj) {
+                    this._intersectObjects.splice(i, 1);
+                    return;
+                }
+            }
+        }
+    }
+
+    /**
+     * 交互对象列表
+     * @type {Array}
+     */
+    get intersectObjects() {
+        return this._intersectObjects.concat();
+    }
+
+    /**
+     * 暂定渲染
+     * @return {*}
+     */
+    get pause() {
         return this._pause;
     }
-    set pause(bool){
-        if(this._pause===bool)return;
-        this._pause=bool;
-        if(!this._pause)this[_animateFrame]();
+
+    set pause(bool) {
+        if (this._pause === bool) return;
+        this._pause = bool;
+        if (!this._pause) this[_animateFrame]();
     }
 
     /**
@@ -295,7 +325,7 @@ class ThreeJsModel extends EventDispatcher {
      * 创建一个控制器，方便调试时候使用
      * @requires require('threejs/controls/OrbitControls.js')
      */
-    createControls() {
+    createControls(dom) {
 
         if (!THREE.OrbitControls) {
 
@@ -307,11 +337,12 @@ class ThreeJsModel extends EventDispatcher {
         if (this.controls) return;
 
         console.log('createControls');
+        let _dom=dom!==undefined?$(dom)[0]:this.render.domElement;
         /**
          * 镜头控制器
          * @type {THREE.OrbitControls}
          */
-        this.controls = new THREE.OrbitControls(this.camera, this.render.domElement);
+        this.controls = new THREE.OrbitControls(this.camera, _dom);
         // this.controls = new THREE.OrbitControls(this.camera, $('body')[0]);
 
     }
