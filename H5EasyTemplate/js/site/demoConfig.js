@@ -101,7 +101,7 @@ var SiteConfig = {
     ],
 
     //【非必填】可以设置默认第一个页面 .默认是pages里面的第一个页面
-    firstPage: 'HtmlPage',
+    firstPage: 'IntroPage',
     //【非必填】可以设置本地debug 默认第一个页面
     // debugFirstPage: 'MovieInOutPage',
     //【非必填】设置作品回流页面
