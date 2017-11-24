@@ -75,7 +75,8 @@ var SiteConfig = {
                 var _image=new Image();
                 _image.src='./images/ShareImg.jpg';
                 this.view.append(_image);
-            }
+            },
+            touchSwipe:false
         },
         //【页面配置方式5】配置视频页面
         {
@@ -88,6 +89,11 @@ var SiteConfig = {
             width:1235,
             //设置视频高
             height: 640,
+            initUI:function () {
+              this.view.find('.uiPanel .btn').on('click',function () {
+                  SiteModel.gotoPage('MovieInPage');
+              });
+            },
             //视频准备可以播放时候
             readyPlay:function () {
 
@@ -97,6 +103,7 @@ var SiteConfig = {
                 console.log(this.name,'playEnd');
                 SiteModel.gotoPage('MovieInPage');
             }
+
         },
     ],
 
@@ -142,6 +149,7 @@ var SiteConfig = {
     baseEnd: loadBaseEnd,
     //【非必填】默认'v'竖屏 'h'横屏 'auto' 横竖屏皆可以
     type:'auto',
+    resizeDelay:300,
 };
 
 
