@@ -131,10 +131,11 @@ class DefaultMain extends ds.core.EventDispatcher {
             _index += 1;
             if (_index >= _loadList.length) {
                 loadEnd();
+                SiteModel.resize();
                 return;
             }
+            // if(_index===0)SiteModel.resize();
 
-            SiteModel.resize();
 
             _nowLoadData = _loadList[_index];
 
@@ -207,7 +208,7 @@ class DefaultMain extends ds.core.EventDispatcher {
                 return;
             }
             else {
-                
+
                 let _workid=_urlParamDc['WorkID'];
                 _firstPage = _workPage.name;
                 this.isWorkBack=true;
@@ -229,13 +230,14 @@ class DefaultMain extends ds.core.EventDispatcher {
             }
         }
         else{
-            SiteModel.hitLoadPanel();
+
             let _pager = SiteModel.pager;
             _firstPage = SiteConfig.firstPage;
             if (SiteModel.debug && SiteConfig.debugFirstPage) _firstPage = SiteConfig.debugFirstPage;
             if (!_pager.pageDc[_firstPage]) _firstPage = _pager.pageList[0].name;
             _firstPage = _pager.pageDc[_firstPage].name;
             SiteModel.gotoPage(_firstPage);
+            SiteModel.hitLoadPanel();
         }
 
 
