@@ -51,7 +51,7 @@ var SiteConfig = {
                 //view是这个页面具体呈现对象, btn是这个页面下有的一个按钮
                 this.view.btn.on('click', function () {
                     // SiteModel.gotoPage('MovieInPage');
-                    var _page=SiteModel.getPage('VideoPage');
+                    var _page = SiteModel.getPage('VideoPage');
                     _page.play();
                 });
             }
@@ -70,13 +70,13 @@ var SiteConfig = {
         'other.NoMoviePage',
         //【页面配置方式4】配置简单HTML页面 在HTML上有没有dom结构 自动创建添加到#domBox内 如果没这个节点会添加到#screen
         {
-            name:'#AutoCreateDom2',
-            initUI:function () {
-                var _image=new Image();
-                _image.src='./images/ShareImg.jpg';
+            name: '#AutoCreateDom2',
+            initUI: function () {
+                var _image = new Image();
+                _image.src = './images/ShareImg.jpg';
                 this.view.append(_image);
             },
-            touchSwipe:false
+            touchSwipe: false
         },
         //【页面配置方式5】配置视频页面
         {
@@ -84,23 +84,25 @@ var SiteConfig = {
             //标记这个页面类型是视频播放页面 注意在plugins 里面需要添加视频播放插件 'videoPage'
             type: 'video',
             // 视频页面地址 不需要填写 .mp4，因为会根据系统自动判断播放类型
-            url:'media/intro',
+            url: 'media/intro',
             //设置视频宽
-            width:1235,
+            width: 1235,
             //设置视频高
             height: 640,
-            initUI:function () {
-              this.view.find('.uiPanel .btn').on('click',function () {
-                  SiteModel.gotoPage('MovieInPage');
-              });
+            initUI: function () {
+                var _self = this;
+                this.view.find('.uiPanel .btn').on('click', function () {
+                    SiteModel.gotoPage('MovieInPage');
+                    _self.videoPlayer.pause();
+                });
             },
             //视频准备可以播放时候
-            readyPlay:function () {
+            readyPlay: function () {
 
             },
             //视频播放完成时候
-            playEnd:function () {
-                console.log(this.name,'playEnd');
+            playEnd: function () {
+                console.log(this.name, 'playEnd');
                 SiteModel.gotoPage('MovieInPage');
             }
 
@@ -112,11 +114,11 @@ var SiteConfig = {
     //【非必填】可以设置本地debug 默认第一个页面
     // debugFirstPage: 'MovieInOutPage',
     //【非必填】设置作品回流页面
-    workPage:{
+    workPage: {
         //回流页面名称
-        name:"WorkPage",
+        name: "WorkPage",
         // 设置这个参数，会中断页面跳转，会等获取到作品数据后，自己进行手动进行控制回流页面的跳转
-        getWorkData:function (workid) {
+        getWorkData: function (workid) {
 
         }
     },
@@ -148,8 +150,8 @@ var SiteConfig = {
     //【非必填】框架SiteModel创建完成（构建完成 $选择器、SiteModel拥有事件功能、自适应框架执行、声音对象构建完成）
     baseEnd: loadBaseEnd,
     //【非必填】默认'v'竖屏 'h'横屏 'auto' 横竖屏皆可以
-    type:'auto',
-    resizeDelay:300,
+    type: 'auto',
+    resizeDelay: 300,
 };
 
 
