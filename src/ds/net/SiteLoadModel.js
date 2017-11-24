@@ -51,9 +51,11 @@
             //判断是createjs类型loading
             else if (window['createjs'] !== undefined && _loadPanel instanceof createjs.DisplayObject) {
 
-                if (progress >= 99) progress = 99;
-                if (_loadPanel instanceof createjs.MovieClip) _loadPanel.gotoAndStop(progress);
-                if (_loadPanel.label) _loadPanel.label.text = progress < 10 ? '0' + (progress + 1) + '%' : (progress + 1) + '%';
+
+                if (_loadPanel instanceof createjs.MovieClip) {
+                    _loadPanel.gotoAndStop(progress >= 99?99:progress);
+                }
+                if (_loadPanel.label) _loadPanel.label.text = progress < 10 ? '0' + (progress ) + '%' : (progress) + '%';
             }
 
         };
@@ -91,7 +93,7 @@
 
             //开始初始化Domloading
             SiteModel.loadPanel = $('#siteLoadPanel');
-
+            SiteModel.loadPanel.show();
             //加载这单页面应用
             if(callBack)callBack();
 
@@ -106,39 +108,25 @@
 
             $('#siteLoadPanel').hide();
 
-
-
             //loading加载配置
             var _loadObj = {
-
-                basePath: './assets/',
-                //js路径
-                jsUrl: 'loading.js',
-                jsNS: 'loadlib',
-                imgNS: 'loadimages',
-                //加载完成后调用的方法
-                complete: onComplete,
-                //加载进行调用的方法
-                // progress: onProgress,
-                //加载方式 初始化LoadQueue的crossOrigin参数
-                loadType: true,
-                crossOrigin: false,
+                complete:onComplete
             };
 
-            var _config=SiteModel.cjsLoadData;
-            if(_config){
-               _loadObj.basePath=_getDefault(_config.basePath,_loadObj.basePath);
-               _loadObj.jsUrl=_getDefault(_config.jsUrl,_loadObj.jsUrl);
-               _loadObj.jsNS=_getDefault(_config.jsNS,_loadObj.jsNS);
-               _loadObj.imgNS=_getDefault(_config.imgNS,_loadObj.imgNS);
-               _loadObj.loadType=_getDefault(_config.loadType,_loadObj.imgNS);
-               _loadObj.crossOrigin=_getDefault(_config.crossOrigin,_loadObj.imgNS);
-            }
+            var _config=SiteModel.cjsLoadData||{};
+
+            _loadObj.basePath=_getDefault(_config.basePath,'./assets/');
+            _loadObj.jsUrl=_getDefault(_config.jsUrl,'loading.js');
+            _loadObj.jsNS=_getDefault(_config.jsNS,'loadlib');
+            _loadObj.imgNS=_getDefault(_config.imgNS,'loadimages');
+            _loadObj.loadType=_getDefault(_config.loadType,true);
+            _loadObj.crossOrigin=_getDefault(_config.crossOrigin,true);
+            // console.log('_loadObj:',_loadObj);
 
             //loading加载完成后的方法处理
             function onComplete(e) {
 
-                console.log('LoadPanel加载完成');
+                // console.log('LoadPanel加载完成');
 
                 if(SiteModel){
                     //创建加载界面

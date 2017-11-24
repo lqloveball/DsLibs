@@ -47,10 +47,11 @@
         /**
          * 加载队列
          * @alias module:ds/net/QueueLoad.load
-         * @param {array} list
-         * @param {function} completeFun
-         * @param {function} progressFun
-         * @param {object} opts
+         * @param {array} list  图片队列
+         * @param {function} completeFun  加载完成
+         * @param {function} progressFun 加载进度
+         * @param {object} opts  配置参数
+         * @param {string} opts.basePath 配置根目录路径
          * @return {array} 加载队列数组
          */
         load: function (list,completeFun,progressFun,opts) {

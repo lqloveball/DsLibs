@@ -13,6 +13,22 @@ let ds = root.ds = root.ds || {};
 ds.createjs = ds.createjs || {};
 
 /**
+ * 获取动画标签的开始帧
+ * @param {createjs.DisplayObject} mc
+ * @param {string} value
+ */
+ds.createjs.getFrameByLabel=function (mc,value) {
+    if(mc instanceof createjs.MovieClip){
+        let _labels=mc.labels;
+        for (let i = 0; i < _labels.length; i++) {
+            if(_labels[i].label===value)return _labels[i].position;
+        }
+        return -1;
+    }
+    return -1;
+};
+
+/**
  * 获取一个显示对象的BitmapData
  * @requires module:libs/createjs/BitmapData.js
  * @param {createjs.DisplayObject} display  一个需要截图的显示对象
@@ -786,7 +802,7 @@ ds.createjs.loadAssets = function (opts) {
 
     }
 
-    let basePath = opts.basePath ? opts.basePath : null;
+  
 
     //获取导出库对象  新版发布才需要
     let _comp;
@@ -809,12 +825,12 @@ ds.createjs.loadAssets = function (opts) {
     //加载类型，默认不需要http服务的false
     let loadType = opts.loadType ? opts.loadType : false;
 
-    //创建队列对象
+    //创建队列对象1
     let queue;
     if (!opts.crossOrigin) queue = new createjs.LoadQueue(loadType);
     else {
 
-        var _crossOrigin = typeof opts.crossOrigin === 'string' ? opts.crossOrigin : 'anonymous';
+        let _crossOrigin = typeof opts.crossOrigin === 'string' ? opts.crossOrigin : 'anonymous';
         queue = new createjs.LoadQueue(loadType, '', _crossOrigin);
 
     }
@@ -826,15 +842,26 @@ ds.createjs.loadAssets = function (opts) {
     queue.addEventListener("error", queueError);
     queue.addEventListener("complete", queueComplete);
 
+    let basePath;
+    if(opts.basePath)basePath=opts.basePath;
+    else {
+        basePath= _getAbsoluteUrl(jsUrl);
+        basePath=basePath.slice(0,basePath.lastIndexOf('/'))+'/';
+    }
+   
     //先开始加载导出的JS
-    let _jsUrl = basePath ? basePath + jsUrl : jsUrl;
-
+    // let _jsUrl = basePath ? basePath + jsUrl : jsUrl;
+    let _jsUrl;
+    if(jsUrl.indexOf('/')===-1)_jsUrl=basePath + jsUrl;
+    else _jsUrl=jsUrl;
 
     let jsloader = new createjs.JavaScriptLoader({
         src: _jsUrl,
         id: _jsUrl,
         type: "javascript"
     });
+
+    
 
 
     jsloader.addEventListener('complete', jsComplete);
@@ -866,7 +893,7 @@ ds.createjs.loadAssets = function (opts) {
         else {
 
             // console.log('queueStartLoad:',AdobeAn.compositions);
-            var _currentID;
+            let _currentID;
 
             for (var key in AdobeAn.compositions) {
 
@@ -888,7 +915,7 @@ ds.createjs.loadAssets = function (opts) {
             }
 
             _comp = AdobeAn.getComposition(_currentID);
-            var lib = _comp.getLibrary();
+            let lib = _comp.getLibrary();
             window[jsNS] = lib;
             window[imgNS] = _comp.getImages();
             queueArr = lib.properties.manifest;
@@ -900,6 +927,7 @@ ds.createjs.loadAssets = function (opts) {
 
 
         let i;
+
         //如果存在basePath设置选择对window[jsNS].properties.manifest进行设置
         if (basePath) {
 
@@ -1103,5 +1131,13 @@ ds.createjs.isWebGLSupported = function () {
     }
 
 };
+var _getAbsoluteUrlElement
+function _getAbsoluteUrl(url) {
+    if (url.indexOf("http:") >= 0 || url.indexOf("https:") >= 0) return url;
+    _getAbsoluteUrlElement = document.createElement('a');
+    _getAbsoluteUrlElement.href = url;
+    url = _getAbsoluteUrlElement.href;
+    return url;
+}
 
 export default ds.createjs;

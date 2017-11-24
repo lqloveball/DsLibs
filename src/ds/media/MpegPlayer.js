@@ -3,11 +3,55 @@ import jsmpeg from 'libs/media/jsmpg.js';
 
 /**
  *  视频交互类
+ *
+ *  #### [安卓版本对video标签支持不好，但又支持webgl的项目可以使用这个视频解码播放器做替代方案]
+ *
+ *  这个播放器需要 mp3（声音） 与 mpg （视频画面） 2个文件来进行播放
+ *
+ *  ##### 音频抽取
+ *
+ *   使用Adobe Media Encoder 对视频进行转换导出mp3资源
+ *
+ *  ##### 视频转码  [ffmpeg donw](http://www.ffmpeg.org/)
+ *
+ *  命令：
+ *  ```
+ *  ffmpeg -i xxxx.mp4 -f mpeg1video -vf "crop=iw-mod(iw\,1):ih-mod(ih\,1)" -qscale 10 -b 0 xxxx.mpg
+ *  ```
+ *  - xxxx.mp4：原视频文件名；xxxx.mpg：导出的视频文件
+ *  - (iw\,2)和(ih\,2)为视频的宽高，设置为1则代表为原视频宽高
+ *  - -qscale 1 ：视频的清晰度，1代表最清晰，数值越大越模糊
+ *
  *  @class
  *  @memberof ds.media
+ *
  */
 class MpegPlayer extends EventDispatcher {
 
+    /**
+     *
+     * @param {string} url 视频url地址
+     * @param {object} opts
+     * @param {boolean} opts.progressive
+     * @param {CanvasElement} opts.el
+     * @param {boolean} opts.autoplay
+     * @param {boolean} opts.autoload
+     * @param {boolean} opts.progressShow
+     * @param {boolean} opts.loop
+     * @param {boolean} opts.seekable
+     * @param {number} opts.duration
+     * @param {HTMLElement|string} opts.append
+     * @param {object} opts.css
+     * @param {function} opts.onstartload
+     * @param {function} opts.onload
+     * @param {function} opts.update
+     * @param {function} opts.onprogress
+     * @param {function} opts.onplayend
+     * @param {function} opts.onplay
+     * @param {function} opts.onpause
+     * @param {function} opts.oncanPlay
+     * @param {function} opts.oncanPlayProgress
+     */
     constructor(url, opts) {
 
         super();

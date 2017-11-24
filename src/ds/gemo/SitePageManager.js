@@ -120,20 +120,18 @@ class SitePageManager extends EventDispatcher {
 
         if (this._pageList.indexOf(page) !== -1) return;
 
-        if (page.name) {
+        let _name = page.name;
 
-            this._pageDc[page.name] = page;
-            this._pageList.push(page);
+        if (!_name)_name = 'DsPage' + this._pageList.length;
+        page.name = _name;
 
-        } else {
-
-
-            var _name = 'DsPage' + this._pageList.length;
-            page.name = _name;
-            this._pageDc[page.name] = page;
-            this._pageList.push(page);
-
+        if (this._pageDc[_name]) {
+            console.warn('Already have page.name ：', page.name);
+            return;
         }
+
+        this._pageDc[page.name] = page;
+        this._pageList.push(page);
 
     }
 

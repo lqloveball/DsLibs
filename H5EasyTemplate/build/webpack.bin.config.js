@@ -37,7 +37,7 @@ function getEDSLibs(dir,ext) {
 //根据src目录下js来确定有多少入口文件
 getEntries('./src','js');
 //获取简易框架下代码开发文件
-getEDSLibs('./source/edslibs','js');
+getEDSLibs('./source/eds','js');
 //基础公共框架
 webpackEntry['../edslibs/base']=[
     'jquery',

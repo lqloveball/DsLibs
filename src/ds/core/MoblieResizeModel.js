@@ -312,6 +312,10 @@
 
             }
 
+            /**
+             * 自适应 resize
+             * @event  ds.core.MoblieResizeModel#resize
+             */
             this.ds('resize');
 
         };

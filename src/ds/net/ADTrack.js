@@ -1,12 +1,12 @@
 //这个类使用老js方法，有可能直接插入html标签内使用
-!(function (factory) {
+!(function(factory) {
 
     var root = (typeof window !== 'undefined' ? window : (typeof process === 'object' && typeof require === 'function' && typeof global === 'object') ? global : this);
 
 
     if (typeof define === 'function' && define.amd) {
 
-        define(['exports'], function (exports) {
+        define(['exports'], function(exports) {
 
             module.exports = factory(root, exports);
 
@@ -21,7 +21,7 @@
 
     }
 
-}(function (root, ADTrack) {
+}(function(root, ADTrack) {
 
     var ds = root.ds = root.ds || {};
     ds.net = ds.net || {};
@@ -48,7 +48,7 @@
          * @alias module:ds/net/ADTrack.baiduPV
          * @param  {string} pageurl [如 '/virtual/login']
          */
-        baiduPV: function (pageurl) {
+        baiduPV: function(pageurl) {
 
             if (window['_hmt'] === undefined) return;
 
@@ -66,7 +66,7 @@
          * @param  {string} [category='Event']  [默认Event【百度描述】要监控的目标的类型名称，通常是同一组目标的名字，比如"视频"、"音乐"、"软件"、"游戏"等等。该项必填，不填、填"-"的事件会被抛弃。]
          * @param  {string} [action='Click']    [默认Click【百度描述】用户跟目标交互的行为，如"播放"、"暂停"、"下载"等等。该项必填，不填、填"-"的事件会被抛弃。]
          */
-        baiduEvent: function (opt_label, opt_value, category, action) {
+        baiduEvent: function(opt_label, opt_value, category, action) {
 
             if (window['_hmt'] === undefined) return;
             if (!category) category = 'Event';
@@ -82,11 +82,14 @@
          * @alias module:ds/net/ADTrack.gaPV
          * @param  {string} pageurl [如 '/virtual/login']
          */
-        gaPV:function (pageurl) {
+        gaPV: function(pageurl) {
 
-            if (window['ga'] === undefined) return;
+            if (!window['gtag']) return;
             if (pageurl.indexOf('/') !== 0) pageurl = '/' + pageurl;
-            ga('send', 'pageview', pageurl);
+            gtag('config', 'GA_TRACKING_ID', {
+                'page_path': pageurl
+            });
+            //ga('send', 'pageview', pageurl);
 
         },
         /**
@@ -96,21 +99,24 @@
          * @param  {string} [category='Event']  [默认Event【百度描述】要监控的目标的类型名称，通常是同一组目标的名字，比如"视频"、"音乐"、"软件"、"游戏"等等。该项必填，不填、填"-"的事件会被抛弃。]
          * @param  {string} [action='Click']    [默认Click【百度描述】用户跟目标交互的行为，如"播放"、"暂停"、"下载"等等。该项必填，不填、填"-"的事件会被抛弃。]
          */
-        gaEvent:function (opt_label, opt_value, category, action) {
+        gaEvent: function(opt_label, opt_value, category, action) {
 
-            if (window['ga'] === undefined) return;
+            if (!window['gtag']) return;
             if (!category) category = 'Event';
             if (!action) action = 'Click';
             if (!opt_value) opt_value = 1;
             if (!opt_label) return;
-
-            ga('send', {
-                hitType: 'event',
-                eventCategory: category,
-                eventAction: action,
-                eventLabel: opt_label,
-                eventValue: Number(opt_value),
+            gtag('event', action, {
+                'event_category': category,
+                'event_label': opt_label
             });
+            // ga('send', {
+            //     hitType: 'event',
+            //     eventCategory: category,
+            //     eventAction: action,
+            //     eventLabel: opt_label,
+            //     eventValue: Number(opt_value),
+            // });
 
         },
         /**
@@ -118,7 +124,7 @@
          * @alias module:ds/net/ADTrack.pv
          * @param  {string} pageurl [如 '/virtual/login']
          */
-        pv:function (pageurl) {
+        pv: function(pageurl) {
 
             ds.net.baiduPV(pageurl);
             ds.net.gaPV(pageurl);
@@ -131,7 +137,7 @@
          * @param  {string} [category='Event']  [默认Event【百度描述】要监控的目标的类型名称，通常是同一组目标的名字，比如"视频"、"音乐"、"软件"、"游戏"等等。该项必填，不填、填"-"的事件会被抛弃。]
          * @param  {string} [action='Click']    [默认Click【百度描述】用户跟目标交互的行为，如"播放"、"暂停"、"下载"等等。该项必填，不填、填"-"的事件会被抛弃。]
          */
-        event:function (opt_label, opt_value, category, action) {
+        event: function(opt_label, opt_value, category, action) {
 
             ds.net.baiduEvent(opt_label, opt_value, category, action);
             ds.net.gaEvent(opt_label, opt_value, category, action);

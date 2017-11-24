@@ -56,7 +56,7 @@ gulp.task('clean:webpack', function() {
 });
 //http server 环境
 gulp.task('webpack:dev',function(){
-  var _webpackConfig=require('./webpack.dev.config.js');
+  var _webpackConfig=require('./webpack.windowdev.config.js');
   // console.log(JSON.stringify(_webpackConfig));
   _webpackConfig.devtool='#cheap-module-source-map';
   webpack(_webpackConfig).watch(200, function(err, stats) {

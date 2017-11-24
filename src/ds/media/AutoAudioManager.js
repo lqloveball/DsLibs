@@ -432,7 +432,7 @@
          */
         this.getAudioByID = function (value) {
 
-            var _audio = _autoAudioer.audioDc[value];
+            var _audio = this.audioDc[value];
             return _audio;
 
         };

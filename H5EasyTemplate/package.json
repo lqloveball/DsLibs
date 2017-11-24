@@ -6,10 +6,11 @@
   "scripts": {
     "webpack-dev": "webpack --config build/webpack.dev.config.js",
     "webpack-bin": "webpack --config build/webpack.bin.config.js",
-    "ebasebin": "webpack --config build/webpack.ebasebin.config.js",
+    "basebin": "webpack --config build/webpack.basebin.config.js",
     "webpack-debug": "webpack --config build/webpack.debug.config.js",
     "debug": "gulp --gulpfile build/gulpDebugTemp.js & npm run  webpack-debug",
     "dev": "npm run server & npm run webpack-dev",
+    "dev2": "gulp --gulpfile build/gulpServer.js & webpack --config build/webpack.dev2.config.js",
     "bin": "npm run server & npm run webpack-bin",
     "gulpDev": "gulp --gulpfile build/gulpWebpack.js",
     "gulpBin": "gulp --gulpfile build/gulpWebpackBin.js",

@@ -303,6 +303,14 @@
 
     });
     /**
+     * 调整一个连接
+     * @member ds.net.post
+     * @param {string} value
+     */
+    ds.net.open = function (value) {
+        location.href = value;
+    };
+    /**
      * @member ds.net.post
      * @function
      * @see 详细请见： {@link module:ds/net/QuickAjax.post}

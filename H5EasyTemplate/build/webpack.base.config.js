@@ -19,7 +19,7 @@ module.exports = {
             src: resolveBowerPath('./src'),
             ds: resolveBowerPath('source/ds'),
             libs: resolveBowerPath('source/libs'),
-            edslibs: resolveBowerPath('source/edslibs'),//简易代码框架目录
+            edslibs: resolveBowerPath('source/eds'),//简易代码框架目录
             threejs: resolveBowerPath('source/threejs'),//threejs代码目录
 
             // 不需要设置app了

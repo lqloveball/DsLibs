@@ -42,9 +42,9 @@ var developmentConfig = {
     //编译出来文件目录
     dist: '../js/app/',
     //需要监听编译less文件
-    lesswatch: ['../src/less/*.less', '../less/**/*.less'],
+    lesswatch: ['../less/*.less', '../less/**/*.less'],
     //需要编译的less文件
-    lessbuild: ['../src/less/*.less'],
+    lessbuild: ['../less/*.less'],
     //less to css路径
     cssPath: "../css/",
     //css 变化监听

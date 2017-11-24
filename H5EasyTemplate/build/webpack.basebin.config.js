@@ -35,7 +35,7 @@ function getEDSLibs(dir,ext) {
     });
 }
 //获取简易框架下代码开发文件
-getEDSLibs('./source/edslibs','js');
+getEDSLibs('./source/eds','js');
 //基础公共框架
 webpackEntry['../edslibs/base']=[
     'jquery',

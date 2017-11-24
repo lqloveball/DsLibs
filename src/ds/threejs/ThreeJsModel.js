@@ -647,8 +647,8 @@ function resizeEvent() {
 
         if (this.resizeType == 'fixed') {
 
-            _width = 640;
-            _height = _actualH;
+            _width = this.width;
+            _height = this.height;
 
         }
         else if (this.resizeType == 'fixed2') {

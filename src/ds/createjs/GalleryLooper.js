@@ -72,7 +72,7 @@ class GalleryLooper extends EventDispatcher {
         this.lock = false;
 
         //是否运动中
-        this._movieing = false;
+        this._movieIning = false;
 
         //左消失
         let _beforeOut = _box.beforeOut;
@@ -178,7 +178,7 @@ class GalleryLooper extends EventDispatcher {
      */
     select(value) {
         if (this.lock) return;
-        if (this._movieing) return;
+        if (this._movieIning) return;
         console.log('select:', value);
         this._galleryAnnularLoopManager.select(value);
     }
@@ -186,8 +186,8 @@ class GalleryLooper extends EventDispatcher {
     _updata(e) {
 
         if (!e) return;
-        if (this._movieing) return;
-        this._movieing = true;
+        if (this._movieIning) return;
+        this._movieIning = true;
         let i, _mc, _rf, _nows, _olds;
         let _box = this._box;
         let _self = this;
@@ -220,7 +220,7 @@ class GalleryLooper extends EventDispatcher {
             }
             //显示层级排列
             _box.sortChildren(this._sortSwapIndexFunction);
-            this._movieing = false;
+            this._movieIning = false;
 
         } else {
 
@@ -322,7 +322,7 @@ class GalleryLooper extends EventDispatcher {
     _movieEnd(value) {
         //动画是否播放完成
         if (value === 1) {
-            this._movieing = false;
+            this._movieIning = false;
             this.ds('movieEnd');
         }
     }
@@ -350,7 +350,7 @@ class GalleryLooper extends EventDispatcher {
      */
     next() {
         if (this.lock) return;
-        if (this._movieing) return;
+        if (this._movieIning) return;
         this._galleryAnnularLoopManager.next();
     }
 
@@ -359,7 +359,7 @@ class GalleryLooper extends EventDispatcher {
      */
     previous() {
         if (this.lock) return;
-        if (this._movieing) return;
+        if (this._movieIning) return;
         this._galleryAnnularLoopManager.previous();
     }
 
@@ -400,7 +400,7 @@ class GalleryLooper extends EventDispatcher {
      * @return {boolean}
      */
     get movieing() {
-        return this._movieing
+        return this._movieIning
     }
 
     /**

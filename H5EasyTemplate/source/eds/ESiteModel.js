@@ -14,36 +14,55 @@ require('ds/core/SiteModelByMobile');
 
 //网站构建逻辑开始执行
 window.SiteModelStart = function (cf) {
+
     var _default_config = {
-        //需要createjs框架
+
+        resizeDelay: _getDefault(cf.resizeDelay,100),
+
         hasCJS: _getDefault(cf.hasCJS, true),
-        //需要创建createjs模块
         hasCJSModel: _getDefault(cf.hasCJSModel, true),
-        //不需要createjs loading界面
         hasCJSLoad: _getDefault(cf.hasCJSLoad, false),
-        //webgl 双canvas版本 createjs 模块
         hasCJSWebGL: _getDefault(cf.hasCJSWebGL, false),
-        hasThreeJs: _getDefault(cf.hasThreeJs, false),
-        hasThreeJsModel: _getDefault(cf.hasThreeJsModel, false),
+        cjsLoadData: _getDefault(cf.cjsLoadData, undefined),
+        cjsBox: _getDefault(cf.cjsBox, '#cjsBox'),
+
         hasPixiJs: _getDefault(cf.hasPixiJs, false),
         hasPixiJsModel: _getDefault(cf.hasPixiJsModel, false),
-        initLoadPanel: cf.initLoadPanel,
-        audioConfig: cf.audioConfig,
-        otherjs: cf.otherjs,
+        pixiBox: _getDefault(cf.pixiBox, '#pixiBox'),
+
+        hasThreeJs: _getDefault(cf.hasThreeJs, false),
+        hasThreeJsModel: _getDefault(cf.hasThreeJsModel, false),
+        threejsBox: _getDefault(cf.threejsBox, '#threejsBox'),
+
+        initLoadPanel: _getDefault(cf.initLoadPanel,undefined),
+        showProgress: _getDefault(cf.showProgress,undefined),
+        hitLoadPanel: _getDefault(cf.hitLoadPanel,undefined),
+
+
+
+        audioConfig: _getDefault(cf.audioConfig,undefined),
+
+        baseUrl: _getDefault(cf.baseUrl,'./js/edslibs/base.js'),
+        cjsUrl: _getDefault(cf.cjsUrl,'./js/edslibs/createjsFrameWork.js'),
+        threeUrl: _getDefault(cf.threeUrl,'./js/libs/three.min.js'),
+        pixiUrl: _getDefault(cf.threeUrl,'./js/libs/pixijs.min.js'),
+
+        otherjs: _getDefault(cf.otherjs,[]),
+
+        baseEnd: _getDefault(cf.baseEnd,undefined),
+
     };
+
     var _base = _getDefault(cf.base, '');
     var _type = _getDefault(cf.type, 'v');
-    console.log(_default_config);
-    //传入的对象是最为整个SiteModel配置使用
-    if(cf.isAllConfig)  window.SiteModel = new ds.core.SiteModelByMobile(_base + cf.url, _type, cf);
-    //只是部分配置使用
-    else  window.SiteModel = new ds.core.SiteModelByMobile(_base + cf.url, _type, _default_config);
-    //开启网站
+
+    window.SiteModel = new ds.core.SiteModelByMobile(_base + cf.url, _type, _default_config);
+
     window.SiteModel.start();
 
 };
 
-//默认有SPA配置对象，就立即执行
+
 if (window['SiteConfig'] !== undefined) window.SiteModelStart(window['SiteConfig']);
 else {
 
@@ -112,6 +131,13 @@ function _getAbsoluteUrl(url) {
     return url;
 }
 
+var root = (typeof window !== 'undefined' ? window : (typeof process === 'object' && typeof require === 'function' && typeof global === 'object') ? global : this);
+
+/**
+ * 快速开发H5库
+ * @namespace ds
+ */
+var eds = root.eds = root.eds || {};
 
 
 

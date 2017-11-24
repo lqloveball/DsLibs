@@ -100,7 +100,7 @@
 
                 if (location.href.indexOf(domain) !== -1) _apiUrl = "http://wechat." + domain + "/JsApiWXConfig.aspx";
 
-                CallJsApiWXConfigItf(_apiUrl);
+                if(!SiteModel.debug)CallJsApiWXConfigItf(_apiUrl);
 
                 //回流页面走的流程
                 if (location.href.indexOf(_workPageUrl) !== -1) {

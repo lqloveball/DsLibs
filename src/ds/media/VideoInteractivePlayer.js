@@ -111,6 +111,7 @@ class VideoInteractivePlayer extends EventDispatcher {
             this.ds(e);
         }, this);
         _videoPlayer.on('update', function (e) {
+
             /**
              * 视频播放中实时触发事件
              * @event ds.media.VideoInteractivePlayer#update
@@ -118,7 +119,7 @@ class VideoInteractivePlayer extends EventDispatcher {
             this.ds(e);
         }, this);
 
-        _videoPlayer.on('update', this._timeUpDate);
+        _videoPlayer.on('update', this._timeUpDate,this);
 
         this._playing = false;
 
@@ -259,12 +260,12 @@ class VideoInteractivePlayer extends EventDispatcher {
      * ```
      */
     addCuePoint(cd) {
-
+        cd=cd||{};
         if (!cd.time) return;
         if (!cd.name) cd.name = 'time_' + cd.time;
         cd.runNum = 0;
         cd.bool = false;
-        this._videoCuePointList.push(pointData);
+        this._videoCuePointList.push(cd);
     }
 
     /**

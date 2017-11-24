@@ -149,6 +149,7 @@ class VideoTagPlayer extends EventDispatcher {
 
 
         _video.addEventListener("timeupdate", function (e) {
+            
             _self._updateEvent();
         });
         _video.addEventListener("play", function (e) {
@@ -166,6 +167,7 @@ class VideoTagPlayer extends EventDispatcher {
 
     _updateEvent() {
         if (this._opts.onupdate) this._opts.onupdate();
+
         /**
          * 刷新事件
          * @event ds.media.VideoTagPlayer#update

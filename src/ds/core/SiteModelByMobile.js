@@ -52,6 +52,7 @@
      * @param {string} [opts.cjsBox='#cjsBox'] createjs模块添加什么dom容器内
      * @param {boolean} [opts.hasPixiJs=false] 是否需要pixijs框架加载
      * @param {boolean} [opts.hasPixiJsModel=false] 是否使用pixijs做网站
+     * @param {boolean} [opts.pixiBox='#pixiBox'] pixijs模块添加到dom容器
      * @param {boolean} [opts.hasThreeJs=false] 是否需要threejs框架加载
      * @param {boolean} [opts.hasThreeJsModel=false] 是否需要创建threejs模块
      * @param {string} [opts.threejsBox='#threejsBox'] threejs模块添加到dom容器
@@ -131,16 +132,17 @@
         root.SiteModel = this;
 
 
-
         var _resizeModelType = type || 'v';
 
         var _self = this;
 
         opts = opts || {};
 
-        this.getScript=getScript;
+        this.config = opts;
 
-        this.getScriptList=getScriptList;
+        this.getScript = getScript;
+
+        this.getScriptList = getScriptList;
 
         this.cjsLoadData = opts.cjsLoadData;
         /**
@@ -199,6 +201,7 @@
         var _debug = false;
         //根据端口好判断是不是本地测试
         if (location.href.indexOf(':800') !== -1) _debug = true;
+        if (location.href.indexOf(':300') !== -1) _debug = true;
 
         /**
          * 是否本地测试情况
@@ -278,9 +281,9 @@
 
         /**
          * 页面跳转方法
-         * 在SiteModel.loadSinglePageApplication() (加载AppMain.js）后会执行时候创建
+         * 在SiteModel.loadSinglePageApplication() 执行后单页应用创建SiteModel.pager完成方可使用
          * @method ds.core.SiteModelByMobile.prototype.gotoPage
-         * @param {string} value  需要调整到页面标识
+         * @param {string} value  需要跳转到页面标识
          * @function
          */
         this.gotoPage = function gotoPage(value) {
@@ -294,6 +297,19 @@
 
             if (ds.net && ds.net.pv) ds.net.pv(value);
 
+        };
+
+        /**
+         * 获取到页面模块
+         * 在SiteModel.loadSinglePageApplication() 执行后单页应用创建SiteModel.pager完成方可使用
+         * @method ds.core.SiteModelByMobile.prototype.getPage
+         * @param {string} value  页面模块名称
+         * @function
+         */
+        this.getPage = function (value) {
+            if (!_self.pager) return;
+            if (!_self.pager.getPage) return;
+            return _self.pager.getPage(value);
         };
 
         /**
@@ -413,7 +429,7 @@
                 if (typeof loadSPA === 'string') {
 
                     _self.getScript(loadSPA, function () {
-                        console.log('loadSPA End');
+                        // console.log('loadSPA End');
                         /**
                          * 单页面应用加载完成
                          * @event ds.core.SiteModelByMobile#spaEnd
@@ -446,7 +462,7 @@
 
             _self.getScript(_url, function () {
 
-                console.log('loadBaseFrameWork');
+                // console.log('loadBaseFrameWork');
 
                 ds.core.EventDispatcher.extend(_self);
 
@@ -483,7 +499,7 @@
 
             _self.getScript(_url, function () {
 
-                console.log('loadCreateJsFrameWork');
+                // console.log('loadCreateJsFrameWork');
 
                 /**
                  * createjs框架加载完成
@@ -519,7 +535,7 @@
                 hasGL: opts.hasCJSWebGL,
                 appendTo: opts.cjsBox !== undefined ? $(opts.cjsBox) : $('#cjsBox')[0],
                 width: 640,
-                height: 1140,
+                height: 1235,
                 fps: 30
             });
             /**
@@ -579,7 +595,7 @@
         }
 
         //自适应计算
-        function _resize() {
+        function _resize(e) {
 
             //对cteatejs模块进行横竖屏幕下缩放计算控制
             if (_self.resizeModel.type === 'auto') {
@@ -598,6 +614,12 @@
                 _self.screen.scrollTop(0);
             }, 30);
 
+            /**
+             * 自适应 resize
+             * @event  ds.core.SiteModelByMobile#resize
+             */
+            _self.ds(e);
+
         }
 
 
@@ -611,10 +633,12 @@
 
             if (ds.pixijs && ds.pixijs.create) {
 
+                opts.pixiBox = opts.pixiBox !== undefined ? $(opts.pixiBox)[0] : $('#pixiBox')[0];
+
                 _self.pixiJsModel = ds.pixijs.create({
-                    appendTo: $('#pixiBox')[0],
+                    appendTo: opts.pixiBox,
                     width: 640,
-                    height: 1140,
+                    height: 1235,
                     fps: 30
                 });
 
@@ -642,14 +666,16 @@
 
             if (ds.threejs && ds.threejs.create) {
 
+                opts.threejsBox = opts.threejsBox !== undefined ? $(opts.threejsBox)[0] : $('#threejsBox')[0];
+
                 SiteModel.threeJsModel = ds.threejs.create({
                     width: 640,
-                    height: 1140,
+                    height: 1235,
                     resizeType: 'fixed2',
                     hasModelAnimate: true,
                     intersect: true,
                     intersectDom: opts.threejsBox,
-                    appendTo: opts.threejsBox !== undefined ? $(opts.threejsBox) : $('#threejsBox')[0],
+                    appendTo: opts.threejsBox,
                 });
 
                 /**
@@ -670,7 +696,7 @@
          */
         this.beforeSinglePageApplicationLoadAssets = function (callback) {
 
-            console.log('before SAP LoadAssets Start');
+            // console.log('before SAP LoadAssets Start');
 
             var _other = [];
             var _url;
@@ -698,7 +724,8 @@
              * @event ds.core.SiteModelByMobile#otherJsStart
              */
             if (_self.ds) _self.ds('otherJsStart');
-            console.log('load other:',_other);
+
+            // console.log('load otherjs:', _other);
 
             _self.getScriptList(_other, function () {
 
