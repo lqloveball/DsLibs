@@ -125,16 +125,18 @@
          * @function
          */
         this.showOrientationTip=function (bool) {
-
+            // console.log('_orientationTip',_orientationTip);
             if(!_orientationTip)return;
 
             bool=bool!==undefined?bool:true;
 
             $('body').append(_orientationTip);
+            _orientationTip.show();
 
             if (bool) _orientationTip.find('.mod-orient-layer__desc').text('为了更好的体验，请使用竖屏浏览');
             else _orientationTip.find('.mod-orient-layer__desc').text('为了更好的体验，请使用横屏浏览');
 
+            // console.log('showOrientationTip');
         };
         /**
          * 隐藏提示
@@ -219,6 +221,7 @@
          */
         Object.defineProperty(this, "oldInputState", {get: function () {return _oldInputState;}});
 
+        var _ResizeTime;
         /**
          * 初始化启动自适应计算
          * @method ds.core.MoblieResizeModel.prototype.initResize
@@ -229,14 +232,17 @@
             $(window).resize(function () {
 
                 _self.resize();
-                setTimeout(function () {
+                _ResizeTime=setTimeout(function () {
+                    clearTimeout(_ResizeTime);
                     _self.resize();
+
                 }, _resizeDelay);
 
             });
 
             //部分手机自适应会有问题
             setTimeout(function () {
+                clearTimeout(_ResizeTime);
                 _self.resize();
             }, _resizeDelay);
 
@@ -250,7 +256,7 @@
          * @function
          */
         this.resize = function () {
-
+            // console.log('resize');
             _oldActualH = _actualH;
             _oldInputState = _isInputState;
 

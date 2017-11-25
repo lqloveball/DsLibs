@@ -17,7 +17,7 @@ window.SiteModelStart = function (cf) {
 
     var _default_config = {
 
-        resizeDelay: _getDefault(cf.resizeDelay,100),
+        resizeDelay: _getDefault(cf.resizeDelay, 100),
 
         hasCJS: _getDefault(cf.hasCJS, true),
         hasCJSModel: _getDefault(cf.hasCJSModel, true),
@@ -34,27 +34,26 @@ window.SiteModelStart = function (cf) {
         hasThreeJsModel: _getDefault(cf.hasThreeJsModel, false),
         threejsBox: _getDefault(cf.threejsBox, '#threejsBox'),
 
-        initLoadPanel: _getDefault(cf.initLoadPanel,undefined),
-        showProgress: _getDefault(cf.showProgress,undefined),
-        hitLoadPanel: _getDefault(cf.hitLoadPanel,undefined),
+        initLoadPanel: _getDefault(cf.initLoadPanel, undefined),
+        showProgress: _getDefault(cf.showProgress, undefined),
+        hitLoadPanel: _getDefault(cf.hitLoadPanel, undefined),
 
 
+        audioConfig: _getDefault(cf.audioConfig, undefined),
 
-        audioConfig: _getDefault(cf.audioConfig,undefined),
+        baseUrl: _getDefault(cf.baseUrl, './js/edslibs/base.js'),
+        cjsUrl: _getDefault(cf.cjsUrl, './js/edslibs/createjsFrameWork.js'),
+        threeUrl: _getDefault(cf.threeUrl, './js/libs/three.min.js'),
+        pixiUrl: _getDefault(cf.threeUrl, './js/libs/pixijs.min.js'),
 
-        baseUrl: _getDefault(cf.baseUrl,'./js/edslibs/base.js'),
-        cjsUrl: _getDefault(cf.cjsUrl,'./js/edslibs/createjsFrameWork.js'),
-        threeUrl: _getDefault(cf.threeUrl,'./js/libs/three.min.js'),
-        pixiUrl: _getDefault(cf.threeUrl,'./js/libs/pixijs.min.js'),
+        otherjs: _getDefault(cf.otherjs, []),
 
-        otherjs: _getDefault(cf.otherjs,[]),
-
-        baseEnd: _getDefault(cf.baseEnd,undefined),
+        baseEnd: _getDefault(cf.baseEnd, undefined),
 
     };
 
     var _base = _getDefault(cf.base, '');
-    var _type = _getDefault(cf.type, 'v');
+    var _type = _getDefault(cf.type, 'auto');
 
     window.SiteModel = new ds.core.SiteModelByMobile(_base + cf.url, _type, _default_config);
 
@@ -79,10 +78,10 @@ else {
         _cf.hasPixiJs = _getDefault(_screen.getAttribute('data-hasPixiJs'), false);
         _cf.hasPixiJsModel = _getDefault(_screen.getAttribute('data-hasPixiJsModel'), false);
 
-        if(_cf.hasThreeJs||_cf.hasThreeJsModel||_cf.hasPixiJs||_cf.hasPixiJsModel){
-            if(!_cf.otherjs)_cf.otherjs=[];
-            if(_cf.hasThreeJs||_cf.hasThreeJsModel)_cf.otherjs.push('./js/edslibs/extend_threejs.js');
-            if(_cf.hasPixiJs||_cf.hasPixiJsModel)_cf.otherjs.push('./js/edslibs/extend_pixijs.js');
+        if (_cf.hasThreeJs || _cf.hasThreeJsModel || _cf.hasPixiJs || _cf.hasPixiJsModel) {
+            if (!_cf.otherjs) _cf.otherjs = [];
+            if (_cf.hasThreeJs || _cf.hasThreeJsModel) _cf.otherjs.push('./js/edslibs/extend_threejs.js');
+            if (_cf.hasPixiJs || _cf.hasPixiJsModel) _cf.otherjs.push('./js/edslibs/extend_pixijs.js');
         }
 
         SiteModelStart(_cf);
@@ -117,9 +116,9 @@ else {
 }
 
 function _getDefault(obj, defaultValue) {
-    if(obj === undefined|| obj === null)return defaultValue;
-    if(obj==='true')return true;
-    else if(obj==='false')return false;
+    if (obj === undefined || obj === null) return defaultValue;
+    if (obj === 'true') return true;
+    else if (obj === 'false') return false;
     return obj;
 }
 

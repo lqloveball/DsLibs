@@ -35,7 +35,7 @@
          * @method ds.net.SiteLoadModel.prototype.showProgress
          * @param {number} progress 加载进度值 0-100；
          */
-        this.showProgress=function (progress) {
+        this.showProgress = function (progress) {
 
             //获取load界面
             var _loadPanel = SiteModel.loadPanel;
@@ -53,7 +53,7 @@
 
 
                 if (_loadPanel instanceof createjs.MovieClip) {
-                    _loadPanel.gotoAndStop(progress >= 99?99:progress);
+                    _loadPanel.gotoAndStop(progress >= 99 ? 99 : progress);
                 }
                 if (_loadPanel.label) _loadPanel.label.text = progress < 10 ? '0' + (progress ) + '%' : (progress) + '%';
             }
@@ -65,7 +65,7 @@
          * @method ds.net.SiteLoadModel.prototype.hitLoadPanel
          * @param {function} callBack 隐藏loading界面完成后回调
          */
-        this.hitLoadPanel=function (callBack) {
+        this.hitLoadPanel = function (callBack) {
 
             var _loadPanel = SiteModel.loadPanel;
             if (!_loadPanel) return;
@@ -77,8 +77,16 @@
 
             }
             else if (window['createjs'] !== undefined && _loadPanel instanceof createjs.DisplayObject) {
+                if (window['JT']) {
+                    JT.to(_loadPanel, .5, {
+                        alpha: 0, onEnd: function () {
+                            if (_loadPanel.parent) _loadPanel.parent.removeChild(_loadPanel);
+                        }
+                    });
+                }else{
+                    if (_loadPanel.parent) _loadPanel.parent.removeChild(_loadPanel);
+                }
 
-                if (_loadPanel.parent) _loadPanel.parent.removeChild(_loadPanel);
 
             }
 
@@ -89,13 +97,13 @@
          * @method ds.net.SiteLoadModel.prototype.initDOMLoadPanel
          * @param {function} callBack 创建完成loading界面完成后回调
          */
-        this.initDOMLoadPanel=function (callBack) {
+        this.initDOMLoadPanel = function (callBack) {
 
             //开始初始化Domloading
             SiteModel.loadPanel = $('#siteLoadPanel');
             SiteModel.loadPanel.show();
             //加载这单页面应用
-            if(callBack)callBack();
+            if (callBack) callBack();
 
         };
 
@@ -104,23 +112,23 @@
          * @method ds.net.SiteLoadModel.prototype.initCreateJsLoadPanel
          * @param {function} callBack 创建完成loading界面完成后回调
          */
-        this.initCreateJsLoadPanel=function (callBack) {
+        this.initCreateJsLoadPanel = function (callBack) {
 
             $('#siteLoadPanel').hide();
 
             //loading加载配置
             var _loadObj = {
-                complete:onComplete
+                complete: onComplete
             };
 
-            var _config=SiteModel.cjsLoadData||{};
+            var _config = SiteModel.cjsLoadData || {};
 
-            _loadObj.basePath=_getDefault(_config.basePath,'./assets/');
-            _loadObj.jsUrl=_getDefault(_config.jsUrl,'loading.js');
-            _loadObj.jsNS=_getDefault(_config.jsNS,'loadlib');
-            _loadObj.imgNS=_getDefault(_config.imgNS,'loadimages');
-            _loadObj.loadType=_getDefault(_config.loadType,true);
-            _loadObj.crossOrigin=_getDefault(_config.crossOrigin,true);
+            _loadObj.basePath = _getDefault(_config.basePath, './assets/');
+            _loadObj.jsUrl = _getDefault(_config.jsUrl, 'loading.js');
+            _loadObj.jsNS = _getDefault(_config.jsNS, 'loadlib');
+            _loadObj.imgNS = _getDefault(_config.imgNS, 'loadimages');
+            _loadObj.loadType = _getDefault(_config.loadType, true);
+            _loadObj.crossOrigin = _getDefault(_config.crossOrigin, true);
             // console.log('_loadObj:',_loadObj);
 
             //loading加载完成后的方法处理
@@ -128,16 +136,16 @@
 
                 // console.log('LoadPanel加载完成');
 
-                if(SiteModel){
+                if (SiteModel) {
                     //创建加载界面
-                    if(_config&&_config.className){
+                    if (_config && _config.className) {
                         SiteModel.loadPanel = new window[_loadObj.jsNS][_config.className]();
-                    }else{
+                    } else {
                         SiteModel.loadPanel = new loadlib.LoadPanel();
                     }
 
                     //添加到场景
-                    SiteModel.createJsModel.root.addChild(SiteModel.loadPanel);
+                    SiteModel.createJsModel.stage.addChild(SiteModel.loadPanel);
 
                     SiteModel.loadPanel.gotoAndStop(0);
 
@@ -146,7 +154,7 @@
                 }
 
                 //loading UI构建完成
-                if(callBack)callBack();
+                if (callBack) callBack();
 
             }
 
@@ -176,41 +184,41 @@
          *   );
          *
          */
-        this.loadCJS=function (url,complete,progress,opts) {
+        this.loadCJS = function (url, complete, progress, opts) {
 
-            opts=opts||{};
+            opts = opts || {};
             var _progressArr;
-            if(typeof progress ==='string')_progressArr=progress.split(',');
-            else if(progress instanceof Array)_progressArr=progress;
+            if (typeof progress === 'string') _progressArr = progress.split(',');
+            else if (progress instanceof Array) _progressArr = progress;
 
-            var _start=0,_end=100,_speed;
+            var _start = 0, _end = 100, _speed;
 
-            if(_progressArr){
+            if (_progressArr) {
 
-                _start=Number(_progressArr[0]);
-                _end=Number(_progressArr[1]);
+                _start = Number(_progressArr[0]);
+                _end = Number(_progressArr[1]);
 
             }
 
-            _speed=_end-_start;
+            _speed = _end - _start;
 
             //加载配置对象
             var _loadData = {
-                basePath: _getDefault(opts.basePath,'./assets/'),
+                basePath: _getDefault(opts.basePath, './assets/'),
                 jsUrl: url,
-                jsNS: _getDefault(opts.jsNS,'lib'),
-                imgNS:  _getDefault(opts.imgNS,'images'),
-                loadType:_getDefault(opts.loadType, true),
-                crossOrigin: _getDefault(opts.crossOrigin,false),
-                otherList: _getDefault(opts.otherList,[]),
+                jsNS: _getDefault(opts.jsNS, 'lib'),
+                imgNS: _getDefault(opts.imgNS, 'images'),
+                loadType: _getDefault(opts.loadType, true),
+                crossOrigin: _getDefault(opts.crossOrigin, false),
+                otherList: _getDefault(opts.otherList, []),
                 complete: function (e) {
 
-                    if(complete)complete();
+                    if (complete) complete();
 
                 },
                 progress: function (e) {
 
-                    if(opts.progress)opts.progress(e);
+                    if (opts.progress) opts.progress(e);
 
                     SiteModel.showProgress(_start + (_speed * e.target.progress >> 0));
 
@@ -219,16 +227,16 @@
             };
 
             //开始加载动画资源
-            if(ds.createjs)ds.createjs.loadAssets(_loadData);
+            if (ds.createjs) ds.createjs.loadAssets(_loadData);
 
         };
 
     }
 
     function _getDefault(obj, defaultValue) {
-        if(obj === undefined|| obj === null)return defaultValue;
-        if(obj==='true')return true;
-        else if(obj==='false')return false;
+        if (obj === undefined || obj === null) return defaultValue;
+        if (obj === 'true') return true;
+        else if (obj === 'false') return false;
         return obj;
     }
 

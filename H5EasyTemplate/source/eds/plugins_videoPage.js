@@ -28,6 +28,10 @@ class VideoPageModel extends ds.core.EventDispatcher {
         this._domInHtml = false;
         this._config = opts;
 
+        this._type = 'videoPage';
+        this._screenType = _getDefault(opts.screenType, 'v');
+
+
         let _css = {
             position: 'absolute',
             width: opts.width || 640,
@@ -39,6 +43,7 @@ class VideoPageModel extends ds.core.EventDispatcher {
         //是否强制横屏
         let _isHorizontal = false;
         if (_css.width > _css.height) _isHorizontal = true;
+        if(_isHorizontal) this._screenType='auto';
 
         //开始构建html部分
         let _temp;
@@ -85,12 +90,12 @@ class VideoPageModel extends ds.core.EventDispatcher {
                 '-o-transform': 'translateZ(-1px)',
                 'transform': 'translateZ(-1px)',
             });
-            this.view.css({left:-3000});
+            this.view.css({left: -3000});
         }
 
-        let _uiPanel=this.view.find('.uiPanel');
-        if(_uiPanel&&_uiPanel.length>0){
-            this._uiPanel=_uiPanel;
+        let _uiPanel = this.view.find('.uiPanel');
+        if (_uiPanel && _uiPanel.length > 0) {
+            this._uiPanel = _uiPanel;
             _uiPanel.hide();
         }
 
@@ -122,6 +127,9 @@ class VideoPageModel extends ds.core.EventDispatcher {
             }
         });
 
+        SiteModel.resizeModel.on('resize', function () {
+            this._resize();
+        }, this);
     }
 
     movieIn() {
@@ -133,8 +141,8 @@ class VideoPageModel extends ds.core.EventDispatcher {
         this._videoElement.css({left: 0});
         this._videoPlayer.play();
 
-        if(this._isHorizontal)this.view.css({left:0});
-        if(this._uiPanel)this._uiPanel.show();
+        if (this._isHorizontal) this.view.css({left: 0});
+        if (this._uiPanel) this._uiPanel.show();
 
 
         if (this._domInHtml) {
@@ -166,8 +174,8 @@ class VideoPageModel extends ds.core.EventDispatcher {
         if (this._domInHtml) this._view.hide();
         else this._view.remove();
 
-        if(this._isHorizontal)this.view.css({left:-3000});
-        if(this._uiPanel)this._uiPanel.hide();
+        if (this._isHorizontal) this.view.css({left: -3000});
+        if (this._uiPanel) this._uiPanel.hide();
 
         this.movieOutEnd();
         if (this._config.movieOut) this._config.movieOut();
@@ -183,7 +191,7 @@ class VideoPageModel extends ds.core.EventDispatcher {
     }
 
     play() {
-
+        this._videoPlayer.resetCuePoints();
         this._videoPlayer.seekToTime(0);
         this._videoPlayer.play();
 
@@ -216,6 +224,59 @@ class VideoPageModel extends ds.core.EventDispatcher {
     get isCreatejsView() {
         return this._isCreatejsView;
     }
+
+    get type() {
+        return this._type;
+    }
+
+    /**
+     * 自适应方式 默认'v'竖屏 'h'横屏 'auto' 横竖屏皆可以
+     * @return {string}
+     */
+    get screenType() {
+        return this._screenType
+    }
+
+    /**
+     * 场景自适应
+     * @private
+     */
+    _resize() {
+
+        if (this.name !== SiteModel.pager.pageLabel) return;
+
+        let _resizeModel = SiteModel.resizeModel;
+        let _width = _resizeModel.width;
+        let _height = _resizeModel.height;
+        let _actualH = _resizeModel.actualH;
+        let _pageScale = _resizeModel.pageScale;
+        let _isInputState = _resizeModel.isInputState;
+        let _horizontal = _resizeModel.horizontal;
+        let _screenWidth = _resizeModel.screenWidth;
+        let _densityDpi = _resizeModel.densityDpi;
+        let _screenType = this._screenType;
+
+        // console.log(this.name,'_resize',this._screenType,_horizontal);
+        if (_screenType === 'v') {
+            if (_horizontal) SiteModel.resizeModel.showOrientationTip(true);
+            else SiteModel.resizeModel.hideOrientationTip();
+        }
+        else if (_screenType === 'h') {
+            if(!_horizontal)SiteModel.resizeModel.showOrientationTip(false);
+            else SiteModel.resizeModel.hideOrientationTip();
+        } else {
+            SiteModel.resizeModel.hideOrientationTip();
+        }
+
+    }
+}
+
+
+function _getDefault(obj, defaultValue) {
+    if (obj === undefined || obj === null) return defaultValue;
+    if (obj === 'true') return true;
+    else if (obj === 'false') return false;
+    return obj;
 }
 
 // console.log('VideoPageModel');

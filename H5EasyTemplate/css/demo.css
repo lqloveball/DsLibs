@@ -624,8 +624,8 @@ li {
 
 #VideoPage .btn {
   position: absolute;
-  left: 0;
-  top: 0;
+  left: 50px;
+  top: 50px;
   width: 100px;
   height: 100px;
   background: #fff;

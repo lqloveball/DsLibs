@@ -76,7 +76,6 @@ var SiteConfig = {
                 _image.src = './images/ShareImg.jpg';
                 this.view.append(_image);
             },
-            touchSwipe: false
         },
         //【页面配置方式5】配置视频页面
         {
@@ -86,13 +85,13 @@ var SiteConfig = {
             // 视频页面地址 不需要填写 .mp4，因为会根据系统自动判断播放类型
             url: 'media/intro',
             //设置视频宽
-            width: 1235,
+            width: 640,
             //设置视频高
-            height: 640,
+            height: 1235,
             initUI: function () {
                 var _self = this;
                 this.view.find('.uiPanel .btn').on('click', function () {
-                    SiteModel.gotoPage('MovieInPage');
+                    SiteModel.gotoPage('NoMoviePage');
                     _self.videoPlayer.pause();
                 });
             },
@@ -110,7 +109,7 @@ var SiteConfig = {
     ],
 
     //【非必填】可以设置默认第一个页面 .默认是pages里面的第一个页面
-    firstPage: 'IntroPage',
+    firstPage: 'AutoCreateDom2',
     //【非必填】可以设置本地debug 默认第一个页面
     // debugFirstPage: 'MovieInOutPage',
     //【非必填】设置作品回流页面

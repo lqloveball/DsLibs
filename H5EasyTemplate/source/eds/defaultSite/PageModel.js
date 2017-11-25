@@ -17,8 +17,8 @@ class PageModel extends ds.core.EventDispatcher {
 
         var _self = this;
 
+        //字符串的配置
         if (typeof opts === 'string') {
-
             let _temp = opts;
             opts = {};
             if (_temp.indexOf('.') > 0) {
@@ -34,31 +34,42 @@ class PageModel extends ds.core.EventDispatcher {
             }
         }
 
+        //对象配置 判断是否html页面
         if (opts.name.indexOf('#') === 0) {
             let _temp = opts.name;
             opts.name = _temp.slice(1).split(' ')[0];
             opts.$dom = _temp;
             opts.cs = 'html';
-            opts.touchSwipe = true;
+            opts.touchSwipe = _getDefault(opts.touchSwipe, true);
         }
 
+
+        //是否能滑动翻页
+        opts.touchSwipe = _getDefault(opts.touchSwipe, true);
         //上下滑动
-        if (opts.touchVertical === undefined) opts.touchVertical = true;
+        opts.touchVertical = _getDefault(opts.touchVertical, true);
         //运动中是锁住
-        if (opts.movieLock === undefined) opts.movieLock = true;
-        //页面切换是否可以循环
-        if (opts.touchSwipeLoop === undefined) opts.touchSwipeLoop = false;
+        opts.movieLock = _getDefault(opts.movieLock, true);
+        //页面切换是否可以循环,到最后一页是否能切到上一页
+        opts.touchSwipeLoop = _getDefault(opts.touchSwipeLoop, true);
+        //是否可以切下一页
+        opts.touchNext = _getDefault(opts.touchNext, true);
+        //是否能切上一页
+        opts.touchPrevious = _getDefault(opts.touchPrevious, true);
 
         this._name = opts.name;
         this._cs = opts.cs;
+
+        //页面类型 html createjs videoPage
+        this._type = 'html';
+        this._screenType = _getDefault(opts.screenType, 'v');
 
 
         this._movieIning = true;
         this._movieOuting = true;
         this._isCreatejsView = false;
         this._view = null;
-        this._domInHtml=false;
-
+        this._domInHtml = false;
         this._config = opts;
 
         if (opts.cs === 'html') {
@@ -67,24 +78,25 @@ class PageModel extends ds.core.EventDispatcher {
             this._name = opts.name;
             this._cs = opts.cs;
             let _temp;
-            if (opts.$dom)_temp = $(opts.$dom);
+            if (opts.$dom) _temp = $(opts.$dom);
             else _temp = $('#' + this._name);
+            //判断是否非原dom结构内拥有
             if (_temp.length <= 0) {
                 _temp = $(document.createElement("div"));
                 _temp[0].id = this._name;
                 let _css = {position: 'absolute', left: 0, top: 0,};
                 if (opts.css) _css = opts.css;
                 _temp.css(_css);
-            }else{
-               this._domInHtml=true;
+            } else {
+                this._domInHtml = true;
             }
-
             this._view = _temp;
-            // console.log('html create ',this._name);
+            this._type = 'html';
 
         }
         else if (window['createjs'] && opts.cs !== 'html') {
 
+            this._type = 'createjs';
             if (this._name.indexOf('.') !== -1) {
                 let _temp = this._name;
                 let _arr = _temp.split('.');
@@ -177,37 +189,47 @@ class PageModel extends ds.core.EventDispatcher {
             this._previousPage();
         });
 
+        SiteModel.resizeModel.on('resize', function () {
+            this._resize();
+        }, this);
+
     }
 
     _nextPage() {
+        console.log(this.name, this._config.touchSwipe);
         if (SiteModel.pager.pageLabel !== this.name) return;
-        // console.log('_nextPage',this.name,this._config.movieLock,this._movieIning,this._movieOuting);
-        if (this._config.movieLock && (this._movieIning||this._movieOuting)) return;
+        let _config = this._config;
+        if (_config.movieLock && (this._movieIning || this._movieOuting)) return;
+        if (!_config.touchNext) return;
         let _pager = SiteModel.pager;
         let _index = _pager.pageList.indexOf(_pager.pageModel);
         let _num = _index + 1;
         if (_num >= _pager.pageList.length) {
-            if (this._config.touchSwipeLoop) _num = 0;
+            if (t_config.touchSwipeLoop) _num = 0;
             else _num = _pager.pageList.length - 1;
         }
-
         let _page = _pager.pageList[_num];
+        if (_page.type === 'videoPage') return;
         SiteModel.gotoPage(_page.name);
 
     }
 
     _previousPage() {
+
         if (SiteModel.pager.pageLabel !== this.name) return;
-        if (this._config.movieLock && (this._movieIning||this._movieOuting)) return;
+        let _config = this._config;
+        if (_config.movieLock && (this._movieIning || this._movieOuting)) return;
+        if (!_config.touchPrevious) return;
         let _pager = SiteModel.pager;
         let _index = _pager.pageList.indexOf(_pager.pageModel);
         let _num = _index - 1;
         if (_num < 0) {
             _num = _pager.pageList.length - 1;
-            if (this._config.touchSwipeLoop) _num = _pager.pageList.length - 1;
+            if (_config.touchSwipeLoop) _num = _pager.pageList.length - 1;
             else _num = 0;
         }
         let _page = _pager.pageList[_num];
+        if (_page.type === 'videoPage') return;
         SiteModel.gotoPage(_page.name);
 
     }
@@ -217,28 +239,28 @@ class PageModel extends ds.core.EventDispatcher {
         this._movieOuting = false;
         this._movieIning = true;
         this.ds('movieIn');
-        console.log(this.name + ':movieIn',this._movieIning);
+        // console.log(this.name + ':movieIn', this._movieIning);
         if (this._isCreatejsView) {
             _Root.addChildAt(this._view);
             this._view.gotoAndStop(0);
             this._view.gotoAndPlay(0);
-        }else{
+        } else {
 
-            if(this._domInHtml){
+            if (this._domInHtml) {
                 this._view.show();
 
-            }else{
-                let _domBox=$('#domBox');
-                if(_domBox.length>0) $('#domBox').append(this._view);
-                else  $('#screen').append(this._view);
+            } else {
+                let _domBox = $('#domBox');
+                if (_domBox.length > 0) $('#domBox').append(this._view);
+                else $('#screen').append(this._view);
                 this._view.show();
             }
-            setTimeout(()=>{
+            setTimeout(() => {
                 this.movieInEnd();
-            },500);
+            }, 500);
         }
-
         if (this._config.movieIn) this._config.movieIn();
+        this._resize();
     }
 
     movieInEnd() {
@@ -271,14 +293,14 @@ class PageModel extends ds.core.EventDispatcher {
             }, this);
 
         }
-        else if (this._isCreatejsView){
+        else if (this._isCreatejsView) {
             this.movieOutEnd();
         }
         else {
 
-            if(this._domInHtml){
+            if (this._domInHtml) {
                 this._view.hide();
-            }else{
+            } else {
                 this._view.remove();
             }
             this.movieOutEnd();
@@ -318,6 +340,58 @@ class PageModel extends ds.core.EventDispatcher {
     get isCreatejsView() {
         return this._isCreatejsView;
     }
+
+    get type() {
+        return this._type;
+    }
+
+    /**
+     * 自适应方式 默认'v'竖屏 'h'横屏 'auto' 横竖屏皆可以
+     * @return {string}
+     */
+    get screenType() {
+        return this._screenType
+    }
+
+    /**
+     * 场景自适应
+     * @private
+     */
+    _resize() {
+
+        if (this.name !== SiteModel.pager.pageLabel) return;
+
+        let _resizeModel = SiteModel.resizeModel;
+        let _width = _resizeModel.width;
+        let _height = _resizeModel.height;
+        let _actualH = _resizeModel.actualH;
+        let _pageScale = _resizeModel.pageScale;
+        let _isInputState = _resizeModel.isInputState;
+        let _horizontal = _resizeModel.horizontal;
+        let _screenWidth = _resizeModel.screenWidth;
+        let _densityDpi = _resizeModel.densityDpi;
+        let _screenType = this._screenType;
+
+        // console.log(this.name,'_resize',this._screenType,_horizontal);
+        if(_screenType==='v'){
+            if(_horizontal)SiteModel.resizeModel.showOrientationTip(true);
+            else SiteModel.resizeModel.hideOrientationTip();
+        }
+        else if(_screenType==='h'){
+            if(!_horizontal)SiteModel.resizeModel.showOrientationTip(false);
+            else SiteModel.resizeModel.hideOrientationTip();
+        }else{
+            SiteModel.resizeModel.hideOrientationTip();
+        }
+
+    }
+}
+
+function _getDefault(obj, defaultValue) {
+    if (obj === undefined || obj === null) return defaultValue;
+    if (obj === 'true') return true;
+    else if (obj === 'false') return false;
+    return obj;
 }
 
 export default PageModel;

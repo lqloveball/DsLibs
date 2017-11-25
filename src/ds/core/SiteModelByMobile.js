@@ -59,7 +59,7 @@
      * @param {function} [opts.initLoadPanel=undefined] 自定义创建loading界面,这个函数必须有一个callback函数，在loading界面创建完成后调用
      * @param {function} [opts.showProgress=undefined]  自定loading进度条 带参数 进度0-100
      * @param {function} [opts.hitLoadPanel=undefined]  自定loading进度条隐藏的方法 带参数 callback方法
-     * @param {number} [opts.resizeDelay=100]  微信下旋转后自适应响应时间慢，设置合理delay 强制执行一次reisze（特别是load 过程中）
+     * @param {number} [opts.resizeDelay=300]  微信下旋转后自适应响应时间慢，设置合理delay 强制执行一次reisze（特别是load 过程中）
      * @param {object} [opts.audioConfig=undefined]  声音管理器。主要实现功能：默认背景音控制、与音频资源加载管理
      *
      * ```js
@@ -576,12 +576,11 @@
             _self.resizeModel = new ds.core.MoblieResizeModel({
                 screen: _self.screen[0],
                 type: _resizeModelType,
-                delay: opts.resizeDelay || 100
+                delay: opts.resizeDelay || 300
             });
 
             //进行提示浮动层显示
-            if (_self.resizeModel.type !== 'auto') _self.resizeModel.createOrientationTip();
-
+            _self.resizeModel.createOrientationTip();
 
             //监听场景自适应
             _self.resizeModel.on('resize', _resize);
