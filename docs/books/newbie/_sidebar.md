@@ -1,0 +1,24 @@
+- [Home](/README)
+- [新人必读](/books/newbie/README)
+- 入门
+    - [前端开发工具](/books/newbie/base/Tools.md)
+    - [前端开发环境](/books/newbie/npm/README.md)
+    - [开发环境配置安装](/books/newbie/npm/WorkFlowInstall.md)
+- 开始上手
+    - [项目开发流程](#)
+    - [EDSSite模板开发项目](/books/eds/README.md)
+- 源码管理
+    - [源代码管理Git](/books/newbie/Git/README.md)
+    - [内网Git使用](/books/newbie/Git/LocalGit.md)
+    - [通过Github获取Dslibs](/books/newbie/Git/DsMaintain.md)
+- 常见问题
+    - [前端开发知识](/books/newbie/base/H5FAQ.md)
+- 基础
+   - [团队精神](/books/newbie/base/TeamSpirit.md)
+   - [基础类与对象](/books/newbie/JSBase/Base0.md)
+   - [基础事件机制](/books/newbie/JSBase/Base1.md)
+   - [JQurey如何原生实现](/books/newbie/JSBase/Base2.md)
+- 团队资源
+    - [EDSSite 文档](/books/eds/README.md)
+    <a href="./dsDocs/index.html" target="_blank">Dslibs API 文档</a>
+ 

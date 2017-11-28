@@ -17,6 +17,7 @@ class PageModel extends ds.core.EventDispatcher {
 
         var _self = this;
 
+
         //字符串的配置
         if (typeof opts === 'string') {
             let _temp = opts;
@@ -25,12 +26,16 @@ class PageModel extends ds.core.EventDispatcher {
                 let _arr = _temp.split('.');
                 opts.name = _arr[1];
                 opts.cs = _temp;
-                opts.touchSwipe = true;
+                opts.touchSwipe = _getDefault(opts.touchSwipe, true);
             }
             else if (_temp.indexOf('#') === 0) {
                 opts.name = _temp;
                 opts.cs = 'html';
-                opts.touchSwipe = true;
+                opts.touchSwipe = _getDefault(opts.touchSwipe, true);
+            }
+            else{
+                console.error('页面配置错误：'+_temp);
+                return;
             }
         }
 
@@ -45,7 +50,7 @@ class PageModel extends ds.core.EventDispatcher {
 
 
         //是否能滑动翻页
-        opts.touchSwipe = _getDefault(opts.touchSwipe, true);
+        opts.touchSwipe = _getDefault(opts.touchSwipe, false);
         //上下滑动
         opts.touchVertical = _getDefault(opts.touchVertical, true);
         //运动中是锁住
@@ -159,6 +164,7 @@ class PageModel extends ds.core.EventDispatcher {
         if (opts.movieInEnd) opts.movieInEnd = opts.movieInEnd.bind(this);
         if (opts.movieOut) opts.movieOut = opts.movieOut.bind(this);
         if (opts.movieOutEnd) opts.movieOutEnd = opts.movieOutEnd.bind(this);
+        if (opts.resize) opts.resize = opts.resize.bind(this);
         if (opts.initUI) {
             opts.initUI = opts.initUI.bind(this);
             opts.initUI();
@@ -191,6 +197,7 @@ class PageModel extends ds.core.EventDispatcher {
 
         SiteModel.resizeModel.on('resize', function () {
             this._resize();
+            if(opts.resize)opts.resize();
         }, this);
 
     }

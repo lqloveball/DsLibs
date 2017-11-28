@@ -324,7 +324,7 @@
          * 分享模块
          * 还在单页面应用（AppMain.js）构建时执行时候创建
          * @member ds.core.SiteModelByMobile.prototype.shareModel
-         * @type {ds.net.ShareModel}
+         * @type {ds.net.CagoeWechatShareModel}
          */
         this.shareModel = null;
 

@@ -622,7 +622,7 @@ li {
   display: none;
 }
 
-#VideoPage .btn {
+#VideoPage .uiPanel .btn {
   position: absolute;
   left: 50px;
   top: 50px;

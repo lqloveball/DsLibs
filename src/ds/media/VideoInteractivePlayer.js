@@ -119,7 +119,9 @@ class VideoInteractivePlayer extends EventDispatcher {
             this.ds(e);
         }, this);
 
-        _videoPlayer.on('update', this._timeUpDate,this);
+        _videoPlayer.on('update', function (e) {
+            _self._timeUpDate(e);
+        },this);
 
         this._playing = false;
 
@@ -204,6 +206,7 @@ class VideoInteractivePlayer extends EventDispatcher {
      */
     _timeUpDate(e) {
 
+        let _self=this;
         let _videoPlayer = this._videoPlayer;
         if (!_videoPlayer) return;
         let _currentTime = 0;

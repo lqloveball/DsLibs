@@ -104,6 +104,7 @@ class VideoPageModel extends ds.core.EventDispatcher {
         if (opts.movieInEnd) opts.movieInEnd = opts.movieInEnd.bind(this);
         if (opts.movieOut) opts.movieOut = opts.movieOut.bind(this);
         if (opts.movieOutEnd) opts.movieOutEnd = opts.movieOutEnd.bind(this);
+        if (opts.resize) opts.resize = opts.resize.bind(this);
         if (opts.initUI) {
             opts.initUI = opts.initUI.bind(this);
             opts.initUI();
@@ -129,6 +130,7 @@ class VideoPageModel extends ds.core.EventDispatcher {
 
         SiteModel.resizeModel.on('resize', function () {
             this._resize();
+            if(opts.resize)opts.resize();
         }, this);
     }
 
@@ -256,14 +258,34 @@ class VideoPageModel extends ds.core.EventDispatcher {
         let _densityDpi = _resizeModel.densityDpi;
         let _screenType = this._screenType;
 
-        // console.log(this.name,'_resize',this._screenType,_horizontal);
+        console.log(this.name,'_resize',this._screenType,_horizontal,this._videoPlayerOriginalPlay);
         if (_screenType === 'v') {
-            if (_horizontal) SiteModel.resizeModel.showOrientationTip(true);
-            else SiteModel.resizeModel.hideOrientationTip();
+
+            if (_horizontal){
+                if(this._videoPlayerOriginalPlay===undefined)this._videoPlayerOriginalPlay=this._videoPlayer.playing;
+                this._videoPlayer.pause();
+                SiteModel.resizeModel.showOrientationTip(true);
+            }
+            else{
+                if(this._videoPlayerOriginalPlay){
+                    this._videoPlayer.play();
+                    this._videoPlayerOriginalPlay=undefined;
+                }
+                SiteModel.resizeModel.hideOrientationTip();
+            }
         }
         else if (_screenType === 'h') {
-            if(!_horizontal)SiteModel.resizeModel.showOrientationTip(false);
-            else SiteModel.resizeModel.hideOrientationTip();
+
+            if (!_horizontal){
+                this._videoPlayerOriginalPlay=this._videoPlayer.playing;
+                this._videoPlayer.pause();
+                SiteModel.resizeModel.showOrientationTip(false);
+            }
+            else{
+                if(this._videoPlayerOriginalPlay) this._videoPlayer.play();
+                SiteModel.resizeModel.hideOrientationTip();
+            }
+
         } else {
             SiteModel.resizeModel.hideOrientationTip();
         }

@@ -28,15 +28,15 @@ class DefaultMain extends ds.core.EventDispatcher {
             if (_otherjs.indexOf('./js/edslibs/extend_pixijs.js') < 0) _otherjs.push('./js/edslibs/extend_pixijs.js');
         }
         //是否需要添加插件
-        if(SiteConfig.plugins&&SiteConfig.plugins.length>0){
+        if (SiteConfig.plugins && SiteConfig.plugins.length > 0) {
 
-            let _plugins=SiteConfig.plugins;
+            let _plugins = SiteConfig.plugins;
             let _jsUrl;
             for (let i = 0; i < _plugins.length; i++) {
 
                 let _url = _plugins[i];
-                if(_url.indexOf('.js')<0) _jsUrl='./js/edslibs/plugins_'+_url+'.js';
-                else   _jsUrl=_url;
+                if (_url.indexOf('.js') < 0) _jsUrl = './js/edslibs/plugins_' + _url + '.js';
+                else _jsUrl = _url;
                 _otherjs.push(_jsUrl);
 
             }
@@ -84,10 +84,10 @@ class DefaultMain extends ds.core.EventDispatcher {
                 complete: loadStart,
             };
             if (obj instanceof Array) {
-                let _tp=obj;
-                obj={type:'images'};
-                obj.basePath='';
-                obj.list=_tp;
+                let _tp = obj;
+                obj = {type: 'images'};
+                obj.basePath = '';
+                obj.list = _tp;
             }
 
             if (typeof obj === 'string') {
@@ -99,8 +99,8 @@ class DefaultMain extends ds.core.EventDispatcher {
 
             }
             else if (obj.type && obj.type === 'images') {
-                _loadObj.type=obj.type;
-                let _ls=_loadObj.list;
+                _loadObj.type = obj.type;
+                let _ls = _loadObj.list;
             }
             else {
 
@@ -139,11 +139,11 @@ class DefaultMain extends ds.core.EventDispatcher {
 
             _nowLoadData = _loadList[_index];
 
-            if(_nowLoadData.type&&_nowLoadData.type==='images'){
-                ds.net.queueLoad(_nowLoadData.list,_nowLoadData.complete,_nowLoadData.progress,{
-                    basePath:_nowLoadData.basePath
+            if (_nowLoadData.type && _nowLoadData.type === 'images') {
+                ds.net.queueLoad(_nowLoadData.list, _nowLoadData.complete, _nowLoadData.progress, {
+                    basePath: _nowLoadData.basePath
                 });
-            }else{
+            } else {
                 ds.createjs.loadAssets(_nowLoadData);
             }
 
@@ -182,54 +182,62 @@ class DefaultMain extends ds.core.EventDispatcher {
             this._startSitePage();
         } else {
             console.log('load extend js');
+
             SiteModel.getScriptList(_extend, () => {
                 this._startSitePage();
             })
         }
 
+
     }
 
     _startSitePage() {
+        //如果有配置开始进入网站首页方法，会使用配置方法。默认startSitePage不执行
+        if (SiteConfig.startSitePage) {
+            var _startSitePage = SiteConfig.startSitePage.bind(this);
+            _startSitePage();
+            return;
+        }
 
         // console.log('startSitePage');
 
-        this.isWorkBack=false;
+        this.isWorkBack = false;
 
         let _firstPage;
-        if (window.location.href.indexOf(SiteConfig.shareWorkUrl) !== -1){
-            let _workPage=SiteConfig.workPage;
-            if(!_workPage){
+        if (window.location.href.indexOf(SiteConfig.shareWorkUrl) !== -1) {
+            let _workPage = SiteConfig.workPage;
+            if (!_workPage) {
                 alert('请在配置内设置回流页面');
                 return;
             }
             let _urlParamDc = ds.net.getUrlParameterDictionary();
-            if(!_urlParamDc||!_urlParamDc['WorkID']){
+            if (!_urlParamDc || !_urlParamDc['WorkID']) {
                 ds.alert('作品id获取失败');
                 return;
             }
             else {
 
-                let _workid=_urlParamDc['WorkID'];
+                let _workid = _urlParamDc['WorkID'];
                 _firstPage = _workPage.name;
-                this.isWorkBack=true;
-                this.workID=_workid;
+                this.isWorkBack = true;
+                this.workID = _workid;
 
-                let _event={
-                    type:'backWorkPage',
-                    id:_workid,
+                let _event = {
+                    type: 'backWorkPage',
+                    id: _workid,
                 };
 
                 this.ds(_event);
                 SiteModel.ds(_event);
 
-                if(_workPage.getWorkData)_workPage.getWorkData(_workid);
-                else{
+                if (_workPage.getWorkData) _workPage.getWorkData(_workid);
+                else {
                     SiteModel.hitLoadPanel();
                     SiteModel.gotoPage(_firstPage);
                 }
             }
         }
-        else{
+        else {
 
             let _pager = SiteModel.pager;
             _firstPage = SiteConfig.firstPage;
@@ -239,7 +247,6 @@ class DefaultMain extends ds.core.EventDispatcher {
             SiteModel.gotoPage(_firstPage);
             SiteModel.hitLoadPanel();
         }
-
 
 
     }

@@ -7,10 +7,17 @@
   <meta name="description" content="Description">
   <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
   <link rel="stylesheet" href="./css/vue.css">
+  <script>
+      if (typeof navigator.serviceWorker !== 'undefined') {
+          navigator.serviceWorker.register('./js/sw.js')
+      }
+  </script>
 </head>
 
 <body>
   <div id="app"></div>
+
+
 </body>
 <script>
   window.$docsify = {
@@ -20,7 +27,7 @@
     executeScript: true, //支持外部脚本
     loadSidebar: true, //配置自定义侧边栏
     subMaxLevel: 6, //侧边栏 目标层级
-    autoHeader: true, //同时设置 loadSidebar 和 autoHeader 后，可以根据 _sidebar.md 的内容自动为每个页面增加标题
+    autoHeader: false, //同时设置 loadSidebar 和 autoHeader 后，可以根据 _sidebar.md 的内容自动为每个页面增加标题
 
     mergeNavbar: true, //小屏设备下合并导航栏到侧边栏。
     //显示编辑时间
