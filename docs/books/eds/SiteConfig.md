@@ -167,13 +167,19 @@ extend: [
 ]
 ```
   
+
 #### startSitePage
 
 阻止默认的开始网站页面的方法，会使用配置开始页面方法来执行
+
 
   
 #### 更多SiteModel初始化构建配置
 
  <a href="/dsDocs/ds.core.SiteModelByMobile.html" target='_blank'>SiteModelByMobile API文档</a>
+ 
+ #### mode
+ 
+ 默认是 `default` ,会使用默认简易的模板框架。
 
 

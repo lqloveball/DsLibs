@@ -12,5 +12,6 @@
 - [框架结构说明](/books/eds/FrameStructure.md)
 - [站点构建过程](/books/eds/Siteflow.md)
 - [Adobe Animate 资源发布设置](/books/eds/AnimatePublishSet.md)
+- [更多开发方式](/books/eds/othersConfig.md)
 - 其他
 <a href="./dsDocs/index.html" target="_blank">Dslibs API Docs</a>

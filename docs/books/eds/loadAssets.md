@@ -59,3 +59,10 @@ loadAssets:[
     ]
 }
 ```
+#### HTML页面上支持懒加载属性设置
+
+在页面上的img标签内有`lazypath`属性，网站模板构建时候会检索所有图片对象进行图片加载处理，`src`建议需要放一张空的图片
+
+```html
+<img lazypath="images/BGMICON.png" src="images/lazy.png" />
+```
