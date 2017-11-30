@@ -17,7 +17,6 @@ class PageModel extends ds.core.EventDispatcher {
 
         var _self = this;
 
-
         //字符串的配置
         if (typeof opts === 'string') {
             let _temp = opts;
@@ -33,8 +32,8 @@ class PageModel extends ds.core.EventDispatcher {
                 opts.cs = 'html';
                 opts.touchSwipe = _getDefault(opts.touchSwipe, true);
             }
-            else{
-                console.error('页面配置错误：'+_temp);
+            else {
+                console.error('页面配置错误：' + _temp);
                 return;
             }
         }
@@ -197,7 +196,7 @@ class PageModel extends ds.core.EventDispatcher {
 
         SiteModel.resizeModel.on('resize', function () {
             this._resize();
-            if(opts.resize)opts.resize();
+            if (opts.resize) opts.resize();
         }, this);
 
     }
@@ -212,11 +211,11 @@ class PageModel extends ds.core.EventDispatcher {
         let _index = _pager.pageList.indexOf(_pager.pageModel);
         let _num = _index + 1;
         if (_num >= _pager.pageList.length) {
-            if (t_config.touchSwipeLoop) _num = 0;
+            if (_config.touchSwipeLoop) _num = 0;
             else _num = _pager.pageList.length - 1;
         }
         let _page = _pager.pageList[_num];
-        if (_page.type === 'videoPage') return;
+        if (_page.type !== 'html' && _page.type !== 'createjs') return;
         SiteModel.gotoPage(_page.name);
 
     }
@@ -236,7 +235,7 @@ class PageModel extends ds.core.EventDispatcher {
             else _num = 0;
         }
         let _page = _pager.pageList[_num];
-        if (_page.type === 'videoPage') return;
+        if (_page.type !== 'html' && _page.type !== 'createjs') return;
         SiteModel.gotoPage(_page.name);
 
     }
@@ -380,14 +379,14 @@ class PageModel extends ds.core.EventDispatcher {
         let _screenType = this._screenType;
 
         // console.log(this.name,'_resize',this._screenType,_horizontal);
-        if(_screenType==='v'){
-            if(_horizontal)SiteModel.resizeModel.showOrientationTip(true);
+        if (_screenType === 'v') {
+            if (_horizontal) SiteModel.resizeModel.showOrientationTip(true);
             else SiteModel.resizeModel.hideOrientationTip();
         }
-        else if(_screenType==='h'){
-            if(!_horizontal)SiteModel.resizeModel.showOrientationTip(false);
+        else if (_screenType === 'h') {
+            if (!_horizontal) SiteModel.resizeModel.showOrientationTip(false);
             else SiteModel.resizeModel.hideOrientationTip();
-        }else{
+        } else {
             SiteModel.resizeModel.hideOrientationTip();
         }
 

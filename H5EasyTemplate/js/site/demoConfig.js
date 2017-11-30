@@ -64,8 +64,7 @@ var SiteConfig = {
         'other.MovieInOutPage',
         //【页面配置方式4】配置简单HTML页面 在HTML上有这个dom结构
         '#HtmlPage',
-        //【页面配置方式4】配置简单HTML页面 在HTML上有没有dom结构 自动创建添加到#domBox内 如果没这个节点会添加到#screen
-        '#AutoCreateDom',
+
         // 页面动画没有进场与退场
         'other.NoMoviePage',
         //【页面配置方式4】配置简单HTML页面 在HTML上有没有dom结构 自动创建添加到#domBox内 如果没这个节点会添加到#screen
@@ -75,8 +74,13 @@ var SiteConfig = {
                 var _image = new Image();
                 _image.src = './images/ShareImg.jpg';
                 this.view.append(_image);
+                $(_image).on('click',function () {
+                    var _page = SiteModel.getPage('FramesPage');
+                    _page.play();
+                })
             },
         },
+
         //【页面配置方式5】配置视频页面
         {
             name: '#VideoPage',
@@ -88,6 +92,8 @@ var SiteConfig = {
             width: 640,
             //设置视频高
             height: 1235,
+            hasFPS:true,
+            end:133,
             initUI: function () {
                 var _self = this;
                 this.view.find('.uiPanel .btn').on('click', function () {
@@ -106,10 +112,51 @@ var SiteConfig = {
             }
 
         },
+        //【页面配置方式4】配置简单HTML页面 在HTML上有没有dom结构 自动创建添加到#domBox内 如果没这个节点会添加到#screen
+        '#AutoCreateDom',
+        {
+            name: '#FramesPage',
+            //标记这个页面类型是视频播放页面 注意在plugins 里面需要添加视频播放插件 'videoPage'
+            type: 'frames',
+            // 视频页面地址 不需要填写 .mp4，因为会根据系统自动判断播放类型
+            url: 'media/intro',
+            //设置视频宽
+            width: 640,
+            //设置视频高
+            height: 1235,
+            end:133,
+            autoload:false,
+            autoplay:false,
+            // hasMp3:true,
+            loop:true,
+            // mp3:'images/video/intro.mp3',
+            initUI: function () {
+                var _self = this;
+                this.view.find('.uiPanel .btn1').on('click', function () {
+                    if(_self.videoPlayer.playing)_self.videoPlayer.pause();
+                    else _self.videoPlayer.play();
+                });
+
+                this.view.find('.uiPanel .btn2').on('click', function () {
+
+                    SiteModel.gotoPage('NoMoviePage');
+                });
+            },
+            //视频准备可以播放时候
+            readyPlay: function () {
+
+            },
+            //视频播放完成时候
+            playEnd: function () {
+                console.log(this.name, 'playEnd');
+                // SiteModel.gotoPage('MovieInPage');
+            }
+
+        },
     ],
 
     //【非必填】可以设置默认第一个页面 .默认是pages里面的第一个页面
-    firstPage: 'MovieInPage',
+    firstPage: 'HomePage',
     //【非必填】可以设置本地debug 默认第一个页面
     // debugFirstPage: 'MovieInOutPage',
     //【非必填】设置作品回流页面
@@ -123,7 +170,7 @@ var SiteConfig = {
     },
     //【非必填】插件。
     plugins: [
-        'videoPage'
+        'videoPage','framesPage'
     ],
     //【非必填】扩展逻辑代码。
     extend: [

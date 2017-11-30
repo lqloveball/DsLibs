@@ -140,6 +140,14 @@ class PageManager extends ds.core.EventDispatcher {
                     }
                     _page=new eds.VideoPageModel(_config);
                 }
+                else if(_config.type&&_config.type==='frames'){
+                    if(!eds.VideoPageModel) {
+                        console.error(_config.name+' :缺少视频页面插件');
+                        return;
+                    }
+                    _page=new eds.FramesPageModel(_config);
+                }
+
                 else {
                     _page=new PageModel(_config);
                 }

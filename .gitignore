@@ -2,7 +2,8 @@
 /.idea/
 /docsBuild/
 /H5Template/src/ds/
-/H5Template/src/libs/
+/H5Template/src/ds/
+/H5Template/media/
 /H5Template/src/app/pages/
 /H5TemplateTest/
 /H5EasyTemplate/source/ds/

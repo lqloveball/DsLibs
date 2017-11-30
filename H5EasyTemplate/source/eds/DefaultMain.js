@@ -5,6 +5,7 @@ import 'ds/net/QuickAjax';
 import 'ds/net/ADTrack';
 import 'ds/net/QueueLoad';
 import 'ds/ui/PopAlert';
+import 'ds/utils/Animate';
 import 'ds/net/CagoeWechatShareModel';
 
 
@@ -58,12 +59,13 @@ class DefaultMain extends ds.core.EventDispatcher {
 
         let _self = this;
 
+
+
         let _loadAssets = SiteConfig.loadAssets;
 
-        if (!_loadAssets || _loadAssets.length <= 0) {
-            console.error('请配置加载资源');
-            return;
-        }
+        if (!_loadAssets || _loadAssets.length <= 0) console.warn('你确定不配置加载资源吗！如果有createjs必须有相关资源');
+
+        this._loadLazyImages();
 
         let _loadList = [];
 
@@ -156,10 +158,44 @@ class DefaultMain extends ds.core.EventDispatcher {
         }
 
         function loadEnd() {
+            _self._loadLazyImagesEnd();
             _self._initPageManager();
         }
 
         loadStart();
+
+    }
+
+    _loadLazyImagesEnd(){
+       let _lazysList= this._lazysList;
+        for (let i = 0; i < _lazysList.length; i++) {
+            let _img = _lazysList[i];
+            _img.src=_img.getAttribute('lazypath');
+        }
+    }
+
+    _loadLazyImages(){
+
+        let _img;
+        let _imgs=$('img');
+        let _dc={};
+        let _lazys=[];
+        this._lazysList=[];
+        for (let i = 0; i < _imgs.length; i++) {
+            _img = _imgs[i];
+            let _url=_img.getAttribute('lazypath');
+            if(_url)this._lazysList.push(_img);
+            if(_url&&!_dc[_url]){
+                _dc[_url]=_url;
+                _lazys.push(_url);
+            }
+        }
+
+        if(_lazys.length>0){
+            if(SiteConfig.loadAssets)SiteConfig.loadAssets=[];
+            SiteConfig.loadAssets.push(_lazys);
+        }
+
 
     }
 

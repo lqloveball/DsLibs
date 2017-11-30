@@ -5,7 +5,6 @@ import EventDispatcher from '../core/EventDispatcher';
 import enableInlineVideo from 'libs/media/iphone-inline-video.min.js';
 
 
-
 /**
  *  视频标签交互播放器
  *
@@ -67,6 +66,14 @@ class VideoTagPlayer extends EventDispatcher {
      *
      * @param {string} url 视频源
      * @param {object} opts 播放器配置
+     * @param {HTMLElement} opts.el=undefined  捆绑dom元素
+     * @param {HTMLElement|string} opts.append=undefined  添加到dom容器节点
+     * @param {object} opts.css=undefined  播放器样式
+     * @param {boolean} opts.hasFPS=false 是否加入序列帧播放器判断
+     * @param {function} opts.onupdate  播放刷新
+     * @param {function} opts.onplay  开始播放
+     * @param {function} opts.onpause 播放暂停
+     * @param {function} opts.onplayend  播放完成
      */
     constructor(url, opts) {
 
@@ -149,7 +156,6 @@ class VideoTagPlayer extends EventDispatcher {
 
 
         _video.addEventListener("timeupdate", function (e) {
-            
             _self._updateEvent();
         });
         _video.addEventListener("play", function (e) {

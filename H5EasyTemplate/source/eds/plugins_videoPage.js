@@ -1,6 +1,7 @@
 import 'ds/media/VideoInteractivePlayer';
 import 'ds/media/VideoTagPlayer';
 import 'ds/media/MpegPlayer';
+import 'ds/media/FramesPlayer';
 import 'ds/ui/AutoHorizontalScreenContainer';
 
 /**
@@ -72,8 +73,27 @@ class VideoPageModel extends ds.core.EventDispatcher {
 
         let _videoPlayer = new ds.media.VideoInteractivePlayer(this._videoUrl, {
             append: this._videoPanel[0],
-            css: _css
+            css: _css,
+            autoload:_getDefault(opts.autoload,true),
+            autoplay:_getDefault(opts.autoplay,false),
+            hasAudio:_getDefault(opts.hasAudio,true),
+            //自动计算的时候是否包含序列帧播放器
+            hasFPS:_getDefault(opts.hasFPS,false),
+            //以下序列帧播放器才可能拥有的初始化属性
+            fps:_getDefault(opts.fps,12),
+            prefixes:_getDefault(opts.prefixes,'v'),
+            suffix:_getDefault(opts.suffix,'.jpg'),
+            start:_getDefault(opts.start,0),
+            end:_getDefault(opts.end,0),
+            formatLength:_getDefault(opts.formatLength,3),
+            loop:_getDefault(opts.loop,false),
+            bufferedime:_getDefault(opts.bufferedime,2),
+            mp3:_getDefault(opts.mp3,''),
+            audio:_getDefault(opts.audio,''),
+
         });
+
+
 
         this._videoPlayer = _videoPlayer;
         this._videoElement = $(_videoPlayer.el);
@@ -175,6 +195,8 @@ class VideoPageModel extends ds.core.EventDispatcher {
 
         if (this._domInHtml) this._view.hide();
         else this._view.remove();
+
+        this._videoPlayer.pause();
 
         if (this._isHorizontal) this.view.css({left: -3000});
         if (this._uiPanel) this._uiPanel.hide();

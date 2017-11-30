@@ -631,6 +631,38 @@ li {
   background: #fff;
 }
 
+#FramesPage {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+#FramesPage .uiPanel {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: none;
+  font-size: 25px;
+}
+
+#FramesPage .uiPanel .btn1 {
+  position: absolute;
+  left: 50px;
+  top: 50px;
+  width: 150px;
+  height: 50px;
+  background: #fff;
+}
+
+#FramesPage .uiPanel .btn2 {
+  position: absolute;
+  left: 50px;
+  top: 150px;
+  width: 150px;
+  height: 50px;
+  background: #fff;
+}
+
 #HtmlPage {
   position: absolute;
   left: 0;

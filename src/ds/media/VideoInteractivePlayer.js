@@ -8,8 +8,27 @@ import EventDispatcher from '../core/EventDispatcher';
 class VideoInteractivePlayer extends EventDispatcher {
     /**
      * 构建播放器
-     * @param {string} url 播放源
-     * @param {object} opts
+     * @param {string} url 播放源地址。不带后缀名，会根据设备情况自动判断使用`mpg`播放器还是默认`video`标签播放器。`opts.hasFPS`如果是`true`，非微信安卓会是`序列帧`播放器
+     * @param {object} opts  配置参数
+     * @param {string} opts.type=undefined 指定播放器类型 4种：'mpg'软解码mpg,'fs'序列帧播放器, 'video'默认video标签，'ts'待实现
+     * @param {HTMLElement} opts.el=undefined  捆绑dom元素
+     * @param {HTMLElement|string} opts.append=undefined  添加到dom容器节点
+     * @param {object} opts.css=undefined  播放器样式
+     * @param {boolean} opts.hasFPS=false 是否加入序列帧播放器判断
+     * @param {function} opts.onupdate  播放刷新
+     * @param {function} opts.onplay  开始播放
+     * @param {function} opts.onpause 播放暂停
+     * @param {function} opts.onplayend  播放完成
+     *
+     * 以下参数是对`非video`播放器设置
+     * @param {boolean} opts.autoplay=false  是否自动播放
+     * @param {boolean} opts.loop=false   是否自动循环播放
+     * @param {boolean} opts.autoload=false 是否自动加载
+     * @param {boolean} opts.hasAudio `mpg` `fs`类型播放器是否需要音频
+     * @param {string} opts.audio 对应音频地址 等同opts.mp3
+     * @param {string} opts.mp3 对应音频地址 等同opts.audio
+     *
+     * @see 更多参数设置看各类播放器具体实现类所需参数
      */
     constructor(url, opts) {
 
@@ -20,22 +39,26 @@ class VideoInteractivePlayer extends EventDispatcher {
 
         opts = opts || {};
 
+        opts.hasAudio=opts.hasAudio!== undefined?opts.hasAudio:true;
 
         let _type;
-        if (opts.type != undefined) _type = opts.type;
+        if (opts.type !== undefined) _type = opts.type;
         else {
 
-            let _playerData = this.getVideoPlayerTypeByExts(url);
+            let _hasFPS = opts.hasFPS !== undefined ? opts.hasFPS : false;
+
+            let _playerData = this.getVideoPlayerTypeByExts(url, _hasFPS);
             _type = _playerData.type;
             if (_playerData.ext === 'dynamics') {
                 if (_type === 'video') url = url + '.mp4';
                 if (_type === 'mpg') {
-
-                    if (!opts.audio && !opts.hasAudio) opts.audio = url + '.mp3';
+                    if (!opts.audio && opts.hasAudio) opts.audio = url + '.mp3';
                     url = url + '.mpg';
-
                 }
                 if (_type === 'ts') url = url + '.ts';
+                if (_type === 'fs') {
+                    if (!opts.audio && !opts.mp3 && opts.hasAudio) opts.mp3 = url + '.mp3';
+                }
             }
         }
 
@@ -111,7 +134,6 @@ class VideoInteractivePlayer extends EventDispatcher {
             this.ds(e);
         }, this);
         _videoPlayer.on('update', function (e) {
-
             /**
              * 视频播放中实时触发事件
              * @event ds.media.VideoInteractivePlayer#update
@@ -121,7 +143,7 @@ class VideoInteractivePlayer extends EventDispatcher {
 
         _videoPlayer.on('update', function (e) {
             _self._timeUpDate(e);
-        },this);
+        }, this);
 
         this._playing = false;
 
@@ -132,16 +154,16 @@ class VideoInteractivePlayer extends EventDispatcher {
      * 开始加载
      */
     load() {
-
         if (_type === 'mpg' || _type === 'ts' || _type === 'fs') this._videoPlayer.load();
     }
 
     /**
      * 根据链接地址获取播放器类型
      * @param {string} url 视频链接地址
+     * @param {boolean} hasFPS 自动判断时候要不要判断序列帧播放器
      * @return {Object}
      */
-    getVideoPlayerTypeByExts(url) {
+    getVideoPlayerTypeByExts(url, hasFPS) {
 
         let _type;
         let _exts = ['mpg', 'ts', 'fs', 'video'];
@@ -151,22 +173,33 @@ class VideoInteractivePlayer extends EventDispatcher {
         //如果不带后缀,根据设备判断播放方式
         if (_fi < 0) {
 
-
             let u = navigator.userAgent;
             let ua = u.toLowerCase();
             let wechat = false;
             if (ua.match(/MicroMessenger/i) == "micromessenger") wechat = true;
+            let weibo = false;
+            if (ua.match(/WeiBo/i) === "weibo") weibo = true;
             //ios终端
             let ios = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
             //android终端
             let android = u.indexOf('Android') > -1 || u.indexOf('Adr') > -1;
 
-            if (wechat || (location.href.indexOf(':800') !== -1)) {
+            if (wechat) {
 
                 if (ios) _type = 'video';
                 else _type = 'mpg';
 
-            } else {
+            }
+            else if (hasFPS) {
+
+                if (ios) _type = 'video';
+                else if(android){
+                    _type = 'fs';
+                }
+                else _type = 'video';
+
+            }
+            else {
 
                 _type = 'video';
 
@@ -206,7 +239,7 @@ class VideoInteractivePlayer extends EventDispatcher {
      */
     _timeUpDate(e) {
 
-        let _self=this;
+
         let _videoPlayer = this._videoPlayer;
         if (!_videoPlayer) return;
         let _currentTime = 0;
@@ -221,7 +254,7 @@ class VideoInteractivePlayer extends EventDispatcher {
 
                 _td.bool = true;
                 _td.runNum += 1;
-                var _eventData = {
+                let _eventData = {
                     type: 'cuePoint',
                     data: _td,
                     time: _currentTime
@@ -255,15 +288,11 @@ class VideoInteractivePlayer extends EventDispatcher {
      * @param {string} cd.name 这个时间点的名称
      * @param {number} cd.time 时间,秒数
      * @param {function} cd.fun  时间点执行的时间函数
-     * @return {object} cd 设置时间节点数据
+     * @return {object} cd 设置时间节点数据 cd.runNum执行多少次 cd.bool是否被执行过
      *
-     * ```js
-     *  cd.runNum  自动创建  这个时间执行多少次 方便用来进行逻辑处理判断
-     *  cd.bool  自动创建  这个时间执行多少次 方便用来进行逻辑处理判断
-     * ```
      */
     addCuePoint(cd) {
-        cd=cd||{};
+        cd = cd || {};
         if (!cd.time) return;
         if (!cd.name) cd.name = 'time_' + cd.time;
         cd.runNum = 0;

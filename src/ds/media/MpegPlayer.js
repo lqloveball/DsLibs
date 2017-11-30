@@ -31,26 +31,27 @@ class MpegPlayer extends EventDispatcher {
     /**
      *
      * @param {string} url 视频url地址
-     * @param {object} opts
-     * @param {boolean} opts.progressive
-     * @param {CanvasElement} opts.el
-     * @param {boolean} opts.autoplay
-     * @param {boolean} opts.autoload
-     * @param {boolean} opts.progressShow
-     * @param {boolean} opts.loop
-     * @param {boolean} opts.seekable
-     * @param {number} opts.duration
-     * @param {HTMLElement|string} opts.append
-     * @param {object} opts.css
-     * @param {function} opts.onstartload
-     * @param {function} opts.onload
-     * @param {function} opts.update
-     * @param {function} opts.onprogress
-     * @param {function} opts.onplayend
-     * @param {function} opts.onplay
-     * @param {function} opts.onpause
-     * @param {function} opts.oncanPlay
-     * @param {function} opts.oncanPlayProgress
+     * @param {object} opts  配置参数
+     * @param {boolean} opts.progressive 是否渐进加载
+     * @param {CanvasElement} opts.el  捆绑dom元素
+     * @param {boolean} opts.autoplay 是否自动播放
+     * @param {boolean} opts.autoload 是否自动加载
+     * @param {boolean} opts.progressShow 是否显示默认加载进度
+     * @param {boolean} opts.loop  是否循环播放
+     * @param {boolean} opts.seekable 是否可以搜索指定帧
+     * @param {boolean} opts.hasTouchstart 是否需要touch触发默认加载播放
+     * @param {number} opts.duration 时长
+     * @param {HTMLElement|string} opts.append 添加到容器节点
+     * @param {object} opts.css  设置样式
+     * @param {function} opts.onstartload 开始加载
+     * @param {function} opts.onload 加载完成
+     * @param {function} opts.update 播放刷新
+     * @param {function} opts.onprogress 加载进度
+     * @param {function} opts.onplayend 播放完成
+     * @param {function} opts.onplay 开始播放
+     * @param {function} opts.onpause 播放暂停
+     * @param {function} opts.oncanPlay 可以播放
+     * @param {function} opts.oncanPlayProgress 第一个可以播放的加载进度
      */
     constructor(url, opts) {
 
@@ -66,8 +67,6 @@ class MpegPlayer extends EventDispatcher {
         this._url = url;
         //是否缓存加载
         let _progressive = (opts.progressive !== undefined) ? opts.progressive : true;
-        //是否在声音允许播放就开始进行加载准备解码播放
-        let _loadByAudioCanplay = true;
 
         let _canvas;
         if (opts.el != undefined) _canvas = $(opts.el)[0];
@@ -455,7 +454,7 @@ class MpegPlayer extends EventDispatcher {
     /**
      * 总帧数
      */
-    get frameCount() {
+    get totalFrames() {
         return this._player.frameCount;
     }
 
