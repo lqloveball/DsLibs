@@ -1,6 +1,6 @@
 ### Dslibs
 
-为快速开发H5互动项目而生代
+为了更高效开发手机微信H5互动
 
 [Demo](https://lqloveball.github.io/DsLibsDemo/)
 
@@ -32,3 +32,10 @@
         - `npm run webpack-dev` webpack开发编译模式不带 http服务
         - `npm run webpack-bin` webpack部署编译模式不带 http服务
         - `npm run debug` 开发模板测试使用。
+        
+- `H5EasyTemplate` 简易开发模板，通过简单配置可以进行项目的开发
+    - `npm run server` 只运行服务器环境
+    - `npm run dev` 只对src根目录下js进行做入口文件进行编译
+    - `npm run dev2` 会编译source相关框架代码 `熟悉项目模板开发`人员进行测试开发使用
+    - `npm run basebin` 编译压缩项目模板框架 `熟悉项目模板开发`人员进行测试开发使用
+    - `npm run debug` 在`DsLibs`库开发环境下使用 `熟悉项目模板开发`人员进行测试开发使用
