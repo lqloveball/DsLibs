@@ -90,7 +90,8 @@ class VideoPageModel extends ds.core.EventDispatcher {
             bufferedime:_getDefault(opts.bufferedime,2),
             mp3:_getDefault(opts.mp3,''),
             audio:_getDefault(opts.audio,''),
-
+            localSave:_getDefault(opts.localSave, false),
+            name:this._name,
         });
 
 

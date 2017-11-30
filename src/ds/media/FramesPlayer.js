@@ -1,6 +1,17 @@
 import EventDispatcher from '../core/EventDispatcher';
 import {getDefault} from '../utils/Mixin';
 
+var _isLocalStorageSupport = false;
+try {
+    _isLocalStorageSupport = 'localStorage' in window && window['localStorage'] !== null;
+    if (_isLocalStorageSupport) {
+        _isLocalStorageSupport = 'FileReader' in window && window['FileReader'] !== null
+    }
+} catch (e) {
+    _isLocalStorageSupport = false
+}
+console.log('isLocalStorageSupport:', _isLocalStorageSupport);
+
 /**
  *  序列帧播放器，带交互触发器
  *  @class
@@ -12,6 +23,8 @@ class FramesPlayer extends EventDispatcher {
      *
      * @param url
      * @param opts
+     * @param {boolean} opts.localSave=false  是否开启本地缓存
+     * //如果要清空需要设置localStorage.clear();
      * @param {number} opts.fps=12  刷新率
      * @param {number} opts.start=0  序列帧开始值
      * @param {number} opts.end=0  序列帧结束值
@@ -54,6 +67,8 @@ class FramesPlayer extends EventDispatcher {
         //加载图片路径
         this._path = _url;
 
+        this._name = opts.name || '';
+
         let _hasAudio = getDefault(opts.hasAudio, false);
         if (_hasAudio) {
             if (!opts.mp3 && !opts.audio) {
@@ -78,8 +93,16 @@ class FramesPlayer extends EventDispatcher {
         this._prefixes = getDefault(opts.prefixes, '');
         //后缀
         this._suffix = getDefault(opts.suffix, '.jpg');
-        //是否缓冲中
-        // this._buffered = true;
+        this._listStart = getDefault(opts.start, 0);
+        this._listEnd = getDefault(opts.end, 0);
+        this._formatLength = getDefault(opts.formatLength, 3);
+
+        this._localSave = getDefault(opts.localSave, false);
+        this._exceededQuota = false;
+
+        //拖动跳帧时候暂停
+        this._showFramePause = false;
+
         //图片是否加载完成
         this._imagesLoadEnd = false;
         //当前缓冲到时间点
@@ -246,9 +269,6 @@ class FramesPlayer extends EventDispatcher {
         }, this._fpsTime);
 
 
-        this._listStart = getDefault(opts.start, 0);
-        this._listEnd = getDefault(opts.end, 0);
-        this._formatLength = getDefault(opts.formatLength, 3);
         if (!opts.images && this._listEnd <= 0) {
             console.error('序列帧播放器没设置结束帧数');
         }
@@ -275,7 +295,18 @@ class FramesPlayer extends EventDispatcher {
             this._imagesList.push(_img);
         }
         _img = new Image();
-        _img.src = this._imagesList[0].url;
+        _img.url = this._imagesList[0].url;
+
+        if (!_isLocalStorageSupport) _img.src = _img.url;
+        else if (this._localSave) {
+            console.warn(this._name + ' 序列帧从本地缓存加载');
+            this._getLocalStorage(_img);
+        }
+        else {
+            console.warn(this._name + ' 序列帧从网络缓存加载');
+            _img.src = _img.url;
+        }
+
 
         this._bufferAllTime = this._imagesList.length / this._fps;
 
@@ -321,7 +352,7 @@ class FramesPlayer extends EventDispatcher {
     load() {
         if (this._isStarload) return;
         this._isStarload = true;
-        console.warn('序列帧开始加载');
+        console.warn(this._name + '序列帧开始加载');
         this._loadImages();
     };
 
@@ -358,7 +389,10 @@ class FramesPlayer extends EventDispatcher {
         }
 
         let _img = _imagesList[_index];
-        _img.src = _img.url;
+        if (!_isLocalStorageSupport) _img.src = _img.url;
+        else if (this._localSave) this._getLocalStorage(_img);
+        else _img.src = _img.url;
+
         _img.onload = function () {
             _self._videoBuffereEvent();
             _self._loadImages();
@@ -368,6 +402,61 @@ class FramesPlayer extends EventDispatcher {
             _self._videoBuffereEvent();
             _self._loadImages();
         };
+
+    }
+
+    _getLocalStorage(img) {
+        if (!_isLocalStorageSupport) return;
+        let _self = this;
+        let _url = img.url;
+        let _imgData;
+        try {
+            _imgData = localStorage.getItem(_url);
+        }
+        catch (e) {
+            console.log(this._imagesLoadIndex + " localStorage.getItem Error: " + e);
+            return;
+        }
+        if (_imgData) {
+            // console.log(this._imagesLoadIndex+':使用本地存储数据');
+            img.src = _imgData;
+            return;
+        } else {
+            img.src = _url;
+        }
+        // console.log(this._imagesLoadIndex+':网络数据');
+        let xhr = new XMLHttpRequest();
+        let fileReader = new FileReader();
+        xhr.open("GET", _url, true);
+        xhr.responseType = "blob";
+        xhr.addEventListener("load", function () {
+            if (xhr.status === 200) {
+                // onload needed since Google Chrome doesn't support addEventListener for FileReader
+                fileReader.onload = function (evt) {
+                    // Read out file contents as a Data URL
+                    let result = evt.target.result;
+                    img.setAttribute("src", result);
+                    // Store Data URL in localStorage
+                    try {
+                        if (!_self._exceededQuota) localStorage.setItem(_url, result);
+                    }
+                    catch (e) {
+                        if (!_self._exceededQuota) {
+                            _self._exceededQuota = true;
+                            console.warn(_self._name + ' 第' + _self._imagesLoadIndex + "张序列开始超出本地缓存配额");
+                            // console.log(_self._name+'>'+_self._imagesLoadIndex+": localStorage.setItem Error: " + e);
+                        }
+
+                    }
+
+                };
+                // Load blob as Data URL
+                fileReader.readAsDataURL(xhr.response);
+
+            }
+        }, false);
+        // Send XHR
+        xhr.send();
 
     }
 
@@ -386,7 +475,6 @@ class FramesPlayer extends EventDispatcher {
     _drawUpdate() {
 
         if (this._audio) {
-
             //缓冲状态
             if (this._isBufferPlay) {
                 //0
@@ -500,6 +588,22 @@ class FramesPlayer extends EventDispatcher {
                 this.ds('playEnd');
                 if (this._loop) this.seekToTime(0, true);
             }
+
+        }
+        //拖动跳帧渲染 一般是对这个动画独立渲染做交互时候才使用
+        if (this._showFramePause) {
+            if (this._currentFrame >= this.totalFrames - 1) this._currentFrame = this.totalFrames - 1;
+            if (this._currentFrame <= 0) this._currentFrame = 0;
+            let _img = this._imagesList[this._currentFrame];
+            if (_img && _img.loaded) {
+                this._cxt.clearRect(0, 0, this._canvas.width, this._canvas.height);
+                this._cxt.drawImage(_img, 0, 0, this._canvas.width, this._canvas.height);
+            }
+
+            this.ds('update');
+            this._timeUpDate();
+
+            if (this._config.update) this._config.update();
         }
 
 
@@ -696,6 +800,7 @@ class FramesPlayer extends EventDispatcher {
         this._totalTime = this._imagesList.length / this._fps;
         //设置当前是播放状态
         this._pause = false;
+        this._showFramePause = false;
         //退出缓冲判断
         this._bufferedEndToPlay = false;
         this._videoBuffereOutEvent();
@@ -716,6 +821,7 @@ class FramesPlayer extends EventDispatcher {
         this._totalTime = this._imagesList.length / this._fps;
         //设置当前是播放状态
         this._pause = true;
+        this._showFramePause = false;
         //退出缓冲判断
         this._bufferedEndToPlay = false;
         this._videoBuffereOutEvent();
@@ -725,6 +831,21 @@ class FramesPlayer extends EventDispatcher {
          * 视频暂停
          * @event ds.media.FramesPlayer#pause
          */
+        this.ds('pause');
+    }
+
+    /**
+     * 拖拽显示指定帧，会触发暂停动画
+     * @param {number} value 指定帧
+     */
+    showFrame(value) {
+        this._totalTime = this._imagesList.length / this._fps;
+        if (value >= this.totalFrames - 1) value = this.totalFrames - 1;
+        if (value <= 0) value = 0;
+        this._currentFrame = value - 1;
+        this._showFramePause = true;
+        this._pause = true;
+        this._update();
         this.ds('pause');
     }
 

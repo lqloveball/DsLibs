@@ -294,6 +294,7 @@ let _shareTitle = _shareData.shareTitle || '速速提供分享标题';
 let _shareInfo = _shareData.shareInfo || '速速提供分享内容';
 let _shareUrl = _shareData.shareUrl || '/index.html';
 let _shareWorkUrl = _shareData.shareWorkUrl || '/index.html?WorkID=';
+let _shareImageUrl = _shareData.shareImageUrl || 'images/ShareImg.jpg';
 SiteModel.shareModel = new ds.net.CagoeWechatShareModel(
     _shareTitle,
     _shareInfo,

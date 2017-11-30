@@ -39,8 +39,8 @@ class VideoInteractivePlayer extends EventDispatcher {
 
         opts = opts || {};
 
-        opts.hasAudio=opts.hasAudio!== undefined?opts.hasAudio:true;
-
+        opts.hasAudio = opts.hasAudio !== undefined ? opts.hasAudio : true;
+        this._name = opts.name || '';
         let _type;
         if (opts.type !== undefined) _type = opts.type;
         else {
@@ -193,7 +193,7 @@ class VideoInteractivePlayer extends EventDispatcher {
             else if (hasFPS) {
 
                 if (ios) _type = 'video';
-                else if(android){
+                else if (android) {
                     _type = 'fs';
                 }
                 else _type = 'video';

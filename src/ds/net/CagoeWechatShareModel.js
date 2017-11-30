@@ -31,8 +31,9 @@
      * @param {string} info='分享内容' 分享内容
      * @param {string} shareUrl='/index.html' 分享链接
      * @param {string} workUrl='/index.html?WorkID=' 作品回流分享链接
+     * @param {string} imageUrl='/index.html?WorkID=' 作品回流分享链接
      */
-    function CagoeWechatShareModel(title,info,shareUrl,workUrl) {
+    function CagoeWechatShareModel(title,info,shareUrl,workUrl,imageUrl) {
 
         var _self=this;
 
@@ -44,6 +45,8 @@
         var _shareUrl = shareUrl!==undefined?getAbsoluteUrl(shareUrl):getAbsoluteUrl('/index.html');
         //作品回流页面地址
         var _workPageUrl = workUrl!==undefined?getAbsoluteUrl(workUrl):getAbsoluteUrl('/index.html?WorkID=');
+
+        var _shareImageUrl=  imageUrl!==undefined?getAbsoluteUrl(imageUrl):getAbsoluteUrl("images/ShareImg.jpg");
 
         /**
          * 作品回流页面地址
@@ -71,10 +74,12 @@
          * @method ds.net.CagoeWechatShareModel.prototype.defaultWeiShare
          * @param  {string} title [分享标题 默认 _shareTitle]
          * @param  {string} info  [分享内容 默认 _shareInfo]
+         *
          * @param  {string} url   [分享链接地址 默认 _shareUrl 传参参考：'/index.html','index.html','http://xxx.xx.com/index.html' ]
+         * @param  {string} imageUrl  [分享图片]
          * @param  {string} domain  [设定需要使用指定的域分享接口地址  如："zedigital.com.cn" ，那接口地址会按"http://wechat."+domain+".cn/JsApiWXConfig.aspx" 进行拼接 ]
          */
-        this.defaultWeiShare = function (title, info, url, domain) {
+        this.defaultWeiShare = function (title, info, url,imageUrl ,domain) {
 
             //插入分享接口js文件
             SiteModel.getScript('./js/libs/cagoeShare.js', function () {
@@ -102,6 +107,8 @@
 
                 if(!SiteModel.debug)CallJsApiWXConfigItf(_apiUrl);
 
+                _shareImageUrl= imageUrl!==undefined?getAbsoluteUrl(imageUrl):_shareImageUrl;
+
                 //回流页面走的流程
                 if (location.href.indexOf(_workPageUrl) !== -1) {
 
@@ -126,18 +133,20 @@
          * @param  {string} title [分享标题 默认 _shareTitle]
          * @param  {string} info  [分享内容 默认 _shareInfo]
          * @param  {string} url   [分享链接地址 默认 _shareUrl 传参参考：'/index.html','index.html','http://xxx.xx.com/index.html' ]
+         * @param  {string} imageUrl
          */
-        this.setWeiShare = function (title, info, url) {
+        this.setWeiShare = function (title, info, url,imageUrl) {
 
             _shareTitle = title || _shareTitle;
             _shareInfo = info || _shareInfo;
+            _shareImageUrl= imageUrl!==undefined?getAbsoluteUrl(imageUrl):_shareImageUrl;
 
             if (url && url.indexOf('http:') <0&& url.indexOf('https:') <0) url=getAbsoluteUrl(url);
 
             _shareUrl = url || _shareUrl;
 
             //进行分享设置
-            SetWechatShare(_shareTitle, _shareInfo, _shareUrl, "images/ShareImg.jpg", function () {
+            SetWechatShare(_shareTitle, _shareInfo, _shareUrl, _shareImageUrl, function () {
 
                 ds.event('WechatShare');
 
@@ -149,20 +158,72 @@
         };
 
         /**
+         * 只设置朋友圈的文案
+         * @param info
+         * @param url
+         * @param imageUrl
+         */
+        this.setWeiShareToTimeline=function (info, url,imageUrl) {
+
+
+            _shareInfo = info || _shareInfo;
+            _shareImageUrl= imageUrl!==undefined?getAbsoluteUrl(imageUrl):_shareImageUrl;
+
+            if (url && url.indexOf('http:') <0&& url.indexOf('https:') <0) url=getAbsoluteUrl(url);
+
+            _shareUrl = url || _shareUrl;
+            //进行分享设置
+            SetWechatShare(_shareTitle, _shareInfo, _shareUrl, _shareImageUrl, function () {
+                ds.event('WechatShare');
+            });
+
+            SetWechatShareToTimeline(_shareInfo, _shareInfo);
+        };
+
+
+        /**
+         * 只设置分享朋友的
+         * @param info
+         * @param url
+         * @param imageUrl
+         */
+        this.setWeiShareToFriend=function (info, url,imageUrl) {
+
+            _shareTitle = title || _shareTitle;
+            _shareInfo = info || _shareInfo;
+            _shareImageUrl= imageUrl!==undefined?getAbsoluteUrl(imageUrl):_shareImageUrl;
+
+            if (url && url.indexOf('http:') <0&& url.indexOf('https:') <0) url=getAbsoluteUrl(url);
+
+            _shareUrl = url || _shareUrl;
+
+            //进行分享设置
+            SetWechatShare(_shareTitle, _shareInfo, _shareUrl, _shareImageUrl, function () {
+
+                ds.event('WechatShare');
+
+            });
+
+            SetWechatShareToFriend(_shareTitle, _shareInfo);
+
+        };
+
+        /**
          * 设置回流页面分享
          * @method ds.net.CagoeWechatShareModel.prototype.setWorkIDWeiShare
          * @param  {string} workid [作品回流页面地址  如：100' 等于 location.origin+'/index.html?WorkID='+'100']
          * @param  {string} title  [分享标题]
          * @param  {string} info   [分享内容]
          */
-        this.setWorkIDWeiShare = function (workid, title, info) {
+        this.setWorkIDWeiShare = function (workid, title, info,imageUrl) {
 
             title = title || _shareTitle;
             info = info || _shareInfo;
+            imageUrl = imageUrl!==undefined?getAbsoluteUrl(imageUrl):_shareImageUrl;
 
             var _url = _workPageUrl + workid;
 
-            SetWechatShare(title, info, _url, "images/ShareImg.jpg", function () {
+            SetWechatShare(title, info, _url, _shareImageUrl, function () {
 
                 ds.event('WechatShare');
 
@@ -178,8 +239,9 @@
          * @method ds.net.CagoeWechatShareModel.prototype.defaultWorkPageWeiShare
          * @param  {string} title  [分享标题]
          * @param  {string} info   [分享内容]
+         * @param  {string} imageUrl   [分享内容]
          */
-        this.defaultWorkPageWeiShare = function (title, info) {
+        this.defaultWorkPageWeiShare = function (title, info,imageUrl) {
 
             //获取地址栏参数字典
             var _urlParamDc = ds.net.getUrlParameterDictionary();
@@ -199,10 +261,11 @@
 
             title = title || _shareTitle;
             info = info || _shareInfo;
+            imageUrl = imageUrl!==undefined?getAbsoluteUrl(imageUrl):_shareImageUrl;
 
             var _url = _workPageUrl + _workid;
 
-            SetWechatShare(title, info, _url, "images/ShareImg.jpg", function () {
+            SetWechatShare(title, info, _url, _shareImageUrl, function () {
 
                 ds.event('WechatShare');
 

@@ -5,6 +5,7 @@ var SiteConfig = {
         shareInfo: "速速提供分享内容",
         shareUrl: "/index.html",
         shareWorkUrl: "/index.html?WorkID=",
+        shareImageUrl: 'images/ShareImg.jpg'
     },
     //【非必填】页面开始加载图片有动画资源前 框架的加载占比，默认20
     loadAssetsStartProgress: 30,
@@ -93,6 +94,7 @@ var SiteConfig = {
             //设置视频高
             height: 1235,
             hasFPS:true,
+            autoload:false,
             end:133,
             initUI: function () {
                 var _self = this;
@@ -119,15 +121,22 @@ var SiteConfig = {
             //标记这个页面类型是视频播放页面 注意在plugins 里面需要添加视频播放插件 'videoPage'
             type: 'frames',
             // 视频页面地址 不需要填写 .mp4，因为会根据系统自动判断播放类型
+            // url: 'images/video/f1',
+            // prefixes:'1_',
+            // start:6,
+            // end:127,
             url: 'media/intro',
+            prefixes:'v',
+            start:0,
+            end:133,
             //设置视频宽
             width: 640,
             //设置视频高
             height: 1235,
-            end:133,
+            localSave:true,
             autoload:false,
             autoplay:false,
-            // hasMp3:true,
+            // hasAudio:true,
             loop:true,
             // mp3:'images/video/intro.mp3',
             initUI: function () {
@@ -156,7 +165,7 @@ var SiteConfig = {
     ],
 
     //【非必填】可以设置默认第一个页面 .默认是pages里面的第一个页面
-    firstPage: 'HomePage',
+    firstPage: 'FramesPage',
     //【非必填】可以设置本地debug 默认第一个页面
     // debugFirstPage: 'MovieInOutPage',
     //【非必填】设置作品回流页面

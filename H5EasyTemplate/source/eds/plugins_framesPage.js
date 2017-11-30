@@ -84,6 +84,8 @@ class FramesPageModel extends ds.core.EventDispatcher{
             mp3:_getDefault(opts.mp3,''),
             audio:_getDefault(opts.audio,''),
             hasAudio:_getDefault(opts.hasAudio,false),
+            localSave:_getDefault(opts.localSave, false),
+            name:this._name,
         });
 
         this._videoPlayer = _videoPlayer;
