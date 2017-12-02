@@ -10,5 +10,10 @@
 /H5EasyTemplate/source/ds/
 /H5EasyTemplate/source/libs/
 /H5EasyTemplate/source/threejs/
+/H5EasyTemplate/media/intro.mp3
+/H5EasyTemplate/media/intro.mp4
+/H5EasyTemplate/media/intro.mpg
+/H5EasyTemplate/media/intro.ts
+/H5EasyTemplate/media/intro/
 package-lock.json
 *.DS_Store
