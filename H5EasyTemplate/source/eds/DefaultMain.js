@@ -1,4 +1,5 @@
 import PageManager from './defaultSite/PageManager';
+import PanelManager from './defaultSite/PanelManager';
 import 'touchjs';
 import 'jstween';
 import 'ds/net/QuickAjax';
@@ -45,7 +46,9 @@ class DefaultMain extends ds.core.EventDispatcher {
 
 
         //设置分享
+        // if (SiteModel.isWeixin) SiteModel.shareModel.defaultWeiShare();
         SiteModel.shareModel.defaultWeiShare();
+
         //在加载模块需要的资源前需要siteModel创建需要的模块吗？
         SiteModel.beforeSinglePageApplicationLoadAssets(() => {
             this._loadMainAssets();
@@ -138,7 +141,7 @@ class DefaultMain extends ds.core.EventDispatcher {
 
             _index += 1;
             if (_index >= _loadList.length) {
-                SiteModel.resizeModel.type='auto';
+                // SiteModel.resizeModel.type='auto';
                 // SiteModel.resize();
                 _self.ds('loadAssetsEnd');
                 loadEnd();
@@ -208,32 +211,35 @@ class DefaultMain extends ds.core.EventDispatcher {
 
     _initPageManager() {
 
-
-        // console.log('_initPageManager');
-
         let _pages = SiteConfig.pages;
         if (!_pages) {
             _pages = SiteConfig.pages = [];
             console.error('请配置页面');
         }
 
+        let _panels = SiteConfig.panels;
+        if (!_panels) {
+            _panels = SiteConfig.panels = [];
+        }
+
         let _pager = SiteModel.pager;
-        _pager.initPageConfig(_pages);
+        _pager.initConfig(_pages);
         this.ds('initPageManager');
+
+        let _paneler = SiteModel.paneler;
+        _paneler.initConfig(_panels);
+        this.ds('initPanelManager');
 
         let _extend = SiteConfig.extend;
         if (!_extend || _extend.length <= 0) {
             this._startSitePage();
-
         } else {
             console.log('load extend js');
-
             SiteModel.getScriptList(_extend, () => {
                 this._startSitePage();
                 this.ds('initExtend');
             })
         }
-
 
     }
 
@@ -245,9 +251,6 @@ class DefaultMain extends ds.core.EventDispatcher {
             return;
         }
 
-        SiteModel.resizeModel.type = 'auto';
-
-
         this.ds('startSitePage');
         //如果有配置开始进入网站首页方法，会使用配置方法。默认startSitePage不执行
         if (SiteConfig.startSitePage) {
@@ -256,7 +259,7 @@ class DefaultMain extends ds.core.EventDispatcher {
             return;
         }
 
-        // console.log('startSitePage');
+        SiteModel.resizeModel.type = 'auto';
 
         this.isWorkBack = false;
 
@@ -265,7 +268,7 @@ class DefaultMain extends ds.core.EventDispatcher {
 
         let _urlParamDc = ds.net.getUrlParameterDictionary();
         console.log(_urlParamDc);
-        if (_urlParamDc &&_urlParamDc['WorkID']) {
+        if (_urlParamDc && _urlParamDc['WorkID']) {
             let _workPage = SiteConfig.workPage;
             if (!_workPage) {
                 ds.alert('请在配置内设置回流页面');
@@ -283,12 +286,12 @@ class DefaultMain extends ds.core.EventDispatcher {
                 id: _workid,
             };
 
-            if(typeof(_workPage)==='string' ) _firstPage = _workPage;
+            if (typeof(_workPage) === 'string') _firstPage = _workPage;
             else _firstPage = _workPage.name;
             // console.log('_firstPage:',_firstPage);
             //
-            if ((typeof(_workPage)==='object' )&&_workPage.getWorkData){
-              _workPage.getWorkData(_workid);
+            if ((typeof(_workPage) === 'object' ) && _workPage.getWorkData) {
+                _workPage.getWorkData(_workid);
             }
             else {
                 SiteModel.gotoPage(_firstPage);
@@ -326,7 +329,7 @@ let _shareWorkUrl = _shareData.shareWorkUrl || './index.html?WorkID=';
 let _shareImageUrl = _shareData.shareImageUrl || './images/ShareImg.jpg';
 let _wxJsUrl = _shareData.wxJsUrl || './js/libs/cagoeShare.js';
 let _apiUrl = _shareData.apiUrl || "http://wechat.cagoe.com/JsApiWXConfig.aspx";
-let _shareCallBack=_shareData.shareCallBack;
+let _shareCallBack = _shareData.shareCallBack;
 SiteModel.shareModel = new ds.net.SiteWechatShareModel({
         title: _shareTitle,
         info: _shareInfo,
@@ -340,6 +343,11 @@ SiteModel.shareModel = new ds.net.SiteWechatShareModel({
 );
 
 SiteModel.pager = new PageManager();
+SiteModel.paneler = new PanelManager();
+
+SiteModel.show = SiteModel.paneler.show.bind(SiteModel.paneler);
+SiteModel.hide = SiteModel.paneler.hide.bind(SiteModel.paneler);
+SiteModel.hideAll = SiteModel.paneler.hideAll.bind(SiteModel.paneler);
 // console.log('-------------1',eds,eds.PageBase);
 //单页面实例创建
 SiteModel.appMain = new DefaultMain();

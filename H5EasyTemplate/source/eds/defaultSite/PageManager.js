@@ -125,7 +125,7 @@ class PageManager extends ds.core.EventDispatcher {
 
     }
 
-    initPageConfig(list){
+    initConfig(list){
 
         for (let i = 0; i < list.length; i++) {
             let _config=list[i];

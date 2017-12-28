@@ -19,6 +19,7 @@ window.SiteModelStart = function (cf) {
 
         resizeDelay: _getDefault(cf.resizeDelay, 100),
 
+        modelWH: _getDefault(cf.modelWH, [640,1235]),
         hasCJS: _getDefault(cf.hasCJS, true),
         hasCJSModel: _getDefault(cf.hasCJSModel, true),
         hasCJSLoad: _getDefault(cf.hasCJSLoad, false),

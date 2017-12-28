@@ -125,14 +125,6 @@ class PageBase extends ds.core.EventDispatcher {
 
             this._view.mouseEnabled = false;
             this._view.gotoAndPlay(this._view.movieOutFrame);
-            this._view.on('tick', function () {
-                if (SiteModel.pager.pageLabel !== this.name) return;
-                if (!this._movieOuting) return;
-                if (this._movieIning) return;
-                if (this._view.currentFrame >= this._view.movieOutEndFrame) {
-                    this.movieOutEnd();
-                }
-            }, this);
 
         }
         else if (this._isCreatejsView) {
@@ -201,27 +193,34 @@ class PageBase extends ds.core.EventDispatcher {
         if (this._view instanceof createjs.DisplayObject) {
             this._isCreatejsView = true;
             this._type = 'createjs';
+            let _view = this.view;
 
-            //自动测试是否时间轴播放完成
-            // console.log(this._view.labels,this._view.currentLabel);
-            this._view.movieInEndFrame = this._view.totalFrames - 1;
-            this._view.movieOutFrame = null;
-            this._view.movieOutEndFrame = null;
-            if (this._view.labels) {
-                let _labels = this._view.labels;
+            //进出场动画逻辑控制
+            _view.movieInEndFrame = _view.totalFrames - 1;
+            _view.movieOutFrame = null;
+            _view.movieOutEndFrame = null;
+            if (_view.labels) {
+                let _labels = _view.labels;
                 let _movieInEnd = getFrameLabelData('movieInEnd', _labels);
                 let _movieOut = getFrameLabelData('movieOut', _labels);
                 let _movieOutEnd = getFrameLabelData('movieOutEnd', _labels);
-                if (_movieInEnd) this._view.movieInEndFrame = _movieInEnd.position;
-                if (_movieOutEnd) {
-                    this._view.movieOutEndFrame = _movieOutEnd.position;
-                    if (_movieOut) this._view.movieOutFrame = _movieOut.position;
-                    else this._view.movieOutFrame = this._view.movieInEndFrame + 1;
+                if (_movieOut) {
+                    _view.movieOutFrame = _movieOut.position;
+                    _view.movieInEndFrame = _view.movieOutFrame = _view.movieOutFrame - 1;
                 }
-                // console.log(this._view.labels,_movieInEnd,_movieOut,_movieOutEnd);
+                if (_movieInEnd) _view.movieInEndFrame = _movieInEnd.position;
+                if (_view.movieInEndFrame !== _view.totalFrames - 1) {
+                    if (_movieOut) _view.movieOutFrame = _movieOut.position;
+                    else _view.movieOutFrame = _view.movieInEndFrame + 1;
+                    if (_movieOutEnd) _view.movieOutEndFrame = _movieOutEnd.position;
+                    else _view.movieOutEndFrame = _view.totalFrames - 1
+                }
+
+                // console.log(_view.labels,_movieInEnd,_movieOut,_movieOutEnd);
             }
-            //帧监听检查
-            this._view.on('tick', function () {
+            //自动测试是否时间轴播放完成
+            //监听进场
+            _view.on('tick', function () {
                 if (SiteModel.pager.pageLabel !== this.name) return;
                 if (!this._movieIning) return;
                 if (this._movieOuting) return;
@@ -229,12 +228,16 @@ class PageBase extends ds.core.EventDispatcher {
                     this.movieInEnd();
                 }
             }, this);
-            //获取抓帧数据信息
-            function getFrameLabelData(value, labels) {
-                for (let i = 0; i < labels.length; i++) {
-                    if (labels[i].label === value) return labels[i];
-                }
-                return null;
+            //监听退场
+            if(_view.movieOutEndFrame && _view.movieOutFrame){
+                _view.on('tick', function () {
+                    if (SiteModel.pager.pageLabel !== this.name) return;
+                    if (!this._movieOuting) return;
+                    if (this._movieIning) return;
+                    if (this._view.currentFrame >= this._view.movieOutEndFrame) {
+                        this.movieOutEnd();
+                    }
+                }, this);
             }
 
         } else {
@@ -271,6 +274,14 @@ class PageBase extends ds.core.EventDispatcher {
     }
 
     /**
+     * 配置
+     * @return {*|{}}
+     */
+    get config(){
+        return this._config;
+    }
+
+    /**
      * 场景自适应
      * @private
      */
@@ -290,7 +301,7 @@ class PageBase extends ds.core.EventDispatcher {
         // console.log(this.name,SiteModel.pager.pageLabel);
         if (this.name !== SiteModel.pager.pageLabel) return;
 
-        console.log(this.name,'_resize',this._screenType,_horizontal);
+        // console.log(this.name,'_resize',this._screenType,_horizontal);
 
         if (_screenType === 'v') {
             if (_horizontal) _resizeModel.showOrientationTip(true);
@@ -308,6 +319,14 @@ class PageBase extends ds.core.EventDispatcher {
 
     }
 
+}
+
+//获取抓帧数据信息
+function getFrameLabelData(value, labels) {
+    for (let i = 0; i < labels.length; i++) {
+        if (labels[i].label === value) return labels[i];
+    }
+    return null;
 }
 
 let root = (typeof window !== 'undefined' ? window : (typeof process === 'object' && typeof require === 'function' && typeof global === 'object') ? global : this);

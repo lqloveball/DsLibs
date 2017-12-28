@@ -143,24 +143,28 @@ class PageModel extends PageBase {
             if (SiteModel.pager.pageLabel !== this.name) return;
             if (!opts.touchSwipe) return;
             if (opts.touchVertical) return;
+            if(SiteModel.paneler&&SiteModel.paneler.hasShowPanel())return;
             this._nextPage();
         });
         touch.on($('#screen')[0], 'swiperight', () => {
             if (SiteModel.pager.pageLabel !== this.name) return;
             if (!opts.touchSwipe) return;
             if (opts.touchVertical) return;
+            if(SiteModel.paneler&&SiteModel.paneler.hasShowPanel())return;
             this._previousPage();
         });
         touch.on($('#screen')[0], 'swipeup', () => {
             if (SiteModel.pager.pageLabel !== this.name) return;
             if (!opts.touchSwipe) return;
             if (!opts.touchVertical) return;
+            if(SiteModel.paneler&&SiteModel.paneler.hasShowPanel())return;
             this._nextPage();
         });
         touch.on($('#screen')[0], 'swipedown', () => {
             if (SiteModel.pager.pageLabel !== this.name) return;
             if (!opts.touchSwipe) return;
             if (!opts.touchVertical) return;
+            if(SiteModel.paneler&&SiteModel.paneler.hasShowPanel())return;
             this._previousPage();
         });
 
