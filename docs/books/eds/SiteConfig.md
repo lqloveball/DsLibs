@@ -172,14 +172,150 @@ extend: [
 
 阻止默认的开始网站页面的方法，会使用配置开始页面方法来执行
 
-
+#### mode
+ 
+默认是 `default` ,会使用默认简易的模板框架。
   
-#### 更多SiteModel初始化构建配置
+### 更多SiteModel初始化构建配置
 
- <a href="/dsDocs/ds.core.SiteModelByMobile.html" target='_blank'>SiteModelByMobile API文档</a>
+ <a href="./dsDocs/ds.core.SiteModelByMobile.html" target='_blank'>SiteModelByMobile API文档</a>
  
- #### mode
- 
- 默认是 `default` ,会使用默认简易的模板框架。
 
+
+####  screen
+
+进行场景自适应的dom对象
+
+- 类型 `string` 
+- 默认值 `#screen`
+
+####  widths
+
+手机端自适应时候使用宽高比
+
+- 类型 `array` 
+- 默认值 `[640, 1138]`
+
+
+####  hasCJS
+
+是否需要createjs框架加载
+
+- 类型 `boolean` 
+- 默认值 `true`
+
+
+####  hasCJSModel
+
+是否是createjs类型网站，默认创建createjs模块
+
+- 类型 `boolean` 
+- 默认值 `true`
+
+####  hasCJSLoad
+
+是否使用createjs制作loading动画
+
+- 类型 `boolean` 
+- 默认值 `true`
+
+
+####  cjsLoadData
+
+使用createjs制作loading动画,需要配置修改loading资源时候使用。
+
+- 类型 `objecy` 
+- 默认值 `无`
+- 配置参考
+```js
+ {
+     basePath:"./assets/test/",
+     jsUrl:'cjsLoad.js',
+     className:"LoadPanel"
+     jsNs:'loadlib',
+     imgNS:'images',
+ }
+```
+
+####  hasCJSWebGL
+
+是否使用createjs WebGL
+
+- 类型 `boolean` 
+- 默认值 `false`
+
+
+####  cjsBox
+
+createjs模块添加什么dom容器内
+
+- 类型 `string` 
+- 默认值 `#cjsBox`
+
+
+####  initLoadPanel
+
+	
+自定义创建loading界面,这个函数必须有一个callback函数，在loading界面创建完成后调用
+
+- 类型 `function` 
+- 默认值 `无`
+
+#### showProgress
+
+自定loading进度条 带参数 进度0-100
+
+- 类型 `function` 
+- 默认值 `无`
+
+#### hitLoadPanel
+
+自定loading进度条隐藏的方法 带参数callback方法
+
+- 类型 `function` 
+- 默认值 `无`
+
+
+#### resizeDelay
+
+微信下旋转后自适应响应时间慢，设置合理delay 强制执行一次reisze（特别是load 过程中）
+
+- 类型 `number` 
+- 默认值 `300`
+
+
+#### audioConfig
+
+声音管理器。主要实现功能：默认背景音控制、与音频资源加载管理
+
+- 类型 `object` 
+- 默认值 `无`
+- 配置参考
+
+```js
+{
+  list: [
+       //声音文件配置
+      {src:'./media/BGM.mp3',id:'BGM',loop:true,volume:1},
+  ],
+  //默认播放声音背景
+  id: 'BGM',
+  //这个BMG 绑定的控制的按钮
+  button: '#BGMBtn'
+}
+```
+
+#### otherjs
+
+在网站单页面应用执行前还需要加载js列表
+
+- 类型 `array` 
+- 默认值 `无`
+
+#### baseEnd
+
+基础框架load完成并且SiteModel构建带有事件功能时候调用
+
+- 类型 `function` 
+- 默认值 `无`
 

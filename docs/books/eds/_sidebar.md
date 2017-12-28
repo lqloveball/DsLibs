@@ -6,11 +6,16 @@
 - [config完整配置](/books/eds/SiteConfig.md)
 - [加载资源配置](/books/eds/loadAssets.md)
 - [页面配置](/books/eds/pagesConfig.md)
-- [扩展逻辑配置](/books/eds/extend.md)
-- [插件配置](/books/eds/plugins.md)
+- [浮层页面配置](/books/eds/panelsConfig.md)
 - [分享配置](/books/eds/shareData.md)
 - [框架结构说明](/books/eds/FrameStructure.md)
 - [站点构建过程](/books/eds/Siteflow.md)
+- 扩展
+    - [扩展逻辑配置](/books/eds/extend.md)
+- 插件 
+    - [插件配置](/books/eds/plugins.md)
+    - [视频页面](/books/eds/plugins_videoPage.md)
+    - [序列帧页面](/books/eds/plugins_framesPage.md)
 - [Adobe Animate 资源发布设置](/books/eds/AnimatePublishSet.md)
 - [更多开发方式](/books/eds/othersConfig.md)
 - 其他
