@@ -1,3 +1,5 @@
+import PanelBase from '../base/PanelBase';
+// import AlertBase from '../base/AlertBase';
 import PanelModel from './PanelModel';
 
 /**
@@ -8,7 +10,58 @@ class PanelManager extends ds.core.EventDispatcher {
         super();
         this._panelList = [];
         this._panelDc = {};
+        // this.AlertBase = AlertBase;
+    }
 
+    // /**
+    //  * 设置基础弹出框皮肤对象
+    //  * @param skin
+    //  * @param opts
+    //  * @param opts.wrapW
+    //  */
+    // setAlertDefaultSkin(skin, opts) {
+    //     this.AlertBase.setDefaultSkin(skin, opts);
+    // }
+    //
+    // /**
+    //  * 在设置过默认弹出框的皮肤后 可以比较好使用这个自定义弹出框
+    //  * @param label
+    //  * @param opts
+    //  */
+    // alert(label, opts){
+    //     console.log('alert:',label);
+    //     this.AlertBase.show(label, opts);
+    // }
+    //
+    // /**
+    //  * 设置alert createjs容器层
+    //  * @param root
+    //  */
+    // setAlertDefaultRootByCreatejs(root) {
+    //     this.AlertBase.showRootByCreatejs = root;
+    // }
+    // /**
+    //  * 设置alert 默认容器层 基于dom
+    //  * @param root
+    //  */
+    // setAlertDefaultRootByHTML(root) {
+    //     this.AlertBase.showRootByHTML = root;
+    // }
+
+    /**
+     * 设置浮动层默认容器 基于createjs
+     * @param root
+     */
+    setDefaultRootByCreatejs(root) {
+        eds.PanelBase.showRootByCreatejs = root;
+    }
+
+    /**
+     * 设置浮动层默认容器 基于dom
+     * @param root
+     */
+    setDefaultRootByHTML(root) {
+        eds.PanelBase.showRootByHTML = root;
     }
 
     /**
@@ -67,14 +120,29 @@ class PanelManager extends ds.core.EventDispatcher {
     }
 
     /**
+     * 删除一个浮层
+     * @param panel
+     */
+    remove(panel) {
+        if (this._panelList.indexOf(panel) <= 0) return;
+        let _name = panel.name;
+        let _panelList = this._panelList;
+        for (let i = 0; i < _panelList.length; i++) {
+            let _temp = _panelList[i];
+            _panelList.splice(i, 1);
+        }
+        this._panelDc[_name] = undefined;
+    }
+
+    /**
      * 初始化浮层页面
      * @param list
      */
     initConfig(list) {
-        let _panel ;
+        let _panel;
         for (let i = 0; i < list.length; i++) {
-            let _config=list[i];
-            _panel=new PanelModel(_config);
+            let _config = list[i];
+            _panel = new PanelModel(_config);
             this.add(_panel);
         }
     }
@@ -83,11 +151,11 @@ class PanelManager extends ds.core.EventDispatcher {
      * 是否有显示浮动层
      * @return {boolean}
      */
-    hasShowPanel(){
-        let _panelList=this._panelList;
+    hasShowPanel() {
+        let _panelList = this._panelList;
         for (let i = 0; i < _panelList.length; i++) {
             let _panel = _panelList[i];
-            if(_panel.showBool)return true;
+            if (_panel.showBool) return true;
         }
         return false;
     }
@@ -96,12 +164,12 @@ class PanelManager extends ds.core.EventDispatcher {
      * 显示浮动层列表
      * @return {Array}
      */
-    showPanelList(){
-        let _list=[];
-        let _panelList=this._panelList;
+    showPanelList() {
+        let _list = [];
+        let _panelList = this._panelList;
         for (let i = 0; i < _panelList.length; i++) {
             let _panel = _panelList[i];
-            if(_panel.showBool)_list.push(_panel);
+            if (_panel.showBool) _list.push(_panel);
         }
         return _list;
     }
@@ -130,6 +198,8 @@ class PanelManager extends ds.core.EventDispatcher {
     get panelList() {
         return this._panelList;
     }
+
+
 }
 
 export default PanelManager;

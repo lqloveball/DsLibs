@@ -47,6 +47,7 @@ class VideoInteractivePlayer extends EventDispatcher {
         else {
 
             let _hasFPS = opts.hasFPS !== undefined ? opts.hasFPS : false;
+            let _firstFPS = opts.firstFPS !== undefined ? opts.firstFPS : false;
 
 
             if (opts.onlyVideo !== undefined && opts.onlyVideo === true) {
@@ -54,7 +55,7 @@ class VideoInteractivePlayer extends EventDispatcher {
                 if (url.indexOf('.mp4') <= 0) url = url + '.mp4';
             }
             else {
-                let _playerData = this.getVideoPlayerTypeByExts(url, _hasFPS);
+                let _playerData = this.getVideoPlayerTypeByExts(url, _hasFPS,_firstFPS);
                 _type = _playerData.type;
                 if (_playerData.ext === 'dynamics') {
                     if (_type === 'video') url = url + '.mp4';
@@ -172,7 +173,7 @@ class VideoInteractivePlayer extends EventDispatcher {
      * @param {boolean} hasFPS 自动判断时候要不要判断序列帧播放器
      * @return {Object}
      */
-    getVideoPlayerTypeByExts(url, hasFPS) {
+    getVideoPlayerTypeByExts(url, hasFPS,firstFPS) {
 
         let _type;
         let _exts = ['mpg', 'ts', 'fs', 'video'];
@@ -196,15 +197,14 @@ class VideoInteractivePlayer extends EventDispatcher {
             if (wechat) {
 
                 if (ios) _type = 'video';
+                else if(hasFPS&&firstFPS) _type = 'fs';
                 else _type = 'mpg';
 
             }
             else if (hasFPS) {
 
                 if (ios) _type = 'video';
-                else if (android) {
-                    _type = 'fs';
-                }
+                else if (android)  _type = 'fs';
                 else _type = 'video';
 
             }

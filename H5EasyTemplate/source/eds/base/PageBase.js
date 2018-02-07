@@ -12,6 +12,7 @@ else if (_CreateJsModel) {
 }
 
 const _onResize = Symbol("_onResize");
+
 /**
  * 简易框架页面基类
  */
@@ -54,11 +55,12 @@ class PageBase extends ds.core.EventDispatcher {
     /**
      * 添加resize监听
      */
-    addResize(){
-        if(this[_onResize])SiteModel.resizeModel.off('resize', this[_onResize]);
-        this[_onResize]=this._resize.bind(this);
+    addResize() {
+        if (this[_onResize]) SiteModel.resizeModel.off('resize', this[_onResize]);
+        this[_onResize] = this.resize.bind(this);
         SiteModel.resizeModel.on('resize', this[_onResize], this);
     }
+
     /**
      * 清空基类的自适应监听
      */
@@ -74,13 +76,14 @@ class PageBase extends ds.core.EventDispatcher {
         this._movieIning = true;
         if (this._config.movieIn) this._config.movieIn();
         this.ds('movieIn');
-        console.log(this.name + ':movieIn', this._isCreatejsView);
+        // console.log(this.name + ':movieIn', this._isCreatejsView);
         if (this._isCreatejsView) {
             _Root.addChildAt(this._view);
-            if(this._view instanceof  createjs.MovieClip){
+            if (this._view instanceof createjs.MovieClip) {
                 this._view.gotoAndStop(0);
                 this._view.gotoAndPlay(0);
             }
+            this.ds('addView');
         }
         else if (this.type === 'html') {
 
@@ -93,13 +96,14 @@ class PageBase extends ds.core.EventDispatcher {
                 else $('#screen').append(this._view);
                 this._view.show();
             }
+            this.ds('addView');
             setTimeout(() => {
                 this.movieInEnd();
             }, 500);
         } else {
             this.movieInEnd();
         }
-        this._resize();
+        this.resize();
     }
 
     /**
@@ -229,7 +233,7 @@ class PageBase extends ds.core.EventDispatcher {
                 }
             }, this);
             //监听退场
-            if(_view.movieOutEndFrame && _view.movieOutFrame){
+            if (_view.movieOutEndFrame && _view.movieOutFrame) {
                 _view.on('tick', function () {
                     if (SiteModel.pager.pageLabel !== this.name) return;
                     if (!this._movieOuting) return;
@@ -273,11 +277,15 @@ class PageBase extends ds.core.EventDispatcher {
         return this._screenType;
     }
 
+    set screenType(value){
+        this._screenType=value;
+    }
+
     /**
      * 配置
      * @return {*|{}}
      */
-    get config(){
+    get config() {
         return this._config;
     }
 
@@ -285,7 +293,7 @@ class PageBase extends ds.core.EventDispatcher {
      * 场景自适应
      * @private
      */
-    _resize() {
+    resize() {
 
         let _resizeModel = SiteModel.resizeModel;
         let _width = _resizeModel.width;
@@ -331,7 +339,7 @@ function getFrameLabelData(value, labels) {
 
 let root = (typeof window !== 'undefined' ? window : (typeof process === 'object' && typeof require === 'function' && typeof global === 'object') ? global : this);
 
-let eds = root.eds = root.eds || {};
+let eds = root.eds = root.eds ? root.eds : {};
 
 eds.PageBase = PageBase;
 

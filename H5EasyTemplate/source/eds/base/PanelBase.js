@@ -62,16 +62,17 @@ class PanelBase extends ds.core.EventDispatcher {
     /**
      * 显示
      * @param opts
-     * @param opts.cb
-     * @param opts.ok
-     * @param opts.no
-     * @param opts.show
-     * @param opts.hide
-     * @param opts.movieInEnd
-     * @param opts.movieOutEnd
-     * @param opts.root 显示容器
+     * @param opts.cb 调用命令要做回调
+     * @param opts.ok 用户点击ok时候调用
+     * @param opts.no 用户点击no时候调用
+     * @param opts.show  调用show命令要做回调
+     * @param opts.hide  调用hide命令要做回调
+     * @param opts.movieInEnd  进入完成调用
+     * @param opts.movieOutEnd  退场时候调用
+     * @param opts.root 显示容器  这个浮动层view需要显示到容器位置
      */
     show(opts) {
+
         if (this._showBool) return;
 
         opts = opts || {};
@@ -86,8 +87,13 @@ class PanelBase extends ds.core.EventDispatcher {
         if (opts.root) this._showRoot =opts.root;
 
         this._showBool = true;
+
+        if (!this._showRoot && this.isCreatejsView)this._showRoot = eds.PanelBase.showRootByCreatejs;
+        if (!this._showRoot && !this.isCreatejsView) this._showRoot = eds.PanelBase.showRootByHTML;
         let _showRoot = this._showRoot;
-        if (!_showRoot && this.isCreatejsView) _showRoot = PanelBase.showRoot;
+
+        // console.log(_showRoot);
+
         if (this.isCreatejsView) {
             _showRoot.addChild(this.view);
 
@@ -103,7 +109,7 @@ class PanelBase extends ds.core.EventDispatcher {
         }
         this.ds('show');
 
-        this._resize();
+        this.resize();
 
         if (_config.show) _config.show();
         if (opts.cb) opts.cb();
@@ -199,7 +205,7 @@ class PanelBase extends ds.core.EventDispatcher {
      */
     addResize() {
         if (this[_onResize]) SiteModel.resizeModel.off('resize', this[_onResize]);
-        this[_onResize] = this._resize.bind(this);
+        this[_onResize] = this.resize.bind(this);
         SiteModel.resizeModel.on('resize', this[_onResize], this);
     }
 
@@ -228,7 +234,7 @@ class PanelBase extends ds.core.EventDispatcher {
             let _bg = _view.bg;
             if (_bg) {
                 _bg.on('click', function () {
-                    console.log('bg click');
+                    // console.log('bg click');
                 });
             }
 
@@ -365,7 +371,7 @@ class PanelBase extends ds.core.EventDispatcher {
      * 场景自适应
      * @private
      */
-    _resize() {
+    resize() {
 
         let _resizeModel = SiteModel.resizeModel;
         let _width = _resizeModel.width;
@@ -388,9 +394,17 @@ class PanelBase extends ds.core.EventDispatcher {
 }
 
 /**
- * 显示浮动层默认容器
+ * createjs显示浮动层默认容器
  */
-PanelBase.showRoot = _Stage;
+PanelBase.showRootByCreatejs = _Stage;
+
+/**
+ * dom 显示浮动层默认容器
+ * @type {*|jQuery|HTMLElement}
+ */
+PanelBase.showRootByHTML=$('#domBox');
+if (PanelBase.showRootByHTML.length <= 0)PanelBase.showRootByHTML = $('#screen');
+
 
 //获取抓帧数据信息
 function getFrameLabelData(value, labels) {
@@ -402,7 +416,7 @@ function getFrameLabelData(value, labels) {
 
 let root = (typeof window !== 'undefined' ? window : (typeof process === 'object' && typeof require === 'function' && typeof global === 'object') ? global : this);
 
-let eds = root.eds = root.eds || {};
+let eds = root.eds = root.eds ?root.eds: {};
 
 eds.PanelBase = PanelBase;
 

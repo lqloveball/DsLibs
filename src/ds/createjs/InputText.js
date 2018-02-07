@@ -1,3 +1,4 @@
+
 /**
  * 一个快速实现createjs内输入框对象
  * @class
@@ -62,6 +63,7 @@ class InputText {
             '-webkit-transform': 'translate(-1000px,-1000px)',
             'background-color': 'transparent',
             width: opts.width || 100,
+            height:_lineHeight + 'px',
             color: opts.color || '#000',
             resize: 'none',
             'font-size': opts.size || 25,
@@ -171,7 +173,7 @@ class InputText {
      * 判断是否输入
      * @return {boolean}
      */
-    isInput() {
+    get isInput() {
 
         if (this._el[0].value === this._defaultText) return false;
         if (this._el[0].value === '') return false;
@@ -249,27 +251,28 @@ class InputText {
  * @type {boolean}
  */
 InputText.upDateBool=true;
-
 InputText.inputTextList = [];
-
-createjs.Ticker.addEventListener("tick", function () {
-
-
-    if(!InputText.upDateBool)return;
+if(window['createjs']!==undefined){
+    createjs.Ticker.addEventListener("tick", function () {
 
 
-    for (var i = 0; i < InputText.inputTextList.length; i++) {
+        if(!InputText.upDateBool)return;
 
-        var _input=InputText.inputTextList[i];
-        if (_input) _input.upInStage();
 
-    }
+        for (var i = 0; i < InputText.inputTextList.length; i++) {
 
-});
+            var _input=InputText.inputTextList[i];
+            if (_input) _input.upInStage();
+
+        }
+
+    });
+}
+
 
 let root = (typeof window !== 'undefined' ? window : (typeof process === 'object' && typeof require === 'function' && typeof global === 'object') ? global : this);
-let ds = root.ds = root.ds || {};
-ds.createjs = ds.createjs || {};
+let ds = root.ds = root.ds ?root.ds: {};
+ds.createjs = ds.createjs?ds.createjs: {name:'createjs'};
 ds.createjs.InputText = InputText;
 
 export default InputText;

@@ -213,8 +213,9 @@ class CreatejsGLModel extends EventDispatcher
 
 let root = (typeof window !== 'undefined' ? window : (typeof process === 'object' && typeof require === 'function' && typeof global === 'object') ? global : this);
 
-let ds = root.ds = root.ds || {};
-ds.createjs = ds.createjs || {};
+let ds = root.ds = root.ds ?root.ds: {};
+ds.createjs = ds.createjs?ds.createjs: {name:'createjs'};
 ds.createjs.CreatejsGLModel=CreatejsGLModel;
+
 
 export default CreatejsGLModel;

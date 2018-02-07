@@ -88,6 +88,8 @@ class VideoPageModel extends eds.PageBase {
             hasAudio: getDefault(opts.hasAudio, true),
             //自动计算的时候是否包含序列帧播放器
             hasFPS: getDefault(opts.hasFPS, false),
+            //mpg 通用fps做选择时候，是否优先考虑fps方式播放
+            firstFPS: getDefault(opts.firstFPS , false),
             //以下序列帧播放器才可能拥有的初始化属性
             fps: getDefault(opts.fps, 12),
             prefixes: getDefault(opts.prefixes, 'v'),
@@ -97,8 +99,8 @@ class VideoPageModel extends eds.PageBase {
             formatLength: getDefault(opts.formatLength, 3),
             loop: getDefault(opts.loop, false),
             bufferedime: getDefault(opts.bufferedime, 2),
-            mp3: getDefault(opts.mp3, ''),
-            audio: getDefault(opts.audio, ''),
+            mp3: getDefault(opts.mp3, null),
+            audio: getDefault(opts.audio, null),
             localSave: getDefault(opts.localSave, false),
             name: this._name,
         });
@@ -164,10 +166,10 @@ class VideoPageModel extends eds.PageBase {
 
         _self._isReadyPlay = false;
 
-        this._removeReSize();
+        this.removeReSize();
 
         SiteModel.resizeModel.on('resize', function () {
-            this._resize();
+            this.resize();
             if (opts.resize) opts.resize();
         }, this);
 
@@ -202,7 +204,7 @@ class VideoPageModel extends eds.PageBase {
             this.movieInEnd();
         }
 
-        this._resize();
+        this.resize();
 
     }
 
@@ -318,7 +320,7 @@ class VideoPageModel extends eds.PageBase {
      * 场景自适应
      * @private
      */
-    _resize() {
+    resize() {
 
         if (this.name !== SiteModel.pager.pageLabel) return;
 
@@ -377,7 +379,7 @@ class VideoPageModel extends eds.PageBase {
         } else {
             SiteModel.resizeModel.hideOrientationTip();
         }
-
+        this.ds('resize');
     }
 }
 

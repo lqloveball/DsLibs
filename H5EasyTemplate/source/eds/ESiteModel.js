@@ -57,8 +57,8 @@ window.SiteModelStart = function (cf) {
     var _type = _getDefault(cf.type, 'v');
 
     window.SiteModel = new ds.core.SiteModelByMobile(_base + cf.url, _type, _default_config);
-
     window.SiteModel.start();
+
 
 };
 
@@ -68,7 +68,16 @@ else {
 
     var _screen = document.getElementById('screen');
     var _cf = {};
-    if (_screen && _screen.getAttribute('data-example')) {
+    if(window['esiteConfig'] !== undefined){
+        esiteModelCreate(window['esiteConfig'],'default');
+    }
+    else if (_screen && _screen.getAttribute('data-config')) {
+        var _mode = _getDefault(_screen.getAttribute('data-mode'), 'default');
+        var _url = _screen.getAttribute('data-config');
+
+        esiteModelCreate(_url,_mode);
+    }
+    else if (_screen && _screen.getAttribute('data-example')) {
         _cf.url = _screen.getAttribute('data-example');
         _cf.hasCJS = _getDefault(_screen.getAttribute('data-hasCJS'), true);
         _cf.hasCJSModel = _getDefault(_screen.getAttribute('data-hasCJSModel'), true);
@@ -78,42 +87,33 @@ else {
         _cf.hasThreeJsModel = _getDefault(_screen.getAttribute('data-hasThreeJsModel'), false);
         _cf.hasPixiJs = _getDefault(_screen.getAttribute('data-hasPixiJs'), false);
         _cf.hasPixiJsModel = _getDefault(_screen.getAttribute('data-hasPixiJsModel'), false);
-
         if (_cf.hasThreeJs || _cf.hasThreeJsModel || _cf.hasPixiJs || _cf.hasPixiJsModel) {
             if (!_cf.otherjs) _cf.otherjs = [];
             if (_cf.hasThreeJs || _cf.hasThreeJsModel) _cf.otherjs.push('./js/edslibs/extend_threejs.js');
             if (_cf.hasPixiJs || _cf.hasPixiJsModel) _cf.otherjs.push('./js/edslibs/extend_pixijs.js');
         }
-
         SiteModelStart(_cf);
-
     }
-    else if (_screen && _screen.getAttribute('data-config')) {
-
-        var _mode = _getDefault(_screen.getAttribute('data-mode'), 'default');
-        var _url = _getAbsoluteUrl(_screen.getAttribute('data-config'));
-
-        ds.core.SiteModelByMobile.getScript(_url, function () {
-
-            if (!window['SiteConfig']) {
-                console.warn('请配置简易单页');
-                return;
-            }
-
-            _mode = _getDefault(SiteConfig.mode, _mode);
-            SiteConfig.mode = _mode;
-
-            if (_mode === 'default') SiteConfig.url = './js/edslibs/DefaultMain.js';
-            else SiteConfig.url = 'js/edslibs/DefaultMain.js';
-
-            SiteModelStart(SiteConfig);
-
-        });
-    }
-    else {
-        console.warn('请在页面上配置你的单页面逻辑代码');
+    else{
+        alert('请在页面上配置你的单页面逻辑代码');
     }
 
+}
+
+function esiteModelCreate(url,model) {
+
+    ds.core.SiteModelByMobile.getScript(_getAbsoluteUrl(url), function () {
+
+        if (window['SiteConfig']===undefined) {
+            alert('请配置简易单页');
+            return;
+        }
+        model = _getDefault(SiteConfig.mode, model);
+        SiteConfig.mode = model;
+        if (model === 'default') SiteConfig.url = './js/edslibs/DefaultMain.js';
+        else SiteConfig.url = 'js/edslibs/DefaultMain.js';
+        SiteModelStart(SiteConfig);
+    });
 }
 
 function _getDefault(obj, defaultValue) {

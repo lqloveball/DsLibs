@@ -94,7 +94,7 @@
 
                     console.log('post End:' + url + 'data type:', typeof(data) + ':', data);
                     //如果是字符串 转下 object
-                    if (typeof(data) === 'string') data = eval(data);
+                    if (typeof(data) === 'string') data = eval('('+data+')');
                     //JSON.parse(data);
 
                     if (data && data[_successTags] !== undefined && Number(data[_successTags]) === 1) {
@@ -304,7 +304,7 @@
     });
     /**
      * 调整一个连接
-     * @member ds.net.post
+     * @member ds.net.open
      * @param {string} value
      */
     ds.net.open = function (value) {

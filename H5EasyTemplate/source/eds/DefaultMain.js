@@ -46,7 +46,6 @@ class DefaultMain extends ds.core.EventDispatcher {
 
 
         //设置分享
-        // if (SiteModel.isWeixin) SiteModel.shareModel.defaultWeiShare();
         SiteModel.shareModel.defaultWeiShare();
 
         //在加载模块需要的资源前需要siteModel创建需要的模块吗？
@@ -111,7 +110,9 @@ class DefaultMain extends ds.core.EventDispatcher {
             }
             else if (obj.type && obj.type === 'images') {
                 _loadObj.type = obj.type;
-                let _ls = _loadObj.list;
+                _loadObj.imgNS = 'other_image_dc';
+                _loadObj.basePath = obj.basePath;
+                _loadObj.list = obj.list;
             }
             else {
 
@@ -151,9 +152,11 @@ class DefaultMain extends ds.core.EventDispatcher {
             _nowLoadData = _loadList[_index];
 
             if (_nowLoadData.type && _nowLoadData.type === 'images') {
-                ds.net.queueLoad(_nowLoadData.list, _nowLoadData.complete, _nowLoadData.progress, {
-                    basePath: _nowLoadData.basePath
-                });
+                if(ds.createjs&&ds.createjs.queueLoad){
+                    ds.createjs.queueLoad(_nowLoadData);
+                }else{
+                    ds.net.queueLoad(_nowLoadData.list, _nowLoadData.complete, _nowLoadData.progress, { basePath: _nowLoadData.basePath});
+                }
             } else {
                 ds.createjs.loadAssets(_nowLoadData);
             }
@@ -162,7 +165,11 @@ class DefaultMain extends ds.core.EventDispatcher {
         }
 
         function progress(e) {
-            let _progress = e.target.progress;
+
+            let _progress;
+            if (typeof e === 'number')  _progress = e;
+            else _progress = e.target.progress;
+
             SiteModel.showProgress(_nowLoadData.start + (_spacing * _progress >> 0));
         }
 
@@ -236,8 +243,8 @@ class DefaultMain extends ds.core.EventDispatcher {
         } else {
             console.log('load extend js');
             SiteModel.getScriptList(_extend, () => {
-                this._startSitePage();
                 this.ds('initExtend');
+                this._startSitePage();
             })
         }
 
@@ -251,6 +258,9 @@ class DefaultMain extends ds.core.EventDispatcher {
             return;
         }
 
+        SiteModel.resizeModel.type = 'auto';
+        // SiteModel.resize();
+
         this.ds('startSitePage');
         //如果有配置开始进入网站首页方法，会使用配置方法。默认startSitePage不执行
         if (SiteConfig.startSitePage) {
@@ -259,10 +269,16 @@ class DefaultMain extends ds.core.EventDispatcher {
             return;
         }
 
-        SiteModel.resizeModel.type = 'auto';
+        this.startSitePage();
+
+
+    }
+
+    startSitePage(){
+
+        let _pager = SiteModel.pager;
 
         this.isWorkBack = false;
-
 
         let _firstPage;
 
@@ -313,10 +329,7 @@ class DefaultMain extends ds.core.EventDispatcher {
             SiteModel.gotoPage(_firstPage);
             SiteModel.hitLoadPanel();
 
-
         }
-
-
     }
 
 }
@@ -348,6 +361,7 @@ SiteModel.paneler = new PanelManager();
 SiteModel.show = SiteModel.paneler.show.bind(SiteModel.paneler);
 SiteModel.hide = SiteModel.paneler.hide.bind(SiteModel.paneler);
 SiteModel.hideAll = SiteModel.paneler.hideAll.bind(SiteModel.paneler);
+// SiteModel.alert = SiteModel.paneler.alert.bind(SiteModel.paneler);
 // console.log('-------------1',eds,eds.PageBase);
 //单页面实例创建
 SiteModel.appMain = new DefaultMain();

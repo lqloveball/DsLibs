@@ -134,11 +134,28 @@
      */
     Utils.isPhone = function (value) {
 
-        var re = new RegExp(/^((\d{11})|^((\d{7,8})|(\d{4}|\d{3})-(\d{7,8})|(\d{4}|\d{3})-(\d{7,8})-(\d{4}|\d{3}|\d{2}|\d{1})|(\d{7,8})-(\d{4}|\d{3}|\d{2}|\d{1}))$)$/);
-        var retu = value.match(re);
-        if (retu) return true;
-        else return false;
+        var myreg = /^[1][3,4,5,7,8][0-9]{9}$/;
+        if (!myreg.test(value)) {
+            return false;
+        } else {
+            return true;
+        }
 
+    };
+
+    /**
+     * 判断是否电话号码
+     *  @alias module:ds/utils/Utils~isTel
+     * @param {string} value [判断字符串]
+     * @return {boolean}
+     */
+    Utils.isTel = function (tel) {
+        var myreg = /^(([0\+]\d{2,3}-)?(0\d{2,3})-)(\d{7,8})(-(\d{3,}))?$/;
+        if (!myreg.test(tel)) {
+            return false;
+        } else {
+            return true;
+        }
     };
 
     /**

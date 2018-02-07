@@ -96,7 +96,7 @@
             set:function (value) {
                 if(value==='v'||value==='h'||value==='auto'){
                     _type=value;
-                    _self.resize();
+                    // _self.resize();
                 }
             }
 

@@ -152,9 +152,9 @@ class FramesPageModel extends eds.PageBase {
                 }
             }
         });
-        this._removeReSize();
+        this.removeReSize();
         SiteModel.resizeModel.on('resize', function () {
-            this._resize();
+            this.resize();
             if (opts.resize) opts.resize();
         }, this);
 
@@ -272,7 +272,7 @@ class FramesPageModel extends eds.PageBase {
      * 场景自适应
      * @private
      */
-    _resize() {
+    resize() {
 
         if (this.name !== SiteModel.pager.pageLabel) return;
 
@@ -318,7 +318,7 @@ class FramesPageModel extends eds.PageBase {
         } else {
             SiteModel.resizeModel.hideOrientationTip();
         }
-
+        this.ds('resize');
     }
 
 

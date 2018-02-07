@@ -1,27 +1,37 @@
 import CreatejsModel from './CreatejsModel.js';
 import CreatejsGLModel from './CreatejsGLModel.js';
 import InputText from './InputText.js';
+import AutoHorizontalScreenContainer from './AutoHorizontalScreenContainer.js';
 
 let root = (typeof window !== 'undefined' ? window : (typeof process === 'object' && typeof require === 'function' && typeof global === 'object') ? global : this);
 
-let ds = root.ds = root.ds || {};
+let ds = root.ds = root.ds ? root.ds : {};
+
 /**
  * createjs相关便捷函数，为快速开发createjs项目存在
  * @namespace ds.createjs
  * @requires module:libs/createjs/createjs0.8.2.min.js
  */
-ds.createjs = ds.createjs || {};
+ds.createjs = ds.createjs ? ds.createjs : {name: 'createjs'};
+
+/**
+ * 创建createjs横屏容器
+ */
+ds.createjs.createHBox=function () {
+    let _box=new AutoHorizontalScreenContainer();
+    return _box;
+};
 
 /**
  * 获取动画标签的开始帧
  * @param {createjs.DisplayObject} mc
  * @param {string} value
  */
-ds.createjs.getFrameByLabel=function (mc,value) {
-    if(mc instanceof createjs.MovieClip){
-        let _labels=mc.labels;
+ds.createjs.getFrameByLabel = function (mc, value) {
+    if (mc instanceof createjs.MovieClip) {
+        let _labels = mc.labels;
         for (let i = 0; i < _labels.length; i++) {
-            if(_labels[i].label===value)return _labels[i].position;
+            if (_labels[i].label === value) return _labels[i].position;
         }
         return -1;
     }
@@ -64,31 +74,29 @@ ds.createjs.getDisplayObjectBitmapData = function (display, rect) {
  */
 ds.createjs.addInput = function (display, opts, defaultText) {
 
-    var _input = new InputText(display, opts, defaultText);
+    let _input = new InputText(display, opts, defaultText);
     return _input;
 
 };
 
 //dom元素列表
 let _CreatejsDOMList = [];
+
 /**
  * 是否自动刷新判断 dom元素在场景内
  * @type {boolean}
  */
 ds.createjs.CreatejsDOMAuto = true;
-createjs.Ticker.addEventListener("tick", function () {
+if (window['createjs'] !== undefined) {
+    createjs.Ticker.addEventListener("tick", function () {
+        if (!ds.createjs.CreatejsDOMAuto) return;
+        for (let i = 0; i < _CreatejsDOMList.length; i++) {
+            let _domElement = _CreatejsDOMList[i];
+            if (_domElement) _domElement.upInStage();
+        }
+    });
+}
 
-    if (!ds.createjs.CreatejsDOMAuto) return;
-
-
-    for (var i = 0; i < _CreatejsDOMList.length; i++) {
-
-        var _domElement = _CreatejsDOMList[i];
-        if (_domElement) _domElement.upInStage();
-
-    }
-
-});
 
 /**
  * 添加一个createjs 绑定的dom元素
@@ -182,6 +190,8 @@ ds.createjs.addHitDom = function (display, dom, domBox, fun) {
     return _domElement;
 
 };
+
+
 /**
  * 为createjs绑定的dom元素来做click触发
  * @param {createjs.Container} display 显示容器
@@ -220,11 +230,11 @@ ds.createjs.addAvatar = function (url, size, box, loadend) {
         if (box) box.addChild(_bmp);
         let _s = size / _img.width;
         _bmp.scaleX = _bmp.scaleY = _s;
-        if (loadend) loadend(_bmp,true);
+        if (loadend) loadend(_bmp, true);
     };
 
     _img.onerror = function () {
-        if (loadend) loadend(_bmp,false);
+        if (loadend) loadend(_bmp, false);
     };
     _img.src = url;
     return _bmp;
@@ -351,7 +361,7 @@ ds.createjs.wrapMetrics = function (label, info, width, crop) {
 
         if (crop && _w > width) {
 
-            label.text = _oinfo.split(0,_oinfo.length-3)+'...';
+            label.text = _oinfo.split(0, _oinfo.length - 3) + '...';
 
             return;
 
@@ -378,7 +388,7 @@ ds.createjs.wrapMetrics = function (label, info, width, crop) {
 ds.createjs.formatNumberShow = function (value, mcList, hitZero) {
 
     hitZero = hitZero !== undefined ? hitZero : false;
-    if(value<=0)value=0;
+    if (value <= 0) value = 0;
     let _info = value + '';
 
     let i;
@@ -727,6 +737,7 @@ ds.createjs.loadJS = function (jsUrl, complete, error) {
 
 };
 
+
 var tempAnchor;
 
 function determineCrossOrigin(url, loc) {
@@ -772,6 +783,7 @@ ds.createjs.JSNCS = [];
  * @param {string} [opts.basePath='']  添加相对路径 默认不输入basePath为'',直接使用默认路径，有设置会basePath+其他路径url
  * @param {boolean} [opts.loadType=false]  资源加载方式，是否使用预加载文件头来获取精准的加载进度
  * @param {boolean} [opts.crossOrigin=false]  跨域传入值  ''或者'anonymous' 传入true 等同'anonymous'
+ * @param {number} [opts.maxLink=5] 最大同时加载速
  * @return {createjs.LoadQueue} 加载对象
  *
  * @example
@@ -803,7 +815,6 @@ ds.createjs.loadAssets = function (opts) {
 
     }
 
-  
 
     //获取导出库对象  新版发布才需要
     let _comp;
@@ -814,7 +825,8 @@ ds.createjs.loadAssets = function (opts) {
     let ssList = opts.ssList ? opts.ssList : null;
 
     //顺带加载一些其他资源
-    let otherList = opts.otherList ? opts.otherList : null;
+    let otherList = opts.otherList !== undefined ? opts.otherList : null;
+    if (!otherList) otherList = opts.list !== undefined ? opts.list : null;
     //js命名空间
     let jsNS = opts.jsNS ? opts.jsNS : 'lib';
     //图片命名空间
@@ -825,6 +837,7 @@ ds.createjs.loadAssets = function (opts) {
     let progress = opts.progress ? opts.progress : null;
     //加载类型，默认不需要http服务的false
     let loadType = opts.loadType ? opts.loadType : false;
+    let maxLink = opts.maxLink ? opts.maxLink : 5;
 
     //创建队列对象1
     let queue;
@@ -842,27 +855,27 @@ ds.createjs.loadAssets = function (opts) {
     queue.addEventListener("progress", queueProgress);
     queue.addEventListener("error", queueError);
     queue.addEventListener("complete", queueComplete);
+    queue.setMaxConnections(maxLink);
+    queue.maintainScriptOrder = true;
 
     let basePath;
-    if(opts.basePath)basePath=opts.basePath;
+    if (opts.basePath) basePath = opts.basePath;
     else {
-        basePath= _getAbsoluteUrl(jsUrl);
-        basePath=basePath.slice(0,basePath.lastIndexOf('/'))+'/';
+        basePath = _getAbsoluteUrl(jsUrl);
+        basePath = basePath.slice(0, basePath.lastIndexOf('/')) + '/';
     }
-   
+
     //先开始加载导出的JS
     // let _jsUrl = basePath ? basePath + jsUrl : jsUrl;
     let _jsUrl;
-    if(jsUrl.indexOf('/')===-1)_jsUrl=basePath + jsUrl;
-    else _jsUrl=jsUrl;
+    if (jsUrl.indexOf('/') === -1) _jsUrl = basePath + jsUrl;
+    else _jsUrl = jsUrl;
 
     let jsloader = new createjs.JavaScriptLoader({
         src: _jsUrl,
         id: _jsUrl,
         type: "javascript"
     });
-
-    
 
 
     jsloader.addEventListener('complete', jsComplete);
@@ -1001,6 +1014,74 @@ ds.createjs.loadAssets = function (opts) {
 
 };
 
+/**
+ * 队列加载
+ * @param opts
+ * @param opts.list
+ * @param opts.otherList
+ * @param opts.progress
+ * @param opts.complete
+ * @param opts.loadType
+ * @param opts.maxLink
+ * @param opts.crossOrigin
+ * @return {createjs.LoadQueue}
+ */
+ds.createjs.queueLoad = function (opts) {
+
+    // console.log('ds.createjs.queueLoad');
+    let list = opts.list !== undefined ? opts.list : null;
+    if (!list) list = opts.otherList !== undefined ? opts.otherList : null;
+
+    let complete = opts.complete ? opts.complete : null;
+    //加载过程回调
+    let progress = opts.progress ? opts.progress : null;
+    //加载类型，默认不需要http服务的false
+    let loadType = opts.loadType ? opts.loadType : false;
+    let maxLink = opts.maxLink ? opts.maxLink : 5;
+    let basePath = opts.basePath !== undefined ? opts.basePath : '';
+
+
+    if(!list||list.length<=0){
+        console.warn('不要传空队列进行加载');
+        if (complete !== null) complete(null);
+    }
+
+    //创建队列对象1
+    let queue;
+    if (!opts.crossOrigin) queue = new createjs.LoadQueue(loadType);
+    else {
+        let _crossOrigin = typeof opts.crossOrigin === 'string' ? opts.crossOrigin : 'anonymous';
+        queue = new createjs.LoadQueue(loadType, '', _crossOrigin);
+
+    }
+
+    queue.addEventListener("progress", queueProgress);
+    queue.addEventListener("complete", queueComplete);
+    queue.setMaxConnections(maxLink);
+    queue.maintainScriptOrder = true;
+    let i,queueArr=[];
+    for (i = 0; i < list.length; i++){
+        let _tp={src:list[i]};
+        _tp.src=basePath+_tp.src;
+        queueArr.push(_tp);
+    }
+
+    //队列加载进度
+    function queueProgress(e) {
+        if (progress !== null) progress(e);
+    }
+
+    //队列加载完成
+    function queueComplete(e) {
+        if (complete !== null) complete(e);
+    }
+
+    queue.loadManifest(queueArr);
+
+    //队列对象
+    return queue;
+};
+
 
 /**
  * 快速创建一个CreatejsModel基础结构
@@ -1026,7 +1107,7 @@ ds.createjs.create = function (opts) {
     let _width = opts.width ? opts.width : 640;
     let _height = opts.height ? opts.height : 1140;
     let _fps = opts.fps ? opts.fps : 30;
-    let _appendTo = opts.appendTo ? opts.appendTo : '';
+
 
     let _canvas = opts.canvas ? opts.canvas : document.createElement("canvas");
 
@@ -1051,6 +1132,7 @@ ds.createjs.create = function (opts) {
 
 
         _cjsModel = new CreatejsModel(_canvas);
+
 
     }
 
@@ -1133,7 +1215,8 @@ ds.createjs.isWebGLSupported = function () {
     }
 
 };
-var _getAbsoluteUrlElement
+var _getAbsoluteUrlElement;
+
 function _getAbsoluteUrl(url) {
     if (url.indexOf("http:") >= 0 || url.indexOf("https:") >= 0) return url;
     _getAbsoluteUrlElement = document.createElement('a');
@@ -1141,5 +1224,6 @@ function _getAbsoluteUrl(url) {
     url = _getAbsoluteUrlElement.href;
     return url;
 }
+
 
 export default ds.createjs;

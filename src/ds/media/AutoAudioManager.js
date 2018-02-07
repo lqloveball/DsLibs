@@ -31,6 +31,32 @@
      * 自动背景声音播放管理对象
      * @class ds.media.AutoAudioManager
      * @classdesc 一般用在网站 加载声音队列、自动播放背景声音BGM、控制声音临时暂停、开启临时暂停声音使用
+     * @example
+     * //为了防止微信网站加载框架代码太慢，造成 WeixinJSBridge 事件过期，在html内插入下面代码，这样默认播放背景音频就以这个为准
+     <script>
+     (function () {
+            window.__defaultAudioObj = {src: './media/BGM.mp3', id: 'gameBGM', loop: true, volume: 1};
+            var _obj = window.__defaultAudioObj;
+            var _tempAudio = new Audio();
+            _obj.audio = _tempAudio;
+            _tempAudio.autoplay = _obj.autoplay === undefined ? false : _obj.autoplay;
+            _tempAudio.loop = _obj.loop === undefined ? true : _obj.loop;
+            _tempAudio._volume = _obj.volume;
+            _tempAudio.src = _obj.src;
+            if (ua.match(/MicroMessenger/i) === "micromessenger") {
+                if (window['WeixinJSBridge'] === undefined) {
+                    document.addEventListener("WeixinJSBridgeReady", function() {
+
+                        _tempAudio.play();
+                        _tempAudio.volume = _tempAudio._volume !== undefined ? _tempAudio._volume : 1;
+                    });
+                }
+            }else{
+                _tempAudio.play();
+                _tempAudio.volume = _tempAudio._volume !== undefined ? _tempAudio._volume : 1;
+            }
+        })();
+     </script>
      *
      */
     ds.media.AutoAudioManager = AutoAudioManager;
@@ -38,6 +64,21 @@
     function AutoAudioManager() {
 
         var _self = this;
+
+        /**
+         * 显示背景控制按钮是否暂停
+         *
+         * @method ds.media.AutoAudioManager.prototype.paused
+         * @type {boolean}
+         */
+        _self.paused;
+
+        /**
+         * 显示背景控制按钮临时暂停前状态
+         * @method ds.media.AutoAudioManager.prototype.tempPaused
+         * @type {boolean|undefined} undefined 代表没有临时暂停  boolean 代表临时暂停前的是否暂停
+         */
+        _self.tempPaused;
 
         /**
          * 声音索引字典
@@ -82,6 +123,7 @@
             opts = opts || {};
             opts.list = opts.list || [];
             opts.id = opts.id || 'BGM';
+
             opts.button = opts.button || '#BGMBtn';
 
             //队列加载播放声音，微信设置默认播放声音
@@ -104,6 +146,8 @@
             var list = opts.list;
             //第一个播放的声音 id索引值
             var firstPlayID = opts.id;
+            // console.log('__defaultAudioObj',(window.__defaultAudioObj));
+            if(window.__defaultAudioObj){firstPlayID=window.__defaultAudioObj.id;}
             //是否执行第一次声音默认播放
             var autoPlay = opts.autoPlay !== undefined ? opts.autoPlay : true;
 
@@ -114,9 +158,17 @@
 
             //需要初始化声音播放的列表
             _audioList = [];
+            if(window.__defaultAudioObj){
+                var _obj = window.__defaultAudioObj;
+                var _tempAudio=_obj.audio;
+                _audioList.push(_tempAudio);
+                if (_obj.id) _audioDc[_obj.id] = _tempAudio;
+            }
             for (var i = 0; i < list.length; i++) {
 
                 var _obj = list[i];
+                if(window.__defaultAudioObj&&window.__defaultAudioObj.id===_obj.id)continue;
+                // console.log(i,_obj.id);
                 var _tempAudio = new Audio();
                 _obj.audio = _tempAudio;
                 _tempAudio.autoplay = _obj.autoplay === undefined ? false : _obj.autoplay;
@@ -129,6 +181,8 @@
 
             }
 
+
+
             //判断声音是否不初始化播放过
             var _InitBool = false;
 
@@ -138,7 +192,6 @@
 
                 if (window['WeixinJSBridge'] === undefined) {
 
-                    // alert('has WeixinJSBridge');
 
                     document.addEventListener("WeixinJSBridgeReady", function func() {
 
@@ -204,7 +257,7 @@
             //初始化播放声音
             function initAudioPlay() {
 
-                // console.log('非微信', _audioList.length);
+               // console.log('非微信', _audioList.length);
 
                 if (_InitBool) return;
 
@@ -220,7 +273,7 @@
                 }
 
                 if (_audioDc[firstPlayID]) {
-
+                    // console.log(firstPlayID,_audioDc[firstPlayID]);
                     _tempAudio = _audioDc[firstPlayID];
 
                     if (!autoPlay) _tempAudio.pause();
@@ -335,6 +388,8 @@
 
             //声音对象
             var _audio = audio;
+            _self.tempPaused=undefined;
+            _audio.__opaused=undefined;
             _audio._upUIState = upUIState;
             //监听声音对象事件
             _audio.addEventListener("play", upUIState);
@@ -343,11 +398,16 @@
             //按钮点击事件
             _button[0]._bgmClickActivate = function () {
 
+                if(_audio.__opaused!=undefined){
+                    console.warn('临时暂停后不允许，按钮点击开启，需要通过临时暂停播放开启');
+                    return;
+                }
                 // console.log(_button);
                 if (_audio.paused) _audio.play();
                 else _audio.pause();
 
-                _self.paused=_audio.__opaused!==undefined?(!_audio.__opaused):_audio.paused;
+                // _self.paused=_audio.__opaused!==undefined?(!_audio.__opaused):_audio.paused;
+                _self.paused=_audio.paused;
 
             };
 
@@ -360,7 +420,6 @@
                 if (_button) {
 
                     if (_audio.paused) {
-
                         _button.find('.on').hide();
                         _button.find('.off').show();
 
@@ -378,7 +437,8 @@
             //重置UI状态
             upUIState();
 
-            _self.paused=_audio.__opaused!==undefined?(!_audio.__opaused):_audio.paused;
+            // _self.paused=_audio.__opaused!==undefined?(!_audio.__opaused):_audio.paused;
+            _self.paused=_audio.paused;
         };
 
         /**
@@ -400,8 +460,8 @@
          *
          */
         this.temporarilyPaused = function (audio) {
-
             audio.__opaused = audio.paused;
+            this.tempPaused=audio.__opaused;
             audio.pause();
 
         };
@@ -421,7 +481,11 @@
          */
         this.temporarilyPlay = function (audio) {
 
-            if (!audio.__opaused) audio.play();
+            if (!audio.__opaused) {
+                audio.__opaused=undefined;
+                this.tempPaused=undefined;
+                audio.play();
+            }
 
         };
 
@@ -432,7 +496,7 @@
          * @return  {Audio} audio 声音对象
          */
         this.getAudioByID = function (value) {
-
+            // console.log('getAudioByID:',value);
             var _audio = this.audioDc[value];
             return _audio;
 

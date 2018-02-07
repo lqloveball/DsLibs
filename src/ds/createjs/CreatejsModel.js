@@ -31,11 +31,13 @@ class CreatejsModel extends EventDispatcher {
          */
         this.canvas = canvas ? canvas : document.createElement("canvas");
 
+
         /**
          * 舞台对象
          * @member {createjs.Stage}
          */
         this.stage = new createjs.Stage(canvas);
+
         this.stage.createjsModel = this;
         this.stage.update();
 
@@ -139,9 +141,11 @@ class CreatejsModel extends EventDispatcher {
 
 let root = (typeof window !== 'undefined' ? window : (typeof process === 'object' && typeof require === 'function' && typeof global === 'object') ? global : this);
 
-let ds = root.ds = root.ds || {};
-ds.createjs = ds.createjs || {};
+let ds = root.ds = root.ds ?root.ds: {};
+ds.createjs = ds.createjs?ds.createjs: {name:'createjs'};
 ds.createjs.CreatejsModel = CreatejsModel;
+
+
 
 export default CreatejsModel;
 

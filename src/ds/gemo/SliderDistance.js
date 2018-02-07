@@ -1,5 +1,5 @@
 import EventDispatcher from '../core/EventDispatcher';
-import PageSlider from  './PageSlider';
+import PageSlider from './PageSlider';
 
 const _upDateFrame = Symbol("_upDateFrame");
 
@@ -42,6 +42,7 @@ class SliderDistance extends EventDispatcher {
 
         opts = opts || {};
 
+        this.name=opts.name||'SliderDistance';
         /**
          * 目标变化对象
          */
@@ -148,7 +149,7 @@ class SliderDistance extends EventDispatcher {
 
         //计算拖拽计算距离 一般使用window宽或者高
         if (opts.touchDistance) this._touchDistance = opts.touchDistance;
-        else this._touchDistance = (this.type == 'v') ? window.innerHeight : window.innerWidth;
+        else this._touchDistance = (this.type === 'v') ? window.innerHeight : window.innerWidth;
 
         //进行拖拽用dom元素
         this._touchDom = opts.touchDom !== undefined ? $(opts.touchDom) : $('body');
@@ -162,18 +163,26 @@ class SliderDistance extends EventDispatcher {
          * 平滑拖动处理对象
          * @type {ds.gemo.PageSlider}
          */
-        this.slider = new PageSlider(this._touchDom);
+        this.slider = new ds.gemo.PageSlider(this._touchDom,{name:opts.name});
 
-        // this[_sliderTouchStart] = sliderTouchStart.bind(this);
-        // this[_sliderTouchMovie] = sliderTouchMovie.bind(this);
-        // this[_sliderTouchEnd] = sliderTouchEnd.bind(this);
 
-        this.slider.on('start', this._sliderTouchStart,this);
-        this.slider.on('move', this._sliderTouchMovie,this);
-        this.slider.on('end', this._sliderTouchEnd,this);
+        // this.slider.on('start', this._sliderTouchStart.bind(this), this);
+        // this.slider.on('move', this._sliderTouchMovie.bind(this), this);
+        // this.slider.on('end', this._sliderTouchEnd.bind(this), this);
 
-        this[_upDateFrame] = updateFrame.bind(this);
-        this[_upDateFrame]();
+
+        this.slider.on('start', (e)=>{
+            this._sliderTouchStart(e);
+        });
+        this.slider.on('move', (e)=>{
+            this._sliderTouchMovie(e);
+        });
+        this.slider.on('end', (e)=>{
+            this._sliderTouchEnd(e);
+        });
+
+
+        this._updateFrame();
 
     }
 
@@ -186,7 +195,7 @@ class SliderDistance extends EventDispatcher {
         this._lock = value;
         this._autoMovieing = false;
 
-        this[_upDateFrame]();
+        this._updateFrame();
 
     }
 
@@ -219,6 +228,8 @@ class SliderDistance extends EventDispatcher {
 
     _sliderTouchStart(e) {
 
+        console.log(this.name,'_sliderTouchStart');
+
         this._touchStartDistance = this.target[this.key];
 
         if (this.reverse) this._touchStartDistance = -this._touchStartDistance;
@@ -244,13 +255,13 @@ class SliderDistance extends EventDispatcher {
 
     _sliderTouchMovie(e) {
 
-        // console.log('_sliderTouchMovie');
+        console.log(this.name,'_sliderTouchMovie');
         //运动中不做
         if (this._tweening) return;
         //锁住不做更改
         if (this.lock) return;
 
-        if (this.type == 'v') {
+        if (this.type === 'v') {
             //只计算纵向滚动 不是上下滑动忽略
             if (!e.upright) return;
         } else {
@@ -321,12 +332,14 @@ class SliderDistance extends EventDispatcher {
     distanceUpdate() {
 
         if (!this.loop) {
+
             /**
              * 到最小距离
              * @event ds.gemo.SliderDistance#toMin
              * @property {number} value - 当前距离值
              */
             if (this._distance <= this.min) this.ds({type: 'toMin', value: this._distance});
+
             /**
              * 到最大距离
              * @event ds.gemo.SliderDistance#toMax
@@ -336,7 +349,7 @@ class SliderDistance extends EventDispatcher {
         }
 
         // console.log(this.target[this.key]);
-        if (this.target && this.target[this.key]!==undefined) {
+        if (this.target && this.target[this.key] !== undefined) {
 
             if (this.reverse) this.target[this.key] = -this._distance;
             else this.target[this.key] = this._distance;
@@ -393,7 +406,7 @@ class SliderDistance extends EventDispatcher {
         // console.log('sliderEndAutoMove:',this.speed);
 
         this._autoMovieing = true;
-        this[_upDateFrame]();
+        this._updateFrame();
         this._touchStartDistance = null;
 
         /**
@@ -426,7 +439,7 @@ class SliderDistance extends EventDispatcher {
         let _end = tweenData.end;
         tweenData.end = null;
 
-        let _self=this;
+        let _self = this;
 
         if (window['TweenMax']) {
 
@@ -448,7 +461,7 @@ class SliderDistance extends EventDispatcher {
 
             TweenMax.to(_obj, time, tweenData);
 
-        }else  if (window['JT']){
+        } else if (window['JT']) {
 
             this._tweening = true;
             this.lock = true;
@@ -472,62 +485,68 @@ class SliderDistance extends EventDispatcher {
 
     }
 
+    _updateFrame() {
+
+        //运动中不做
+        if (this._tweening) return;
+        //锁住 跳过
+        if (this.lock) return;
+        console.log(this.name,'_updateFrame',this._autoMovieing);
+        //没有自运动中
+        if (!this._autoMovieing) return;
+
+        if (this.failure > 0) {
+
+            if (Math.abs(this.speed) >= this.failure) this.speed = this.speed - this.failure * this.speed;
+            else this.speed = 0;
+
+        }
+
+        if (this.speed === 0) {
+
+            this._autoMovieing = false;
+            return;
+
+        }
+
+        this._distance += this.speed;
+
+        if (!this.loop) {
+
+            if (this._distance <= this.min) {
+
+                this._distance = this.min;
+                this._autoMovieing = false;
+
+            }
+            if (this._distance >= this.max) {
+
+                this._distance = this.max;
+                this._autoMovieing = false;
+
+            }
+
+        } else {
+
+            if (this._distance < this.min) this._distance = this.max - (this.min - this._distance);
+            if (this._distance > this.max) this._distance = this.min + (this._distance - this.max);
+
+        }
+
+        this.distanceUpdate();
+
+        requestAnimationFrame(()=>{
+            // console.log('----requestAnimationFrame');
+            this._updateFrame();
+        });
+
+    }
+
 
 }
 
 
 
-function updateFrame() {
-    //运动中不做
-    if (this._tweening) return;
-    //锁住 跳过
-    if (this.lock) return;
-    //没有自运动中
-    if (!this._autoMovieing) return;
-
-    if (this.failure > 0) {
-
-        if (Math.abs(this.speed) >= this.failure) this.speed = this.speed - this.failure * this.speed;
-        else this.speed = 0;
-
-    }
-
-    if (this.speed === 0) {
-
-        this._autoMovieing = false;
-        return;
-
-    }
-
-    this._distance += this.speed;
-
-    if (!this.loop) {
-
-        if (this._distance <= this.min) {
-
-            this._distance = this.min;
-            this._autoMovieing = false;
-
-        }
-        if (this._distance >= this.max) {
-
-            this._distance = this.max;
-            this._autoMovieing = false;
-
-        }
-
-    } else {
-
-        if (this._distance < this.min) this._distance = this.max - (this.min - this._distance);
-        if (this._distance > this.max) this._distance = this.min + (this._distance - this.max);
-
-    }
-
-    this.distanceUpdate();
-
-    requestAnimationFrame(this[_upDateFrame]);
-
-}
 
 let root = (typeof window !== 'undefined' ? window : (typeof process === 'object' && typeof require === 'function' && typeof global === 'object') ? global : this);
 

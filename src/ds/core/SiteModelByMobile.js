@@ -7,7 +7,7 @@
     if (typeof define === 'function' && define.amd) {
 
         define(['exports'], function (exports) {
-
+            // require('./Test.js');
             require('../net/SiteLoadModel');
             require('ds/gemo/Devicer');
             module.exports = factory(root, exports);
@@ -38,6 +38,7 @@
      * @param {object} opts  SiteModel模块初始化构建参数
      * @param {string} [opts.screen='#screen'] 进行场景自适应的dom对象
      * @param {array} [opts.widths=[640, 1138]] 手机端自适应时候使用宽高比
+     * @param {array} [opts.modelWH=[640,1235]] 自动创建模块的宽高
      * @param {boolean} [opts.hasCJS=false] 是否需要createjs框架加载
      * @param {boolean} [opts.hasCJSModel=false] 是否是createjs类型网站，默认创建createjs模块
      * @param {boolean} [opts.hasCJSLoad=false] 是否使用createjs制作loading动画
@@ -141,6 +142,8 @@
 
         opts = opts || {};
 
+        opts.modelWH=opts.modelWH||[640,1235];
+
         this.config = opts;
 
         this.getScript = getScript;
@@ -205,7 +208,6 @@
         //根据端口好判断是不是本地测试
         if (location.href.indexOf(':800') !== -1) _debug = true;
         if (location.href.indexOf(':300') !== -1) _debug = true;
-
         /**
          * 是否本地测试情况
          * 根据端口好判断是不是本地测试,因为平时开发环境运行后链接地址端口是:800*
@@ -467,6 +469,8 @@
 
                 // console.log('loadBaseFrameWork');
 
+
+
                 ds.core.EventDispatcher.extend(_self);
 
                 //初始化背景声音与声音加载对象
@@ -498,11 +502,13 @@
          */
         function loadCreateJsFrameWork() {
 
+
+
             var _url = opts.cjsUrl || './js/edslibs/createjsFrameWork.js';
 
             _self.getScript(_url, function () {
 
-                // console.log('loadCreateJsFrameWork');
+
 
                 /**
                  * createjs框架加载完成
@@ -612,13 +618,26 @@
          */
         function initCreateJsModel() {
 
+            // alert('siteModel:'+ds.createjs.name);
+            // alert(ds.createjs);
+            // alert(ds.createjs.create);
+
+            // alert(ds.createjs.d);
+            // ds.createjs.d();
+            // alert(ds.createjs.getFrameByLabel);
+            // alert(ds.temp);
+
             _self.createJsModel = ds.createjs.create({
                 hasGL: opts.hasCJSWebGL,
                 appendTo: opts.cjsBox !== undefined ? $(opts.cjsBox) : $('#cjsBox')[0],
-                width: 640,
-                height: 1235,
+                width: opts.modelWH[0],
+                height: opts.modelWH[1],
                 fps: 30
             });
+
+            var _hroot=_self.createJsModel.hroot=ds.createjs.createHBox();
+            _self.createJsModel.stage.addChild(_hroot);
+
             /**
              * createJsModel模块 构建完成
              * @event ds.core.SiteModelByMobile#cjsModelBuild
@@ -641,8 +660,8 @@
 
                 _self.pixiJsModel = ds.pixijs.create({
                     appendTo: opts.pixiBox,
-                    width: 640,
-                    height: 1235,
+                    width: opts.modelWH[0],
+                    height: opts.modelWH[1],
                     fps: 30
                 });
 
@@ -673,8 +692,8 @@
                 opts.threejsBox = opts.threejsBox !== undefined ? $(opts.threejsBox)[0] : $('#threejsBox')[0];
 
                 SiteModel.threeJsModel = ds.threejs.create({
-                    width: 640,
-                    height: 1235,
+                    width: opts.modelWH[0],
+                    height: opts.modelWH[1],
                     resizeType: 'fixed2',
                     hasModelAnimate: true,
                     intersect: true,
@@ -800,7 +819,7 @@
 
             _script.onreadystatechange = function () {
 
-                if (this.readyState == "loaded" || this.readyState == "complete") {
+                if (this.readyState === "loaded" || this.readyState === "complete") {
 
                     if (complete) complete();
 

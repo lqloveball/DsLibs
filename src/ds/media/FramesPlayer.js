@@ -120,6 +120,8 @@ class FramesPlayer extends EventDispatcher {
         this._isStarload = false;
         //是否加载完成
         this._isLoadEnd = false;
+        //加载进度
+        this._progress = 0;
 
         //图片列表
         this._imagesList = [];
@@ -184,7 +186,8 @@ class FramesPlayer extends EventDispatcher {
 
         let _audio = null;
         let _audioUrl = getDefault(opts.audio, '');
-        _audioUrl = getDefault(opts.mp3, _audioUrl);
+        if(opts.mp3&&opts.mp3!==undefined&&opts.mp3!==null&&opts.mp3!=='')_audioUrl=opts.mp3;
+
 
         if (_audioUrl !== '') {
 
@@ -285,7 +288,7 @@ class FramesPlayer extends EventDispatcher {
     }
 
     initImageList() {
-        console.log('initImageList:', this._listStart, this._listEnd);
+        // console.log('initImageList:', this._listStart, this._listEnd);
         let _self = this;
         this._imagesList = [];
         let _img;
@@ -367,8 +370,9 @@ class FramesPlayer extends EventDispatcher {
         let _index = this._imagesLoadIndex;
         let _imagesList = this._imagesList;
 
-        // console.log(_index, _imagesList);
+        // console.log(_index, _imagesList.length);
         let _progress = _index / _imagesList.length;
+        this._progress = _progress;
         if (this._config.onprogress) this._config.onprogress(_progress);
         /**
          * 加载进度
@@ -380,7 +384,7 @@ class FramesPlayer extends EventDispatcher {
         if (_index >= _imagesList.length) {
             this._imagesLoadIndex = _imagesList.length - 1;
             this._videoLoadEndEvent();
-            // console.log('complete');
+            // console.log('complete',_index,_imagesList.length);
             this._imagesLoadEnd = true;
             _self._isLoadEnd = true;
             if (this._config.onload) this._config.onload();
@@ -421,13 +425,13 @@ class FramesPlayer extends EventDispatcher {
             console.log(this._imagesLoadIndex + " localStorage.getItem Error: " + e);
             return;
         }
+
         if (_imgData) {
             // console.log(this._imagesLoadIndex+':使用本地存储数据');
             img.src = _imgData;
             return;
-        } else {
-            img.src = _url;
         }
+
         // console.log(this._imagesLoadIndex+':网络数据');
         let xhr = new XMLHttpRequest();
         let fileReader = new FileReader();
@@ -439,7 +443,8 @@ class FramesPlayer extends EventDispatcher {
                 fileReader.onload = function (evt) {
                     // Read out file contents as a Data URL
                     let result = evt.target.result;
-                    img.setAttribute("src", result);
+                    img.src = result;
+                    img.crossOrigin = "Anonymous";
                     // Store Data URL in localStorage
                     try {
                         if (!_self._exceededQuota) localStorage.setItem(_url, result);
@@ -589,11 +594,16 @@ class FramesPlayer extends EventDispatcher {
                 if (this._videoPlayEnd) return;
                 this._videoPlayEnd = true;
                 if (this._config.onplayend) this._config.onplayend();
+                /**
+                 * 播放完成
+                 * @event ds.media.FramesPlayer#playEnd
+                 */
                 this.ds('playEnd');
                 if (this._loop) this.seekToTime(0, true);
             }
 
         }
+
         //拖动跳帧渲染 一般是对这个动画独立渲染做交互时候才使用
         if (this._showFramePause) {
             if (this._currentFrame >= this.totalFrames - 1) this._currentFrame = this.totalFrames - 1;
@@ -705,34 +715,50 @@ class FramesPlayer extends EventDispatcher {
      * @private
      */
     _timeUpDate() {
-
-        let _currentTime = 0;
-        _currentTime = this.currentTime;
+        let _currentTime = this.currentTime;
+        let _currentFrame = this.currentFrame;
         let _videoCuePointList = this._videoCuePointList;
 
         for (let i = 0; i < _videoCuePointList.length; i++) {
 
             let _td = _videoCuePointList[i];
+            if (_td.type === 'time') {
+                if (_td.time && _currentTime >= _td.time && !_td.bool) {
+                    _td.bool = true;
+                    _td.runNum += 1;
+                    let _eventData = {
+                        type: 'cuePoint',
+                        data: _td,
+                        time: _currentTime,
+                        frame: _currentFrame
+                    };
 
-            if (_td.time && _currentTime >= _td.time && !_td.bool) {
+                    if (_td.fun) _td.fun(_eventData);
+                    /**
+                     * 交互提示点
+                     * @event ds.media.VideoInteractivePlayer#cuePoint
+                     * @property {object} data - 交互时间点数据
+                     * @property {number} time - 当前触发时间
+                     * @property {number} frame - 当前触发帧
+                     */
+                    this.ds(_eventData);
+                }
+            } else {
+                if (_td.frame && _currentFrame >= _td.frame && !_td.bool) {
+                    _td.bool = true;
+                    _td.runNum += 1;
+                    let _eventData = {
+                        type: 'cuePoint',
+                        data: _td,
+                        time: _currentTime,
+                        frame: _currentFrame
+                    };
 
-                _td.bool = true;
-                _td.runNum += 1;
-                let _eventData = {
-                    type: 'cuePoint',
-                    data: _td,
-                    time: _currentTime
-                };
-
-                if (_td.fun) _td.fun(_eventData);
-                /**
-                 * 交互提示点
-                 * @event ds.media.VideoInteractivePlayer#cuePoint
-                 * @property {object} data - 交互时间点数据
-                 * @property {number} time - 当前触发时间
-                 */
-                this.ds(_eventData);
+                    if (_td.fun) _td.fun(_eventData);
+                    this.ds(_eventData);
+                }
             }
+
 
         }
 
@@ -749,8 +775,10 @@ class FramesPlayer extends EventDispatcher {
      */
     addCuePoint(cd) {
         cd = cd || {};
-        if (!cd.time) return;
-        if (!cd.name) cd.name = 'time_' + cd.time;
+        if (cd.time !== undefined && cd.frame !== undefined) return;
+        if (cd.frame !== undefined) cd.type = 'frame';
+        else cd.type = 'time';
+        if (!cd.name) cd.name = 'time_' + (cd.type === 'time' ? cd.time : cd.frame);
         cd.runNum = 0;
         cd.bool = false;
         this._videoCuePointList.push(cd);
@@ -844,8 +872,9 @@ class FramesPlayer extends EventDispatcher {
      */
     showFrame(value) {
         this._totalTime = this._imagesList.length / this._fps;
-        if (value >= this.totalFrames - 1) value = this.totalFrames - 1;
+        if (value >= this.totalFrames) value = this.totalFrames;
         if (value <= 0) value = 0;
+        this._videoPlayEnd = false;
         this._currentFrame = value - 1;
         this._showFramePause = true;
         this._pause = true;
@@ -870,7 +899,7 @@ class FramesPlayer extends EventDispatcher {
             this.seekToTime(_time, bool)
         }
         else {
-
+            this._videoPlayEnd = false;
             if (bool !== undefined) {
                 if (bool) this.play();
                 else this.pause();
@@ -894,6 +923,7 @@ class FramesPlayer extends EventDispatcher {
      */
     seekToTime(value, bool) {
         if (bool !== undefined) {
+            this._videoPlayEnd = false;
             if (bool) this.play();
             else this.pause();
         }
@@ -1038,7 +1068,7 @@ class FramesPlayer extends EventDispatcher {
      * 是否加载完成所有序列帧
      * @return {boolean}
      */
-    get isLoadEnd() {
+    get isImagesLoadEnd() {
         return this._imagesLoadEnd;
     }
 
@@ -1059,6 +1089,14 @@ class FramesPlayer extends EventDispatcher {
     }
 
     /**
+     * 加载进度情况
+     * @return {number}
+     */
+    get progress() {
+        return this._progress;
+    }
+
+    /**
      * 缓存进度
      * @return {number}
      */
@@ -1072,6 +1110,14 @@ class FramesPlayer extends EventDispatcher {
      */
     get videoCuePointList() {
         return this._videoCuePointList.concat();
+    }
+
+    /**
+     * 这个序列帧播放器名字
+     * @return {*|string}
+     */
+    get name() {
+        return this._name;
     }
 }
 

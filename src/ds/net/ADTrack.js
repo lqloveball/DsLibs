@@ -77,6 +77,28 @@
             // console.log('baiduEvent:', opt_label);
 
         },
+
+        czcPV:function (pageurl) {
+            if (window['_czc'] === undefined) return;
+            if (pageurl.indexOf('/') !== 0) pageurl = '/' + pageurl;
+            _czc.push([ "_trackPageview",pageurl]);
+        },
+        /**
+         * 友盟
+         * http://open.cnzz.com/a/new/trackevent/
+         * @param opt_label
+         * @param opt_value
+         * @param category
+         * @param action
+         */
+        czcEvent:function (opt_label, opt_value, category, action) {
+            if (window['_czc'] === undefined) return;
+            if (!category) category = 'Event';
+            if (!action) action = 'Click';
+            if (!opt_value) opt_value = '1';
+            if (!opt_label) return;
+            _czc.push(["_trackEvent",category,action,opt_label,opt_value,'dafen']);
+        },
         /**
          * Google的PV
          * @alias module:ds/net/ADTrack.gaPV
@@ -125,7 +147,7 @@
          * @param  {string} pageurl [如 '/virtual/login']
          */
         pv: function(pageurl) {
-
+            ds.net.ADTrack.czcPV(pageurl);
             ds.net.baiduPV(pageurl);
             ds.net.gaPV(pageurl);
 
@@ -138,7 +160,7 @@
          * @param  {string} [action='Click']    [默认Click【百度描述】用户跟目标交互的行为，如"播放"、"暂停"、"下载"等等。该项必填，不填、填"-"的事件会被抛弃。]
          */
         event: function(opt_label, opt_value, category, action) {
-
+            ds.net.ADTrack.czcEvent(opt_label, opt_value, category, action);
             ds.net.baiduEvent(opt_label, opt_value, category, action);
             ds.net.gaEvent(opt_label, opt_value, category, action);
 
