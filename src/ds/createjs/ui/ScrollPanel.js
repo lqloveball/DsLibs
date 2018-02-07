@@ -2,6 +2,8 @@ import EventDispatcher from '../../core/EventDispatcher';
 
 /**
  * 滚动条组件
+ * @class
+ * @memberof ds.createjs.ui
  */
 class ScrollPanel extends EventDispatcher {
 

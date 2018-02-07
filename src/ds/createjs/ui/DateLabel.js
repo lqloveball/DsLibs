@@ -1,6 +1,11 @@
 import EventDispatcher from '../../core/EventDispatcher';
 import {getDefault, getHTMLElement} from '../../utils/Mixin';
 
+/**
+ * 选择日期组件
+ * @class
+ * @memberof ds.createjs.ui
+ */
 class DateLabel extends EventDispatcher {
 
     constructor(skin, opts) {

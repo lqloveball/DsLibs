@@ -4,6 +4,6 @@ let ds = root.ds = root.ds || {};
 ds.createjs = ds.createjs || {};
 /**
  * 关于createjs的ui相关
- * @namespace ds.createjs.effect
+ * @namespace ds.createjs.ui
  */
 ds.createjs.ui = ds.createjs.ui || {};

@@ -3,6 +3,8 @@ import {getDefault, getHTMLElement} from '../../utils/Mixin';
 
 /**
  * 双向选择按钮
+ * @class
+ * @memberof ds.createjs.ui
  */
 class CheckBox extends EventDispatcher {
 

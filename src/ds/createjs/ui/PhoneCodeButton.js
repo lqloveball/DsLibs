@@ -4,6 +4,8 @@ import {getDefault, getAbsoluteUrl} from '../../utils/Mixin';
 import Utils from '../../utils/Utils';
 /**
  * 发送手机验证码按钮封装
+ * @class
+ * @memberof ds.createjs.ui
  */
 class PhoneCodeButton extends EventDispatcher {
 

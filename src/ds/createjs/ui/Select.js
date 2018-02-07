@@ -3,6 +3,8 @@ import {getDefault, getHTMLElement} from '../../utils/Mixin';
 
 /**
  * 选择框封装
+ * @class
+ * @memberof ds.createjs.ui
  */
 class Select extends EventDispatcher {
 

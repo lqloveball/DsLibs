@@ -3,6 +3,8 @@ import InputText from '../InputText';
 
 /**
  * 输入框封装
+ * @class
+ * @memberof ds.createjs.ui
  */
 class InputLabel extends EventDispatcher {
 
