@@ -1,4 +1,4 @@
-import {getDefault} from 'ds/utils/Mixin';
+import {getDefault,isDOM} from 'ds/utils/Mixin';
 
 let [_AppMain, _CreateJsModel, _PixiJsModel, _ThreeJsModel] = [SiteModel.appMain, SiteModel.createJsModel, SiteModel.pixiJsModel, SiteModel.threeJsModel];
 let _Root, _Stage;
@@ -245,9 +245,12 @@ class PageBase extends ds.core.EventDispatcher {
             }
 
         } else {
-
-            this._type = 'html';
-
+            if(isDOM(this._view)){
+                this._type = 'html';
+            }
+            else{
+                this._type = 'othre';
+            }
         }
 
 

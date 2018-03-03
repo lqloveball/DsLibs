@@ -7,17 +7,130 @@ ds.threejs = ds.threejs || {};
 
 /**
  * threejs 简化加载处理工作
- * @module ds/threejs/LoadManager
+ * @class
+ * @memberof ds.threejs
  */
-let LoadManager = {
+class LoadManager {
+    constructor() {
+    }
+
+    /**
+     * 加载场景背景6面体
+     * @param list
+     * @param complete
+     * @param progress
+     * @param path
+     */
+    loadTextureCube(list,complete, progress,path){
+
+        let _manager = new THREE.LoadingManager();
+        _manager.onProgress = function (item, loaded, total) {
+
+            if (loaded === total) {
+
+                if (complete) complete(_textureCube);
+
+            } else {
+
+                let _progress = loaded / total;
+                if (progress) progress(_progress);
+
+            }
+        };
+
+        let _loader=new THREE.CubeTextureLoader(_manager);
+
+        if(path)_loader.setPath(path);
+
+        let _textureCube=_loader.load( list);
+
+        return _textureCube;
+
+    }
+
+    loadJSONModels(list, complete, progress) {
+        let _loadDataDc = {};
+        let _manager = new THREE.LoadingManager();
+        _manager.onProgress = function (item, loaded, total) {
+
+            if (loaded === total) {
+
+                if (complete) complete(_loadDataDc);
+
+            } else {
+
+                let _progress = loaded / total;
+                if (progress) progress(_progress);
+
+            }
+        };
+
+        let _objList = [];
+        for (let i = 0; i < list.length; i++) {
+            let _obj = list[i];
+            if (typeof(_obj) === 'string') {
+                _obj = {src: _obj, id: _obj};
+                list[i] = _obj;
+            }
+
+            if(!_obj.id)_obj.id=_obj.src;
+
+
+
+
+            let _loader = new THREE.JSONLoader(_manager);
+
+            let _loadData={
+                id:_obj.id,
+                loadData:_obj,
+                loader:_loader,
+                geometry:null,
+                materials:null,
+            };
+
+            if (_obj.id !== undefined) _loadDataDc[_obj.id] = _loadData;
+
+            _objList.push(_loader);
+
+            //开始加载
+            _loader.load(_obj.src,
+                //加载完成
+                function (geometry, materials) {
+                    // console.log(_loadData.id);
+                    _loadData.geometry=geometry;
+                    _loadData.materials=materials;
+
+                },
+                //加载进度
+                function (xhr) {
+
+                    if (xhr.lengthComputable) {
+
+                        let _progress = xhr.loaded / xhr.total;
+
+                    }
+
+                },
+                //加载错误
+                function () {
+
+                    console.log('JSON Load Error');
+
+                }
+            );
+
+        }
+
+        return _loadDataDc;
+    }
 
     /**
      * 加载editor编辑导出的场景对象，快速读取灯光与场景
-     * @alias module:ds/threejs/LoadManager~loadSceneJSON
-     * @param {string} url 加载场景json地址
-     * @param {function} complete 加载完成function
-     * @param {function} progress 加载过程function(progress)
-     * @param {function} error 加载错误function
+     * @param url
+     * @param complete
+     * @param progress
+     * @param error
+     * @return {THREE.ObjectLoader}
      * @example
      * ds.threejs.LoadManager.loadSceneJSON('./a.json',function(scene){
      *
@@ -26,16 +139,14 @@ let LoadManager = {
      *
      * });
      */
-    loadSceneJSON: function (url, complete, progress, error) {
+    loadScene(url, complete, progress, error) {
 
         let _loader = new THREE.ObjectLoader();
 
         _loader.load(url,
             //完成
             function (scene) {
-                //_LightGroup=scene.getObjectByName('LightGroup');
                 if (complete) complete(scene);
-
             },
             //进度
             function (e) {
@@ -50,12 +161,10 @@ let LoadManager = {
         );
 
         return _loader;
+    }
 
-
-    },
     /**
      * obj格式模型加载队列
-     * @alias module:ds/threejs/LoadManager~loadObjectModels
      * @param {array} list  加载对象列表
      * ```js
      * [
@@ -80,15 +189,15 @@ let LoadManager = {
      *
      *      });
      */
-    loadObjectModels: function (list, complete, progress) {
+    loadObjectModels(list, complete, progress) {
 
-        let _objectDc = {};
+        let _loadDataDc = {};
         let _manager = new THREE.LoadingManager();
         _manager.onProgress = function (item, loaded, total) {
 
-            if (loaded == total) {
+            if (loaded === total) {
 
-                if (complete) complete();
+                if (complete) complete(_loadDataDc);
 
             } else {
 
@@ -106,32 +215,36 @@ let LoadManager = {
                 _obj = {src: _obj, id: _obj};
                 list[i] = _obj;
             }
+            if(!_obj.id)_obj.id=_obj.src;
 
-            if (_obj.id !== undefined) _objectDc[_obj.id] = _obj;
 
             let _loader = new THREE.OBJLoader(_manager);
 
-            // _obj.loader=_loader;
-            //加载完成后进行的附加值使用
-            _loader._load_objData = _obj;
+            let _loadData={
+                id:_obj.id,
+                loadData:_obj,
+                loader:_loader,
+                object:null,
+
+            };
+
+            if (_obj.id !== undefined) _loadDataDc[_obj.id] = _loadData;
+
 
             _objList.push(_loader);
 
             //开始加载
             _loader.load(_obj.src,
                 //加载完成
-                function (object, self) {
-                    // console.log(itself,object,itself._load_objData)
-                    //改造OBJLoader内的onLoad传参数，多添加一个
-                    if (self) self._load_objData.object = object;
-
+                function (object) {
+                    _loadData.object=object;
                 },
                 //加载进度
                 function (xhr) {
 
                     if (xhr.lengthComputable) {
 
-                        let _progress = xhr.loaded / xhr.total * 100;
+                        let _progress = xhr.loaded / xhr.total ;
 
                     }
 
@@ -145,13 +258,12 @@ let LoadManager = {
             );
         }
 
-        return _objectDc;
-    },
+        return _loadDataDc;
+    }
 
     /**
      * 加载SEA3D模型
      * 需要SEA3D loader支持，并且加载顺序有要求
-     * @alias module:ds/threejs/LoadManager~loadSEA3DModel
      * @param {string} url 加载模型json地址
      * @param {function} complete 加载完成function
      * @param {function} progress 加载过程function(progress)
@@ -169,7 +281,7 @@ let LoadManager = {
      * });
      *
      */
-    loadSEA3DModel: function (url,complete, progress) {
+    loadSEA3DModel(url, complete, progress) {
 
         if (!THREE.SEA3D) {
 
@@ -202,10 +314,10 @@ let LoadManager = {
         _loader.load(url);
         return _loader;
 
-    },
+    }
+
     /**
      * 加载Texture队列
-     * @alias module:ds/threejs/LoadManager~loadTextures
      * @param {array} list
      *
      * ```js
@@ -229,8 +341,7 @@ let LoadManager = {
      * });
      *
      */
-    loadTextures:function (list,complete, progress,fileEnd) {
-
+    loadTextures(list, complete, progress, fileEnd) {
         //纹理图片字典
         let _textureDc = {};
         //加载对象列表
@@ -242,7 +353,7 @@ let LoadManager = {
 
             if (typeof(_obj) === 'string') {
 
-                _obj = { src: _obj,id:_obj};
+                _obj = {src: _obj, id: _obj};
                 list[i] = _obj;
 
             }
@@ -270,29 +381,29 @@ let LoadManager = {
 
             }
 
-            _obj = list[_index];
-            _loader = _loadList[_index];
+            let _obj = list[_index];
+            let _loader = _loadList[_index];
 
-            _loader.load(
+            _obj.texture=_loader.load(
                 // 加载图片路径
                 _obj.src,
                 // 图片加载完成
-                function(texture) {
+                function (texture) {
 
                     _obj.texture = texture;
 
                     //单个文件加载完成
-                    if(fileEnd)fileEnd(_obj);
+                    if (fileEnd) fileEnd(_obj);
 
                     fileLoad();
 
                 },
                 // 加载进度
-                function(xhr) {
+                function (xhr) {
 
                 },
                 // 加载错误
-                function(xhr) {
+                function (xhr) {
                     fileLoad();
                 }
             );
@@ -302,7 +413,7 @@ let LoadManager = {
         //加载完成
         function fileLoadAllEnd() {
 
-            if (complete) complete();
+            if (complete) complete(_textureDc);
 
         }
 
@@ -314,17 +425,15 @@ let LoadManager = {
         }
 
         return _textureDc;
-
     }
+}
 
-};
 
 /**
  * 加载器对象
  * @member ds.threejs.LoadManager
  * @type module:ds/threejs/LoadManager
  */
-ds.threejs.LoadManager = LoadManager;
-
+ds.threejs.LoadManager = new LoadManager();
 
 export default ds.threejs.LoadManager;

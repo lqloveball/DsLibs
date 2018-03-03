@@ -327,6 +327,7 @@ class ThreeJsModel extends EventDispatcher {
      */
     createControls(dom) {
 
+
         if (!THREE.OrbitControls) {
 
             console.warn('no has THREE.OrbitControls');
@@ -335,8 +336,8 @@ class ThreeJsModel extends EventDispatcher {
         }
 
         if (this.controls) return;
+        console.log('createControls',this.controls);
 
-        console.log('createControls');
         let _dom=dom!==undefined?$(dom)[0]:this.render.domElement;
         /**
          * 镜头控制器
@@ -550,9 +551,7 @@ class ThreeJsModel extends EventDispatcher {
 
         let f;
         let vertical = w;
-        if (r < 1) {
-            vertical = vertical / r;
-        }
+        if (r < 1) {vertical = vertical / r;}
         f = Math.atan(vertical / d / 2) * 2 * (180 / Math.PI);
         return f;
 
@@ -593,6 +592,7 @@ function animateFrame() {
      */
     this.ds(this._afterUpdateEvent);
 
+    if (this.controls)this.controls.update();
 
     //状态
     if (this.stats) this.stats.update();

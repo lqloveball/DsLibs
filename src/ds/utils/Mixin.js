@@ -92,12 +92,26 @@ function getHTMLElement(dom) {
  */
 ds.utils.mixin.getHTMLElement = getHTMLElement;
 
+/**
+ * 是否dom对象
+ * @param dom
+ * @return {*}
+ */
+function isDOM(dom) {
+
+    if(typeof dom === 'object') dom=$(dom)[0];
+    if (typeof HTMLElement === 'object') return dom instanceof HTMLElement;
+    else return dom && typeof dom === 'object' && dom.nodeType === 1 && typeof dom.nodeName === 'string';
+}
+
+ds.utils.mixin.isDOM = isDOM;
 
 export {
     getDefault,
     getAbsoluteUrl,
     getHTMLElement,
-    getLayout
+    getLayout,
+    isDOM
 };
 
 export default ds.utils.mixin;

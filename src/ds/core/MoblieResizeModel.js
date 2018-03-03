@@ -509,7 +509,9 @@
             if (_os === 'ios') {
                 // console.log(_densityDpi);
                 // _viewport.setAttribute('content', 'target-densitydpi=device-dpi,maximum-scale=1.0, user-scalable=no');
+
                 _viewport.setAttribute('content', 'target-densityDpi=' + _densityDpi + ',initial-scale=1.0, maximum-scale=1.0,user-scalable=no');
+
                 //  _viewport.setAttribute('content', 'width='+_winWidth+',target-densityDpi='+_densityDpi+',initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
                 //  _viewport.setAttribute('content', 'width=device-width,target-densityDpi='+_densityDpi+',initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
             } else {

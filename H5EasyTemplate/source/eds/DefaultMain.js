@@ -283,7 +283,6 @@ class DefaultMain extends ds.core.EventDispatcher {
         let _firstPage;
 
         let _urlParamDc = ds.net.getUrlParameterDictionary();
-        console.log(_urlParamDc);
         if (_urlParamDc && _urlParamDc['WorkID']) {
             let _workPage = SiteConfig.workPage;
             if (!_workPage) {

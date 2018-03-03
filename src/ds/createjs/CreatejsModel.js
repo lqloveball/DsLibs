@@ -64,6 +64,10 @@ class CreatejsModel extends EventDispatcher {
 
         createjs.MotionGuidePlugin.install();
 
+        this.tempBox=new createjs.Container();
+        this.tempBox.x=100000;
+        this.tempBox.y=100000;
+        this.stage.addChild(this.tempBox);
 
         // createjs.Ticker.on("tick", this._tickEvent,this);
         this._addTick();

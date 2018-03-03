@@ -19,6 +19,20 @@ import Orienter from '../gemo/Orienter';
  */
 class SceneOrienter extends EventDispatcher {
 
+    /**
+     *
+     * @param target 目标控制对象
+     * @param moveWidth 平移距离
+     * @param opts
+     * @param opts.angle=60  角度
+     * @param opts.direction=true  方向
+     * @param opts.regPt={x: 0, y: 0}  注册点
+     * @param opts.stage=null  舞台stage对象
+     * @param opts.touchRect={
+            width: window.innerWidth,
+            height: window.innerHeight,
+        }  拖拽计算宽高
+     */
     constructor(target, moveWidth, opts) {
 
         super();

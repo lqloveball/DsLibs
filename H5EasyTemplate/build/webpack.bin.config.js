@@ -91,7 +91,7 @@ module.exports = merge(webpackBaseConfig, {
       inline: true //实时刷新
   },
   // 生产
-  devtool: '#cheap-module-source-map',
+  // devtool: '#cheap-module-source-map',
   // 生产
   // devtool: '#eval',
   //是否观察者模式
@@ -108,7 +108,8 @@ module.exports = merge(webpackBaseConfig, {
     new webpack.optimize.UglifyJsPlugin({
       comments: false, //去掉注释
       compress: {
-        warnings: false//去警告
+        comments: false,
+        beautify: false,
       }
     }),
     //new webpack.optimize.CommonsChunkPlugin('common', 'common.js'),

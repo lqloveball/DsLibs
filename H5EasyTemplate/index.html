@@ -4,24 +4,40 @@
     <meta charset="UTF-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="viewport" content=" initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="format-detection" content="telephone=no">
     <meta content="telephone=no" name="format-detection"/>
     <meta name="apple-mobile-web-app-capable" content="yes"/>
     <title>简易项目模板</title>
     <link rel="stylesheet" href="./css/index.css"/>
-    <script src="js/libs/polyfillB.js"></script>
+    <!-- 判断是否需要载入babel-polyfills -->
+    <script type="text/javascript">
+       var modernBrowser = (
+         'fetch' in window &&
+         'assign' in Object
+       );
+       if ( !modernBrowser ) {
+         var scriptElement = document.createElement('script');
+
+         scriptElement.async = false;
+         scriptElement.src = '/js/libs/babel.polyfills.min.js';
+         document.head.appendChild(scriptElement);
+       }
+    </script>
+    <!-- 初始化设置viewport -->
     <script>
         var ua = navigator.userAgent;
         if (/Android (\d+\.\d+)/.test(ua)) document.write('<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no">');
-        else document.write('<meta name="viewport" content="width=640,target-densitydpi=device-dpi,maximum-scale=1.0, user-scalable=no">');
+        else document.write('<meta name="viewport" content="width=device-width,user-scalable=no;">');
     </script>
-    <style>
+    <!-- 简易模板配置 -->
+    <script>
+        window.esiteConfig="js/site/defaultSite.js";
+    </script>
+     <style>
         html, body {  height: 100%;  -webkit-box-sizing: border-box;  box-sizing: border-box;  overflow: hidden;  background-color: #ccc;  }
         #siteLoadPanel {  position: absolute;  left: 0;  top: 0;  width: 640px;  height: 100%;  background: #000;  display: none;  }
     </style>
-    <script>
-    </script>
 </head>
 <body>
 <div id="screen" data-config="js/site/defaultSite.js">
