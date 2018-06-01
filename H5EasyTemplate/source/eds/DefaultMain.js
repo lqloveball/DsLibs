@@ -8,6 +8,7 @@ import 'ds/net/QueueLoad';
 import 'ds/ui/PopAlert';
 import 'ds/utils/Animate';
 import 'ds/net/SiteWechatShareModel';
+import {getDefault} from 'ds/utils/Mixin';
 
 
 class DefaultMain extends ds.core.EventDispatcher {
@@ -45,8 +46,22 @@ class DefaultMain extends ds.core.EventDispatcher {
         }
 
 
-        //设置分享
-        SiteModel.shareModel.defaultWeiShare();
+        //设置分享 并监听分享的事件
+        if(SiteModel.shareModel){
+            let _shareConfig = getDefault(SiteConfig.shareConfig,{});
+
+            SiteModel.shareModel.on('shareAPIEnd',()=>{
+                if(_shareConfig.shareAPIEnd)_shareConfig.shareAPIEnd();
+            });
+            SiteModel.shareModel.on('shareAPIError',(e)=>{
+                if(_shareConfig.shareAPIError)_shareConfig.shareAPIError(e);
+            });
+            SiteModel.shareModel.on('setShareEnd',()=>{
+                if(_shareConfig.setShareEnd)_shareConfig.setShareEnd();
+            });
+
+            SiteModel.shareModel.defaultWeiShare();
+        }
 
         //在加载模块需要的资源前需要siteModel创建需要的模块吗？
         SiteModel.beforeSinglePageApplicationLoadAssets(() => {
@@ -276,6 +291,8 @@ class DefaultMain extends ds.core.EventDispatcher {
 
     startSitePage(){
 
+        let _autoHitLoadPanel = getDefault(SiteConfig.autoHitLoadPanel,true);
+
         let _pager = SiteModel.pager;
 
         this.isWorkBack = false;
@@ -310,12 +327,11 @@ class DefaultMain extends ds.core.EventDispatcher {
             }
             else {
                 SiteModel.gotoPage(_firstPage);
-                SiteModel.hitLoadPanel();
+                if(_autoHitLoadPanel)SiteModel.hitLoadPanel();
             }
 
             this.ds(_event);
             SiteModel.ds(_event);
-
 
         }
         else {
@@ -326,33 +342,43 @@ class DefaultMain extends ds.core.EventDispatcher {
             if (!_pager.pageDc[_firstPage]) _firstPage = _pager.pageList[0].name;
             _firstPage = _pager.pageDc[_firstPage].name;
             SiteModel.gotoPage(_firstPage);
-            SiteModel.hitLoadPanel();
+            if(_autoHitLoadPanel)SiteModel.hitLoadPanel();
 
         }
     }
 
 }
 
-let _shareData = SiteConfig.shareData || {};
-let _shareTitle = _shareData.shareTitle || '速速提供分享标题';
-let _shareInfo = _shareData.shareInfo || '速速提供分享内容';
-let _shareUrl = _shareData.shareUrl || './index.html';
-let _shareWorkUrl = _shareData.shareWorkUrl || './index.html?WorkID=';
-let _shareImageUrl = _shareData.shareImageUrl || './images/ShareImg.jpg';
-let _wxJsUrl = _shareData.wxJsUrl || './js/libs/cagoeShare.js';
-let _apiUrl = _shareData.apiUrl || "http://wechat.cagoe.com/JsApiWXConfig.aspx";
-let _shareCallBack = _shareData.shareCallBack;
-SiteModel.shareModel = new ds.net.SiteWechatShareModel({
-        title: _shareTitle,
-        info: _shareInfo,
-        shareUrl: _shareUrl,
-        workUrl: _shareWorkUrl,
-        imageUrl: _shareImageUrl,
-        wxJsUrl: _wxJsUrl,
-        apiUrl: _apiUrl,
-        shareCallBack: _shareCallBack,
-    }
-);
+
+let _shareConfig = getDefault(SiteConfig.shareConfig,{});
+
+let _shareTitle = getDefault(_shareConfig.shareTitle,'速速提供分享标题');
+let _shareInfo = getDefault(_shareConfig.shareInfo,'速速提供分享内容');
+let _shareTimelineInfo = getDefault(_shareConfig.timelineInfo,_shareInfo);
+let _shareUrl = getDefault(_shareConfig.shareUrl,'./index.html');
+let _shareWorkUrl = getDefault(_shareConfig.shareWorkUrl,'./index.html?WorkID=');
+let _shareImageUrl = getDefault(_shareConfig.shareImageUrl,'./images/ShareImg.jpg');
+let _wxJsUrl = getDefault(_shareConfig.wxJsUrl,'./js/libs/cagoeShare.js');
+let _apiUrl = getDefault(_shareConfig.apiUrl,"http://wechat.cagoe.com/JsApiWXConfig.aspx");
+let _shareCallBack = _shareConfig.shareCallBack;
+let _shareEnabled=getDefault(_shareConfig.enabled,true);
+
+if(_shareEnabled){
+    SiteModel.shareModel = new ds.net.SiteWechatShareModel({
+            title: _shareTitle,
+            info: _shareInfo,
+            timelineInfo: _shareTimelineInfo,
+            shareUrl: _shareUrl,
+            workUrl: _shareWorkUrl,
+            imageUrl: _shareImageUrl,
+            wxJsUrl: _wxJsUrl,
+            apiUrl: _apiUrl,
+            shareCallBack: _shareCallBack,
+        }
+    );
+}
+
+
 
 SiteModel.pager = new PageManager();
 SiteModel.paneler = new PanelManager();

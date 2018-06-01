@@ -1,16 +1,4 @@
 import {getDefault,isDOM} from 'ds/utils/Mixin';
-
-let [_AppMain, _CreateJsModel, _PixiJsModel, _ThreeJsModel] = [SiteModel.appMain, SiteModel.createJsModel, SiteModel.pixiJsModel, SiteModel.threeJsModel];
-let _Root, _Stage;
-if (_PixiJsModel) {
-    _Root = _PixiJsModel.root;
-    _Stage = _PixiJsModel.stage;
-}
-else if (_CreateJsModel) {
-    _Root = _CreateJsModel.root;
-    _Stage = _CreateJsModel.stage;
-}
-
 const _onResize = Symbol("_onResize");
 
 /**
@@ -72,13 +60,16 @@ class PageBase extends ds.core.EventDispatcher {
      * 页面进场，在页面进场时候自动调用。请不要直接执行
      */
     movieIn() {
+
+
         this._movieOuting = false;
         this._movieIning = true;
         if (this._config.movieIn) this._config.movieIn();
         this.ds('movieIn');
         // console.log(this.name + ':movieIn', this._isCreatejsView);
         if (this._isCreatejsView) {
-            _Root.addChildAt(this._view);
+            let _root=SiteModel.createJsModel.root;
+            _root.addChildAt(this._view);
             if (this._view instanceof createjs.MovieClip) {
                 this._view.gotoAndStop(0);
                 this._view.gotoAndPlay(0);

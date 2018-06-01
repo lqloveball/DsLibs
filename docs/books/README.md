@@ -1,1 +1,0 @@
-Maksim Frontend Development Lab

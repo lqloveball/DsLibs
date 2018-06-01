@@ -1,16 +1,7 @@
 import PageBase from '../base/PageBase';
 import {getDefault} from 'ds/utils/Mixin';
 
-let [_AppMain, _CreateJsModel, _PixiJsModel, _ThreeJsModel] = [SiteModel.appMain, SiteModel.createJsModel, SiteModel.pixiJsModel, SiteModel.threeJsModel];
-let _Root, _Stage;
-if (_PixiJsModel) {
-    _Root = _PixiJsModel.root;
-    _Stage = _PixiJsModel.stage;
-}
-else if (_CreateJsModel) {
-    _Root = _CreateJsModel.root;
-    _Stage = _CreateJsModel.stage;
-}
+
 
 /**
  * 常规html 与 createjs 页面模块

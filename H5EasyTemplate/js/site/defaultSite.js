@@ -1,6 +1,6 @@
-var SiteConfig = {
+window.SiteConfig = {
     //【必填】 分享设置
-    shareData: {
+    shareConfig: {
         shareTitle: "速速提供分享标题",
         shareInfo: "速速提供分享内容",
         shareUrl: "/index.html",
@@ -14,6 +14,8 @@ var SiteConfig = {
     pages: [
 
     ],
-
+    extend: [
+        //'./js/app/SiteExtend.js'
+    ]
 };
 

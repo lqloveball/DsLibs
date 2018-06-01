@@ -1,30 +1,41 @@
-/**
- * 公共配置
- */
-var path = require('path');
+const path = require('path');
 
-function resolveBowerPath(dir) {
-    return path.join(__dirname, '..', dir);
-}
+function resolveBowerPath(dir) {return path.join(__dirname, '..', dir);}
 
 module.exports = {
-    //别名
+	// //输出设置
+	output: {
+	  //输出路径
+	  path: path.resolve(__dirname, '../js/'),
+	  //输出程序入口  输出名称或名称 pattern
+	  filename: "[name].js",
+	  //指定静态资源的位置 require.ensure路径
+	  publicPath: './js/',
+	  //输出第三方支持库压缩
+	  chunkFilename: "[name].js",
+	},
+	//别名
     resolve: {
         alias: {
-
-            //目录快捷设置
+        	//目录别名
             source: resolveBowerPath('./source'),
             assets: resolveBowerPath('./assets'),
             images: resolveBowerPath('./images'),
             src: resolveBowerPath('./src'),
             ds: resolveBowerPath('source/ds'),
             libs: resolveBowerPath('source/libs'),
-            eds: resolveBowerPath('source/eds'),//简易代码框架目录
-            threejs: resolveBowerPath('source/threejs'),//threejs代码目录
+            eds: resolveBowerPath('source/eds'),
+            threejs: resolveBowerPath('source/threejs'),
+            babylon: resolveBowerPath('source/babylon'),//babylon代码目录
 
-            // 不需要设置app了
-            // app: resolveBowerPath('./src/app'),
-            //vue需要用到
+            //ds库核心代码别名
+            eventdispatcher: 'ds/core/EventDispatcher.js',
+            moblieresizemodel: 'ds/core/MoblieResizeModel.js',
+            resizeModel: 'ds/core/ResizeModel.js',
+            dscreatejs: 'ds/createjs/index.js',
+
+
+             //vue相关别名
             'vue$': 'vue/dist/vue.esm.js',
             'vuex$': 'vuex/dist/vuex.esm.js',
             //'vue$': 'libs/vue/vue.min.js',
@@ -42,7 +53,8 @@ module.exports = {
             css3d: 'libs/shrek/css3d.min.js',
             orienter: 'libs/shrek/orienter.js',
 
-            //常用第三方库
+
+            //第三方库相关别名
             tweenmax: 'libs/greensock/TweenMax.min.js',
             timelinelite: 'libs/greensock/TimelineLite.min.js',
             tweenlite: 'libs/greensock/TweenLite.min.js',
@@ -52,7 +64,8 @@ module.exports = {
             uaparser: 'libs/parser/ua-parser.min.js',
             socketio: 'libs/socket.io/socket.io.js',
 
-            //createjs库
+             //createjs库
+            // createjs: 'libs/createjs/createjs0.8.2.min.js',
             createjs: 'libs/createjs/createjs1.0.0.min.js',
             easeljs: 'libs/createjs/easeljs-0.8.2.min.js',
             tweenjs: 'libs/createjs/tweenjs-0.6.2.min.js',
@@ -65,18 +78,19 @@ module.exports = {
             pixijsdragonBones: 'libs/pixi/dragonBones.min.js',
             dspixijs: 'ds/pixijs/index.js',
 
-            //DsLibs
-            eventdispatcher: 'ds/core/EventDispatcher.js',
-            moblieresizemodel: 'ds/core/MoblieResizeModel.js',
-            dscreatejs: 'ds/createjs/index.js',
+
 
         }
     },
-    //模块loader进行字符串的处理
-    module: {
-        // webpack 2.0后的loader方式
-        rules: [
-            //vue模块加载器
+	//模块处理
+	module: {
+		rules: [
+			{
+			  test: /\.special\.json$/,
+			  type: "javascript/auto",
+			  use: "special-loader"
+			},
+			//vue模块加载器
             {
                 test: /\.vue$/,
                 loader: 'vue-loader',
@@ -91,7 +105,7 @@ module.exports = {
             },
             //html处理
             {test: /\.html$/, loader: 'html-loader'},
-            //处理ES6
+            // //处理ES6
             {
                 test: /\.(js|jsx)$/,
                 loader: 'babel-loader',
@@ -114,7 +128,7 @@ module.exports = {
                 use: [
                     'style-loader',
                     'css-loader',
-                    'less-loader',
+                    'less-loader?sourceMap',
                 ]
             },
             {
@@ -139,6 +153,11 @@ module.exports = {
                     },
                 ]
             },
-        ],
-    },
-};
+		]
+	}
+
+}
+
+
+
+

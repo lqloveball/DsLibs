@@ -1,15 +1,6 @@
 import {getDefault} from 'ds/utils/Mixin';
 
-let [_AppMain, _CreateJsModel, _PixiJsModel, _ThreeJsModel] = [SiteModel.appMain, SiteModel.createJsModel, SiteModel.pixiJsModel, SiteModel.threeJsModel];
-let _Root, _Stage;
-if (_PixiJsModel) {
-    _Root = _PixiJsModel.root;
-    _Stage = _PixiJsModel.stage;
-}
-else if (_CreateJsModel) {
-    _Root = _CreateJsModel.root;
-    _Stage = _CreateJsModel.stage;
-}
+
 const _onResize = Symbol("_onResize");
 
 class PanelBase extends ds.core.EventDispatcher {
@@ -43,7 +34,7 @@ class PanelBase extends ds.core.EventDispatcher {
         this._showBool = false;
         this._showRoot = null;
 
-        if (opts.root) this._showRoot =opts.root;
+        if (opts.root) this._showRoot = opts.root;
         if (opts.ok) opts.ok = opts.ok.bind(this);
         if (opts.no) opts.no = opts.no.bind(this);
         if (opts.show) opts.show = opts.show.bind(this);
@@ -84,12 +75,30 @@ class PanelBase extends ds.core.EventDispatcher {
         if (opts.hide) _config.hide = opts.hide.bind(this);
         if (opts.movieInEnd) _config.movieInEnd = opts.movieInEnd.bind(this);
         if (opts.movieOutEnd) _config.movieOutEnd = opts.movieOutEnd.bind(this);
-        if (opts.root) this._showRoot =opts.root;
+        if (opts.root) this._showRoot = opts.root;
 
         this._showBool = true;
 
-        if (!this._showRoot && this.isCreatejsView)this._showRoot = eds.PanelBase.showRootByCreatejs;
-        if (!this._showRoot && !this.isCreatejsView) this._showRoot = eds.PanelBase.showRootByHTML;
+        if (!this._showRoot && this.isCreatejsView) {
+
+            if (SiteModel.createJsModel && !eds.PanelBase.showRootByCreatejs) {
+                eds.PanelBase.showRootByCreatejs = SiteModel.createJsModel.stage;
+            }
+
+            this._showRoot = eds.PanelBase.showRootByCreatejs;
+        }
+        if (!this._showRoot && !this.isCreatejsView) {
+
+            if (!eds.PanelBase.showRootByHTML) {
+                eds.PanelBase.showRootByHTML = $('#domBox');
+                if (eds.PanelBase.showRootByHTML.length <= 0) {
+                    eds.PanelBase.showRootByHTML = $('#screen');
+                }
+            }
+
+            this._showRoot = eds.PanelBase.showRootByHTML;
+
+        }
         let _showRoot = this._showRoot;
 
         // console.log(_showRoot);
@@ -104,6 +113,10 @@ class PanelBase extends ds.core.EventDispatcher {
         }
         else if (this.type === 'html') {
 
+            _showRoot.append(this.view);
+            this.view.show();
+            this.movieInEnd();
+
         } else {
             this.movieInEnd();
         }
@@ -113,6 +126,7 @@ class PanelBase extends ds.core.EventDispatcher {
 
         if (_config.show) _config.show();
         if (opts.cb) opts.cb();
+
     }
 
     /**
@@ -127,9 +141,11 @@ class PanelBase extends ds.core.EventDispatcher {
      */
     hide(opts) {
 
+
         if (!this._showBool) return;
         opts = opts || {};
         let _config = this._config;
+
 
         if (opts.ok) _config.ok = opts.ok.bind(this);
         if (opts.no) _config.no = opts.no.bind(this);
@@ -148,7 +164,9 @@ class PanelBase extends ds.core.EventDispatcher {
             }
         }
         else if (this.type === 'html') {
+            this.view.hide();
             this.movieOutEnd();
+
         }
         else {
             this.movieOutEnd();
@@ -160,10 +178,10 @@ class PanelBase extends ds.core.EventDispatcher {
                 opts.yes();
             }
             else if (opts.yes) {
-                if(_config.ok)_config.ok();
+                if (_config.ok) _config.ok();
             }
             else {
-                if(_config.no)_config.no();
+                if (_config.no) _config.no();
             }
         }
 
@@ -239,33 +257,33 @@ class PanelBase extends ds.core.EventDispatcher {
             }
 
             let _closeBtn = _view.closeBtn;
+            // console.log('_closeBtn', _closeBtn);
             if (_closeBtn) {
-                _closeBtn.on('click', function () {
+                _closeBtn.on('click', () => {
                     this.hide();
-                }, this);
+                });
             }
 
             let _btn = _view.btn;
             if (_btn) {
-                _btn.on('click', function () {
-                    this.hide({yes:true});
-                }, this);
+                _btn.on('click', () => {
+                    this.hide({yes: true});
+                });
             }
 
             let _btn_ok = _view.btn_ok;
             if (_btn_ok) {
-                _btn_ok.on('click', function () {
-                    this.hide({yes:true});
-                }, this);
+                _btn_ok.on('click', () => {
+                    this.hide({yes: true});
+                });
             }
 
             let _btn_no = _view.btn_no;
             if (_btn_no) {
-                _btn_no.on('click', function () {
-                    this.hide({yes:false});
-                }, this);
+                _btn_no.on('click', () => {
+                    this.hide({yes: false});
+                });
             }
-
 
 
             //进出场动画逻辑控制
@@ -286,7 +304,7 @@ class PanelBase extends ds.core.EventDispatcher {
                     if (_movieOut) _view.movieOutFrame = _movieOut.position;
                     else _view.movieOutFrame = _view.movieInEndFrame + 1;
                     if (_movieOutEnd) _view.movieOutEndFrame = _movieOutEnd.position;
-                    else _view.movieOutEndFrame = _view.totalFrames - 1
+                    else _view.movieOutEndFrame = _view.totalFrames - 1;
                 }
 
                 // console.log(_view.labels,_movieInEnd,_movieOut,_movieOutEnd);
@@ -364,9 +382,10 @@ class PanelBase extends ds.core.EventDispatcher {
      * 配置
      * @return {*|{}}
      */
-    get config(){
+    get config() {
         return this._config;
     }
+
     /**
      * 场景自适应
      * @private
@@ -396,14 +415,14 @@ class PanelBase extends ds.core.EventDispatcher {
 /**
  * createjs显示浮动层默认容器
  */
-PanelBase.showRootByCreatejs = _Stage;
+PanelBase.showRootByCreatejs = null;
+
 
 /**
  * dom 显示浮动层默认容器
  * @type {*|jQuery|HTMLElement}
  */
-PanelBase.showRootByHTML=$('#domBox');
-if (PanelBase.showRootByHTML.length <= 0)PanelBase.showRootByHTML = $('#screen');
+PanelBase.showRootByHTML = null;
 
 
 //获取抓帧数据信息
@@ -416,7 +435,7 @@ function getFrameLabelData(value, labels) {
 
 let root = (typeof window !== 'undefined' ? window : (typeof process === 'object' && typeof require === 'function' && typeof global === 'object') ? global : this);
 
-let eds = root.eds = root.eds ?root.eds: {};
+let eds = root.eds = root.eds ? root.eds : {};
 
 eds.PanelBase = PanelBase;
 
