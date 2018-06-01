@@ -3,7 +3,7 @@
 H5快速拼搭代码库
 
 [Demo](https://lqloveball.github.io/DsLibsDemo/)
-[Docs](https://lqloveball.github.io/DsLibs/)
+[Docs](http://dslibs.ne.cagoe.com/docs)
 
 #### 目录说明
 
