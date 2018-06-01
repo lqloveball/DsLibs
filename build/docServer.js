@@ -11,7 +11,7 @@ var browserSync = require('browser-sync').create(); //自动刷新调试
 gulp.task('server',function() {
     // 启动browserSync服务
     browserSync.init({
-        server: '../docs/',
+        server: '../',
         port: 3001,
         open: "external"
     });

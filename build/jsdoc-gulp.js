@@ -17,10 +17,10 @@ var JSDOC_CONFIG = {
     },
     "source": {
         "include": [
-            // "../src/"
+            "../H5EasyTemplate/source/ds/"
         ],
         "exclude": [
-            // "../src/libs/"
+            "../H5EasyTemplate/source/libs/"
         ],
         "includePattern": ".+\\.js(doc)?$",
         "excludePattern": "(^|\\/|\\\\)_"
